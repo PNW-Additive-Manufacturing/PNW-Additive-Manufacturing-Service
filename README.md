@@ -1,10 +1,8 @@
 # Purdue Northwest 3D Printing Service
 
-Making requesting 3D prints at Purdue Northwest considerably easier.
+The PNW 3D Printing Service enables PNW students, and faculty members to utilize our 3D printers through a user-friendly website. When requesting a print, a user may decide which filament to be used, it's color, how strong the model should be, and a few notes.
 
-## How it will work
-
-The PNW 3D Printing Service enables PNW students, and faculty to request 3D prints through a user-friendly website. When requesting a print, a user may decide which filament to be used, color, infill density, and additionally, a few notes. After submitting, they will be redirected to a page displaying the status of their commission. The status of a commission will include the following states: `Pending Approval, Denied, Queued, Printing, Printed, Failed, and Fulfilled`. You can imagine the commission ID as a UPS tracking number - enabling you to check the status of said commission at a later date.
+After submission, you will be redirected to a page displaying the id and status of your commission. The status of a commission will include the following states: `Pending Approval, Denied, Queued, Printing, Printed, Failed, and Fulfilled`. You can imagine the commission id as a UPS tracking number - enabling you to check the status of said commission at a later date.
 
 | Commission State | Description |
 | ----------------- | ----------- |
