@@ -1,1 +1,37 @@
-# PNW-3D-Printing
+# Purdue Northwest 3D Printing Service
+
+Making requesting 3D prints at Purdue Northwest considerably easier.
+
+## How it will work
+
+The PNW 3D Printing Service enables PNW students, and faculty to request 3D prints through a user-friendly website. When requesting a print, a user may decide which filament to be used, color, infill density, and additionally, a few notes. After submitting, they will be redirected to a page displaying the status of their commission. The status of a commission will include the following states: `Pending Approval, Denied, Queued, Printing, Printed, Failed, and Fulfilled`. You can imagine the commission ID as a UPS tracking number - enabling you to check the status of said commission at a later date.
+
+| Commission State | Description |
+| ----------------- | ----------- |
+| Pending Approval | Model is pending for review. If accepted, model is sliced and changed to `Queued` or `Printing` status. |
+| Denied | Model may not reliably printable, too big to print, or NSFW. An explanation will be provided. |
+| Queued | Model is waiting to be printed. A queue position will be displayed when viewing the status. |
+| Printing | The print is underway, and can be monitored by the webcam. |
+| Printed | Model has been printed and is waiting for pickup. |
+| Failed | Model could not be successfully printed after several attempts.  |
+| Fulfilled | Finished print has been picked up, fulfilling the commission. |
+
+### Pricing
+
+Has yet to be determined. Depends on the filament, and amount used. May reflect how Purdue University operates their 3D Printing Services.
+
+### Maintainer Dashboard
+
+Maintainers of the PNW 3D Printing Service will have the responsibility of maintaining the printers and handling commissions via the Maintainer Dashboard. The Maintainer Dashboard will display a list of all commissions, sorted by their state. Maintainers will be be approve, deny, mark as printing, and archive commissions here.
+
+## Development
+
+Exactly how the PNW 3D Printing Service application will function is undetermined.
+Though, a few applications and libraries come to mind:
+
+- When submitting and viewing a commission you'll be able to view the model are you printing utilizing the [ViewSTL library](https://www.viewstl.com/plugin/).
+- When viewing the commission while in the `Printing` status a video feed of the print will be embedded using [Mainsail's Crowsnest](https://github.com/mainsail-crew/crowsnest#documentation). *Though, as of writing, I am unsure how to integrate printers that come with webcams to [Crowsnest](https://github.com/mainsail-crew/crowsnest#documentation).*
+
+### Automation
+
+A potentially automated feature utilized by the maintainers of the printers would be starting prints through the [Maintainers Dashboard](#maintainer-dashboard) automatically via the upload G-Code when approved. To obtain this functionality we will need to communicate with the printer. Doing this depends on the MCU, the brain of a 3D printer, and the firmware it is running. For example, a possible implementation may utilize (Moonraker)[https://github.com/Arksine/moonraker], a web-api to communicate with an MCU flashed with (Klipper firmware)[https://github.com/Klipper3d/klipper]. Communication with printers could also bring real-time statistics to a commission such as estimated time remaining, and etc.
