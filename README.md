@@ -14,6 +14,53 @@ After submission, you will be redirected to a page displaying the id and status 
 | Failed | Model could not be successfully printed after several attempts.  |
 | Fulfilled | Finished print has been picked up, fulfilling the commission. |
 
+## Structure
+
+### Database
+* User
+    * Types 
+        * End User
+            * Submits Requests
+            * View Request Status
+        * Maintainer
+            * View/Update Requests
+            * View/Update Files
+        * Admin
+            * Manage Manintainers
+    * Properties
+        * Email
+        * Name
+        * Password
+* Requests
+    * Status
+    * User
+    * Submit time
+    * File Reference
+    * Printer
+    * Filament
+* Printers
+    * Model
+    * Filaments
+    * Dimensions
+    * Status
+    * Queue
+* Filaments
+    * Material
+    * Color
+    * Inventory
+
+### Files
+* STL
+* Gcode
+
+### Website
+* Requests
+    * Create
+    * View
+* Dashboard
+    * Printer Status
+    * Request Status
+
 ## Pricing
 
 Has yet to be determined. Depends on the filament, and amount used. May reflect how Purdue University operates their 3D Printing Services.
