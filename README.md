@@ -1,6 +1,6 @@
 # Purdue Northwest 3D Printing Service
 
-The PNW 3D Printing Service enables PNW students, and faculty members to utilize the Additive Manufacturing Club 3D printers through a user-friendly website. When requesting a print, you may decide which filament to be used, it's color, and the infill density used.
+The PNW 3D Printing Service enables PNW students, and faculty members to utilize the Additive Manufacturing Club 3D printers through a user-friendly website. When requesting a print, you may decide which filament to be used, it's color, and the infill density configured when sliced.
 
 After submission, you will be redirected to a page displaying the id and status of your commission. The status of a commission will include the following states: `Pending Approval, Denied, Queued, Printing, Printed, Failed, and Fulfilled`. You can imagine the commission id as a UPS tracking number - enabling you to check the status of said commission at a later date.
 
@@ -14,11 +14,11 @@ After submission, you will be redirected to a page displaying the id and status 
 | Failed | Model could not be successfully printed after several attempts.  |
 | Fulfilled | Finished print has been picked up, fulfilling the commission. |
 
-### Pricing
+## Pricing
 
 Has yet to be determined. Depends on the filament, and amount used. May reflect how Purdue University operates their 3D Printing Services.
 
-### Maintainer Dashboard
+## Maintainer Dashboard
 
 Maintainers of the PNW 3D Printing Service will have the responsibility of maintaining the printers and handling commissions via the Maintainer Dashboard. The Maintainer Dashboard will display a list of all commissions, sorted by their state. Maintainers will be be approve, deny, mark as printing, and archive commissions here.
 

@@ -1,0 +1,4 @@
+{
+  "root": true,
+  "extends": ["next", "turbo", "prettier"] // Tells ESLint to use the "eslint-config-custom" package
+}

@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background-rgb: 255, 255, 255;
+  --foreground-rgb: 0, 0, 0;
+  --background2-rgb: 245, 245, 250;
+  --ascent-rgb: #e4af0b
+}
+
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --background-rgb: 0, 0, 0;
+    --foreground-rgb: 255, 255, 255;
+  }
+} */
+
+.wrapper {
+  width: 50%;
+  margin-left: 25%;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+  font-family: Poppins, sans-serif;
+  /* background: radial-gradient(circle at 100%, #333, #333 50%, #eee 75%, #333 75%); */
+}
+
+h1, h2, h3, h4 {
+  font-family: "Champion Lightwt";
+  font-weight: 400;
+  /* font-size: 4rem; */
+}
+
+input,button {
+  border-radius: 5px;
+  padding: 1rem 1.2rem 1rem 1.2rem;
+}
+input {
+  border: 0px;
+  /* width: 15rem; */
+  background-color: rgb(var(--background-rgb));
+}
+button {
+  background-color: white;
+  border: 0px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  outline: 2px solid var(--ascent-rgb);
+}
+button:hover, button:active {
+  background-color: var(--ascent-rgb);
+  color: rgb(64, 64, 64);
+  transition: 0.05s;
+  color: white;
+}
+input:hover, input::selection, input::marker {
+  outline: 2px solid var(--ascent-rgb);
+}
+button:hover {
+  cursor: pointer;
+}
+.inputs {
+  margin: auto;
+  font-family: 'Azeret Mono', monospace;
+}
+input {
+  display: block;
+  width: auto;
+  width: -moz-available;
+  border-left: 4px solid var(--ascent-rgb);
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  font-weight: lighter;
+  color: rgb(64, 64, 64);
+  margin-bottom: 0.9rem;
+}

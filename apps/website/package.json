@@ -1,0 +1,34 @@
+{
+  "name": "commissions",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "format": "eslint --fix --ext .js,.jsx ."
+  },
+  "dependencies": {
+    "@react-three/fiber": "^8.14.4",
+    "@types/three": "^0.156.0",
+    "lineicons-react": "^1.0.5",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-stl-viewer": "^2.3.0",
+    "three": "^0.157.0"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "autoprefixer": "latest",
+    "eslint-config-custom": "*",
+    "postcss": "latest",
+    "tailwindcss": "latest",
+    "typescript": "latest"
+  },
+  "main": "index.js",
+  "license": "MIT"
+}
