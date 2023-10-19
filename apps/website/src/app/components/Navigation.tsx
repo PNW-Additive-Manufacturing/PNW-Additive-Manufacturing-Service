@@ -2,8 +2,6 @@ import { RegularSearchAlt } from "lineicons-react"
 import * as React from "react";
 import Image from 'next/image'
 
-import * as Flowbite from "flowbite-react";
-
 export function NavbarLink({label, path, icon}: {label: string, path: string, icon: React.JSX.Element}): JSX.Element {
 	return <a href={path} className="flex  justify-center items-center bg-gray-100 rounded-md pt-2 pb-2 pr-4 pl-4">
 		<span className='inline'>{icon}</span>

@@ -5,7 +5,8 @@ export default function Home() {
     <main>      
       <h1>Purdue Northwest 3D Printing</h1>
       <div className="flex">
-        <button className="flex-1">Request a Print</button>
+        <a href="request">Request a Print</a>
+        {/* <button className="flex-1">Request a Print</button> */}
         <button className="flex-1">View status of a Print</button>
       </div>
     </main>
