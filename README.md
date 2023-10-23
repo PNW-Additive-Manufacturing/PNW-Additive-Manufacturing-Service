@@ -18,19 +18,21 @@ After submission, you will be redirected to a page displaying the id and status 
 
 ### Database
 * User
-    * Types 
+    * Email
+    * First Name
+    * Last Name
+    * Password
+    * Type
         * End User
             * Submits Requests
             * View Request Status
         * Maintainer
             * View/Update Requests
             * View/Update Files
+            * Manage Printers
+            * Manage Filament
         * Admin
-            * Manage Manintainers
-    * Properties
-        * Email
-        * Name
-        * Password
+            * Manage Users
 * Requests
     * Status
     * User
@@ -49,9 +51,12 @@ After submission, you will be redirected to a page displaying the id and status 
     * Color
     * Inventory
 
-### Files
+### Server Files
 * STL
 * Gcode
+
+### API
+* Layer between components
 
 ### Website
 * Requests
