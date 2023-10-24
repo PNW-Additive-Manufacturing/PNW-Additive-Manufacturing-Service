@@ -17,13 +17,13 @@ After submission, you will be redirected to a page displaying the id and status 
 ## Structure
 
 ### Database
-* User
+* Account
     * Email
     * First Name
     * Last Name
     * Password
-    * Type
-        * End User
+    * Permission
+        * User
             * Submits Requests
             * View Request Status
         * Maintainer
@@ -33,26 +33,31 @@ After submission, you will be redirected to a page displaying the id and status 
             * Manage Filament
         * Admin
             * Manage Users
-* Requests
-    * User
-    * Submit time
+    * VerificationId
+* Request
+    * Id
+    * AccountEmail
+    * SubmitTime
+    * IsFullfilled
 * Part
-    * Request
+    * RequestId
+    * Name
     * Quantity
     * Status
-    * File Reference
-    * Printer
-    * Filament
-* Printers
+    * PrinterId
+    * FilamentId
+* Printer
+    * Name
     * Model
-    * Filaments
     * Dimensions
+    * Filaments
     * Status
     * Queue
-* Filaments
+* Filament
+    * Id
     * Material
     * Color
-    * Inventory
+    * InStock
 
 ### Server Files
 * STL
