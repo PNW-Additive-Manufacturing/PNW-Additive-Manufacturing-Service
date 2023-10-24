@@ -38,6 +38,7 @@ After submission, you will be redirected to a page displaying the id and status 
     * Submit time
 * Part
     * Request
+    * Quantity
     * Status
     * File Reference
     * Printer
