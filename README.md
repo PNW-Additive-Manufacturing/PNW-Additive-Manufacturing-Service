@@ -34,9 +34,11 @@ After submission, you will be redirected to a page displaying the id and status 
         * Admin
             * Manage Users
 * Requests
-    * Status
     * User
     * Submit time
+* Part
+    * Request
+    * Status
     * File Reference
     * Printer
     * Filament
