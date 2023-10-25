@@ -40,6 +40,7 @@ After submission, you will be redirected to a page displaying the id and status 
     * AccountEmail
     * SubmitTime
     * IsFullfilled
+    * Notes
 * Part
     * RequestId
     * Name
