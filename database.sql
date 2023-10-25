@@ -25,6 +25,7 @@ CREATE TABLE Printer (
 
 CREATE TABLE Request (
   Id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  Name varchar(120) NOT NULL,
   AccountEmail varchar(120) REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE,
   SubmitTime timestamp with time zone NOT NULL DEFAULT NOW(),
   IsFullfilled bool NOT NULL DEFAULT false,
