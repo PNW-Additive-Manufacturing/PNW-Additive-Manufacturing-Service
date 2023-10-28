@@ -36,9 +36,11 @@ After submission, you will be redirected to a page displaying the id and status 
     * VerificationId
 * Request
     * Id
+    * Name
     * AccountEmail
     * SubmitTime
     * IsFullfilled
+    * Notes
 * Part
     * RequestId
     * Name
