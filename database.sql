@@ -1,4 +1,7 @@
+DROP TYPE IF EXISTS PermissionType CASCADE;
 CREATE TYPE PermissionType AS ENUM ('user', 'maintainer', 'admin');
+
+DROP TABLE IF EXISTS Account CASCADE;
 CREATE TABLE Account (
   Email varchar(120) PRIMARY KEY,
   FirstName varchar(50) NOT NULL,
@@ -8,21 +11,24 @@ CREATE TABLE Account (
   VerificationId UUID DEFAULT gen_random_uuid()
 );
 
+DROP TABLE IF EXISTS Filament CASCADE;
 CREATE TABLE Filament (
   Id SERIAL PRIMARY KEY,
   Material varchar(10) NOT NULL,
   Color varchar(10) NOT NULL,
-  bool InStock NOT NULL DEFAULT TRUE,
-  UNIQUE (Name, Material)
+  InStock bool NOT NULL DEFAULT TRUE,
+  UNIQUE (Color, Material)
 );
 
+DROP TABLE IF EXISTS Printer CASCADE;
 CREATE TABLE Printer (
-  Name varchar(120) NOT NULL, -- Bob, Joe, Cnacer
+  Name varchar(120) NOT NULL PRIMARY KEY, -- Bob, Joe, Cnacer
   Model varchar(120) NOT NULL,
   Dimensions int[3] NOT NULL,
   Filaments varchar(10)[] NOT NULL
 );
 
+DROP TABLE IF EXISTS Request CASCADE;
 CREATE TABLE Request (
   Id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   Name varchar(120) NOT NULL,
@@ -32,13 +38,16 @@ CREATE TABLE Request (
   Notes varchar(500)
 );
 
+DROP TYPE IF EXISTS PartStatus;
 CREATE TYPE PartStatus AS ENUM ('Pending', 'Denied', 'Queued', 'Printing', 'Printed', 'Failed');
+
+DROP TABLE IF EXISTS Part CASCADE;
 CREATE TABLE Part (
   RequestId UUID REFERENCES Request(Id) ON DELETE CASCADE ON UPDATE CASCADE,
   Name varchar(80) NOT NULL,
   Quantity int NOT NULL CHECK (Quantity > 0 and Quantity <= 100),
   Status PartStatus NOT NULL DEFAULT 'Pending',
-  PrinterId UUID REFERENCES Printer(Id) ON DELETE SET NULL,
-  FilamentId int 
+  PrinterId varchar(120) DEFAULT NULL REFERENCES Printer(Name) ON DELETE SET NULL,
+  FilamentId SERIAL NOT NULL REFERENCES Filament(Id) ON DELETE CASCADE ON UPDATE CASCADE,
   UNIQUE (RequestId, Name)
 );
