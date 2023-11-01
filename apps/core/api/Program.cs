@@ -17,7 +17,7 @@ public class DatabaseContext : DbContext
     public DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseNpgsql("Host=my_host;Database=my_db;Username=my_user;Password=my_pw");
+        => optionsBuilder.UseNpgsql(Environment.GetEnvironmentVariable("DB_CONNECTION"));
 }
 
 // public class SessionConstraints 
