@@ -1,9 +1,11 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "core", "core.csproj", "{4835567A-D890-4643-A7FA-7505C1CB8B9C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "api", "api\api.csproj", "{4835567A-D890-4643-A7FA-7505C1CB8B9C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrinterInterop", "PrinterInterop\PrinterInterop\PrinterInterop.csproj", "{A9F6B157-2F5A-407A-8B4F-6A7649D58DD7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{4835567A-D890-4643-A7FA-7505C1CB8B9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4835567A-D890-4643-A7FA-7505C1CB8B9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4835567A-D890-4643-A7FA-7505C1CB8B9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9F6B157-2F5A-407A-8B4F-6A7649D58DD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9F6B157-2F5A-407A-8B4F-6A7649D58DD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9F6B157-2F5A-407A-8B4F-6A7649D58DD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9F6B157-2F5A-407A-8B4F-6A7649D58DD7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

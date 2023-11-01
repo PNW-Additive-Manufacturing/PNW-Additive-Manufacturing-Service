@@ -13,13 +13,13 @@ public class FileController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet]
-    [Route("{partId:int}")]
-    public async Task<IActionResult> GetSTL(int partId) 
-    {
-        // https://devblogs.microsoft.com/dotnet/attribute-routing-in-asp-net-mvc-5/ 
+    // [HttpGet]
+    // [Route("{partId:int}")]
+    // public async Task<IActionResult> GetSTL(int partId) 
+    // {
+    //     // https://devblogs.microsoft.com/dotnet/attribute-routing-in-asp-net-mvc-5/ 
         
-    }
+    // }
 
     public async Task<IActionResult> Index()
     {
