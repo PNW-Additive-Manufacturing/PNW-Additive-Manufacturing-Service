@@ -1,6 +1,7 @@
 import Image from 'next/image'
 
 import { PartList, Part } from '@/app/components/PartList'
+import { Navbar } from './components/Navigation'
 
 export default function Home() {
   let parts = [
@@ -25,14 +26,17 @@ export default function Home() {
   ]
   return (
     <main>      
-      <h1>Purdue Northwest 3D Printing</h1>
-      <div className="flex">
-        <a href="request">Request a Print</a>
-        {/* <button className="flex-1">Request a Print</button> */}
-        <button className="flex-1">View status of a Print</button>
-      </div>
+      <Navbar links={[
+        {name: "Request a Print", path: "/request"},
+        {name: "Request a Print", path: "/request"},
 
-      <h2 className="p-3 text-4xl font-extrabold dark:text-black">Part List</h2> 
+      ]}/>
+
+      <h2 className="p-3 text-4xl font-extrabold text-center sdark:text-black">Your Pending Parts</h2> 
+
+      <PartList parts={parts}/>
+
+      <h2 className="p-3 text-4xl font-extrabold text-center sdark:text-black">Your Completed Parts</h2> 
 
       <PartList parts={parts}/>
     </main>

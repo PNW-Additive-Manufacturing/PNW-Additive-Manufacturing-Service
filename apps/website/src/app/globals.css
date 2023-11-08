@@ -6,7 +6,15 @@
   --background-rgb: 255, 255, 255;
   --foreground-rgb: 0, 0, 0;
   --background2-rgb: 245, 245, 250;
-  --ascent-rgb: #e4af0b
+  --ascent-rgb: #e4af0b;
+
+  /* PNW Branding Stuff */
+  --pnw-gold-logo: #e6b10e;
+  --pnw-gold: #b1810b;
+  --pnw-blue: #7ca6c0;
+  --pnw-gold-light: #f7f2e6;
+  --pnw-black: #000000;
+
 }
 
 /* @media (prefers-color-scheme: dark) {
