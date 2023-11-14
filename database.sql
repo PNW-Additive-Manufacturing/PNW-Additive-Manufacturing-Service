@@ -24,10 +24,10 @@ DROP TABLE IF EXISTS Printer CASCADE;
 CREATE TABLE Printer (
   Name varchar(120) NOT NULL PRIMARY KEY, -- Bob, Joe, Cnacer
   Model varchar(120) NOT NULL,
-  Dimensions int[3] NOT NULL,
+  Dimensions int[3] NOT NULL DEFAULT '{}',
   SupportedMaterials varchar(10)[] NOT NULL,
   OutOfOrder bool NOT NULL DEFAULT false,
-  Queue SMALLINT[] NOT NULL
+  Queue SMALLINT[] NOT NULL DEFAULT '{}'
 );
 
 DROP TABLE IF EXISTS Request CASCADE;

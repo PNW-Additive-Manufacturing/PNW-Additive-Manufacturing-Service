@@ -6,7 +6,6 @@ namespace Models;
 [Table("filament")]
 public class Filament 
 {
-    [Key]
     public short Id { get; set; }
 
     [Required]

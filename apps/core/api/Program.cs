@@ -25,6 +25,12 @@ public class PrintingDbContext : DbContext
     public DbSet<Models.Request> Requests { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Models.Request>()
+            .HasMany(r => r.Parts)
+            .WithOne(p => p.Request)
+            .HasForeignKey(p => p.RequestId)
+            .HasPrincipalKey(r => r.Id);
+
         modelBuilder.HasPostgresEnum<PartStatus>();
         modelBuilder.HasPostgresEnum<Account.PermissionType>();
         base.OnModelCreating(modelBuilder);

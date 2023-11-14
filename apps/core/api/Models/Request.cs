@@ -6,7 +6,6 @@ namespace Models;
 
 [Table("request")]
 public class Request {
-    [Key]
     public short Id { get; set; }
 
     public string? Name { get; set; }

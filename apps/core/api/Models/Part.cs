@@ -1,7 +1,9 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace Models;
 
@@ -17,7 +19,6 @@ public enum PartStatus
 
 [Table("part")]
 public class Part {
-    [Key]
     public short Id { get; set; }
 
     [Required]
@@ -29,7 +30,7 @@ public class Part {
     [Required]
     public int Quantity { get; set; } = 1;
 
-    [Required]
+    [Required, JsonConverter(typeof(JsonStringEnumConverter))]
     public PartStatus Status { get; set; } = PartStatus.Pending;
 
     public string? AssignedPrinterName { get; set; } 
@@ -38,13 +39,16 @@ public class Part {
     public short? AssignedFilamentId { get; set; }
 
 
-    // [NotMapped]
-    // public Request Request { get; set; }
+    [NotMapped]
+    public Model? Model { get; set; } 
 
-    // [NotMapped]
-    // public Printer AssignedPrinter { get; set; }
+    [NotMapped]
+    public Request? Request { get; set; }
 
-    // [NotMapped]
-    // public Filament AssignedFilament { get; set; }
+    [NotMapped]
+    public Printer? AssignedPrinter { get; set; }
+
+    [NotMapped]
+    public Filament? AssignedFilament { get; set; }
     
 }
