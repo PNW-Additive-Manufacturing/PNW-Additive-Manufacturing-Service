@@ -1,3 +1,7 @@
+# Custom
+apps/core/api/wwwroot
+
+
 # Logs
 logs
 *.log

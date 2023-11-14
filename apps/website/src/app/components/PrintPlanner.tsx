@@ -1,5 +1,5 @@
 import { MutableRefObject, ReactElement, useContext, useRef, useState } from "react";
-import { Box3, BoxGeometry, BufferAttribute, BufferGeometry, Color, EdgesGeometry, Mesh, MeshBasicMaterial, MeshStandardMaterial, OrthographicCamera, PerspectiveCamera, PointLight, PointLight, MathUtils as TMathUtils, Vector3 } from "three";
+import { Box3, BoxGeometry, BufferAttribute, BufferGeometry, Color, EdgesGeometry, Mesh, MeshBasicMaterial, MeshStandardMaterial, OrthographicCamera, PerspectiveCamera, PointLight, MathUtils as TMathUtils, Vector3 } from "three";
 import { useFrame, Canvas, useThree } from "@react-three/fiber";
 import { Caveat } from "next/font/google";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -70,7 +70,7 @@ function BoundingBoxToEdgeGeometry(box: Box3): EdgesGeometry {
 
 function PrintScene({}: {}): JSX.Element {
     // Element references
-    const meshRef = useRef<Mesh>();
+    const meshRef = useRef<Mesh>(null);
     const lightRef = useRef<PointLight>();
 
     // useThree(({camera}) => {

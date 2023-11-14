@@ -5,7 +5,7 @@ import { BufferGeometry, Color, Euler, Group, Material, Mesh, MeshBasicMaterial,
 export default function ModelViewer({models, volume}: {
     models: [{name: string, position: Vector3, rotation: Euler, model: BufferGeometry}], 
     volume: Vector3}) {
-    const scene = useRef<Group<Object3DEventMap>>();
+    const scene = useRef<Group<Object3DEventMap>>(null); //add null to fix type issue in return <group ref={scene}>
 
     useThree(state => {
         state.camera = new PerspectiveCamera(40);
