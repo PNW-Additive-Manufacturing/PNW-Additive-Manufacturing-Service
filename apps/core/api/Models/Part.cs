@@ -15,25 +15,36 @@ public enum PartStatus
     Failed,
 }
 
+[Table("part")]
 public class Part {
-    [ForeignKey("OrderId"), Required]
-    public Guid OrderId;
-
-    [NotMapped]
-    public Order Order { get; set; }
+    [Key]
+    public short Id { get; set; }
 
     [Required]
-    public string Name;
+    public short RequestId { get; set; }
+    
+    [Required]
+    public short ModelId { get; set; }
 
     [Required]
-    public PartStatus Status;
+    public int Quantity { get; set; } = 1;
 
     [Required]
-    public int Quantity = 1;
+    public PartStatus Status { get; set; } = PartStatus.Pending;
 
-    public string PrinterName;
+    public string? AssignedPrinterName { get; set; } 
 
-    [Required]
-    public int FilamentId;
+    // [ForeignKey("FilamentId")]
+    public short? AssignedFilamentId { get; set; }
+
+
+    // [NotMapped]
+    // public Request Request { get; set; }
+
+    // [NotMapped]
+    // public Printer AssignedPrinter { get; set; }
+
+    // [NotMapped]
+    // public Filament AssignedFilament { get; set; }
     
 }

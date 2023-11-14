@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Collections.Concurrent;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
@@ -12,82 +13,35 @@ using Microsoft.VisualBasic;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Npgsql;
 
-public class DatabaseContext : DbContext
+public class PrintingDbContext : DbContext
 {
-    public DbSet<Account> Users { get; set; }
-    public DbSet<Order> Requests { get; set; }
-
+    public DbSet<Models.Account> Accounts { get; set; }
+    public DbSet<Models.Filament> Filaments { get; set; }
+    public DbSet<Models.Model> Models { get; set; }
+    public DbSet<Models.Part> Parts { get; set; }
+    public DbSet<Models.Printer> Printers { get; set; }
+    public DbSet<Models.Request> Requests { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Order>()
-            .HasMany(r => r.Parts)
-            .WithOne(p => p.Order)
-            .HasForeignKey(d => d.OrderId);
+        modelBuilder.HasPostgresEnum<PartStatus>();
+        modelBuilder.HasPostgresEnum<Account.PermissionType>();
         base.OnModelCreating(modelBuilder);
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseNpgsql(Environment.GetEnvironmentVariable("DB_CONNECTION"));
+    {
+        var dataSource = new NpgsqlDataSourceBuilder(Environment.GetEnvironmentVariable("DB_CONNECTION"));
+        dataSource.MapEnum<PartStatus>();
+        dataSource.MapEnum<Account.PermissionType>();
+
+        optionsBuilder
+            .UseNpgsql(dataSource.Build())
+            .UseLowerCaseNamingConvention();
+    }
+
 }
-
-// public class SessionConstraints 
-// {
-//     public TimeSpan ValidFor { get; set; } = TimeSpan.FromDays(1); 
-// }
-// public class AuthorizationManager<Identity>
-// {
-//     public class Session
-//     {
-//         public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
-//         public Identity Identity { get; init; }
-
-//         public Session(Identity identity) 
-//         {
-//             this.Identity = identity;
-//         }
-//     }
-
-//     public delegate string GenerateSessionToken(Identity identity);
-//     public delegate Identity? RetrieveIdentity(string username, string password);
-
-//     private readonly ConcurrentDictionary<string, Session> Sessions = new();
-
-//     public TimeSpan SessionLife { get; set; } = TimeSpan.FromDays(1);
-//     public RetrieveIdentity? DoRetrieveIdentity { get; set; }
-//     public GenerateSessionToken? DoGenerateSessionToken { get; set; }
-
-//     public bool TryGetSession(string sessionToken, out Session? session) 
-//     {
-//         if (!this.Sessions.TryGetValue(sessionToken, out session)) return false;
-//         if (DateTime.UtcNow > session.CreatedAt + SessionLife) 
-//         {
-//             // Session has expired!
-//             this.Sessions.Remove(sessionToken, out var _);
-//             return false;
-//         }
-//         return true;
-//     }
-
-//     public string? Login(string username, string password) 
-//     {
-//         if (this.DoRetrieveIdentity == null)
-//             throw new MissingMemberException("Unable to retrieve the Identity of requested User.", nameof(this.DoRetrieveIdentity));
-//         if (this.DoGenerateSessionToken == null)
-//             throw new MissingMemberException("Unable to generate SessionToke for requested User.", nameof(this.DoGenerateSessionToken));
-
-//         Identity? identity = this.DoRetrieveIdentity(username, password);
-//         if (identity == null) {
-//             Console.WriteLine("No identity!");
-//             return null;
-//         }
-
-//         string sessionToken = this.DoGenerateSessionToken(identity);
-//         this.Sessions.TryAdd(sessionToken, new Session(identity));
-//         Console.WriteLine($"\tCreated Session: {sessionToken}");
-//         return sessionToken;
-//     }
-// }
 
 internal class Program
 {
@@ -115,7 +69,7 @@ internal class Program
 
         // Add services to the container.
         builder.Services.AddControllers();
-        builder.Services.AddDbContext<DatabaseContext>();
+        builder.Services.AddDbContext<PrintingDbContext>();
 
         // https://learn.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-7.0
         // builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

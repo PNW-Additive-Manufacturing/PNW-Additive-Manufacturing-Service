@@ -25,7 +25,7 @@ CREATE TABLE Printer (
   Name varchar(120) NOT NULL PRIMARY KEY, -- Bob, Joe, Cnacer
   Model varchar(120) NOT NULL,
   Dimensions int[3] NOT NULL,
-  Filaments varchar(10)[] NOT NULL,
+  SupportedMaterials varchar(10)[] NOT NULL,
   OutOfOrder bool NOT NULL DEFAULT false,
   Queue SMALLINT[] NOT NULL
 );
@@ -49,8 +49,8 @@ CREATE TABLE Model (
   OwnerEmail varchar(120) REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-DROP TYPE IF EXISTS PartStatus;
-CREATE TYPE PartStatus AS ENUM ('Pending', 'Denied', 'Queued', 'Printing', 'Printed', 'Failed');
+DROP TYPE IF EXISTS PartStatus CASCADE;
+CREATE TYPE PartStatus AS ENUM ('pending', 'denied', 'queued', 'printing', 'printed', 'failed');
 
 DROP TABLE IF EXISTS Part CASCADE;
 CREATE TABLE Part (
@@ -58,7 +58,7 @@ CREATE TABLE Part (
   RequestId SMALLSERIAL REFERENCES Request(Id) ON DELETE CASCADE ON UPDATE CASCADE,
   ModelId SMALLSERIAL REFERENCES Model(Id) ON DELETE CASCADE ON UPDATE CASCADE,
   Quantity int NOT NULL CHECK (Quantity > 0 and Quantity <= 100),
-  Status PartStatus NOT NULL DEFAULT 'Pending',
-  PrinterName varchar(120) DEFAULT NULL REFERENCES Printer(Name) ON DELETE SET NULL,
-  FilamentId SERIAL NOT NULL REFERENCES Filament(Id) ON DELETE SET NULL ON UPDATE CASCADE
+  Status PartStatus NOT NULL DEFAULT 'pending',
+  AssignedPrinterName varchar(120) DEFAULT NULL REFERENCES Printer(Name) ON DELETE SET NULL,
+  AssignedFilamentId SMALLINT REFERENCES Filament(Id) ON DELETE SET NULL ON UPDATE CASCADE
 );
