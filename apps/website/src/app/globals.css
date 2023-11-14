@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --background-rgb: 255, 255, 255;
+  --background-rgb: 248, 248, 248;
   --foreground-rgb: 0, 0, 0;
   --background2-rgb: 245, 245, 250;
   --ascent-rgb: #e4af0b;
@@ -17,6 +17,10 @@
 
 }
 
+* {
+  font-family: inherit;
+}
+
 /* @media (prefers-color-scheme: dark) {
   :root {
     --background-rgb: 0, 0, 0;
@@ -24,22 +28,31 @@
   }
 } */
 
+
+
 .wrapper {
   width: 50%;
   margin-left: 25%;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
+  /* color: rgb(var(--foreground-rgb)); */
+  color: rgb(64, 64, 64);
   background: rgb(var(--background-rgb));
-  font-family: Poppins, sans-serif;
+  
+  /* font-family: Poppins, sans-serif; */
+  /* font-family: "Helvetica" !important; */
+  font-family: Helvetica Neue,Helvetica,Arial,sans-serif; 
   /* background: radial-gradient(circle at 100%, #333, #333 50%, #eee 75%, #333 75%); */
 }
 
+p {
+  color: rgb(64, 64, 64)
+}
+
 h1, h2, h3, h4 {
-  font-family: "Champion Lightwt";
-  font-weight: 400;
-  /* font-size: 4rem; */
+  font-family: "Helvetica";
+  font-weight: bolder;
 }
 
 input,button {
@@ -51,13 +64,13 @@ input {
   /* width: 15rem; */
   background-color: rgb(var(--background-rgb));
 }
-button {
+/* button {
   background-color: white;
   border: 0px;
   font-weight: bold;
   font-size: 0.9rem;
   outline: 2px solid var(--ascent-rgb);
-}
+} */
 button:hover, button:active {
   background-color: var(--ascent-rgb);
   color: rgb(64, 64, 64);
@@ -84,4 +97,44 @@ input {
   font-weight: lighter;
   color: rgb(64, 64, 64);
   margin-bottom: 0.9rem;
+}
+
+tr:nth-child(even) {
+  background-color: rgba(231, 231, 231, 0.3);
+}
+
+.horizontal-wrap {
+  width: 65%;
+  margin-left: calc(35%/2);
+}
+
+.container 
+{
+  background-color: white;
+  border-radius: 0.125rem;
+  padding: 2rem;
+  /* width: fit-content; */
+  height: fit-content;
+}
+
+
+/* Table Styling */
+
+th, td {
+  padding: 1rem;
+}
+table thead tr {
+  /* background-color: #9e9e9e; */
+  padding: 2rem;
+  border-radius: 50%;
+  border-bottom: 2px solid gray;
+  text-transform: uppercase;
+}
+table thead tr td {
+  /* color: white; */
+  font-size: 1rem;
+  border-radius: 50%;
+}
+table tbody tr td {
+  font-size: 1.2rem;
 }

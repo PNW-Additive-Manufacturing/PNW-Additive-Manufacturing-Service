@@ -1,4 +1,6 @@
 
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 namespace Models;
@@ -14,11 +16,24 @@ public enum PartStatus
 }
 
 public class Part {
-    public Guid RequestId;
+    [ForeignKey("OrderId"), Required]
+    public Guid OrderId;
+
+    [NotMapped]
+    public Order Order { get; set; }
+
+    [Required]
     public string Name;
+
+    [Required]
     public PartStatus Status;
-    public int Quantity;
+
+    [Required]
+    public int Quantity = 1;
+
     public string PrinterName;
+
+    [Required]
     public int FilamentId;
     
 }
