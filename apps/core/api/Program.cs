@@ -11,10 +11,21 @@ using System.Text;
 using Microsoft.VisualBasic;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 public class DatabaseContext : DbContext
 {
-    public DbSet<User> Users { get; set; }
+    public DbSet<Account> Users { get; set; }
+    public DbSet<Order> Requests { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Order>()
+            .HasMany(r => r.Parts)
+            .WithOne(p => p.Order)
+            .HasForeignKey(d => d.RequestId);
+        base.OnModelCreating(modelBuilder);
+    }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseNpgsql(Environment.GetEnvironmentVariable("DB_CONNECTION"));
@@ -107,12 +118,12 @@ internal class Program
         builder.Services.AddDbContext<DatabaseContext>();
 
         // https://learn.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-7.0
-        builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(options => {
-                options.ExpireTimeSpan = TimeSpan.FromDays(1);
-                options.SlidingExpiration = true;
-                options.AccessDeniedPath = "/Forbidden/";
-            });
+        // builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        //     .AddCookie(options => {
+        //         options.ExpireTimeSpan = TimeSpan.FromDays(1);
+        //         options.SlidingExpiration = true;
+        //         options.AccessDeniedPath = "/Forbidden/";
+        //     });
 
         var app = builder.Build();
 
@@ -125,9 +136,9 @@ internal class Program
             app.UseHsts();
         }
 
-        app.UseCookiePolicy(new CookiePolicyOptions() {
-            MinimumSameSitePolicy = SameSiteMode.Lax
-        });
+        // app.UseCookiePolicy(new CookiePolicyOptions() {
+        //     MinimumSameSitePolicy = SameSiteMode.Lax
+        // });
 
         app.UseRouting();
 

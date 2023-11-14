@@ -4,15 +4,16 @@ const config: Config = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
-    colors: {
-      "pnw-gold": "var(--pnw-gold)",
-      "pnw-gold-light": "var(--pnw-gold-light)",
-
-    },
     extend: {
+      colors: {
+        "pnw-gold": "var(--pnw-gold)",
+        "pnw-gold-light": "var(--pnw-gold-light)",
+        "indicator-inactive": "#94a3b8"
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':

@@ -1,6 +1,7 @@
 import { RegularSearchAlt } from "lineicons-react"
 import * as React from "react";
 import Image from 'next/image'
+import HorizontalWrap from "./HorizontalWrap";
 
 /*
 export function NavbarLink({label, path, icon}: {label: string, path: string, icon: React.JSX.Element}): JSX.Element {
@@ -17,6 +18,7 @@ function NavbarLink({name, path} : {name: string, path: string}) {
 export function Navbar({links}: {links: {name: string, path: string}[]}): JSX.Element {
     return (
         <nav className='bg-pnw-gold-light flex flex-row p-5 justify-between outline-1 outline-black w-full '>
+            <HorizontalWrap>
             <div className="basis-1/2 flex tracking-wider">
                 <Image className="mr-2" src="/PNW_Logo_Small.png" width={100} height={20} alt="PNWAM Logo"></Image>
                 <span>
@@ -27,6 +29,7 @@ export function Navbar({links}: {links: {name: string, path: string}[]}): JSX.El
             <div className="w-full flex basis-1/2 items-center justify-end tracking-wider gap-5">
                 {links.map(val => <NavbarLink key={val.name} name={val.name} path={val.path}/>)}
             </div>
+            </HorizontalWrap>
         </nav>
     )
 }

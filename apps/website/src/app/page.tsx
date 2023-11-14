@@ -32,6 +32,8 @@ export default function Home() {
 
       ]}/>
 
+      <h1>Welcome, Aaron Jung!</h1>
+
       <h2 className="p-3 text-4xl font-extrabold text-center sdark:text-black">Your Pending Parts</h2> 
 
       <PartList parts={parts}/>

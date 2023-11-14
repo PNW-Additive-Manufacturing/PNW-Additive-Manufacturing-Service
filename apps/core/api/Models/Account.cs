@@ -24,9 +24,9 @@ public class Account  {
     public Guid? VerificationId { get; set; }
 
 
-    public static implicit operator Claim[](Account account) => new Claim[] {
-        new(ClaimTypes.Name, $"{account.FirstName} {account.LastName}"),
-        new(ClaimTypes.Role, Enum.GetName(typeof(PermissionType), account.Permission)!),
-        new(ClaimTypes.Email, account.Email),
-    };
+    // public static implicit operator Claim[](Account account) => new Claim[] {
+    //     new(ClaimTypes.Name, $"{account.FirstName} {account.LastName}"),
+    //     new(ClaimTypes.Role, Enum.GetName(typeof(PermissionType), account.Permission)!),
+    //     new(ClaimTypes.Email, account.Email),
+    // };
 }
