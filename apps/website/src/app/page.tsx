@@ -28,7 +28,6 @@ export default function Home() {
     <main>      
       <Navbar links={[
         {name: "Request a Print", path: "/request"},
-        {name: "Request a Print", path: "/request"},
 
       ]}/>
 

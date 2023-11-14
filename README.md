@@ -18,7 +18,7 @@ After submission, you will be redirected to a page displaying the id and status 
 
 ### Database
 * Account
-    * Email
+    * Email [Primary]
     * First Name
     * Last Name
     * Password
@@ -35,28 +35,35 @@ After submission, you will be redirected to a page displaying the id and status 
             * Manage Users
     * VerificationId
 * Request
-    * Id
+    * Id [Primary]
     * Name
-    * AccountEmail
+    * OwnerEmail [Ref]
     * SubmitTime
     * IsFullfilled
     * Notes
 * Part
-    * RequestId
-    * Name
+    * Id [Primary]
+    * RequestId [Ref]
+    * ModelId [Ref]
     * Quantity
     * Status
-    * PrinterId
+    * PrinterName [Ref]
     * FilamentId
-* Printer
+* Model
+    * Id [Primary]
     * Name
+    * OwnerEmail [Ref]
+    * FilePath
+    * ThumbnailPath
+* Printer
+    * Name [Primary]
     * Model
     * Dimensions
     * Filaments
-    * Status
-    * Queue
+    * OutOfOrder
+    * Queue (List)
 * Filament
-    * Id
+    * Id [Primary]
     * Material
     * Color
     * InStock
