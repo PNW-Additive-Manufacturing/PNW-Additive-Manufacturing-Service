@@ -23,7 +23,7 @@ public class DatabaseContext : DbContext
         modelBuilder.Entity<Order>()
             .HasMany(r => r.Parts)
             .WithOne(p => p.Order)
-            .HasForeignKey(d => d.RequestId);
+            .HasForeignKey(d => d.OrderId);
         base.OnModelCreating(modelBuilder);
     }
 
@@ -141,6 +141,9 @@ internal class Program
         // });
 
         app.UseRouting();
+
+        app.UseStaticFiles(); //required for serving static files in <content_root>/wwwroot
+
 
         app.UseAuthentication();
         app.UseAuthorization();
