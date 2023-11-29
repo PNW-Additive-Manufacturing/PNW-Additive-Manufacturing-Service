@@ -18,9 +18,10 @@ function NavbarLink({name, path} : {name: string, path: string}) {
 export function Navbar({links}: {links: {name: string, path: string}[]}): JSX.Element {
     return (
         <nav className='bg-pnw-gold-light flex flex-row p-5 justify-between outline-1 outline-black w-full '>
-            <HorizontalWrap>
-            <div className="basis-1/2 flex tracking-wider">
-                <Image className="mr-2" src="/PNW_Logo_Small.png" width={100} height={20} alt="PNWAM Logo"></Image>
+            <div className="basis-1/2 flex tracking-wider ">
+                <a href="/">
+                    <Image className="mr-2" src="/PNW_Logo_Small.png" width={100} height={20} alt="PNWAM Logo"></Image>
+                </a>
                 <span>
                     <p style={{fontSize: "20px", color: "var(--pnw-gold)", fontFamily: "Coda"}}>Purdue Northwest</p>
                     <p style={{fontSize: "12px", color: "var(--pnw-black)", fontFamily: "Coda"}}>Additive Manufacturing</p>
@@ -29,7 +30,6 @@ export function Navbar({links}: {links: {name: string, path: string}[]}): JSX.El
             <div className="w-full flex basis-1/2 items-center justify-end tracking-wider gap-5">
                 {links.map(val => <NavbarLink key={val.name} name={val.name} path={val.path}/>)}
             </div>
-            </HorizontalWrap>
         </nav>
     )
 }

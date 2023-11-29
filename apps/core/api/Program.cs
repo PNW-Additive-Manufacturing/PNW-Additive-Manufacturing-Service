@@ -38,7 +38,8 @@ public class PrintingDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        var dataSource = new NpgsqlDataSourceBuilder(Environment.GetEnvironmentVariable("DB_CONNECTION"));
+        //var dataSource = new NpgsqlDataSourceBuilder(Environment.GetEnvironmentVariable("DB_CONNECTION"));
+        var dataSource = new NpgsqlDataSourceBuilder("host=localhost port=5432 dbname=postgres user=postgres password=postgres sslmode=prefer");
         dataSource.MapEnum<PartStatus>();
         dataSource.MapEnum<Account.PermissionType>();
 
@@ -103,8 +104,7 @@ internal class Program
 
         app.UseRouting();
 
-        app.UseStaticFiles(); //required for serving static files in <content_root>/wwwroot
-
+        app.UseFileServer();
 
         app.UseAuthentication();
         app.UseAuthorization();

@@ -6,9 +6,10 @@ const nextConfig = {
     unoptimized: true
   },
 
+  trailingSlash: true,
+
   env: {
     API_ROOT: 'http:/localhost:5126',
-
   },
 }
 
