@@ -37,8 +37,10 @@ public class PrintingDbContext : DbContext
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        var dataSource = new NpgsqlDataSourceBuilder(Environment.GetEnvironmentVariable("DB_CONNECTION"));
+    {   
+        //var dataSource = new NpgsqlDataSourceBuilder(Environment.GetEnvironmentVariable("DB_CONNECTION"));
+        var dataSource = new NpgsqlDataSourceBuilder("host=127.0.0.1 port=5432 database=printing_db user=ryan password=ryan sslmode=prefer");
+
         dataSource.MapEnum<PartStatus>();
         dataSource.MapEnum<Account.PermissionType>();
 

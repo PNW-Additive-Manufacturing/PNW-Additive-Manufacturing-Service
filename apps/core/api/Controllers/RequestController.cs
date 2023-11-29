@@ -24,7 +24,10 @@ public class RequestController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<Request>> Index()
     {   
+        //var requests = this._db.Requests.ToList();
+        
         var requests = this._db.Requests.Include(r => r.Parts).ToList();
+        
         foreach (var request in requests)
         {
             // request.Parts = this._db.Parts.Where(p => p.RequestId == request.Id).ToList();
@@ -43,6 +46,7 @@ public class RequestController : ControllerBase
                 }
             }
         }
+        
         return new JsonResult(requests, new JsonSerializerOptions() {
             ReferenceHandler = ReferenceHandler.IgnoreCycles
         });
