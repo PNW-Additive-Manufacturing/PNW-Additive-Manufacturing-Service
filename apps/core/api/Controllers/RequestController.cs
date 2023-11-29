@@ -1,4 +1,6 @@
 using System.Net.Http.Headers;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -11,22 +13,39 @@ namespace Controllers;
 public class RequestController : ControllerBase
 {
     private readonly ILogger<RequestController> _logger;
-    private readonly DatabaseContext _db;
+    private readonly PrintingDbContext _db;
 
-    public RequestController(ILogger<RequestController> logger, DatabaseContext db)
+    public RequestController(ILogger<RequestController> logger, PrintingDbContext db)
     {
         _logger = logger;
         _db = db;
     }
-    
+
     [HttpGet]
-    // public IActionResult Index()
-    public ActionResult<IEnumerable<Order>> Index()
+    public ActionResult<IEnumerable<Request>> Index()
     {   
-        return new JsonResult(this._db.Requests
-            .Include(w => w.Parts)
-            .ToList()
-        );
+        var requests = this._db.Requests.Include(r => r.Parts).ToList();
+        foreach (var request in requests)
+        {
+            // request.Parts = this._db.Parts.Where(p => p.RequestId == request.Id).ToList();
+            foreach (var part in request.Parts)
+            {
+                part.Model = this._db.Models.FirstOrDefault(m => m.Id == part.ModelId);
+                
+                if (part.AssignedPrinterName != null)
+                {
+                    part.AssignedPrinter = this._db.Printers.FirstOrDefault(p => p.Name == part.AssignedPrinterName);
+                }
+
+                if (part.AssignedFilamentId != null)
+                {
+                    part.AssignedFilament = this._db.Filaments.FirstOrDefault(f => f.Id == part.AssignedFilamentId);
+                }
+            }
+        }
+        return new JsonResult(requests, new JsonSerializerOptions() {
+            ReferenceHandler = ReferenceHandler.IgnoreCycles
+        });
     }
 
 

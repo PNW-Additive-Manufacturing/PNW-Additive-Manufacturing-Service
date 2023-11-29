@@ -1,7 +1,9 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace Models;
 
@@ -15,25 +17,38 @@ public enum PartStatus
     Failed,
 }
 
+[Table("part")]
 public class Part {
-    [ForeignKey("OrderId"), Required]
-    public Guid OrderId;
+    public short Id { get; set; }
+
+    [Required]
+    public short RequestId { get; set; }
+    
+    [Required]
+    public short ModelId { get; set; }
+
+    [Required]
+    public int Quantity { get; set; } = 1;
+
+    [Required, JsonConverter(typeof(JsonStringEnumConverter))]
+    public PartStatus Status { get; set; } = PartStatus.Pending;
+
+    public string? AssignedPrinterName { get; set; } 
+
+    // [ForeignKey("FilamentId")]
+    public short? AssignedFilamentId { get; set; }
+
 
     [NotMapped]
-    public Order Order { get; set; }
+    public Model? Model { get; set; } 
 
-    [Required]
-    public string Name;
+    [NotMapped]
+    public Request? Request { get; set; }
 
-    [Required]
-    public PartStatus Status;
+    [NotMapped]
+    public Printer? AssignedPrinter { get; set; }
 
-    [Required]
-    public int Quantity = 1;
-
-    public string PrinterName;
-
-    [Required]
-    public int FilamentId;
+    [NotMapped]
+    public Filament? AssignedFilament { get; set; }
     
 }

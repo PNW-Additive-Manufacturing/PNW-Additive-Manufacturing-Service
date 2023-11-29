@@ -1,8 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Claims;
 
 namespace Models;
 
+[Table("account")]
 public class Account  {
     public enum PermissionType 
     {
@@ -11,22 +13,20 @@ public class Account  {
         Admin
     }
 
+    [Required]
     public string FirstName { get; set; }
+
+    [Required]
     public string LastName { get; set; }
 
-    [EmailAddress]
+    [Key, EmailAddress, Required]
     public string Email { get; set; }
 
-    public string Password;
+    [Required]
+    public string Password { get; set; }
 
-    public PermissionType Permission { get; set; } = PermissionType.User;
+    // public PermissionType Permission { get; set; } = PermissionType.User;
+    public int Permission { get; set; }
 
-    public Guid? VerificationId { get; set; }
-
-
-    // public static implicit operator Claim[](Account account) => new Claim[] {
-    //     new(ClaimTypes.Name, $"{account.FirstName} {account.LastName}"),
-    //     new(ClaimTypes.Role, Enum.GetName(typeof(PermissionType), account.Permission)!),
-    //     new(ClaimTypes.Email, account.Email),
-    // };
+    public Guid? VerificationId { get; set; } = null;
 }

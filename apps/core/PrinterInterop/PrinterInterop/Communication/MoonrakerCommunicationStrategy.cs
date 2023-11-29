@@ -122,6 +122,19 @@ public class MoonrakerCommunicationStrategy : ICommunicationStrategy
         GC.SuppressFinalize(this);
     }
 
+    public async Task<bool> IsConnected()
+    {
+        try
+        {
+            // TODO: Replace with more suited endpoint.
+            return (await HttpClient.GetAsync("/server/files/list")).IsSuccessStatusCode;
+        }
+        catch (HttpRequestException)
+        {
+            return false;
+        }
+    }
+
     // protected async Task<IDictionary<string, object>> PostAsync<R>(string requestUri, MoonrakerPayload payload)
     // {
     //     var res = await this.HttpClient.PostAsJsonAsync(requestUri, payload);

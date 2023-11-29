@@ -8,7 +8,8 @@ public enum PrinterPrintState
 }
 public class PrinterStatus
 {
-    public PrinterPrintState PrintState { get; set; } = PrinterPrintState.Standby; 
+    public bool IsConnected { get; }
+    public PrinterPrintState? PrintState { get; set; } = PrinterPrintState.Standby; 
     public string? SelectedFile { get; set; }
     public TimeSpan? ElapsedTime { get; set; }
     public DateTime? PrintStartedAt { get; set; }
