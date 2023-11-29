@@ -4,6 +4,8 @@ import { PartList, Part } from '@/app/components/PartList'
 import { Navbar } from './components/Navigation'
 
 export default function Home() {
+  //fetch(`${process.env.API_ROOT}`).then((v) => console.log(v));
+
   let parts = [
     {
       id: '1',
