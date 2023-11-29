@@ -15,6 +15,10 @@ public class Printer
     [Required]
     public List<int> Dimensions { get; set; }
 
+    public string CommunicationStrategy { get; set; }
+    public string CommunicationStrategyOptions { get; set; }
+
+
     [Required]
     public List<string> SupportedMaterials { get; set; } = new();
 

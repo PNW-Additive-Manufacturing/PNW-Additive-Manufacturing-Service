@@ -76,6 +76,7 @@ internal class Program
         // Add services to the container.
         builder.Services.AddControllers();
         builder.Services.AddDbContext<PrintingDbContext>();
+        builder.Services.AddSingleton<PrinterManager>();
 
         // https://learn.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-7.0
         // builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

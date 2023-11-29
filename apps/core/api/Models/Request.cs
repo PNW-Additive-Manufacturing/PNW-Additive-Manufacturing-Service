@@ -22,5 +22,8 @@ public class Request {
 
     // [ForeignKey("part_requestid_fkey")]
     [NotMapped]
-    public List<Part> Parts { get; set; } = new List<Part>(); 
+    public List<Part> Parts { get; set; } = new List<Part>();
+
+    [NotMapped]
+    public Account? Owner { get; set; }
 }

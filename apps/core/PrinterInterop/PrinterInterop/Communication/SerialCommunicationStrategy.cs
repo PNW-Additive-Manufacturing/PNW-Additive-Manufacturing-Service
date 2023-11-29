@@ -261,4 +261,9 @@ public class SerialCommunicationStrategy : ICommunicationStrategy
         this.CommunicationThread.Join();
         GC.SuppressFinalize(this);
     }
+
+    public Task<bool> IsConnected()
+    {
+        throw new NotImplementedException();
+    }
 }

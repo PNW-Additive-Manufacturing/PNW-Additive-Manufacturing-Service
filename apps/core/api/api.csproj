@@ -14,4 +14,9 @@
     <PackageReference Include="Sentry" Version="3.40.1" />
   </ItemGroup>
 
+  
+  <ItemGroup>
+    <ProjectReference Include="../PrinterInterop/PrinterInterop/PrinterInterop.csproj" />
+  </ItemGroup>
+
 </Project>

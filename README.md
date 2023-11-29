@@ -102,3 +102,16 @@ Though, a few applications and libraries come to mind:
 ### Automation
 
 A potentially automated feature utilized by the maintainers of the printers would be starting prints through the [Maintainers Dashboard](#maintainer-dashboard) automatically via the upload G-Code when approved. To obtain this functionality we will need to communicate with the printer. Doing this depends on the MCU, the brain of a 3D printer, and the firmware it is running. For example, a possible implementation may utilize [Moonraker](https://github.com/Arksine/moonraker), a web-api to communicate with an MCU flashed with [Klipper firmware](https://github.com/Klipper3d/klipper). Communication with printers could also bring real-time statistics to a commission such as estimated time remaining, and etc.
+
+### Routing
+
+#### Controlling Printers
+
+```(GET) /api/printers```
+Returns the status of all printers.
+
+```(POST) /api/printer/{name}/stop```
+Stop printing the selected file.
+
+```(POST) /api/printer/{name}/print?file={fileName}```
+Begin printing the selected file.
