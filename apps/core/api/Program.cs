@@ -103,8 +103,10 @@ internal class Program
 
         app.UseRouting();
 
-        app.UseStaticFiles(); //required for serving static files in <content_root>/wwwroot
-
+        //Use to server static files in <content_root>/wwwroot and to
+        //allow index.html files to be accessed without explicitly writing index.html
+        //app.UseStaticFiles(); //required for serving static files in <content_root>/wwwroot
+        app.UseFileServer();
 
         app.UseAuthentication();
         app.UseAuthorization();
