@@ -47,9 +47,12 @@ public class RequestController : ControllerBase
             }
         }
         
+        
+        
         return new JsonResult(requests, new JsonSerializerOptions() {
             ReferenceHandler = ReferenceHandler.IgnoreCycles
         });
+        
     }
 
 
