@@ -21,7 +21,7 @@ public class PrinterController : ControllerBase
     
     public async Task<IActionResult> Index()
     {
-        return new JsonResult(_printerManager.Connections.AsEnumerable().Select(async c => {
+        return new JsonResult(_printerManager.Connections.Select(async c => {
             return new {
                 Name = c.Key,
                 Status = await c.Value.GetStatus() ?? null
