@@ -10,7 +10,6 @@ const nextConfig = {
 
   env: {
     API_ROOT: 'http:/localhost:5126',
-
   },
 }
 

@@ -29,8 +29,7 @@ export default function Home() {
   return (
     <main>      
       <Navbar links={[
-        {name: "Request a Print", path: "/part-request"},
-
+        {name: "Request a Print", path: "/request-part"},
       ]}/>
 
       <h1>Welcome, Aaron Jung!</h1>

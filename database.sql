@@ -27,6 +27,8 @@ CREATE TABLE Printer (
   Dimensions int[3] NOT NULL DEFAULT '{}',
   SupportedMaterials varchar(10)[] NOT NULL,
   OutOfOrder bool NOT NULL DEFAULT false,
+  CommunicationStrategy varchar,
+  CommunicationStrategyOptions varchar,
   Queue SMALLINT[] NOT NULL DEFAULT '{}'
 );
 
