@@ -12,5 +12,7 @@ public interface ICommunicationStrategy : IDisposable
     Task<bool> StopPrint();
     Task<PrinterStatus> GetStatus();
 
+    Task<bool> MoveHead(float x, float y, float z);
+
     public static string NameOf(Type @type) => @type.Name.Split("CommunicationStrategy").First();
 }

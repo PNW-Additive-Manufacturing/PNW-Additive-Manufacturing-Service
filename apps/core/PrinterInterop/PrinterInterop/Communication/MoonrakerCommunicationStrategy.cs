@@ -120,6 +120,7 @@ public class MoonrakerCommunicationStrategy : ICommunicationStrategy
     {
         this.HttpClient.Dispose();
         GC.SuppressFinalize(this);
+
     }
 
     public async Task<bool> IsConnected()
@@ -133,6 +134,11 @@ public class MoonrakerCommunicationStrategy : ICommunicationStrategy
         {
             return false;
         }
+    }
+
+    public Task<bool> MoveHead(float x, float y, float z)
+    {
+        throw new NotImplementedException();
     }
 
     // protected async Task<IDictionary<string, object>> PostAsync<R>(string requestUri, MoonrakerPayload payload)
