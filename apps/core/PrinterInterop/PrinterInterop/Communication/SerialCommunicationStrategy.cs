@@ -266,4 +266,9 @@ public class SerialCommunicationStrategy : ICommunicationStrategy
     {
         throw new NotImplementedException();
     }
+
+    public Task<bool> MoveHead(float x, float y, float z)
+    {
+        throw new NotImplementedException();
+    }
 }

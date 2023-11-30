@@ -114,21 +114,11 @@ var orders: Order[] = [
     }
 ]
 
-// function DashboardItem({name, children}: {name: string, children: any}) {
-//     return <div className=''>
-//         <div className="w-full">
-
-//         </div>
-//     </div>
-// }
-
 export default function Dashboard() 
 {
     const [selectedOrder, setSelectedOrder] = useState<Order>();
     const [selectedPart, setPart] = useState<BufferGeometry>();
     const [selectedPrinter, setSelectedPrinter] = useState<DashboardPrinter>();
-
-    const camera = new PerspectiveCamera(75, 1, 0.1, 1000)
 
     function ProgressBar({progress, color, className, style}: {progress: number, color?: string, className?: string, style?: CSSProperties})
     {

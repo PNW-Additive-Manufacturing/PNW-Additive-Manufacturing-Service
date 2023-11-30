@@ -1,10 +1,5 @@
 using PrinterInterop;
 
-public struct PrinterDescription 
-{
-
-}
-
 public class PrinterManager
 {
     public Dictionary<string, ICommunicationStrategy> Connections { get; } = new();
@@ -16,7 +11,11 @@ public class PrinterManager
     {
         // this._db = db;
         this.LoadPrinters();
+
+        
     }
+
+
 
     public void LoadPrinters()
     {
