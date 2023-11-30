@@ -38,8 +38,7 @@ public class PrintingDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        //var dataSource = new NpgsqlDataSourceBuilder(Environment.GetEnvironmentVariable("DB_CONNECTION"));
-        var dataSource = new NpgsqlDataSourceBuilder("host=localhost port=5432 dbname=postgres user=postgres password=postgres sslmode=prefer");
+        var dataSource = new NpgsqlDataSourceBuilder(Environment.GetEnvironmentVariable("DB_CONNECTION"));
         dataSource.MapEnum<PartStatus>();
         dataSource.MapEnum<Account.PermissionType>();
 
@@ -71,21 +70,16 @@ internal class Program
 
     private static void Main(string[] args)
     {
+        if (Environment.GetEnvironmentVariable("DB_CONNECTION") == null)
+        {
+            throw new InvalidOperationException("Cannot start without DB Connection String");
+        }
         var builder = WebApplication.CreateBuilder(args);
-
 
         // Add services to the container.
         builder.Services.AddControllers();
         builder.Services.AddDbContext<PrintingDbContext>();
         builder.Services.AddSingleton<PrinterManager>();
-
-        // https://learn.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-7.0
-        // builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-        //     .AddCookie(options => {
-        //         options.ExpireTimeSpan = TimeSpan.FromDays(1);
-        //         options.SlidingExpiration = true;
-        //         options.AccessDeniedPath = "/Forbidden/";
-        //     });
 
         var app = builder.Build();
 
@@ -103,21 +97,12 @@ internal class Program
         // });
 
         app.UseRouting();
-
         app.UseFileServer();
 
-        app.UseAuthentication();
-        app.UseAuthorization();
-
-
+        // app.UseAuthentication();
         // app.UseAuthorization();
 
         app.MapControllers();
-
-
-        // app.MapControllerRoute(
-        //     name: "default",
-        //     pattern: "{controller}/{action}/{id}");
 
         app.Run();
     }
