@@ -38,8 +38,7 @@ public class PrintingDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        //var dataSource = new NpgsqlDataSourceBuilder(Environment.GetEnvironmentVariable("DB_CONNECTION"));
-        var dataSource = new NpgsqlDataSourceBuilder("Host=localhost;Database=postgres;Username=postgres;Password=postgres;sslmode=prefer");
+        var dataSource = new NpgsqlDataSourceBuilder(Environment.GetEnvironmentVariable("DB_CONNECTION"));
         dataSource.MapEnum<PartStatus>();
         dataSource.MapEnum<Account.PermissionType>();
 
@@ -72,7 +71,7 @@ internal class Program
     private static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
+        //System.Console.WriteLine(Environment.GetEnvironmentVariable("DB_CONNECTION"));
 
         // Add services to the container.
         builder.Services.AddControllers();

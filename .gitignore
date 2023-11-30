@@ -1,6 +1,8 @@
 # Custom
 apps/core/api/wwwroot
 
+# env
+.env
 
 # Logs
 logs
