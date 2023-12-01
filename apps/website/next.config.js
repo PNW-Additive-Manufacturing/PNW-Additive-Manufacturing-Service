@@ -1,9 +1,13 @@
+const webpack = require('webpack');
+const { parsed: myEnv} = require('dotenv').config({
+  path: "./.env"
+});
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
-  distDir: 'out',
-  images: {
-    unoptimized: true
+  webpack(config) {
+    config.plugins.push(new webpack.EnvironmentPlugin(myEnv));
+    return config;
   },
 
   trailingSlash: true,

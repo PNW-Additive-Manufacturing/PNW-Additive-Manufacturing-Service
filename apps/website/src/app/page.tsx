@@ -3,8 +3,11 @@ import Image from 'next/image'
 import { PartList, Part } from '@/app/components/PartList'
 import { Navbar } from './components/Navigation'
 
-export default function Home() {
-  //fetch(`${process.env.API_ROOT}`).then((v) => console.log(v));
+import db from '@/app/backend/Database';
+
+export default async function Home() {
+  let dbResponse = await db`select * from account`
+
 
   let parts = [
     {
@@ -25,13 +28,16 @@ export default function Home() {
       date: new Date((new Date()).getTime() + 2*60*60*24*1000),
       status: "Pending"
     },
-  ]
+  ];
+
+  console.log(dbResponse);
+
   return (
     <main>      
       <Navbar links={[
         {name: "Request a Print", path: "/request-part"},
       ]}/>
-
+      <p>Database Test: {JSON.stringify(dbResponse)}</p>
       <h1>Welcome, Aaron Jung!</h1>
 
       <h2 className="p-3 text-4xl font-extrabold text-center sdark:text-black">Your Pending Parts</h2> 
