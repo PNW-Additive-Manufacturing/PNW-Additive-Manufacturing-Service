@@ -6,6 +6,7 @@ import { Navbar } from './components/Navigation'
 import db from '@/app/backend/Database';
 
 export default async function Home() {
+  //testing database connection using query
   let dbResponse = await db`select * from account`
 
 
