@@ -1,13 +1,8 @@
 import { PartList, Part } from '@/app/components/PartList'
 import { Navbar } from './components/Navigation'
 
-import db from '@/app/api/Database';
 
 export default async function Home() {
-  //does not work client side because database can only be accessed through
-  //Server Components or through the route.ts files in the /api directory
-  let dbResponse = await db`select * from account` //testing database connection using query
-
 
   let parts = [
     {
@@ -30,8 +25,6 @@ export default async function Home() {
     },
   ];
 
-  console.log(dbResponse);
-
   return (
     <main>      
       <Navbar links={[
@@ -39,7 +32,6 @@ export default async function Home() {
         {name: "Test NextJS API", path: "/test-next-api"},
 
       ]}/>
-      <p>Database Test: {JSON.stringify(dbResponse)}</p>
       <h1>Welcome, Aaron Jung!</h1>
 
       <h2 className="p-3 text-4xl font-extrabold text-center sdark:text-black">Your Pending Parts</h2> 

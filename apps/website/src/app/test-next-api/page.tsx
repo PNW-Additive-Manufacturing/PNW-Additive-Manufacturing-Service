@@ -9,8 +9,9 @@ export default function TestNextAPI() {
   //message is the variable, setMessage is a function to set the message
   //variable and update the UI
   const [message, setMessage] = useState("Nothing yet!");
+  const [dbMessage, setDBMessage] = useState("Nothing yet!");
 
-  //talk to web servers /api route using Promise-based fetch method
+  //talk to web servers /api route using Promise-based fetch method using GET method
   fetch("/api", {
     //options are unnecessary for simple GET request, but its
     //good to know available parameters for more complex fetches
@@ -27,7 +28,27 @@ export default function TestNextAPI() {
     setMessage(JSON.stringify(json));
   }).catch((e) => {
     //update message with error message
-    setMessage("Failed to get message from NextJS API route!");
+    setMessage("Failed to get message from NextJS API route!" + e);
+  });
+
+  //set POST request to /api route
+  fetch("/api", {
+    method: "POST",
+    
+    //if body is a JSON string, set Content-Type to application/json
+    headers: {
+      "Content-Type": "application/json"
+    },
+
+    //pass arguments as a JSON string
+    body: JSON.stringify({
+      max_rows: 1
+    })
+  }).then(async (res) => {
+    //res is the response from server
+    setDBMessage(JSON.stringify(await res.json()));
+  }).catch((e) => {
+    setDBMessage("Post to database failed: " + e)
   });
 
 
@@ -35,8 +56,10 @@ export default function TestNextAPI() {
     <main>      
       <Navbar links={[
         {name: "Request a Print", path: "/request-part"},
+        {name: "Test NextJS Server Component", path: "/test-next-api/server-comp-test"}
       ]}/>
       <p>API Test {message}</p>
+      <p>Database Test {dbMessage}</p>
     </main>
   )
 }
