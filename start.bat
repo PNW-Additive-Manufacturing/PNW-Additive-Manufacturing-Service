@@ -4,7 +4,7 @@ md apps\core\api\wwwroot
 :: build front-end
 cd apps\website
 call npm run build
-
+:: if the build works
 if %errorlevel% == 0 (
     :: copy front-end into server
     cd ..
