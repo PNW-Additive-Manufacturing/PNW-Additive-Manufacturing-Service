@@ -1,7 +1,7 @@
-import jwt, { Secret } from 'jsonwebtoken';
 import { correctPassword } from '@/app/api/util/PasswordHelper';
 import postgres from 'postgres';
 import db from '@/app/api/Database'
+import {login} from '@/app/api/util/AccountHelper';
 
 export async function POST(request: Request) {
   let reqJson = await request.json();
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     return Response.json({"error": null, "success": false});
   }
 
-  let token = jwt.sign({email: email}, process.env.JWT_SECRET!, {expiresIn: '30d'});
-
-  return Response.json({"error": null, "success": true, token: token});
+  login(email);
+  
+  return Response.json({"error": null, "success": true});
 }

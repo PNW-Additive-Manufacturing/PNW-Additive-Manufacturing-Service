@@ -1,6 +1,6 @@
-import db from '@/app/api/Database';
-
 import { hashAndSaltPassword } from '@/app/api/util/PasswordHelper';
+import {login} from '@/app/api/util/AccountHelper';
+import db from '@/app/api/Database';
 import postgres from 'postgres';
 
 export async function POST(request: Request) {
@@ -21,6 +21,8 @@ export async function POST(request: Request) {
   if(res.count === 0) {
     return Response.json({"error": "Failed to add new user!"});
   }
+
+  login(email);
 
   return Response.json({"error": null, "success": true});
 }
