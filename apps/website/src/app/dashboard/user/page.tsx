@@ -31,7 +31,7 @@ export default async function User() {
         {name: "Request a Print", path: "/request-part"},
         {name: "Logout", path: "/logout"}
       ]}/>
-      <h1>Welcome, Aaron Jung!</h1>
+      <h1 className='p-3 text-center'>Welcome, Aaron Jung!</h1>
 
       <h2 className="p-3 text-4xl font-extrabold text-center sdark:text-black">Your Pending Parts</h2> 
 

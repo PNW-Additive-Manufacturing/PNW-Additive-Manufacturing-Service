@@ -77,7 +77,7 @@ button:hover, button:active {
 button:hover, input:hover, textarea:hover, input::selection, input::marker {
   outline: 2px solid var(--ascent-rgb);
 }
-button:hover, input[type="submit"]:hover{
+button:hover, input[type="submit"]:hover, select:hover{
   cursor: pointer;
 }
 .inputs {
