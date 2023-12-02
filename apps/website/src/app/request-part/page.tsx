@@ -9,7 +9,10 @@ import React from 'react';
 export default function Request() {
     return (
         <main>
-            <Navbar links={[]}/>
+            <Navbar links={[
+                {name: "User Dashboard", path: "/dashboard/user"},
+                {name: "Logout", path: "/logout"}
+            ]}/>
 
             <form>
                 <div className="bg-white rounded-sm p-14 pt-10 pb-10 w-full">
