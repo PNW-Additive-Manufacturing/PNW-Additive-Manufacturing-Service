@@ -14,7 +14,6 @@
   --pnw-blue: #7ca6c0;
   --pnw-gold-light: #f7f2e6;
   --pnw-black: #000000;
-
 }
 
 * {
@@ -27,8 +26,6 @@
     --foreground-rgb: 255, 255, 255;
   }
 } */
-
-
 
 .wrapper {
   width: 50%;
@@ -55,11 +52,11 @@ h1, h2, h3, h4 {
   font-weight: bolder;
 }
 
-input,button {
+input,button, textarea {
   border-radius: 5px;
   padding: 1rem 1.2rem 1rem 1.2rem;
 }
-input {
+input, textarea {
   border: 0px;
   /* width: 15rem; */
   background-color: rgb(var(--background-rgb));
@@ -77,17 +74,17 @@ button:hover, button:active {
   transition: 0.05s;
   color: white;
 }
-input:hover, input::selection, input::marker {
+button:hover, input:hover, textarea:hover, input::selection, input::marker {
   outline: 2px solid var(--ascent-rgb);
 }
-button:hover {
+button:hover, input[type="submit"]:hover{
   cursor: pointer;
 }
 .inputs {
   margin: auto;
   font-family: 'Azeret Mono', monospace;
 }
-input {
+input, textarea, button {
   display: block;
   width: auto;
   width: -moz-available;
@@ -97,6 +94,11 @@ input {
   font-weight: lighter;
   color: rgb(64, 64, 64);
   margin-bottom: 0.9rem;
+}
+input[type="submit"], button {
+  background-color: var(--ascent-rgb);
+  color: white;
+  font-weight: bold;
 }
 
 tr:nth-child(even) {
@@ -108,8 +110,7 @@ tr:nth-child(even) {
   margin-left: calc(35%/2);
 }
 
-.container 
-{
+.container {
   background-color: white;
   border-radius: 0.125rem;
   padding: 2rem;
@@ -119,7 +120,6 @@ tr:nth-child(even) {
 
 
 /* Table Styling */
-
 th, td {
   padding: 1rem;
 }
