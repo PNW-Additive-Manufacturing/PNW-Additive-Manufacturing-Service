@@ -1,5 +1,6 @@
 # Custom
 apps/core/api/wwwroot
+ignored/
 
 # env
 .env
