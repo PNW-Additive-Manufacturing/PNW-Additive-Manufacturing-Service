@@ -131,7 +131,9 @@ export default function Maintainer()
     return (
         <main>
             <Navbar links={[
-                {name: "User Dashboard", path: "/dashboard/user"}
+                {name: "Request a Print", path: "/request-part"},
+                {name: "User Dashboard", path: "/dashboard/user"},
+                {name: "Logout", path: "/logout"}
             ]}/>
 
             <div className="flex" style={{height: "100vh"}}>

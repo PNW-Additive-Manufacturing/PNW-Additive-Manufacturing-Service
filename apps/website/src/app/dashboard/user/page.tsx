@@ -28,7 +28,8 @@ export default async function User() {
   return (
     <main>      
       <Navbar links={[
-        {name: "Request a Print", path: "/request-part"}
+        {name: "Request a Print", path: "/request-part"},
+        {name: "Logout", path: "/logout"}
       ]}/>
       <h1>Welcome, Aaron Jung!</h1>
 
