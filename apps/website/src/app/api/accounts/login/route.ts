@@ -1,7 +1,7 @@
-import db from '@/app/api/Database';
-
+import jwt, { Secret } from 'jsonwebtoken';
 import { correctPassword } from '@/app/api/util/PasswordHelper';
 import postgres from 'postgres';
+import db from '@/app/api/Database'
 
 export async function POST(request: Request) {
   let reqJson = await request.json();
@@ -32,6 +32,11 @@ export async function POST(request: Request) {
 
   let passwordCorrect = correctPassword(password, hash);
 
+  if(!passwordCorrect) {
+    return Response.json({"error": null, "success": false});
+  }
 
-  return Response.json({"error": null, "success": passwordCorrect});
+  let token = jwt.sign({email: email}, process.env.JWT_SECRET!, {expiresIn: '30d'});
+
+  return Response.json({"error": null, "success": true, token: token});
 }
