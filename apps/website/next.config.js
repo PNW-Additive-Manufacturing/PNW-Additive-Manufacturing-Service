@@ -1,4 +1,3 @@
-
 //set up dotenv package
 const webpack = require('webpack');
 const { parsed: myEnv} = require('dotenv').config({
