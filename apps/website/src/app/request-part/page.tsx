@@ -1,8 +1,8 @@
 "use client"
 
-import { Input } from '../components/Input';
-import { InputBig } from '../components/InputBig';
-import { Navbar } from '../components/Navigation'
+import { Input } from '@/app/components/Input';
+import { InputBig } from '@/app/components/InputBig';
+import { Navbar } from '@/app/components/Navigation'
 
 import React from 'react';
 

@@ -1,7 +1,7 @@
 "use client"
 
-import { Input } from '../components/Input';
-import { Navbar } from '../components/Navigation'
+import { Input } from '@/app/components/Input';
+import { Navbar } from '@/app/components/Navigation'
 
 export default function Login() {
     return (
