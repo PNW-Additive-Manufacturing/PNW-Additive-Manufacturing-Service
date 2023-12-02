@@ -46,3 +46,6 @@ jspm_packages
 # Dotnet
 obj
 bin
+
+# Printing API
+printers.json
