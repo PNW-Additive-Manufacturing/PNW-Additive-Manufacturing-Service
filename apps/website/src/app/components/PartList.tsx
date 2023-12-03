@@ -1,6 +1,7 @@
 export interface Part {
     id: string,
     name: string,
+    quantity: string,
     date: Date,
     status: string
 }
@@ -10,6 +11,7 @@ function PartRow({part}: {part: Part}): JSX.Element {
     <tr>
       <td className="text-center">{part.id}</td>
       <td className="text-center">{part.name}</td>
+      <td className="text-center">{part.quantity}</td>
       <td className="text-center">{part.date.toDateString()}</td>
       <td className="text-center">{part.status}</td>
     </tr>
@@ -23,7 +25,8 @@ export function PartList({parts}: {parts: Part[]}): JSX.Element {
         <tr>
           <th className="text-center">Part Id</th>
           <th className="text-center">Part Name</th>
-          <th className="text-center">Date</th>
+          <th className="text-center">Quantity</th>
+          <th className="text-center">Date Submitted</th>
           <th className="text-center">Part Status</th>
         </tr>
       </thead>
