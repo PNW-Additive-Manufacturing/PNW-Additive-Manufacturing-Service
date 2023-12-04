@@ -1,6 +1,7 @@
 # Custom
 apps/core/api/wwwroot
 ignored/
+.DS_Store
 
 # env
 .env
