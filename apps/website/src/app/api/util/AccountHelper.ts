@@ -59,6 +59,11 @@ function validatePassword(password: string) {
 export async function attemptLogin(email: string, password: string) {
   email = email.trim();
 
+  //have login work regardless of whether use signs in as "user" or "user@pnw.edu"
+  if(!email.endsWith("@pnw.edu")) {
+    email += "@pnw.edu";
+  }
+
   let res: postgres.RowList<postgres.Row[]>;
   try {
     res = await db`select password, permission, firstname, lastname from account where email=${email}`;
