@@ -3,39 +3,37 @@ using System.Globalization;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Transactions;
+using System.Timers;
 
 
 namespace PrinterInterop;
 
-public class MoonrakerCommunicationOptions 
+public struct MoonrakerCommunicationOptions 
 {
-    public Uri Host { get; set; } = new("http://localhost");
+    public Uri Host { get; set; }
+    public uint ExtruderCount { get; set; }
+    public bool HasHeatedBed { get; set; }
 }
+
+public class MoonrakerException : HttpRequestException
+{
+    public int Code { get; }
+    public string DetailedMessage { get; }
+
+    public MoonrakerException(int errorCode, string message) 
+        : base($"{nameof(MoonrakerException)} (#{errorCode}): {message}")
+        {
+            this.Code = errorCode;
+            this.DetailedMessage = message;
+        }
+}
+
 public class MoonrakerCommunicationStrategy : ICommunicationStrategy
 {
-    // protected class MoonrakerPayload
-    // {
-    //     private static uint _currentId = 0;
-    //     public static uint NextId() => _currentId += 1;
-
-        
-    //     [JsonPropertyName("id")]
-    //     public uint Id { get; } = NextId();
-
-    //     [JsonPropertyName("method")]
-    //     public string Method { get; set; }
-
-    //     [JsonPropertyName("params")]
-    //     public Dictionary<string, object> Parameters { get; } = new();
-
-    //     [JsonPropertyName("jsonrpc")]
-    //     public string JsonRpcVersion { get; set; } = "2.0";
-
-    //     public MoonrakerPayload(string method) => (Method) = (method);
-    // }
-
     public MoonrakerCommunicationOptions Options { get; private set; }
     protected HttpClient HttpClient { get; private set; }
+
     public MoonrakerCommunicationStrategy(MoonrakerCommunicationOptions options) 
     {
         this.Options = options;
@@ -45,39 +43,34 @@ public class MoonrakerCommunicationStrategy : ICommunicationStrategy
         };
     }
 
-    public async Task<PrinterStatus> GetStatus()
+    protected async Task<JsonElement> Get(string url, CancellationToken cancellationToken = default)
     {
-        var resp = await HttpClient.PostAsync("/printer/objects/query?print_stats&virtual_sdcard", null);
-        resp.EnsureSuccessStatusCode();
+        var response = await HttpClient.GetAsync(url, cancellationToken);
+        response.EnsureSuccessStatusCode();
 
-        var results = JsonDocument.Parse(resp.Content.ReadAsStream()).RootElement.GetProperty("result").GetProperty("status");
-        var printStats = results.GetProperty("print_stats");
-        var virtualSd = results.GetProperty("virtual_sdcard");
+        var returnedData =  JsonDocument.Parse(response.Content.ReadAsStream()).RootElement;
 
-        // We could convert this to a dedicated json serializer for the printer status class 
-        // though serialization depends on the strategy being used. This seems like an adequate solution for the time being.
-
-        PrinterPrintState printState = printStats.GetProperty("state").GetString()! switch
+        if (returnedData.TryGetProperty("error", out var errorElement))
         {
-            "printing" => PrinterPrintState.Printing,
-            "paused" => PrinterPrintState.Paused,
-            _ => PrinterPrintState.Standby,
-        };
-        PrinterStatus printerStatus = new()
-        {
-            // CLEANUP: Use switch expression to declare State instead of separately above ^
-            PrintState = printState,
-        };
-
-        if (printState != PrinterPrintState.Standby) 
-        {
-            printerStatus.SelectedFile = printStats.GetProperty("filename").GetString();
-            printerStatus.ElapsedTime = TimeSpan.FromSeconds(printStats.GetProperty("print_duration").GetDouble());
-            printerStatus.PrintStartedAt = DateTime.UtcNow - printerStatus.ElapsedTime;
-            printerStatus.Progress = (int)Math.Round(virtualSd.GetProperty("progress").GetDouble());
+            var errorCode = errorElement.GetProperty("code").GetInt32()!;
+            var errorMessage = errorElement.GetProperty("message").GetString()!;
+            throw new MoonrakerException(errorCode, errorMessage);
         }
+        return returnedData.GetProperty("result")!;
+    }
 
-        return printerStatus;
+    protected async Task<JsonElement> FetchPrinterObject(string objectName)
+    {
+        return (await Get("/printer/objects/query?" + objectName)).GetProperty("status").GetProperty(objectName);
+    }
+    protected async Task<IDictionary<string, JsonElement>> FetchPrinterObject(params string[] objectNames)
+    {
+        var status = (await Get($"/printer/objects/query?{string.Join('&', objectNames)}")).GetProperty("status");
+        
+        var result = new Dictionary<string, JsonElement>();
+        foreach (var name in objectNames) result[name] = status.GetProperty(name);
+
+        return result;
     }
 
     public async Task<bool> HasFile(string fullFileName)
@@ -88,12 +81,7 @@ public class MoonrakerCommunicationStrategy : ICommunicationStrategy
 
     public async Task<IEnumerable<string>> GetFiles() 
     {
-        var resp = await HttpClient.GetAsync("/server/files/list");
-        resp.EnsureSuccessStatusCode();
-
-        return JsonDocument.Parse(resp.Content.ReadAsStream())
-            .RootElement.EnumerateArray()
-            .Select(prop => prop.GetProperty("path").GetString()!);
+        return (await Get("/server/files/list")).EnumerateArray().Select(prop => prop.GetProperty("path").GetString()!);
     } 
 
     public async Task<bool> RunFile(string fileName)
@@ -116,19 +104,20 @@ public class MoonrakerCommunicationStrategy : ICommunicationStrategy
         return (await this.HttpClient.PostAsync("/server/files/upload", formData)).IsSuccessStatusCode;
     }
 
-    public void Dispose()
+    public async Task MoveTool(float x, float y, float z)
     {
-        this.HttpClient.Dispose();
-        GC.SuppressFinalize(this);
-
+        // TODO: Utilize MoonrakerException!
+        (await HttpClient
+            .PostAsync($"/printer/gcode/script?script=G0 F500 X{x} Y{y} Z{z}", null))
+            .EnsureSuccessStatusCode();
     }
 
-    public async Task<bool> IsConnected()
+    public async Task<bool> HasConnection()
     {
         try
         {
-            // TODO: Replace with more suited endpoint.
-            return (await HttpClient.GetAsync("/server/files/list")).IsSuccessStatusCode;
+            // This will query nothing, no print objects are provided.
+            return (await HttpClient.GetAsync("/printer/objects/query")).IsSuccessStatusCode;
         }
         catch (HttpRequestException)
         {
@@ -136,19 +125,53 @@ public class MoonrakerCommunicationStrategy : ICommunicationStrategy
         }
     }
 
-    public Task<bool> MoveHead(float x, float y, float z)
+    public async Task<PrinterState> GetState()
     {
-        throw new NotImplementedException();
+        var currentState = (await FetchPrinterObject("print_stats")).GetString("state")!;
+
+        return Enum.Parse<PrinterState>(currentState, true);
     }
 
-    // protected async Task<IDictionary<string, object>> PostAsync<R>(string requestUri, MoonrakerPayload payload)
-    // {
-    //     var res = await this.HttpClient.PostAsJsonAsync(requestUri, payload);
-    //     var jsonDoc = JsonDocument.Parse(res.Content.ReadAsStream());
+    public async Task<PrintStatus> GetPrintStatus()
+    {
+        var stats = await FetchPrinterObject("print_stats", "virtual_sdcard");
+        var printStats = stats["print_stats"];
 
-    //     // Ignore the ID.
-    //     // var id = jsonDoc.RootElement.GetProperty("id").GetUInt32();
+        return new PrintStatus
+        {
+            SelectedFile = printStats.GetString("filename")!,
+            ElapsedTime = TimeSpan.FromSeconds(printStats.GetSingle("print_duration")),
+            PrintStartedAt = DateTime.UtcNow.AddSeconds(-(int)Math.Floor(printStats.GetSingle("total_duration"))),
+            Progress = (int)(stats["virtual_sdcard"].GetSingle("progress")*100)
+        };
+    }
 
-    //     return jsonDoc.RootElement.GetProperty("result").Deserialize<IDictionary<string, object>>()!;
-    // }
+    public async Task<(float, float, float)> GetExtruderPosition()
+    {
+        var axes = (await FetchPrinterObject("toolhead")).GetProperty("position").EnumerateArray().ToArray();
+
+        return new (axes[0].GetSingle(), axes[1].GetSingle(), axes[2].GetSingle());
+    }
+
+    public async Task<IDictionary<string, float>> GetTemperatures()
+    {
+        var temperatures = new Dictionary<string, float>();
+
+        if (Options.HasHeatedBed) 
+            temperatures.Add("bed", (await FetchPrinterObject("heater_bed")).GetSingle("temperature"));
+
+        // TODO: Query all extruder states at once.
+        temperatures.Add("extruder", (await FetchPrinterObject("extruder")).GetSingle("temperature"));
+        for(int i = 1; i < Options.ExtruderCount; i++) 
+        {
+            temperatures.Add($"extruder{i}", (await FetchPrinterObject($"extruder{i}")).GetSingle("temperature"));
+        }
+        return temperatures;
+    }
+
+    public void Dispose()
+    {
+        this.HttpClient.Dispose();
+        GC.SuppressFinalize(this);
+    }
 }

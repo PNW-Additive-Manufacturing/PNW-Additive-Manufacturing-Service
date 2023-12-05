@@ -18,9 +18,11 @@ After submission, you will be redirected to a page displaying the id and status 
 ## How to use
 * Start the Database
   * host=localhost port=5432 dbname=postgres user=postgres password=xxxxxxx sslmode=prefer connect_timeout=10
-* Run the start.bat file
-  * Do not close the command prompt
-* Visit http://localhost:5126/
+* Navigate to the /apps/website directory
+  * cd apps/website
+* Start the website
+  * npm run dev
+* Visit http://localhost:3000/
   * Enjoy!
 
 ## Structure

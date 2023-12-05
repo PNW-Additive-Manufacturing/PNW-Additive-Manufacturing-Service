@@ -61,7 +61,7 @@ export async function tryCreateAccount(prevState: string, formData: FormData) {
       throw new Error();
     }
   } catch(e) {
-    redirect("/login");
+    redirect("/user/login");
   }
   //remember not to use redirect in try block unless checking if catch(e) has e.message == "NEXT_REDIRECT"
   redirect(`/dashboard/${jwtPayload.permission}`);
