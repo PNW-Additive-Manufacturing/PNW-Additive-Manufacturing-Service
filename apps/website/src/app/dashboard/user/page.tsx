@@ -5,10 +5,10 @@ import { Navbar } from '@/app/components/Navigation'
 export default async function Request() {
 
   let resPendingRequest = await getRequests('dhollema@pnw.edu', false);
-  let pendingRequests: Request[] = resPendingRequest.map((row: any) => {return {name: row.name, date: row.date, isFullfilled: row.isFullfilled}});
+  let pendingRequests: Request[] = resPendingRequest.map((row: any) => {return {name: row.name, date: row.submittime, isFulfilled: row.isfulfilled}});
 
   let resCompletedRequest = await getRequests('dhollema@pnw.edu', true);
-  let completedRequests: Request[] = resCompletedRequest.map((row: any) => {return {name: row.name, date: row.date, isFullfilled: row.isFullfilled}});
+  let completedRequests: Request[] = resCompletedRequest.map((row: any) => {return {name: row.name, date: row.submittime, isFulfilled: row.isfulfilled}});
 
   return (
     <main>      

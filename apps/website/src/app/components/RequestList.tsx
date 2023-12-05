@@ -1,14 +1,15 @@
 export interface Request {
     name: string,
-    date: string,
-    isFullfilled: boolean
+    date: Date,
+    isFulfilled: boolean
 }
 
 function RequestRow({request}: {request: Request}): JSX.Element {
+  console.log(request);
   return (
     <tr>
       <td className="text-left">{request.name}</td>
-      <td className="text-left">{request.date}</td>
+      <td className="text-left">{request.date.toLocaleString()}</td>
     </tr>
   )
 }
