@@ -1,17 +1,25 @@
 import { RequestList, Request } from '@/app/components/RequestList'
 import { getRequests } from '@/app/api/util/GetRequests';
 import { Navbar } from '@/app/components/Navigation'
+import { getJwtPayload } from '@/app/api/util/JwtHelper';
+import { redirect } from 'next/navigation';
 
 export default async function Request() {
+  let email: string;
+  try {
+    email = (await getJwtPayload())!.email;
+  } catch(e) {
+    return redirect("/user/login");
+  }
 
-  let resPendingRequest = await getRequests('dhollema@pnw.edu', false);
+  let resPendingRequest = await getRequests(email, false);
   let pendingRequests: Request[] = resPendingRequest.map((row: any) => {return {name: row.name, date: row.submittime, isFulfilled: row.isfulfilled}});
 
-  let resCompletedRequest = await getRequests('dhollema@pnw.edu', true);
+  let resCompletedRequest = await getRequests(email, true);
   let completedRequests: Request[] = resCompletedRequest.map((row: any) => {return {name: row.name, date: row.submittime, isFulfilled: row.isfulfilled}});
 
   return (
-    <main>      
+    <main>
       <Navbar links={[
         {name: "Request a Print", path: "/request-part"},
         {name: "Logout", path: "/user/logout"}
