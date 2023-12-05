@@ -74,11 +74,6 @@ public class SerialCommunicationStrategy : ICommunicationStrategy
         this.CommunicationThread.Start();
     }
 
-    public Task<PrinterStatus> GetStatus()
-    {
-        throw new NotImplementedException();
-    }
-
     public Task<bool> HasFile(string fileName)
     {
         throw new NotImplementedException();
@@ -262,12 +257,32 @@ public class SerialCommunicationStrategy : ICommunicationStrategy
         GC.SuppressFinalize(this);
     }
 
-    public Task<bool> IsConnected()
+    public Task<bool> HasConnection()
+    {
+        throw new NotImplementedException();
+    }
+    
+    public Task<PrinterState> GetState()
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> MoveHead(float x, float y, float z)
+    public Task<PrintStatus> GetPrintStatus()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<(float, float, float)> GetExtruderPosition()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IDictionary<string, float>> GetTemperatures()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task MoveTool(float x, float y, float z)
     {
         throw new NotImplementedException();
     }
