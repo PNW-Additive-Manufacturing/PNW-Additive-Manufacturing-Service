@@ -19,13 +19,13 @@ public class PrinterConfiguration
         this.CommunicationOptions = communicationOptions;
     }
 
-    public PrinterConnection GetConnection()
+    public ConnectionHealth GetConnection()
     {
         var strategy = CommunicationStrategy switch
         {
             "moonraker" => new MoonrakerCommunicationStrategy(((JsonElement)CommunicationOptions).Deserialize<MoonrakerCommunicationOptions>()!)!,
             _ => throw new NotSupportedException($"Communication Strategy: {CommunicationStrategy} is not supported!")
         };
-        return new PrinterConnection(strategy, TimeSpan.FromSeconds(10));
+        return new ConnectionHealth(strategy, TimeSpan.FromSeconds(10));
     }
 }

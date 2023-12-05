@@ -1,11 +1,12 @@
 using PrinterInterop;
+using System.Net.Http.Headers;
 using System.Text.Json;
 
 namespace PrinterAPI;
 
 internal class Program
 {
-    private static readonly Dictionary<string, (PrinterConnection, PrinterConfiguration)> Printers = new();
+    private static readonly Dictionary<string, (ConnectionHealth, PrinterConfiguration)> Printers = new();
 
     private static async Task Main(string[] args)
     {
@@ -19,21 +20,26 @@ internal class Program
 
         app.MapGet("/printers", () => Results.Ok(Printers.Select(printer => new {
 
-            IsConnected = printer.Value.Item1.IsConnected,
+            ConnectionStatus = printer.Value.Item1.Status,
             Name = printer.Value.Item2.Name
         })));
 
         app.MapGet("/printer/{name}", async (string name) => {
+            name = name.ToLower();
 
-            if (!Printers.TryGetValue(name, out var selectedPrinter))
-            {
-                return Results.NotFound();
-            }
+            // Requested printer is not configured!
+            if (!Printers.TryGetValue(name, out var selectedPrinter)) return Results.NotFound();
 
-            PrinterStatus? status;
+            // If health reports disconnected, do not attempt to query.
+            if (selectedPrinter.Item1.Status == ConnectionState.Disconnected) return Results.Ok(new {
+                ConnectionStatus = ConnectionState.Disconnected,
+                Name = selectedPrinter.Item2.Name
+            });
+
+            PrinterState? status;
             try
             {
-                status = await selectedPrinter.Item1.CommunicationStrategy.GetStatus();
+                status = await selectedPrinter.Item1.CommunicationStrategy.GetState();
             }
             catch (Exception ex)
             {
@@ -41,14 +47,22 @@ internal class Program
                 Console.WriteLine($"Failed to Retrieve Status of {selectedPrinter.Item2.Name}\n{ex}");
                 Console.ResetColor();
 
-                // Ignore.
-                status = null;
+                // Something went wrong...!
+                return Results.Ok(new {
+                    ConnectionStatus = selectedPrinter.Item1.Status,
+                    Name = selectedPrinter.Item2.Name,
+                });
             }
 
+            var toolPosition = await selectedPrinter.Item1.CommunicationStrategy.GetExtruderPosition();
+            var temps = await selectedPrinter.Item1.CommunicationStrategy.GetTemperatures();
+
             return Results.Ok(new {
-                IsConnected = selectedPrinter.Item1.IsConnected,
+                ConnectionStatus = selectedPrinter.Item1.Status,
                 Name = selectedPrinter.Item2.Name,
-                Status = status
+                Status = status,
+                Temperatures = temps,
+                ToolPosition = toolPosition
             });
         });
 
@@ -77,7 +91,7 @@ internal class Program
 
         foreach (var printerConfig in Configuration.Get())
         {
-            PrinterConnection connection;
+            ConnectionHealth connection;
 
             try 
             {
@@ -109,6 +123,8 @@ internal class Program
                 existingConnection.Item1.CommunicationStrategy.Dispose();
                 Printers.Remove(printerConfig.Name);
             }
+
+            connection.Start();
 
             Printers.Add(printerConfig.Name, new (connection, printerConfig));
             Console.ForegroundColor = ConsoleColor.DarkBlue;
