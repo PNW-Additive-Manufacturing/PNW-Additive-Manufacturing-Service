@@ -4,7 +4,7 @@ import { Input } from '@/app/components/Input';
 import { Navbar } from '@/app/components/Navigation'
 import { useFormState, useFormStatus } from 'react-dom';
 
-import { tryCreateAccount } from '@/app/server-actions/account';
+import { tryCreateAccount } from '@/app/api/server-actions/account';
 
 function SubmitButton() {
     const { pending } = useFormStatus();
@@ -35,7 +35,7 @@ export default function CreateAccount() {
 
             <div className="bg-white rounded-sm p-14 pt-10 pb-10 w-full">
                 <h1 className="w-full pb-4 text-left">Already have an account? Login here!</h1>
-                <button> Go to Login Screen </button>
+                <a href='/user/login'><button>Go to Login Screen</button></a>
             </div>
         </main>
     );

@@ -11,7 +11,7 @@ export default function Request() {
         <main>
             <Navbar links={[
                 {name: "User Dashboard", path: "/dashboard/user"},
-                {name: "Logout", path: "/logout"}
+                {name: "Logout", path: "/user/logout"}
             ]}/>
 
             <form>

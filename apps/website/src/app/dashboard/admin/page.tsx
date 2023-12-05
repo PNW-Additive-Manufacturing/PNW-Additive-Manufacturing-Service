@@ -22,7 +22,7 @@ export default async function Admin() {
                 {name: "Request a Print", path: "/request-part"},
                 {name: "User Dashboard", path: "/dashboard/user"},
                 {name: "Maintainer Dashboard", path: "/dashboard/maintainer"},
-                {name: "Logout", path: "/logout"}
+                {name: "Logout", path: "/user/logout"}
             ]}/>
 
             <div className="bg-white rounded-sm p-14 w-full left">

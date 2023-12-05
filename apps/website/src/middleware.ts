@@ -15,14 +15,14 @@ export async function middleware(request: NextRequest) {
   const nextUrl = request.nextUrl.pathname;
 
   //allow non-logged in users to access login and create account screens
-  if(nextUrl.startsWith("/login") || nextUrl.startsWith("/create-account")) {
+  if(nextUrl.startsWith("/user/login") || nextUrl.startsWith("/user/create-account")) {
     return NextResponse.next();
   }
 
   //because this is the only way NextJS will allow me to delete cookies before 
   //a GET request to /logout is completed, the logout feature is here.
   //I could use an API endpoint, but I would prefer to not have both /logout and /api/logout routes
-  if(nextUrl.startsWith("/logout")) {
+  if(nextUrl.startsWith("/user/logout")) {
    // cookies().delete(SESSION_COOKIE);
     let res = NextResponse.next();
     //delete session cookie from response.
@@ -51,7 +51,7 @@ export async function middleware(request: NextRequest) {
   } catch(e) {
     console.log(e);
     //if JWT does not exist or is invalid
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL("/user/login", request.url));
   }
   
   let permission = jwtPayload.permission as Permission;
@@ -66,9 +66,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(`/dashboard/${permission}`, request.url));
   }
   
-
-
   //continue to current URL without issues
   return NextResponse.next();
 }
-

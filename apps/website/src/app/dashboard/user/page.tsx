@@ -14,7 +14,7 @@ export default async function Request() {
     <main>      
       <Navbar links={[
         {name: "Request a Print", path: "/request-part"},
-        {name: "Logout", path: "/logout"}
+        {name: "Logout", path: "/user/logout"}
       ]}/>
 
       <div className="bg-white rounded-sm p-14 w-full left">

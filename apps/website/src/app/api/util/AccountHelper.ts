@@ -28,8 +28,6 @@ export async function createAccount(email: string, firstName: string, lastName: 
     throw new Error("Failed to add new user!");
   }
 
-
-
   await login(email, permission as Permission);
 }
 

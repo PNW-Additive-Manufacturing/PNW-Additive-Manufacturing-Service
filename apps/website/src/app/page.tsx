@@ -12,7 +12,7 @@ export default async function Home() {
         {name: "Maintainer Dashboard", path: "/dashboard/maintainer"},
         {name: "Admin Dashboard", path: "/dashboard/admin"},
         {name: "Create Account", path: "/create-account"},
-        {name: "Login", path: "/login"}
+        {name: "Login", path: "/user/login"}
       ]}/>
 
       <div className="bg-white rounded-sm p-10 w-full">

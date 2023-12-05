@@ -2,13 +2,12 @@
 
 import { Input } from '@/app/components/Input';
 import { Navbar } from '@/app/components/Navigation';
-import { tryLogin } from '@/app/server-actions/account';
+import { tryLogin } from '@/app/api/server-actions/account';
 import { useFormState, useFormStatus } from 'react-dom';
 
 function SubmitButton() {
     const { pending } = useFormStatus();
     return <input type="submit" value={pending ? "Logging you in..." : "Login"}/>
-    
 }
 
 export default function Login() {
@@ -33,7 +32,7 @@ export default function Login() {
 
             <div className="bg-white rounded-sm p-14 pt-10 pb-10 w-full">
                 <h1 className="w-full pb-4 text-left">Don't have an account? Create one!</h1>
-                <a href="/create-account"><button>Create a new account</button></a>
+                <a href="/user/create-account"><button>Create a new account</button></a>
             </div>
         </main>
     );

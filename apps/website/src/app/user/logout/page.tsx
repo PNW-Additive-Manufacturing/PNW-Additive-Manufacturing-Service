@@ -5,7 +5,7 @@ export default async function Logout() {
   return (
     <main>
       <Navbar links={[
-        {name: "Login", path: "/login"}
+        {name: "Login", path: "/user/login"}
       ]}/>
 
       <div className="bg-white rounded-sm p-14 w-full">

@@ -22,7 +22,15 @@ export async function tryLogin(prevState: string, formData: FormData){
 
   //note that next redirect will intentionally throw an error in order to start redirecting
   //WARNING: if in a try/catch, it will not work
-  redirect(`/dashboard/${(await getJwtPayload())?.permission ?? Permission.user}`); //no error checking for Jwt payload since used just logged in
+  let permission = (await getJwtPayload())?.permission;
+  //no error checking for Jwt payload since used just logged in
+  if(permission == Permission.user) {
+    redirect(`/dashboard/user`); 
+  }
+  else {
+    redirect(`/dashboard/maintainer`); 
+  }
+
 }
 
 export async function tryCreateAccount(prevState: string, formData: FormData) {
