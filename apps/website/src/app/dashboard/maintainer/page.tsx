@@ -140,7 +140,7 @@ export default function Maintainer()
                 {/* <Navbar links={[]}></Navbar> */}
                 {/* <HorizontalWrap> */}
                 <div className="bg-white p-4" style={{width: "6rem", height: "100vh"}}>
-                    <Image className="p-0.5" src="/logo.svg" alt="Icon" width={100} height={100}></Image>
+                    <Image className="p-0.5" src="/assets/logo.svg" alt="Icon" width={100} height={100}></Image>
                     <div className="flex items-center flex-col gap-4 pt-8 pb-4 w-full h-full">
                         <span className="text-base"><RegularSearchAlt className="w-full h-fit px-3 pb-2 rounded-lg border-solid"></RegularSearchAlt>Orders</span>
                         <span><RegularCog className="w-full h-fit px-4 pb-2 rounded-lg border-solid"></RegularCog>Settings</span>
@@ -164,7 +164,7 @@ export default function Maintainer()
                                             // borderColor: "rgb(96, 165, 250)"
                                             // borderColor: printer.State == PrinterState.Printing ? "rgb(55, 189, 113)" : "rgb(220, 220, 220)"
                                         }}>
-                                        <Image className="pb-3" src="/Printer.png" alt="printer Image" width={60} height={60} style={{filter: "grayscale(0.20)"}}></Image>
+                                        <Image className="pb-3" src="/assets/Printer.png" alt="printer Image" width={60} height={60} style={{filter: "grayscale(0.20)"}}></Image>
                                         <p className='font-medium text-sm'>{printer.Model}</p>
                                         <p className='font-light text-xs'>{printer.State}</p>
                                     </div>

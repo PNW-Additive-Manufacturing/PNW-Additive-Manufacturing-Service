@@ -1,10 +1,9 @@
-import jwt from 'jsonwebtoken';
 import {cookies} from 'next/headers';
 import { SESSION_COOKIE, Permission } from '@/app/api/util/Constants';
 import { correctPassword, hashAndSaltPassword } from '@/app/api/util/PasswordHelper';
 import postgres from 'postgres';
 import db from '@/app/api/Database'
-import { makeJwt, getJwtPayload } from "@/app/api/util/JwtHelper";
+import { makeJwt } from "@/app/api/util/JwtHelper";
 
 export async function createAccount(email: string, firstName: string, lastName: string, password: string, permission: string) {
   let hash = hashAndSaltPassword(password);
@@ -31,7 +30,7 @@ export async function createAccount(email: string, firstName: string, lastName: 
 
 
 
-  login(email, permission as Permission);
+  await login(email, permission as Permission);
 }
 
 export async function attemptLogin(email: string, password: string) {
@@ -63,11 +62,11 @@ export async function attemptLogin(email: string, password: string) {
     throw new Error("Incorrect Password!");
   }
 
-  login(email, permission);
+  await login(email, permission);
 }
 
-export function login(email: string, permission: Permission) {
-  let token = makeJwt(email, permission);
+export async function login(email: string, permission: Permission) {
+  let token = await makeJwt(email, permission);
 
   //session cookie cannot be accessed via client-side javascript, making this safer than
   //just returning the token via JSON response. 

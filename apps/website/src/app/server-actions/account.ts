@@ -4,7 +4,8 @@ import { attemptLogin, createAccount } from "@/app/api/util/AccountHelper";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getJwtPayload } from "@/app/api/util/JwtHelper";
-import { Permission } from "@/app/api/util/Constants";
+import { Permission, SESSION_COOKIE } from "@/app/api/util/Constants";
+import { cookies } from "next/headers";
 
 /*
   Server Actions for Account-related server stuff
@@ -21,7 +22,7 @@ export async function tryLogin(prevState: string, formData: FormData){
 
   //note that next redirect will intentionally throw an error in order to start redirecting
   //WARNING: if in a try/catch, it will not work
-  redirect(`/dashboard/${getJwtPayload()?.permission ?? Permission.user}`); //no error checking for Jwt payload since used just logged in
+  redirect(`/dashboard/${(await getJwtPayload())?.permission ?? Permission.user}`); //no error checking for Jwt payload since used just logged in
 }
 
 export async function tryCreateAccount(prevState: string, formData: FormData) {
@@ -47,7 +48,7 @@ export async function tryCreateAccount(prevState: string, formData: FormData) {
   //use try-catch in case JWT is invalid
   let jwtPayload;
   try {
-    jwtPayload = getJwtPayload();
+    jwtPayload = await getJwtPayload();
     if(jwtPayload == null) {
       throw new Error();
     }
@@ -57,4 +58,9 @@ export async function tryCreateAccount(prevState: string, formData: FormData) {
   //remember not to use redirect in try block unless checking if catch(e) has e.message == "NEXT_REDIRECT"
   redirect(`/dashboard/${jwtPayload.permission}`);
 
+}
+
+export async function logout() {
+  console.log("Logout")
+  cookies().delete(SESSION_COOKIE);
 }

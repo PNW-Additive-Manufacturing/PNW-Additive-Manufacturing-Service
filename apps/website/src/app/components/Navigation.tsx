@@ -20,7 +20,7 @@ export function Navbar({links}: {links: {name: string, path: string}[]}): JSX.El
         <nav className='bg-pnw-gold-light flex flex-row p-3 justify-between outline-1 outline-black w-full '>
             <div className="basis-1/3 flex tracking-wider ">
                 <a href="/">
-                    <Image className="mr-2 pt-1" src="/PNW_Logo_Small.png" width={100} height={20} alt="PNWAM Logo"></Image>
+                    <Image className="mr-2 pt-1" src="/assets/PNW_Logo_Small.png" width={100} height={20} alt="PNWAM Logo"></Image>
                 </a>
                 <span>
                     <p style={{fontSize: "20px", color: "var(--pnw-gold)", fontFamily: "Coda"}}>Purdue Northwest</p>

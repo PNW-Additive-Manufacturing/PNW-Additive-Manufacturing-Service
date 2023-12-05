@@ -33,7 +33,7 @@ export default function Login() {
 
             <div className="bg-white rounded-sm p-14 pt-10 pb-10 w-full">
                 <h1 className="w-full pb-4 text-left">Don't have an account? Create one!</h1>
-                <button> Create a new account </button>
+                <a href="/create-account"><button>Create a new account</button></a>
             </div>
         </main>
     );
