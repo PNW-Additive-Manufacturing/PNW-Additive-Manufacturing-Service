@@ -12,13 +12,17 @@ import { SESSION_COOKIE } from "@/app/api/util/Constants";
 
 export interface UserInfoJwt {
   email: string,
-  permission: string
+  permission: string,
+  firstname: string,
+  lastname: string
 }
 
-export async function makeJwt(email: string, permission: string) {
+export async function makeJwt(email: string, permission: string, firstname: string, lastname: string) {
   return await new jose.SignJWT({
     email: email, 
-    permission: permission
+    permission: permission,
+    firstname: firstname,
+    lastname: lastname
   })
   .setProtectedHeader({alg: 'HS256'})
   .setIssuedAt()
@@ -34,7 +38,12 @@ export async function getJwtPayload() {
 
   try {
     let payload = (await jose.jwtVerify(cookie.value, new TextEncoder().encode(process.env.JWT_SECRET!))).payload
-    return {email: payload.email as string, permission: payload.permission as string};
+    return {
+      email: payload.email as string, 
+      permission: payload.permission as string,
+      firstname: payload.firstname as string,
+      lastname: payload.lastname as string
+    };
   } catch(e: any) {
     console.error(e);
     throw new Error("Invalid Token! Log Back In!");

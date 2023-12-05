@@ -6,8 +6,11 @@ import { redirect } from 'next/navigation';
 
 export default async function Request() {
   let email: string;
+  let name: string;
   try {
-    email = (await getJwtPayload())!.email;
+    let payload = (await getJwtPayload())!;
+    email = payload.email;
+    name = payload.firstname + " " + payload.lastname;
   } catch(e) {
     return redirect("/user/login");
   }
@@ -24,6 +27,9 @@ export default async function Request() {
         {name: "Request a Print", path: "/request-part"},
         {name: "Logout", path: "/user/logout"}
       ]}/>
+
+      <h1 className="w-full p-4 pt-0 text-left">{`Welcome, ${name}!`}</h1>
+
 
       <div className="bg-white rounded-sm p-14 w-full left">
         <h1 className="w-full pb-4 pt-0 text-left">Pending Requests</h1>

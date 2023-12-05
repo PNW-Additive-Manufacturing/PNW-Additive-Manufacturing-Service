@@ -28,13 +28,13 @@ export async function createAccount(email: string, firstName: string, lastName: 
     throw new Error("Failed to add new user!");
   }
 
-  await login(email, permission as Permission);
+  await login(email, permission as Permission, firstName, lastName);
 }
 
 export async function attemptLogin(email: string, password: string) {
   let res: postgres.RowList<postgres.Row[]>;
   try {
-    res = await db`select password, permission from account where email=${email}`;
+    res = await db`select password, permission, firstname, lastname from account where email=${email}`;
   } catch(e) {
     console.error(e);
     throw new Error("Error: Failed to access database!");
@@ -46,6 +46,9 @@ export async function attemptLogin(email: string, password: string) {
 
   let hash = res[0].password as string;
   let permission = res[0].permission as Permission;
+  let firstname = res[0].firstname as string;
+  let lastname = res[0].lastname as string;
+
 
   /* Because bcrypt ALWAYS uses 60 character long hashes and 
      our database schema forces all password hashes to be 64 characters (padding with spaces if necessary),
@@ -60,11 +63,11 @@ export async function attemptLogin(email: string, password: string) {
     throw new Error("Incorrect Password!");
   }
 
-  await login(email, permission);
+  await login(email, permission, firstname, lastname);
 }
 
-export async function login(email: string, permission: Permission) {
-  let token = await makeJwt(email, permission);
+export async function login(email: string, permission: Permission, firstname: string, lastname: string) {
+  let token = await makeJwt(email, permission, firstname, lastname);
 
   //session cookie cannot be accessed via client-side javascript, making this safer than
   //just returning the token via JSON response. 
