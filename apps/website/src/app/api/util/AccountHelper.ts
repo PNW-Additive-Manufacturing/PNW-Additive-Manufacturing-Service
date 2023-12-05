@@ -6,6 +6,19 @@ import db from '@/app/api/Database'
 import { makeJwt } from "@/app/api/util/JwtHelper";
 
 export async function createAccount(email: string, firstName: string, lastName: string, password: string, permission: string) {
+  firstName = firstName.trim();
+  lastName = lastName.trim();
+  email = email.trim();
+
+  if(!email.endsWith("@pnw.edu")) {
+    throw new Error("Please enter your full pnw.edu email!");
+  }
+
+  let passwordError = validatePassword(password);
+  if(passwordError) {
+    throw new Error(passwordError);
+  }
+
   let hash = hashAndSaltPassword(password);
 
   let res: postgres.RowList<postgres.Row[]>;
@@ -31,7 +44,21 @@ export async function createAccount(email: string, firstName: string, lastName: 
   await login(email, permission as Permission, firstName, lastName);
 }
 
+function validatePassword(password: string) {
+  if(password.length < 8) {
+    return "Password must be at least 8 characters!";
+  }
+
+  if(password.length > 72) {
+    return "Password too long!";
+  }
+
+  return null;
+}
+
 export async function attemptLogin(email: string, password: string) {
+  email = email.trim();
+
   let res: postgres.RowList<postgres.Row[]>;
   try {
     res = await db`select password, permission, firstname, lastname from account where email=${email}`;
