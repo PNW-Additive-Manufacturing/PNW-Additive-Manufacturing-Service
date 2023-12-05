@@ -1,29 +1,14 @@
-import { PartList, Part } from '@/app/components/PartList'
+import { RequestList, Request } from '@/app/components/RequestList'
+import { getRequests } from '@/app/api/util/GetRequests';
 import { Navbar } from '@/app/components/Navigation'
 
+export default async function Request() {
 
-export default async function User() {
+  let resPendingRequest = await getRequests('dhollema@pnw.edu', false);
+  let pendingRequests: Request[] = resPendingRequest.map((row: any) => {return {name: row.name, date: row.date, isFullfilled: row.isFullfilled}});
 
-  let parts = [
-    {
-      id: '1',
-      name: 'Name1',
-      date: new Date(),
-      status: "Pending"
-    },
-    {
-      id: '2',
-      name: 'Name2',
-      date: new Date((new Date()).getTime() + 1*60*60*24*1000),
-      status: "Pending"
-    },
-    {
-      id: '3',
-      name: 'Name3',
-      date: new Date((new Date()).getTime() + 2*60*60*24*1000),
-      status: "Pending"
-    },
-  ];
+  let resCompletedRequest = await getRequests('dhollema@pnw.edu', true);
+  let completedRequests: Request[] = resCompletedRequest.map((row: any) => {return {name: row.name, date: row.date, isFullfilled: row.isFullfilled}});
 
   return (
     <main>      
@@ -31,15 +16,14 @@ export default async function User() {
         {name: "Request a Print", path: "/request-part"},
         {name: "Logout", path: "/logout"}
       ]}/>
-      <h1 className='p-3 text-center'>Welcome, Aaron Jung!</h1>
 
-      <h2 className="p-3 text-4xl font-extrabold text-center sdark:text-black">Your Pending Parts</h2> 
+      <div className="bg-white rounded-sm p-14 w-full left">
+        <h1 className="w-full pb-4 pt-0 text-left">Pending Requests</h1>
+        <RequestList requests={pendingRequests}/>
 
-      <PartList parts={parts}/>
-
-      <h2 className="p-3 text-4xl font-extrabold text-center sdark:text-black">Your Completed Parts</h2> 
-
-      <PartList parts={parts}/>
+        <h1 className="w-full pb-4 pt-10 text-left">Completed Requests</h1>
+        <RequestList requests={completedRequests}/>
+      </div>
     </main>
   )
 }

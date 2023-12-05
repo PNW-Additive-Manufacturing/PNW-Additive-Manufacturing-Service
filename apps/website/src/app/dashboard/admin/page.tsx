@@ -1,6 +1,6 @@
 import { UserList, User } from '@/app/components/UserList'
-import { Navbar } from '@/app/components/Navigation'
 import { getUsers } from '@/app/api/util/GetUsers';
+import { Navbar } from '@/app/components/Navigation'
 
 export default async function Admin() {
 
@@ -26,7 +26,7 @@ export default async function Admin() {
             ]}/>
 
             <div className="bg-white rounded-sm p-14 w-full left">
-                <h1 className="w-full pb-4 pt-10 text-left">Admin List</h1>
+                <h1 className="w-full pb-4 pt-0 text-left">Admin List</h1>
                 <UserList users={admins}/>
 
                 <h1 className="w-full pb-4 pt-10 text-left">Maintainer List</h1>
