@@ -1,7 +1,7 @@
 import postgres from "postgres"
 import db from "@/app/api/Database"
 
-export async function getParts(requestid: string): Promise<Array<postgres.Row>> {
+export async function getParts(requestid: number): Promise<Array<postgres.Row>> {
     const res = await db`select * from part where requestid = ${requestid} order by id`
     let entries = res.entries()
     let r : Array<postgres.Row> = [];

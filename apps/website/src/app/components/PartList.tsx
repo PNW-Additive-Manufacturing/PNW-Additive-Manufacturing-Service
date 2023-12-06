@@ -1,3 +1,5 @@
+import { getModel } from "@/app/api/util/GetModel";
+
 export interface Part {
     id: number,
     requestid: number,
@@ -6,29 +8,31 @@ export interface Part {
     status: string
 }
 
-function PartRow({part}: {part: Part}): JSX.Element {
-  console.log(part);
+export interface Model {
+    id: number,
+    name: string
+}
+
+async function PartRow({part}: {part: Part}): Promise<JSX.Element> {
+    let model = await getModel(part.modelid);
+
   return (
-    <tr>
-      <td className="text-left">{part.id}</td>
-      <td className="text-left">{part.requestid}</td>
-      <td className="text-left">{part.modelid}</td>
-      <td className="text-left">{part.quantity}</td>
-      <td className="text-left">{part.status}</td>
+    <tr className="text-left">
+      <td className="">{model.name}</td>
+      <td className="">{part.quantity}</td>
+      <td className="">{part.status}</td>
     </tr>
   )
 }
 
 export function PartList({parts}: {parts: Part[]}): JSX.Element {
   return (
-    <table className="bg-white m-auto border border-solid border-black border-collapse w-full">
+    <table className="bg-white m-auto w-full">
       <thead>
-        <tr className="text-gray-400">
-          <th className="text-left">Part ID</th>
-          <th className="text-left">Request ID</th>
-          <th className="text-left">Model ID</th>
-          <th className="text-left">Quantity</th>
-          <th className="text-left">Status</th>
+        <tr className="text-left text-gray-400 text-sm">
+          <th className="">Part Name</th>
+          <th className="">Quantity</th>
+          <th className="">Status</th>
         </tr>
       </thead>
       <tbody>

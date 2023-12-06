@@ -16,10 +16,10 @@ export default async function Request() {
   }
 
   let resPendingRequest = await getRequests(email, false);
-  let pendingRequests: Request[] = resPendingRequest.map((row: any) => {return {name: row.name, date: row.submittime, isFulfilled: row.isfulfilled}});
+  let pendingRequests: Request[] = resPendingRequest.map((row: any) => {return {id: row.id, name: row.name, date: row.submittime, isFulfilled: row.isfulfilled}});
 
   let resCompletedRequest = await getRequests(email, true);
-  let completedRequests: Request[] = resCompletedRequest.map((row: any) => {return {name: row.name, date: row.submittime, isFulfilled: row.isfulfilled}});
+  let completedRequests: Request[] = resCompletedRequest.map((row: any) => {return {id: row.id, name: row.name, date: row.submittime, isFulfilled: row.isfulfilled}});
 
   return (
     <main>
@@ -29,7 +29,6 @@ export default async function Request() {
       ]}/>
 
       <h1 className="w-full p-4 pt-0 text-left">{`Welcome, ${name}!`}</h1>
-
 
       <div className="bg-white rounded-sm p-14 w-full left">
         <h1 className="w-full pb-4 pt-0 text-left">Pending Requests</h1>
