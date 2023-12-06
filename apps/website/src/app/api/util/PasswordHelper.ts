@@ -1,10 +1,10 @@
 import bcrypt from 'bcrypt';
 
 export function hashAndSaltPassword(password: string): string{
-  //note that hashedPassword is always 72 bytes or 60 characters for bcrypt
+  //note that hashedPassword is always 60 characters for bcrypt and that plaintext password must be
+  //at most 72 characters
   const hashedPassword = bcrypt.hashSync(password, 10);
 
-  console.log(correctPassword(password, hashedPassword));
   return hashedPassword;
 }
 

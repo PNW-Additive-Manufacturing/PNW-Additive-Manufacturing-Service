@@ -11,10 +11,24 @@ function SubmitButton() {
     return <input type="submit" value={pending ? "Creating Account..." : "Create Account"}/>
 }
 
+//using this pattern allows us to perform client side validation before sending a request to the
+//server to create the account. This can reduce the number of server calls and client
+//side validation is much faster than server-side validation.
+async function clientSideValidation(prevState: string, formData: FormData) {
+    let password = formData.get("password");
+    let confirmPassword = formData.get("confirm-password");
+
+    if(password !== confirmPassword) {
+        return "Password in field does not match Check Password field. Make sure they match!";
+    }
+
+    return await tryCreateAccount(prevState, formData);
+
+}
 
 export default function CreateAccount() {
     //note that Server component cannot return null or Class objects, only plain JSONs and primitive types
-    let [error, formAction] = useFormState<string, FormData>(tryCreateAccount, "");
+    let [error, formAction] = useFormState<string, FormData>(clientSideValidation, "");
 
     return (
         <main>
