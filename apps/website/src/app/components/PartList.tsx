@@ -23,7 +23,7 @@ export function PartList({parts}: {parts: Part[]}): JSX.Element {
   return (
     <table className="bg-white m-auto border border-solid border-black border-collapse w-full">
       <thead>
-        <tr>
+        <tr className="text-gray-400">
           <th className="text-left">Part ID</th>
           <th className="text-left">Request ID</th>
           <th className="text-left">Model ID</th>

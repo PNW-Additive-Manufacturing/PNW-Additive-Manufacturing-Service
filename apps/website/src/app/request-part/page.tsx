@@ -11,15 +11,13 @@ import { requestPart } from '@/app/api/server-actions/request-part';
 
 function SubmitButton() {
     let {pending} = useFormStatus();
-
     return (
-        <>
-            {/*<div className="bg-white rounded-sm font-semibold p-14 pt-0 pb-10 w-full">*/}
+        <div className="bg-white rounded-sm font-semibold p-14 pt-0 pb-10 w-full">
             <input type="submit" value={pending ? "Submitting Request..." : "Submit Request"}/>
-            {/*</div>*/}
-        </>
+        </div>
     )
 }
+
 export default function Request() {
     let [error, formAction] = useFormState<string, FormData>(requestPart, "");
 
@@ -48,9 +46,9 @@ export default function Request() {
                         <p className="uppercase font-semibold br-2">{"Filament"}</p>
                         <select id="filament" name="material">
                             <option value="pla">PLA</option>
-                            <option value="pla">PETG</option>
-                            <option value="pla">ABS</option>
-                            <option value="pla">PC</option>
+                            <option value="petg">PETG</option>
+                            <option value="abs">ABS</option>
+                            <option value="pc">PC</option>
                         </select>
                         <select id="color" name="color">
                             <option value="white">White</option>

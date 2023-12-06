@@ -21,9 +21,9 @@ function RequestRow({request}: {request: Request}): JSX.Element {
 
 export function RequestList({requests}: {requests: Request[]}): JSX.Element {
   return (
-    <table className="bg-white m-auto border border-solid border-black border-collapse w-full">
+    <table className="bg-white m-auto w-full">
       <thead>
-        <tr>
+        <tr className="text-gray-400">
           <th className="text-left">Request</th>
           <th className="text-left">Parts</th>
         </tr>

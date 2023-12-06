@@ -24,16 +24,16 @@ export async function requestPart(prevState: string, formData: FormData) {
   let material = formData.get('material') as string;
   let quantity = 1;
 
-
-
-  if(!file || file.type !== 'model/stl') {
-    return "You need to submit one .stl file!";
+  if(!file) {
+    return "You must submit a .stl file";
   }
-  console.log(file.type);
-
-
-  const buffer = Buffer.from(await file.arrayBuffer());
   const filename = file.name;
+
+  if(!filename.toLowerCase().endsWith(".stl")) {
+    return "The file must be a .stl file";
+  }
+  
+  const buffer = Buffer.from(await file.arrayBuffer());
   const uploadDir = path.join(process.cwd(), "uploads", "stl");
 
   try {
@@ -52,17 +52,21 @@ export async function requestPart(prevState: string, formData: FormData) {
 
   try {
     let success = await db.begin(async (sql) => {
+      
       const [requestId] = await sql`insert into request (name, owneremail, notes) values (${requestName}, ${email}, ${notes}) returning id`;
 
       const [modelId] = await sql`insert into model (name, filepath, owneremail) values (${filename}, ${filename}, ${email}) returning id`;
 
+      const [filamentId] = await sql`select id from filament where color=${color} and material=${material} and instock=true`;
+      
+      if(!filamentId) {
+        throw new Error(`No ${color} ${material} in stock`);
+      }
+
       const partId = await sql`
       insert into part (requestid, modelid, quantity, assignedfilamentid) 
         values (
-          ${requestId.id},
-          ${modelId.id},
-          ${quantity}, 
-          (select id from filament where color=${color} and material=${material})
+          ${requestId.id}, ${modelId.id}, ${quantity}, ${filamentId.id}
         ) 
         returning id;
       `;
@@ -74,6 +78,7 @@ export async function requestPart(prevState: string, formData: FormData) {
       return "Failed to submit part!";
     }
   } catch(e: any) {
+    e = e as Error;
     return "Failed to submit part with error message: " + e.message;
   }
 

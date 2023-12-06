@@ -26,9 +26,9 @@ function UserRow({user}: {user: User}): JSX.Element {
 
 export function UserList({users}: {users: User[]}): JSX.Element {
   return (
-    <table className="bg-white m-auto border border-solid border-black border-collapse w-full">
+    <table className="bg-white m-auto w-full">
       <thead>
-        <tr>
+        <tr className="text-gray-400">
           <th className="text-left">Email</th>
           <th className="text-left">First Name</th>
           <th className="text-left">Last Name</th>
