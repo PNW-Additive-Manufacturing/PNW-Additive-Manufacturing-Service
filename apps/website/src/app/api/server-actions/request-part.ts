@@ -29,25 +29,28 @@ export async function requestPart(prevState: string, formData: FormData) {
     return redirect("/user/login");
   }
 
-  let file = formData.get('file') as File | null;
+
+  let files = formData.getAll('file') as File[] | null;
   let notes = formData.get('notes') as string;
   let requestName = formData.get('requestname') as string;
   let color = formData.get('color') as string;
   let material = formData.get('material') as string;
   let quantity = 1;
 
-  if(!file) {
-    return "You must submit a .stl file";
-  }
-  let filename = file.name;
-
-  if(!filename.toLowerCase().endsWith(".stl")) {
-    return "The file must be a .stl file";
+  if(!files) {
+    return "You must submit one or more .stl files";
   }
 
-  filename = filename.substring(0, file.name.lastIndexOf("."));
+  let filepaths = files.map(f => f.name);
+
+  let nonStlFile = filepaths.find((path) => !path.toLowerCase().endsWith(".stl"));
+  if(nonStlFile) {
+    return `The file ${nonStlFile} must be a .stl file`;
+  }
+
+
+  let filenames = filepaths.map(path => path.substring(0, path.lastIndexOf(".")));
   
-  const buffer = Buffer.from(await file.arrayBuffer());
   const uploadDir = path.join(process.cwd(), "uploads", "stl");
 
   try {
@@ -58,18 +61,21 @@ export async function requestPart(prevState: string, formData: FormData) {
     return "Error, server cannot create uploads folder, try again later!";
   } 
 
+  //write all files to upload folder
   try {
-    fs.writeFileSync(`${uploadDir}${path.sep}${filename}.stl`, buffer);
+    for(let i = 0; i < files.length; i++) {
+      const buffer = Buffer.from(await files[i].arrayBuffer());
+      fs.writeFileSync(`${uploadDir}${path.sep}${filenames[i]}.stl`, buffer);
+    }
   } catch(e) {
-    return "Failed to save file";
+    return "Failed to save file with error: " + e;
   }
 
+  //update database 
   try {
     let success = await db.begin(async (sql) => {
       
       const [requestId] = await sql`insert into request (name, owneremail, notes) values (${requestName}, ${email}, ${notes}) returning id`;
-
-      const [modelId] = await sql`insert into model (name, filepath, owneremail) values (${filename}, ${filename + ".stl"}, ${email}) returning id`;
 
       const [filamentId] = await sql`select id from filament where color=${color} and material=${material} and instock=true`;
       
@@ -79,15 +85,24 @@ export async function requestPart(prevState: string, formData: FormData) {
         throw new Error(`No ${color} ${material} in stock`);
       }
 
-      const partId = await sql`
-      insert into part (requestid, modelid, quantity, assignedfilamentid) 
-        values (
-          ${requestId.id}, ${modelId.id}, ${quantity}, ${!filamentId ? null : filamentId.id}
-        ) 
-        returning id;
-      `;
+      for(let i = 0; i < files!.length; i++) {
+        const [modelId] = await sql`insert into model (name, filepath, owneremail) values (${filenames[i]}, ${filenames[i] + ".stl"}, ${email}) returning id`;
 
-      return partId.count != 0;
+        const partId = await sql`
+          insert into part (requestid, modelid, quantity, assignedfilamentid) 
+          values (
+            ${requestId.id}, ${modelId.id}, ${quantity}, ${!filamentId ? null : filamentId.id}
+          ) 
+          returning id;
+        `;
+
+        if(partId.count == 0) {
+          throw new Error("Failed to insert part!");
+        }
+
+      }
+
+      return true;
     });
 
     if(!success) {

@@ -36,7 +36,7 @@ export default async function Request() {
 
                 <div className="font-semibold">
                     <p className="uppercase br-2">{"STL Part File"}</p>
-                    <input type="file" id="model" accept=".stl" name="file"/>
+                    <input type="file" id="model" accept=".stl" name="file" multiple={true}/>
                 </div>
 
                 <div className="pt-3 pb-4">
