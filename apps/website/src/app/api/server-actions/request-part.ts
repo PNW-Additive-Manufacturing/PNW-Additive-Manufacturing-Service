@@ -22,6 +22,7 @@ export async function getFilamentList() {
 }
 
 export async function requestPart(prevState: string, formData: FormData) {
+  console.log("Requesting Part");
   let email: string;
   try {
     email = (await getJwtPayload())!.email;

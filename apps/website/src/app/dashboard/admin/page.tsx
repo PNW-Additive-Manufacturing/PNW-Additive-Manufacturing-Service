@@ -1,8 +1,13 @@
-import { UserList, User } from '@/app/components/UserList'
+import { UserList, User, ListOfUserList } from '@/app/components/UserList'
 import { getUsers } from '@/app/api/util/GetUsers';
 import { Navbar } from '@/app/components/Navigation'
 
+
+
 export default async function Admin() {
+
+    //grab initial lists of users and their permissions and place it into the ListOfUserList
+    //client component
 
     let resUser = await getUsers('user');
     let users: User[] = resUser.map((row: any) => {return {email: row.email, name1: row.firstname, name2: row.lastname, permission: row.permission}});
@@ -25,17 +30,8 @@ export default async function Admin() {
                 {name: "Logout", path: "/user/logout"}
             ]}/>
 
-            <div className="bg-white rounded-sm p-14 w-full left">
-                <h1 className="w-full pb-4 pt-0 text-left">Admin List</h1>
-                <UserList users={admins}/>
-
-                <h1 className="w-full pb-4 pt-10 text-left">Maintainer List</h1>
-                <UserList users={maintainers}/>
-
-                <h1 className="w-full pb-4 pt-10 text-left">User List</h1>
-                <UserList users={users}/>
-
-            </div>
+            <ListOfUserList admins={admins} normUsers={users} maintainers={maintainers}/>
+            
         </main>
     );
 }
