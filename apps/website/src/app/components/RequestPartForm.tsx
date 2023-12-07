@@ -7,7 +7,7 @@ import { requestPart } from "@/app/api/server-actions/request-part";
 function SubmitButton() {
   let {pending} = useFormStatus();
   return (
-      <div className="bg-white rounded-sm font-semibold p-14 pt-0 pb-10 w-full">
+      <div className="bg-white rounded-sm font-semibold p-0 pb-10 w-full">
           <input type="submit" value={pending ? "Submitting Request..." : "Submit Request"}/>
       </div>
   )

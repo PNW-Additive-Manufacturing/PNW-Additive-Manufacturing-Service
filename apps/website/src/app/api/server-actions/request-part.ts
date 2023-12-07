@@ -4,7 +4,6 @@ import fs from 'fs';
 import path from 'path'
 
 import { getJwtPayload } from '@/app/api/util/JwtHelper';
-
 import { redirect } from 'next/navigation';
 
 import db from '@/app/api/Database';
@@ -40,11 +39,13 @@ export async function requestPart(prevState: string, formData: FormData) {
   if(!file) {
     return "You must submit a .stl file";
   }
-  const filename = file.name;
+  let filename = file.name;
 
   if(!filename.toLowerCase().endsWith(".stl")) {
     return "The file must be a .stl file";
   }
+
+  filename = filename.substring(0, file.name.lastIndexOf("."));
   
   const buffer = Buffer.from(await file.arrayBuffer());
   const uploadDir = path.join(process.cwd(), "uploads", "stl");
@@ -58,7 +59,7 @@ export async function requestPart(prevState: string, formData: FormData) {
   } 
 
   try {
-    fs.writeFileSync(`${uploadDir}${path.sep}${filename}`, buffer);
+    fs.writeFileSync(`${uploadDir}${path.sep}${filename}.stl`, buffer);
   } catch(e) {
     return "Failed to save file";
   }
@@ -68,7 +69,7 @@ export async function requestPart(prevState: string, formData: FormData) {
       
       const [requestId] = await sql`insert into request (name, owneremail, notes) values (${requestName}, ${email}, ${notes}) returning id`;
 
-      const [modelId] = await sql`insert into model (name, filepath, owneremail) values (${filename}, ${filename}, ${email}) returning id`;
+      const [modelId] = await sql`insert into model (name, filepath, owneremail) values (${filename}, ${filename + ".stl"}, ${email}) returning id`;
 
       const [filamentId] = await sql`select id from filament where color=${color} and material=${material} and instock=true`;
       
