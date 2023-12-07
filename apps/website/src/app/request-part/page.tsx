@@ -1,25 +1,26 @@
-"use client"
+"use server"
 
 import { Input } from '@/app/components/Input';
 import { InputBig } from '@/app/components/InputBig';
 import { Navbar } from '@/app/components/Navigation'
+import { RequestPartForm } from '@/app/components/RequestPartForm';
+import { FilamentSelector } from '@/app/components/FilamentSelector';
 
-import React from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { getFilamentList } from '@/app/api/server-actions/request-part';
 
-import { requestPart } from '@/app/api/server-actions/request-part';
+/*
+    This MUST be a server component to work because the FilamentSelector is a client side component
+    that needs the filement list from a Server Action, which can only be retrieved 
+    asyncronously when using a Server Component.
 
-function SubmitButton() {
-    let {pending} = useFormStatus();
-    return (
-        <div className="bg-white rounded-sm font-semibold p-14 pt-0 pb-10 w-full">
-            <input type="submit" value={pending ? "Submitting Request..." : "Submit Request"}/>
-        </div>
-    )
-}
+    Client Components cannot render Server Components unless the server component is passed as a prop.
 
-export default function Request() {
-    let [error, formAction] = useFormState<string, FormData>(requestPart, "");
+    Note that Client Components CANNOT render async Server Components, even if the async Server
+    Component is passed as a prop.
+*/
+
+export default async function Request() {
+    let filaments = await getFilamentList();
 
     return (
         <main>
@@ -28,40 +29,24 @@ export default function Request() {
                 {name: "Logout", path: "/user/logout"}
             ]}/>
 
-            <form action={formAction}>
-                <div className="bg-white rounded-sm p-14 pt-10 pb-10 w-full">
-                    <h1 className="w-full pb-4 text-left">Request a Print</h1>
+            <RequestPartForm>
+                <h1 className="w-full pb-4 text-left">Request a Print</h1>
 
-                    <Input label="Request Name" type="text" id="name" name="requestname" placeholder="Enter the name of the request"/>
+                <Input label="Request Name" type="text" id="name" name="requestname" placeholder="Enter the name of the request"/>
 
-                    <div className="font-semibold">
-                        <p className="uppercase br-2">{"STL Part File"}</p>
-                        <input
-                            type="file" id="model" accept=".stl" name="file"
-                            onChange={(elem) => console.log("Model submitted")}>
-                        </input>
-                    </div>
-
-                    <div className="pt-3 pb-4">
-                        <p className="uppercase font-semibold br-2">{"Filament"}</p>
-                        <select id="filament" name="material">
-                            <option value="pla">PLA</option>
-                            <option value="petg">PETG</option>
-                            <option value="abs">ABS</option>
-                            <option value="pc">PC</option>
-                        </select>
-                        <select id="color" name="color">
-                            <option value="white">White</option>
-                            <option value="black">Black</option>
-                        </select>
-                    </div>
-
-                    <InputBig label="Notes" id="notes" name="notes" placeholder="Anything else we should know?"/>
+                <div className="font-semibold">
+                    <p className="uppercase br-2">{"STL Part File"}</p>
+                    <input type="file" id="model" accept=".stl" name="file"/>
                 </div>
+
+                <div className="pt-3 pb-4">
+                    <p className="uppercase font-semibold br-2">{"Filament"}</p>
+                    <FilamentSelector filaments={filaments}/>
+                </div>
+
+                <InputBig label="Notes" id="notes" name="notes" placeholder="Anything else we should know?"/>
                 
-                <SubmitButton/>  
-                <p className="text-sm text-red-500">{error}</p>
-            </form>
+            </RequestPartForm>
             {/* <StlViewer
                 style={style}
                 orbitControls={true}

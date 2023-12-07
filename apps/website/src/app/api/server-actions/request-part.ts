@@ -9,6 +9,18 @@ import { redirect } from 'next/navigation';
 
 import db from '@/app/api/Database';
 
+export async function getFilamentList() {
+  let filaments = await db`select material, color from filament where instock=true`;
+
+  let rtn: {material: string, color: string}[] = [];
+
+  for(let filament of filaments) {
+    rtn.push({material: filament.material, color: filament.color});
+  }
+
+  return rtn;
+}
+
 export async function requestPart(prevState: string, formData: FormData) {
   let email: string;
   try {
@@ -59,14 +71,16 @@ export async function requestPart(prevState: string, formData: FormData) {
 
       const [filamentId] = await sql`select id from filament where color=${color} and material=${material} and instock=true`;
       
-      if(!filamentId) {
+      //if no filament with matching color and material was found,
+      //check if the user specified the 'Other' option in the web page (empty string == other)
+      if(!filamentId && color && material) {
         throw new Error(`No ${color} ${material} in stock`);
       }
 
       const partId = await sql`
       insert into part (requestid, modelid, quantity, assignedfilamentid) 
         values (
-          ${requestId.id}, ${modelId.id}, ${quantity}, ${filamentId.id}
+          ${requestId.id}, ${modelId.id}, ${quantity}, ${!filamentId ? null : filamentId.id}
         ) 
         returning id;
       `;
