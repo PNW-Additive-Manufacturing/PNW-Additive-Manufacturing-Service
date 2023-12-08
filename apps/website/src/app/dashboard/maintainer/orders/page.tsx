@@ -20,8 +20,48 @@ interface PrintersContext {
 }
 
 async function RunningPartsTable() {
+    var parts = await db`select p.*, owneremail from part as p, request as r where (p.status='printing' or p.status='printed' or p.status='failed') and p.requestid = r.id`;
+    var filaments = await db`select id, material, color from filament where id in ${db(parts.map((p) => p.assignedfilamentid))}`;
+    var models = await db`select * from model where id in ${ db(parts.map((p) => p.modelid)) }`;
+
+    var printers = await db`select * from printer;` as {name: string, model: string}[];
+
     return <table className='w-full overflow-y-auto' style={{ maxHeight: "60vh" }}>
-        
+        <thead>
+            <tr>
+                <td>Part Name</td>
+                <td>Quantity</td>
+                <td>Status</td>
+                <td>User</td>
+                <td>Printer</td>
+            </tr>
+        </thead>
+        <tbody>
+            {parts.map(part => {
+
+
+                const model = models.find(m => m.id === part.modelid)!;
+                const filament = filaments.find(f => f.id === part.assignedfilamentid);
+                // const preferredEmail = (part.owneremail as string).split("@")[0];
+                
+                return <tr>
+                    <td><InlineFile filename={model.name}></InlineFile></td>
+                    <td>{part.quantity}</td>
+                    <td>{part.status === 'printing' ? 
+                        // <span><ProgressBar color='rgb(130, 199, 237)' percentage={60}></ProgressBar></span>
+                        <span className='px-2 py-1 rounded-lg text-base bg-blue-200'>Printing</span>
+                        : part.status === 'printed' ? 
+                        <span className='text-green-500'>Completed</span>
+                        : <span className='text-red-500'>Failed</span>}</td>
+                    {/* <td>{part.lastname} {preferredEmail ?? part.owneremail}</td> */}
+                    <td>{part.lastname} {part.owneremail}</td>
+                    <td><InlinePrinterSelector
+                        partId={part.id}    
+                        printers={printers} 
+                        selection={part.assignedprintername}></InlinePrinterSelector></td>
+                </tr>
+            })}
+        </tbody>
     </table>
 }
 
@@ -46,7 +86,8 @@ async function QueuedPartsTable() {
             {parts.map(part => <tr>
 
                 <td>File.gcode</td>
-                <td><InlinePrinterSelector selectedPrinter={part.assignedprintername}></InlinePrinterSelector></td>
+                <td>INSERT PRINTER SELECTOR</td>
+                {/* <td><InlinePrinterSelector selectedPrinter={part.assignedprintername}></InlinePrinterSelector></td> */}
                 <td><ProgressBar color="blue" percentage={50}></ProgressBar></td>
                 {/* <td>{filaments.find((r, i, obj) => r.id === part.assignedfilamentid)!.material}</td> */}
                 <td></td>
@@ -133,7 +174,6 @@ export default function Maintainer() {
                     }
                 ]}></SidebarNavigation>
 
-                {/* <div className='bg-purple-400 w-3/6 h-screen'> */}
                 <div className='w-4/6 h-screen overflow-y-auto p-12' style={{ minWidth: "900px" }}>
                     <div className='m-auto' style={{ minWidth: "900px", maxWidth: "1100px" }}>
                         <h1 className='text-2xl mb-7'>Orders</h1>
@@ -153,11 +193,12 @@ export default function Maintainer() {
                             </div>
                         </div> */}
 
-                        <h2 className='mt-12'>Running Orders</h2>
-                        <table className='w-full overflow-y-auto' style={{ maxHeight: "60vh" }}>
+                        <h2 className='mt-12'>Processing Orders</h2>
+                        <RunningPartsTable></RunningPartsTable>
+                        {/* <table className='w-full overflow-y-auto' style={{ maxHeight: "60vh" }}>
                             <thead>
                                 <tr>
-                                    <td>Filename</td>
+                                    <td>Part Name</td>
                                     <td>Printer</td>
                                     <td>Progress</td>
                                     <td>User</td>
@@ -187,7 +228,7 @@ export default function Maintainer() {
                                     <td>$10</td>
                                 </tr>
                             </tbody>
-                        </table>
+                        </table> */}
 
                         <h2 className='mt-12'>Queued Parts</h2>
                         <QueuedPartsTable></QueuedPartsTable>

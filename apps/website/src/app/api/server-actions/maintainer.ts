@@ -2,6 +2,8 @@ import db from "@/app/api/Database";
 
 export async function setPartPrinter(prevState: string, data: FormData): Promise<string>
 {
+    console.log("WE BALLING :FIRE: :FIRE: :FIRE: :FIRE:");
+
     var partId = data.get("part_id") as string;
     var printerName = data.get("printer_name") as string;
 
