@@ -6,7 +6,7 @@ import { Canvas, useLoader } from '@react-three/fiber';
 import ModelViewer from '@/app/components/ModelViewer';
 import { BoxGeometry, BufferGeometry, Camera, Euler, PerspectiveCamera, Vector2, Vector3 } from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
-import { RegularLayers, RegularSearchAlt, RegularSpinnerSolid, RegularChevronDown, RegularChevronDownCircle, RegularArrowUp, RegularCog, RegularEye, RegularCheckmarkCircle, RegularBan, RegularPlus, RegularCart, RegularWarning } from 'lineicons-react';
+import { RegularLayers, RegularSearchAlt, RegularSpinnerSolid, RegularChevronDown, RegularChevronDownCircle, RegularArrowUp, RegularCog, RegularEye, RegularCheckmarkCircle, RegularBan, RegularPlus, RegularCart, RegularWarning, RegularCrossCircle, RegularCheckmark } from 'lineicons-react';
 import UserSpan from '@/app/components/UserSpan';
 import PrinterSpan from '@/app/components/PrinterSpan';
 import SidebarNavigation from '@/app/components/DashboardNavigation';
@@ -67,10 +67,8 @@ async function RunningPartsTable() {
 
 async function QueuedPartsTable() {
     var parts = await db`select * from part where status='queued'`;
-    // var models = await db`select * from model where id IN ${parts.map((p) => p.modelid)}`;
-    // var filaments = await db`select id, material, color from filament where id in ${parts.map((p) => p.assignedfilamentid)}`
-
-
+    var models = await db`select * from model where id in ${ db(parts.map((p) => p.modelid)) }`;
+    var filaments = await db`select id, material, color from filament where id in ${db(parts.map((p) => p.assignedfilamentid))}`;
 
     return <table className='w-full overflow-y-auto' style={{ maxHeight: "60vh" }}>
         <thead>
@@ -83,14 +81,13 @@ async function QueuedPartsTable() {
             </tr>
         </thead>
         <tbody>
-            {parts.map(part => <tr>
+            {parts.map((part, index) => <tr key={part.id}>
 
-                <td>File.gcode</td>
+                <td>{models.find((m) => m.id === part.modelid)?.name}</td>
                 <td>INSERT PRINTER SELECTOR</td>
                 {/* <td><InlinePrinterSelector selectedPrinter={part.assignedprintername}></InlinePrinterSelector></td> */}
                 <td><ProgressBar color="blue" percentage={50}></ProgressBar></td>
-                {/* <td>{filaments.find((r, i, obj) => r.id === part.assignedfilamentid)!.material}</td> */}
-                <td></td>
+                <td>{filaments.find((f)=>f.id === part.assignedfilamentid)?.material} {filaments.find((f)=>f.id === part.assignedfilamentid)?.color}</td>
                 <td>Someone</td>
             </tr>)}
             {/* <tr>
@@ -120,28 +117,32 @@ async function QueuedPartsTable() {
 
 async function PendingReviewPartsTable()
 {
-    var parts = await db`select * from part where status='pending'`;
+    var parts = await db`select p.*, owneremail from part as p, request as r where p.status='pending' and p.requestid = r.id`;
+    var models = await db`select * from model where id in ${ db(parts.map((p) => p.modelid)) }`;
+    var filaments = await db`select id, material, color from filament where id in ${db(parts.map((p) => p.assignedfilamentid))}`;
 
     return <table className='w-full overflow-y-auto' style={{ maxHeight: "60vh" }}>
         <thead>
             <tr>
-                <td>Filename</td>
+                <td>Model</td>
                 <td>User</td>
                 <td>Quantity</td>
-                <td>Model</td>
+                <td>File</td>
                 <td>Actions</td>
             </tr>
         </thead>
         <tbody>
-            {parts.map(part => <tr>
-                <td>Filename</td>
-                <td>User</td>
+            {parts.map(part => <tr key={part.id}>
+                <td>{models.find((m) => m.id === part.modelid)?.name}</td>
+                <td>{part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}</td>
                 <td>{part.quantity}</td>
-                <td>Model Download</td>
+                <td><a download={true} className="text-blue-500 underline" href={`/api/download/?file=${models.find((m) => m.id === part.modelid)?.filepath}`}>Download</a></td>
                 <td>
                     <a>
-                        Approve
-                        <RegularPlus className='inline w-4 h-4 fill-green-400'></RegularPlus>
+                        <button className="inline mx-2 text-base w-fit px-2 py-1 bg-green-500 border-none rounded-md">Accept</button>
+                        <button className="inline text-base w-fit px-2 py-1 bg-red-400 border-none rounded-md">Deny</button>
+                        {/* <RegularCrossCircle className='inline w-6 h-6 fill-green-400'></RegularCrossCircle> */}
+                        {/* <RegularCheckmark className='inline w-6 h-6 fill-red-400'></RegularCheckmark> */}
                     </a>
                 </td>
             </tr>)}

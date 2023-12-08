@@ -1,17 +1,10 @@
-import { PartList, Part } from '@/app/components/PartList';
+import { Part, Request } from "@/app/api/util/Constants";
+import { PartList,} from '@/app/components/PartList';
 import { getParts } from '@/app/api/util/GetParts';
 
-export interface Request {
-    id: number,
-    name: string,
-    date: Date,
-    isFulfilled: boolean
-}
-
 async function RequestRow({request}: {request: Request}): Promise<JSX.Element> {
-  let resPart = await getParts(request.id);
-  let parts: Part[] = resPart.map((row: any) => {return {id: row.id, requestid: row.requestid, modelid: row.modelid, quantity: row.quantity, status: row.status, filament: row.filament}});
-  
+  let parts = await getParts(request.id);
+
   const options = {
     year: "2-digit",
     month: "numeric",
@@ -22,7 +15,7 @@ async function RequestRow({request}: {request: Request}): Promise<JSX.Element> {
 
   return (
     <tr className="text-left">
-      <td className="w-1/4 p-2">{request.name}<br/>{request.date.toLocaleString("en-US", options)}</td>
+      <td className="w-1/4 p-1">{request.name}<br/>{request.date.toLocaleString("en-US", options)}</td>
       <td className="p-2"><PartList parts={parts}/></td>
     </tr>
   )
@@ -32,13 +25,13 @@ export function RequestList({requests}: {requests: Request[]}): JSX.Element {
   return (
     <table className="bg-white m-auto w-full">
       <thead>
-        <tr className="text-left text-gray-400">
-          <th className="w-1/4">Request</th>
+        <tr className="text-left">
+          <th className="w-1/4 text-gray-400">Request</th>
           <th className="flex">
-            <th className="w-1/2">Part Name</th>
-            <th className="w-1/6">Filament</th>
-            <th className="w-1/6">Quantity</th>
-            <th className="w-1/6">Status</th>
+            <p className="w-1/2 text-gray-400">Part Name</p>
+            <p className="w-1/6 text-gray-400">Filament</p>
+            <p className="w-1/6 text-gray-400">Quantity</p>
+            <p className="w-1/6 text-gray-400">Status</p>
           </th>
         </tr>
       </thead>
