@@ -17,7 +17,7 @@ export function InlinePrinterSelector({ selectedPrinter, fill, hoveredColor, cla
         className={`bg-transparent ${selection == 'unassigned' ? 'text-red-400' : ''} ${className}`}
         onInput={event => { setSelection(event.currentTarget.value); event.preventDefault(); console.log(event.currentTarget); }}
     >
-        <option disabled selected value="unassigned">Unassigned</option>
+        <option disabled value="unassigned">Unassigned</option>
         {options.map(option => <option value={option}>{option}</option>)}
     </select>;
 }
