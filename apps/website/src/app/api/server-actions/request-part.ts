@@ -8,6 +8,9 @@ import { redirect } from 'next/navigation';
 
 import db from '@/app/api/Database';
 
+const uploadDir = path.join(process.cwd(), "uploads", "stl");
+
+
 export async function getFilamentList() {
   let filaments = await db`select material, color from filament where instock=true`;
 
@@ -51,7 +54,6 @@ export async function requestPart(prevState: string, formData: FormData) {
 
   let filenames = filepaths.map(path => path.substring(0, path.lastIndexOf(".")));
   
-  const uploadDir = path.join(process.cwd(), "uploads", "stl");
 
   try {
     if(!fs.existsSync(uploadDir)) {

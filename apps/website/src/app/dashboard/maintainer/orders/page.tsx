@@ -27,10 +27,8 @@ async function RunningPartsTable() {
 
 async function QueuedPartsTable() {
     var parts = await db`select * from part where status='queued'`;
-    // var models = await db`select * from model where id IN ${parts.map((p) => p.modelid)}`;
-    // var filaments = await db`select id, material, color from filament where id in ${parts.map((p) => p.assignedfilamentid)}`
-
-
+    var models = await db`select * from model where id in ${ db(parts.map((p) => p.modelid)) }`;
+    var filaments = await db`select id, material, color from filament where id in ${db(parts.map((p) => p.assignedfilamentid))}`;
 
     return <table className='w-full overflow-y-auto' style={{ maxHeight: "60vh" }}>
         <thead>
@@ -43,13 +41,12 @@ async function QueuedPartsTable() {
             </tr>
         </thead>
         <tbody>
-            {parts.map(part => <tr>
+            {parts.map((part, index) => <tr key={part.id}>
 
-                <td>File.gcode</td>
+                <td>{models.find((m) => m.id === part.modelid)?.name}</td>
                 <td><InlinePrinterSelector selectedPrinter={part.assignedprintername}></InlinePrinterSelector></td>
                 <td><ProgressBar color="blue" percentage={50}></ProgressBar></td>
-                {/* <td>{filaments.find((r, i, obj) => r.id === part.assignedfilamentid)!.material}</td> */}
-                <td></td>
+                <td>{filaments.find((f)=>f.id === part.assignedfilamentid)?.material} {filaments.find((f)=>f.id === part.assignedfilamentid)?.color}</td>
                 <td>Someone</td>
             </tr>)}
             {/* <tr>
@@ -79,24 +76,26 @@ async function QueuedPartsTable() {
 
 async function PendingReviewPartsTable()
 {
-    var parts = await db`select * from part where status='pending'`;
+    var parts = await db`select p.*, owneremail from part as p, request as r where p.status='pending' and p.requestid = r.id`;
+    var models = await db`select * from model where id in ${ db(parts.map((p) => p.modelid)) }`;
+    var filaments = await db`select id, material, color from filament where id in ${db(parts.map((p) => p.assignedfilamentid))}`;
 
     return <table className='w-full overflow-y-auto' style={{ maxHeight: "60vh" }}>
         <thead>
             <tr>
-                <td>Filename</td>
+                <td>Model</td>
                 <td>User</td>
                 <td>Quantity</td>
-                <td>Model</td>
+                <td>File</td>
                 <td>Actions</td>
             </tr>
         </thead>
         <tbody>
-            {parts.map(part => <tr>
-                <td>Filename</td>
-                <td>User</td>
+            {parts.map(part => <tr key={part.id}>
+                <td>{models.find((m) => m.id === part.modelid)?.name}</td>
+                <td>{part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}</td>
                 <td>{part.quantity}</td>
-                <td>Model Download</td>
+                <td><a download={true} className="text-blue-500 underline" href={`/api/download/?file=${models.find((m) => m.id === part.modelid)?.filepath}`}>Download</a></td>
                 <td>
                     <a>
                         Approve
@@ -134,8 +133,9 @@ export default function Maintainer() {
                 ]}></SidebarNavigation>
 
                 {/* <div className='bg-purple-400 w-3/6 h-screen'> */}
-                <div className='w-4/6 h-screen overflow-y-auto p-12' style={{ minWidth: "900px" }}>
-                    <div className='m-auto' style={{ minWidth: "900px", maxWidth: "1100px" }}>
+                <div className='w-full h-screen overflow-y-auto p-12' style={{ minWidth: "900px" }}>
+                    {/*<div className='m-auto' style={{ minWidth: "900px", maxWidth: "1100px" }}>*/}
+                    <div className='m-auto'>
                         <h1 className='text-2xl mb-7'>Orders</h1>
                         {/* <p className='text-lg mb-2'>Insights</p>
                         <div className='flex flex-row gap-4'>
