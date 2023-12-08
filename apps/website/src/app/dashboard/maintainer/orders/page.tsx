@@ -78,82 +78,86 @@ function RunningPartsTable()
 
 }
 
-export default function Maintainer() 
-{
+export default function Maintainer() {
     return (
-        <main className='flex'>
-            <SidebarNavigation className='w-28' items={[
+        <main >
+            <Navbar links={[
+                {name: "Request a Print", path: "/request-part"},
+                {name: "User Dashboard", path: "/dashboard/user"},
+                {name: "Logout", path: "/user/logout"}
+            ]}/>
 
-                {
-                    name: "Orders",
-                    route: "orders",
-                    icon: (className) => <RegularCart className={`${className}`}></RegularCart>,
-                    active: true
-                },
-                {
-                    name: "Printers",
-                    route: "printers",
-                    icon: (className) => <RegularCog className={`${className}`}></RegularCog>,
-                    active: false
-                }
+            <div className='flex'>
+                <SidebarNavigation className='w-28' items={[
+                    {
+                        name: "Orders",
+                        route: "orders",
+                        icon: (className) => <RegularCart className={`${className}`}></RegularCart>,
+                        active: true
+                    },
+                    {
+                        name: "Printers",
+                        route: "printers",
+                        icon: (className) => <RegularCog className={`${className}`}></RegularCog>,
+                        active: false
+                    }
+                ]}></SidebarNavigation>
 
-            ]}></SidebarNavigation>
+                {/* <div className='bg-purple-400 w-3/6 h-screen'> */}
+                <div className='w-4/6 h-screen overflow-y-auto p-12' style={{minWidth: "900px"}}>
+                    <div className='m-auto' style={{minWidth: "900px", maxWidth: "1100px"}}>
+                        <h1 className='text-2xl mb-7'>Orders</h1>
+                        {/* <p className='text-lg mb-2'>Insights</p>
+                        <div className='flex flex-row gap-4'>
+                            <div className='rounded-xl py-4 px-6 w-fit h-fit bg-amber-300 bg-opacity-20'>
+                                <span className=''>Running Orders: </span>
+                                <span className='font-semibold'>5</span>
+                            </div>
+                            <div className='rounded-lg py-4 px-6 w-fit h-fit bg-sky-600 bg-opacity-20'>
+                                <span className=''>Queued Orders: </span>
+                                <span className='font-semibold'>10</span>
+                            </div>
+                            <div className='rounded-lg py-4 px-6 w-fit h-fit bg-slate-500 bg-opacity-20'>
+                                <span className=''>Waiting for Review: </span>
+                                <span className='font-semibold'>10</span>
+                            </div>
+                        </div> */}
 
-            {/* <div className='bg-purple-400 w-3/6 h-screen'> */}
-            <div className='w-4/6 h-screen overflow-y-auto p-12' style={{minWidth: "900px"}}>
-                <div className='m-auto' style={{minWidth: "900px", maxWidth: "1100px"}}>
-                    <h1 className='text-2xl mb-7'>Orders</h1>
-                    {/* <p className='text-lg mb-2'>Insights</p>
-                    <div className='flex flex-row gap-4'>
-                        <div className='rounded-xl py-4 px-6 w-fit h-fit bg-amber-300 bg-opacity-20'>
-                            <span className=''>Running Orders: </span>
-                            <span className='font-semibold'>5</span>
-                        </div>
-                        <div className='rounded-lg py-4 px-6 w-fit h-fit bg-sky-600 bg-opacity-20'>
-                            <span className=''>Queued Orders: </span>
-                            <span className='font-semibold'>10</span>
-                        </div>
-                        <div className='rounded-lg py-4 px-6 w-fit h-fit bg-slate-500 bg-opacity-20'>
-                            <span className=''>Waiting for Review: </span>
-                            <span className='font-semibold'>10</span>
-                        </div>
-                    </div> */}
-
-                    <h2 className='mt-12'>Running Orders</h2>
-                    <table className='w-full overflow-y-auto' style={{maxHeight: "60vh"}}>
-                        <thead>
-                            <tr>
-                                <td>Filename</td>
-                                <td>Printer</td>
-                                <td>Progress</td>
-                                <td>User</td>
-                                <td>Cost</td>
-                            </tr>
-                        </thead>    
-                        <tbody>
-                            <tr>
-                                <td><InlineFile filename='companion_cube.stl'></InlineFile></td>
-                                <td>Ender 3 V2</td>
-                                <td><ProgressBar color='rgb(174, 236, 169)' percentage={100}></ProgressBar></td>
-                                <td>Ben</td>
-                                <td>$5</td>
-                            </tr>
-                            <tr>
-                                <td><InlineFile filename='avatar.stl'></InlineFile></td>
-                                <td>Ender 3 V2</td>
-                                <td><ProgressBar color='rgb(130, 199, 237)' percentage={50}></ProgressBar></td>
-                                <td>Ben</td>
-                                <td>$20</td>
-                            </tr>
-                            <tr>
-                                <td><InlineFile filename='insane_mount.stl'></InlineFile></td>
-                                <td>Ender 3 V2</td>
-                                <td><ProgressBar color='rgb(207, 83, 72)' percentage={100}></ProgressBar></td>
-                                <td>Aaron</td>
-                                <td>$10</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                        <h2 className='mt-12'>Running Orders</h2>
+                        <table className='w-full overflow-y-auto' style={{maxHeight: "60vh"}}>
+                            <thead>
+                                <tr>
+                                    <td>Filename</td>
+                                    <td>Printer</td>
+                                    <td>Progress</td>
+                                    <td>User</td>
+                                    <td>Cost</td>
+                                </tr>
+                            </thead>    
+                            <tbody>
+                                <tr>
+                                    <td><InlineFile filename='companion_cube.stl'></InlineFile></td>
+                                    <td>Ender 3 V2</td>
+                                    <td><ProgressBar color='rgb(174, 236, 169)' percentage={100}></ProgressBar></td>
+                                    <td>Ben</td>
+                                    <td>$5</td>
+                                </tr>
+                                <tr>
+                                    <td><InlineFile filename='avatar.stl'></InlineFile></td>
+                                    <td>Ender 3 V2</td>
+                                    <td><ProgressBar color='rgb(130, 199, 237)' percentage={50}></ProgressBar></td>
+                                    <td>Ben</td>
+                                    <td>$20</td>
+                                </tr>
+                                <tr>
+                                    <td><InlineFile filename='insane_mount.stl'></InlineFile></td>
+                                    <td>Ender 3 V2</td>
+                                    <td><ProgressBar color='rgb(207, 83, 72)' percentage={100}></ProgressBar></td>
+                                    <td>Aaron</td>
+                                    <td>$10</td>
+                                </tr>
+                            </tbody>
+                        </table>
 
                     <h2 className='mt-12'>Queued Orders</h2>
                     <QueuedPartsTable></QueuedPartsTable>

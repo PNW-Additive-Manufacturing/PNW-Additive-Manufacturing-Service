@@ -7,6 +7,9 @@ import { getJwtPayload } from "@/app/api/util/JwtHelper";
 import { Permission, SESSION_COOKIE } from "@/app/api/util/Constants";
 import { cookies } from "next/headers";
 
+import db from '@/app/api/Database';
+
+
 /*
   Server Actions for Account-related server stuff
 */
@@ -71,4 +74,22 @@ export async function tryCreateAccount(prevState: string, formData: FormData) {
 export async function logout() {
   console.log("Logout")
   cookies().delete(SESSION_COOKIE);
+}
+
+export async function changePermission(prevState: string, formData: FormData): Promise<string> {
+  console.log("changing permission")
+  let newPermission = formData.get("new-permission") as Permission;
+  let userEmail = formData.get("user-email") as string;
+
+  try {
+    let res = await db`update account set permission=${newPermission} where email=${userEmail} returning email`;
+    if(res.count == 0) {
+      throw new Error("Failed to update account!");
+    }
+  } catch(e) {
+    console.error(e);
+    return "Failed to update permission on user!";
+  }
+
+  return "";
 }

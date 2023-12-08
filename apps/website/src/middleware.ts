@@ -46,10 +46,11 @@ export async function middleware(request: NextRequest) {
   try {
     jwtPayload = await getJwtPayload();
     if(jwtPayload == null) {
-      throw new Error();
+      throw new Error("No JWT Exists");
     }
   } catch(e) {
     console.log(e);
+    console.log("Redirect to login");
     //if JWT does not exist or is invalid
     return NextResponse.redirect(new URL("/user/login", request.url));
   }
