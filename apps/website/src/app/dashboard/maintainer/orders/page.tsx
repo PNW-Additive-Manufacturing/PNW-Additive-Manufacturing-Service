@@ -26,7 +26,7 @@ async function RunningPartsTable() {
 }
 
 async function QueuedPartsTable() {
-    var parts = await db`select * from part where status='queued'`;
+    var parts = await db`select p.*, r.owneremail from part as p, request as r where p.status='queued' and p.requestid=r.id`;
     var models = await db`select * from model where id in ${ db(parts.map((p) => p.modelid)) }`;
     var filaments = await db`select id, material, color from filament where id in ${db(parts.map((p) => p.assignedfilamentid))}`;
 
@@ -35,20 +35,24 @@ async function QueuedPartsTable() {
             <tr>
                 <td>Filename</td>
                 <td>Printer</td>
-                <td>Progress</td>
+                <td>Quantity</td>
                 <td>Filament</td>
                 <td>User</td>
             </tr>
         </thead>
         <tbody>
-            {parts.map((part, index) => <tr key={part.id}>
-
-                <td>{models.find((m) => m.id === part.modelid)?.name}</td>
-                <td><InlinePrinterSelector selectedPrinter={part.assignedprintername}></InlinePrinterSelector></td>
-                <td><ProgressBar color="blue" percentage={50}></ProgressBar></td>
-                <td>{filaments.find((f)=>f.id === part.assignedfilamentid)?.material} {filaments.find((f)=>f.id === part.assignedfilamentid)?.color}</td>
-                <td>Someone</td>
-            </tr>)}
+            {parts.map((part, index) => {
+                let filament = filaments.find((f)=>f.id === part.assignedfilamentid);
+                return (
+                    <tr key={part.id}>
+                        <td>{models.find((m) => m.id === part.modelid)?.name}</td>
+                        <td><InlinePrinterSelector selectedPrinter={part.assignedprintername}></InlinePrinterSelector></td>
+                        <td>{part.quantity}</td>
+                        <td>{filament?.material.toUpperCase()} {filament?.color}</td>
+                        <td>{part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}</td>
+                    </tr>
+                );
+            })}
             {/* <tr>
             <td><InlineFile filename='companion_cube.stl'></InlineFile></td>
             <td>Ender 3 V2</td>
@@ -86,23 +90,28 @@ async function PendingReviewPartsTable()
                 <td>Model</td>
                 <td>User</td>
                 <td>Quantity</td>
-                <td>File</td>
+                <td>Filament</td>
                 <td>Actions</td>
             </tr>
         </thead>
         <tbody>
-            {parts.map(part => <tr key={part.id}>
-                <td>{models.find((m) => m.id === part.modelid)?.name}</td>
-                <td>{part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}</td>
-                <td>{part.quantity}</td>
-                <td><a download={true} className="text-blue-500 underline" href={`/api/download/?file=${models.find((m) => m.id === part.modelid)?.filepath}`}>Download</a></td>
-                <td>
-                    <a>
-                        Approve
-                        <RegularPlus className='inline w-4 h-4 fill-green-400'></RegularPlus>
-                    </a>
-                </td>
-            </tr>)}
+            {parts.map(part => {
+                let model = models.find((m) => m.id === part.modelid)!;
+                let filament = filaments.find(f => f.id === part.assignedfilamentid);
+                return (<tr key={part.id}>
+                    <td><a download={true} className="text-blue-500 underline" href={`/api/download/?file=${model.filepath}`}>{model.name}</a></td>
+                    <td>{part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}</td>
+                    <td>{part.quantity}</td>
+                    <td>{filament?.material.toUpperCase()} {filament?.color}</td>
+                    <td>
+                        <a>
+                            Approve
+                            <RegularPlus className='inline w-4 h-4 fill-green-400'></RegularPlus>
+                        </a>
+                    </td>
+                    </tr>
+                );
+            })}
         </tbody>
     </table>
 }

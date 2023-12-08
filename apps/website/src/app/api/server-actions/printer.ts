@@ -1,4 +1,7 @@
+"use server"
+
 import db from "@/app/api/Database";
+import { redirect } from "next/navigation";
 
 
 export async function addPrinter(prevState: string, formData: FormData) : Promise<string> {
@@ -26,7 +29,8 @@ export async function addPrinter(prevState: string, formData: FormData) : Promis
     return "Failed to add printer with error: " + e.message;
   }
 
-  return "";
+  //successful!
+  redirect("/dashboard/admin/printers");
 }
 
 export async function deletePrinter(prevState: string, formData: FormData) : Promise<string> {

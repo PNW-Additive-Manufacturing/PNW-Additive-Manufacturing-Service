@@ -27,7 +27,8 @@ export default async function Admin() {
                 {name: "Request a Print", path: "/request-part"},
                 {name: "User Dashboard", path: "/dashboard/user"},
                 {name: "Maintainer Dashboard", path: "/dashboard/maintainer"},
-                {name: "Logout", path: "/user/logout"}
+                {name: "Printers", path: "/dashboard/admin/printers"},
+                {name: "Logout", path: "/user/logout"},
             ]}/>
 
             <ListOfUserList admins={admins} normUsers={users} maintainers={maintainers}/>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react';
+import { Key, useState } from 'react';
 
 export function InlinePrinterSelector({ selectedPrinter, fill, hoveredColor, className }: { selectedPrinter?: string; fill?: string; hoveredColor?: string; className?: string; }) {
     fill = fill ?? 'fill-slate-200';
@@ -18,6 +18,6 @@ export function InlinePrinterSelector({ selectedPrinter, fill, hoveredColor, cla
         onInput={event => { setSelection(event.currentTarget.value); event.preventDefault(); console.log(event.currentTarget); }}
     >
         <option disabled value="unassigned">Unassigned</option>
-        {options.map(option => <option value={option}>{option}</option>)}
+        {options.map(option => <option key={option} value={option}>{option}</option>)}
     </select>;
 }
