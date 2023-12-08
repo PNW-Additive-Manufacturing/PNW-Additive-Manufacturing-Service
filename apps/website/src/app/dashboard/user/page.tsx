@@ -1,8 +1,9 @@
-import { RequestList, Request } from '@/app/components/RequestList'
+import { RequestList } from '@/app/components/RequestList'
 import { getRequests } from '@/app/api/util/GetRequests';
 import { Navbar } from '@/app/components/Navigation'
 import { getJwtPayload } from '@/app/api/util/JwtHelper';
 import { redirect } from 'next/navigation';
+import { Request } from "@/app/api/util/Constants";
 
 export default async function Request() {
   let email: string;
