@@ -46,3 +46,18 @@ export async function deleteFilament(prevState: string, data: FormData) : Promis
 
     return "";
 }
+
+export async function setFilamentInStock(prevState: string, data: FormData) : Promise<string> {
+    var material = (data.get("filament-material") as string).toLowerCase();
+    var color = (data.get("filament-color") as string).toLowerCase();
+    var instock = (data.get("filament-instock") as string) === "true";
+
+
+    try {
+        await db`update filament set instock=${instock} where material=${material} and color=${color}`;
+    } catch(e: any) {
+        return "Failed to update filament with error: " + e.message;
+    }
+
+    return "";
+}

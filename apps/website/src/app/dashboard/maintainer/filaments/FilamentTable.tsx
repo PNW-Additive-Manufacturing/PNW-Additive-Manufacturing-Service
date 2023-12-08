@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useTransition } from "react";
-import { deleteFilament } from "@/app/api/server-actions/maintainer";
+import { ChangeEvent, useState, useTransition } from "react";
+import { deleteFilament, setFilamentInStock } from "@/app/api/server-actions/maintainer";
 
 export interface Filament {
   material: string,
@@ -31,6 +31,37 @@ export function FilamentList({initialFilaments} : {initialFilaments: Filament[]}
     })
   };
 
+  let changeHandler = (e: ChangeEvent<HTMLSelectElement>, filament: Filament) => {
+    if((e.target.value === "true") === filament.instock) {
+      return;
+    }
+
+    let newInStock = e.target.value;
+
+    startTransition(async () => {
+      let form = new FormData();
+      form.append("filament-material", filament.material);
+      form.append("filament-color", filament.color);
+      form.append("filament-instock", newInStock);
+
+
+      let errorMessage = await setFilamentInStock('', form);
+      if(errorMessage) {
+        setError(errorMessage);
+        return;
+      }
+
+      setFilamentList(filaments.map((f) => {
+        if(f.material === filament.material && f.color === filament.color) {
+          f.instock = newInStock === "true";
+        }
+        return f;
+      }))
+
+    });
+
+  };
+
   return (
     <>
       <p className="text-red-600">{error}</p>
@@ -48,7 +79,13 @@ export function FilamentList({initialFilaments} : {initialFilaments: Filament[]}
           {filaments.map((f: Filament) => <tr key={f.material + f.color}>
             <td className='text-left pl-5'>{f.material.toUpperCase()}</td>
             <td className='text-left'>{f.color}</td>
-            <td className='text-left'>{f.instock ? "true" : "false"}</td>
+            <td className='text-left'>
+              <select onChange={(e) => changeHandler(e, f)} defaultValue={f.instock ? "true" : "false"}>
+                <option value="true">true</option>
+                <option value="false">false</option>
+
+              </select>
+            </td>
             <td className='text-left pr-5'><button className='bg-red-500 p-1 rounded-lg border-none' onClick={(e) => clickHandler(f.material, f.color)}>Delete</button></td>
           </tr>)}
         </tbody>
