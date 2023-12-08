@@ -82,8 +82,8 @@ public class MoonrakerCommunicationStrategy : ICommunicationStrategy
     public async Task<IEnumerable<string>> GetFiles() 
     {
         return (await Get("/server/files/list")).EnumerateArray().Select(prop => prop.GetProperty("path").GetString()!);
-    } 
-
+    }
+    
     public async Task<bool> RunFile(string fileName)
     {
         return (await this.HttpClient.PostAsync($"/printer/print/start?filename={fileName}", null)).IsSuccessStatusCode;
@@ -174,4 +174,5 @@ public class MoonrakerCommunicationStrategy : ICommunicationStrategy
         this.HttpClient.Dispose();
         GC.SuppressFinalize(this);
     }
+
 }

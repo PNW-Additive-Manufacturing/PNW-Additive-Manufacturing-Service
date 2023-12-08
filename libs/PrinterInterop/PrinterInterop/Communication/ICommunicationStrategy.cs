@@ -31,6 +31,7 @@ public interface ICommunicationStrategy : IDisposable
 
     Task<PrinterState> GetState();
     Task<PrintStatus> GetPrintStatus();
+    Task<IEnumerable<string>> GetFiles();
     Task<(float, float, float)> GetExtruderPosition();
     Task<IDictionary<string, float>> GetTemperatures();
 

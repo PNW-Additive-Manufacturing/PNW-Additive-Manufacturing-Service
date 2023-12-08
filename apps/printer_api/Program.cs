@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using PrinterInterop;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -18,25 +19,26 @@ internal class Program
 
         app.MapGet("/", () => "Hello Printers!");
 
-        app.MapGet("/printers", () => Results.Ok(Printers.Select(printer => new {
+        app.MapGet("/printers", () => Results.Ok(Printers.Select(printer => new
+        {
 
-            ConnectionStatus = printer.Value.Item1.Status,
+            ConnectionStatus = Enum.GetName(printer.Value.Item1.Status)!.ToLower(),
             Name = printer.Value.Item2.Name
         })));
 
-        app.MapGet("/printer/{name}", async (string name) => {
-            name = name.ToLower();
-
+        app.MapGet("/printer/{name}", async (string name) =>
+        {
             // Requested printer is not configured!
             if (!Printers.TryGetValue(name, out var selectedPrinter)) return Results.NotFound();
 
             // If health reports disconnected, do not attempt to query.
-            if (selectedPrinter.Item1.Status == ConnectionState.Disconnected) return Results.Ok(new {
-                ConnectionStatus = ConnectionState.Disconnected,
+            if (selectedPrinter.Item1.Status == ConnectionState.Disconnected) return Results.Ok(new
+            {
+                ConnectionStatus = Enum.GetName(ConnectionState.Disconnected),
                 Name = selectedPrinter.Item2.Name
             });
 
-            PrinterState? status;
+            PrinterState status;
             try
             {
                 status = await selectedPrinter.Item1.CommunicationStrategy.GetState();
@@ -48,8 +50,9 @@ internal class Program
                 Console.ResetColor();
 
                 // Something went wrong...!
-                return Results.Ok(new {
-                    ConnectionStatus = selectedPrinter.Item1.Status,
+                return Results.Ok(new
+                {
+                    ConnectionStatus = Enum.GetName(selectedPrinter.Item1.Status),
                     Name = selectedPrinter.Item2.Name,
                 });
             }
@@ -57,19 +60,68 @@ internal class Program
             var toolPosition = await selectedPrinter.Item1.CommunicationStrategy.GetExtruderPosition();
             var temps = await selectedPrinter.Item1.CommunicationStrategy.GetTemperatures();
 
-            return Results.Ok(new {
-                ConnectionStatus = selectedPrinter.Item1.Status,
+            Console.WriteLine(toolPosition);
+
+            return Results.Ok(new
+            {
+                ConnectionStatus = Enum.GetName(selectedPrinter.Item1.Status),
                 Name = selectedPrinter.Item2.Name,
-                Status = status,
+                Status = Enum.GetName(status),
                 Temperatures = temps,
-                ToolPosition = toolPosition
+                ToolPosition = new float[] { toolPosition.Item1, toolPosition.Item2, toolPosition.Item3 }
             });
+        });
+
+        app.MapGet("/printer/{name}/files", async (string name) =>
+        {
+            // Requested printer is not configured!
+            if (!Printers.TryGetValue(name, out var selectedPrinter)) return Results.NotFound();
+
+            // If health reports disconnected, do not attempt to query.
+            if (selectedPrinter.Item1.Status == ConnectionState.Disconnected)
+                // TODO: Replace response with something that provides details about what happened.
+                return Results.Problem(statusCode: 503);
+
+            return Results.Ok(await selectedPrinter.Item1.CommunicationStrategy.GetFiles());
+        });
+
+        app.MapPost("/printer/{name}/stop", async (string name) =>
+        {
+            // Requested printer is not configured!
+            if (!Printers.TryGetValue(name, out var selectedPrinter)) return Results.NotFound();
+
+            // If health reports disconnected, do not attempt to query.
+            if (selectedPrinter.Item1.Status == ConnectionState.Disconnected)
+                // TODO: Replace response with something that provides details about what happened.
+                return Results.Problem(statusCode: 503);
+
+            _ = await selectedPrinter.Item1.CommunicationStrategy.StopPrint();
+            return Results.Ok();
+        });
+
+        app.MapPost("/printer/{name}/print", async (string name, [FromForm] IFormFile file) =>
+        {
+            // Requested printer is not configured!
+            if (!Printers.TryGetValue(name, out var selectedPrinter)) return Results.NotFound();
+
+            // If health reports disconnected, do not attempt to query.
+            if (selectedPrinter.Item1.Status == ConnectionState.Disconnected)
+                // TODO: Replace response with something that provides details about what happened.
+                return Results.Problem(statusCode: 503);
+
+            using var stream = file.OpenReadStream();
+            await selectedPrinter.Item1.CommunicationStrategy.UploadFile(stream, file.FileName);
+
+            Thread.Sleep(2000);
+
+            return Results.Ok(await selectedPrinter.Item1.CommunicationStrategy.RunFile(file.FileName));
         });
 
         app.MapGet("/configuration", () => Results.Ok(Configuration.Get()));
 
-        app.MapPost("/configuration", (PrinterConfiguration[] configurations) => {
-            
+        app.MapPost("/configuration", (PrinterConfiguration[] configurations) =>
+        {
+
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.WriteLine("Updating Configurations");
             Console.ResetColor();
@@ -93,7 +145,7 @@ internal class Program
         {
             ConnectionHealth connection;
 
-            try 
+            try
             {
                 connection = printerConfig.GetConnection();
             }
@@ -105,19 +157,22 @@ internal class Program
                 continue;
             }
 
-            connection.OnDisconnect = () => {
+            connection.OnDisconnect = () =>
+            {
                 Console.WriteLine($"Disconnected: {printerConfig.Name}");
                 return Task.CompletedTask;
             };
-            connection.OnReconnectAttempt = (int attempt) => {
+            connection.OnReconnectAttempt = (int attempt) =>
+            {
                 Console.WriteLine($"Attempting to Reconnect #{attempt}: {printerConfig.Name}");
                 return Task.CompletedTask;
             };
-            connection.OnConnect = () => {
+            connection.OnConnect = () =>
+            {
                 Console.WriteLine($"Connected: {printerConfig.Name}");
                 return Task.CompletedTask;
             };
-            
+
             if (Printers.TryGetValue(printerConfig.Name, out var existingConnection))
             {
                 existingConnection.Item1.CommunicationStrategy.Dispose();
@@ -126,7 +181,7 @@ internal class Program
 
             connection.Start();
 
-            Printers.Add(printerConfig.Name, new (connection, printerConfig));
+            Printers.Add(printerConfig.Name, new(connection, printerConfig));
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.WriteLine($"Loaded Printer: {printerConfig.Name}");
             Console.ResetColor();
