@@ -1,5 +1,5 @@
-import { Part, Request } from "@/app/api/util/Constants";
-import { PartList,} from '@/app/components/PartList';
+import { Request } from "@/app/api/util/Constants";
+import { PartList } from '@/app/components/PartList';
 import { getParts } from '@/app/api/util/GetParts';
 
 async function RequestRow({request}: {request: Request}): Promise<JSX.Element> {
