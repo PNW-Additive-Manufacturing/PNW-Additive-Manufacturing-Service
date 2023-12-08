@@ -4,7 +4,7 @@ namespace PrinterAPI;
 
 public class Configuration
 {
-    public static string Location => "printers.json";
+    public static string Location => Environment.GetEnvironmentVariable("PRINTER_CONFIG_PATH") ?? "printers.json";
 
     private static PrinterConfiguration[]? LoadedConfiguration { get; set; }
 
@@ -15,7 +15,7 @@ public class Configuration
         // Update the current, in-memory, configuration.
         LoadedConfiguration = configurations;
 
-        using var writer = new StreamWriter(File.OpenWrite(Location));
+        using var writer = new StreamWriter(File.Open(Location, FileMode.Create));
         writer.Write(JsonSerializer.Serialize(configurations));
     }
 

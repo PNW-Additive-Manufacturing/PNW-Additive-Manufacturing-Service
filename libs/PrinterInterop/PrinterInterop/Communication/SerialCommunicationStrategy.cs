@@ -286,4 +286,9 @@ public class SerialCommunicationStrategy : ICommunicationStrategy
     {
         throw new NotImplementedException();
     }
+
+    public Task<IEnumerable<string>> GetFiles()
+    {
+        throw new NotImplementedException();
+    }
 }
