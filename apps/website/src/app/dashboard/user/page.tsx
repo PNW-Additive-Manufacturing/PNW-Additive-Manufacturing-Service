@@ -28,9 +28,9 @@ export default async function Request() {
         {name: "Logout", path: "/user/logout"}
       ]}/>
 
-      <h1 className="w-full p-4 pt-0 text-left">{`Welcome, ${name}!`}</h1>
+      <h1 className="w-full p-4 pt-1 pb-1 text-left">{`Welcome, ${name}!`}</h1>
 
-      <div className="bg-white rounded-sm p-14 w-full left">
+      <div className="bg-white rounded-sm p-14 pt-7 w-full left">
         <h1 className="w-full pb-4 pt-0 text-left">Pending Requests</h1>
         <RequestList requests={pendingRequests}/>
 

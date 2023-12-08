@@ -23,9 +23,9 @@ function UserRow({user, onChange}: {user: User, onChange: ((email: string, oldPe
       <td className="">{user.name1}</td>
       <td className="">{user.name2}</td>
       <td className="">
-        <div className="bg-transparent rounded-sm p-14 pt-10 pb-10 w-full">
+        <div className="bg-transparent rounded-sm w-full">
           <input type="hidden" name="user-email" value={user.email}/>
-          <select name="permission-admin" defaultValue={user.permission} onChange={change} className="rounded-md m-0 inline-block text-black bg-transparent border-gray-700 border">
+          <select name="permission-admin" defaultValue={user.permission} onChange={change} className="rounded-md m-0 p-0 inline-block text-black bg-transparent border-gray-700 border">
             <option value="admin">Administrator</option>
             <option value="maintainer">Maintainer</option>
             <option value="user">Normal User</option>
@@ -136,7 +136,7 @@ export function ListOfUserList({normUsers, maintainers, admins}: {normUsers: Use
   };
 
   return (
-    <div className="bg-white rounded-sm p-14 w-full left">
+    <div className="bg-white rounded-sm p-14 pt-7 w-full left">
 
       <h1 className="w-full pb-4 pt-0 text-left">Admin List</h1>
       <UserList users={adminArray} onChange={onChange}/>
