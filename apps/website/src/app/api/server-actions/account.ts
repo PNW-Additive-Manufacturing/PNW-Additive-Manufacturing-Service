@@ -1,4 +1,9 @@
 "use server"
+/*
+  MUST USE "use server" FOR SERVER ACTIONS.
+  Not doing so will result in compilation errors caused from attempting to bundle server
+  NPM packages for the client
+*/
 
 import { attemptLogin, createAccount } from "@/app/api/util/AccountHelper";
 import { revalidatePath } from "next/cache";

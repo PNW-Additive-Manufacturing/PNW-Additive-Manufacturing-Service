@@ -7,7 +7,12 @@ const { parsed: myEnv} = require('dotenv').config({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   //inject dotenv environment variables into NextJS process.env variable
-  webpack(config) {
+  webpack: (config, {isServer}) => {
+    /*
+    if(!isServer) {
+      config.resolve.fallback = {net: false, tls: false}
+    }
+    */
     config.plugins.push(new webpack.EnvironmentPlugin(myEnv));
     return config;
   },

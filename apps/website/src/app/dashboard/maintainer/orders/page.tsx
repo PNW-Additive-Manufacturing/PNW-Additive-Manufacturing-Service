@@ -6,7 +6,7 @@ import { Canvas, useLoader } from '@react-three/fiber';
 import ModelViewer from '@/app/components/ModelViewer';
 import { BoxGeometry, BufferGeometry, Camera, Euler, PerspectiveCamera, Vector2, Vector3 } from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
-import { RegularLayers, RegularSearchAlt, RegularSpinnerSolid, RegularChevronDown, RegularChevronDownCircle, RegularArrowUp, RegularCog, RegularEye, RegularCheckmarkCircle, RegularBan, RegularPlus, RegularCart, RegularWarning } from 'lineicons-react';
+import { RegularLayers, RegularSearchAlt, RegularSpinnerSolid, RegularChevronDown, RegularChevronDownCircle, RegularArrowUp, RegularCog, RegularEye, RegularCheckmarkCircle, RegularBan, RegularPlus, RegularCart, RegularWarning, RegularCrossCircle } from 'lineicons-react';
 import UserSpan from '@/app/components/UserSpan';
 import PrinterSpan from '@/app/components/PrinterSpan';
 import SidebarNavigation from '@/app/components/DashboardNavigation';
@@ -137,6 +137,12 @@ export default function Maintainer() {
                         name: "Printers",
                         route: "printers",
                         icon: (className) => <RegularCog className={`${className}`}></RegularCog>,
+                        active: false
+                    },
+                    {
+                        name: "Filaments",
+                        route: "filaments",
+                        icon: (className) => <RegularCrossCircle className={`${className}`}></RegularCrossCircle>,
                         active: false
                     }
                 ]}></SidebarNavigation>
