@@ -4,6 +4,7 @@ import { Filament, FilamentList } from "./FilamentTable";
 import { Navbar } from "@/app/components/Navigation";
 import SidebarNavigation from "@/app/components/DashboardNavigation";
 import { RegularCart, RegularCog, RegularCrossCircle } from "lineicons-react";
+import Dropdown from "@/app/components/Dropdown";
 
 export default async function Page() {
   let filaments: Filament[] = (await db`select * from filament`).map((f) => {
@@ -42,8 +43,10 @@ export default async function Page() {
           }
         ]}></SidebarNavigation>
 
-        <div className='w-full p-12 overflow-y-scroll' style={{height: 'calc(100vh - 72px)'}}>
-          <FilamentList initialFilaments={filaments}/>
+        <div className='w-full lg:w-2/3 mx-auto p-12 overflow-y-scroll' style={{height: 'calc(100vh - 72px)'}}>
+          <Dropdown name="Filament" collapsible={false}>
+            <FilamentList initialFilaments={filaments}/>
+          </Dropdown>
         </div>
       
       </div>
