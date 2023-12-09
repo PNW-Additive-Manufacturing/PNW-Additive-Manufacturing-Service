@@ -125,7 +125,7 @@ table thead {
   border-radius: 50%;
   /* border-bottom: 2px solid gray; */
   text-transform: uppercase;
-    margin: 2rem 1rem 1rem 2rem;
+  margin: 2rem 1rem 1rem 2rem;
 }
 table thead tr td, table thead tr th {
   font-size: 0.8rem;
@@ -141,7 +141,7 @@ table tbody tr td {
   font-size: 1.1rem;
   padding: 1rem 0rem 1rem 0rem;
 }
-table thead tr td:last-child
+table thead tr td:last-child, table thead tr th:last-child
 {
   padding-right: 0rem;
 }

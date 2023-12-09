@@ -65,10 +65,9 @@ export function FilamentList({initialFilaments} : {initialFilaments: Filament[]}
   return (
     <>
       <p className="text-red-600">{error}</p>
-      <h1 className="text-left">Filaments</h1>
-      <table className="bg-white mt-5 m-auto w-9/10">
+      <table className="w-full">
         <thead>
-          <tr className="text-gray-400">
+          <tr className="">
             <th className="text-left pl-5">Material</th>
             <th className="text-left">Color</th>
             <th className="text-left">In Stock</th>
@@ -80,13 +79,13 @@ export function FilamentList({initialFilaments} : {initialFilaments: Filament[]}
             <td className='text-left pl-5'>{f.material.toUpperCase()}</td>
             <td className='text-left'>{f.color}</td>
             <td className='text-left'>
-              <select onChange={(e) => changeHandler(e, f)} defaultValue={f.instock ? "true" : "false"}>
+              <select className="bg-transparent" onChange={(e) => changeHandler(e, f)} defaultValue={f.instock ? "true" : "false"}>
                 <option value="true">true</option>
                 <option value="false">false</option>
 
               </select>
             </td>
-            <td className='text-left pr-5'><button className='bg-red-500 p-1 rounded-lg border-none' onClick={(e) => clickHandler(f.material, f.color)}>Delete</button></td>
+            <td className='text-left pr-5'><button className='bg-red-600 px-2 py-1 w-fit rounded-lg border-none' onClick={(e) => clickHandler(f.material, f.color)}>Delete</button></td>
           </tr>)}
         </tbody>
       </table>

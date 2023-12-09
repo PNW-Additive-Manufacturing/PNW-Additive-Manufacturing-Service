@@ -3,16 +3,24 @@
 import { RegularChevronDown } from "lineicons-react";
 import { ReactNode, useState } from "react";
 
-export default function Dropdown({ name, children, className, toolbar }: 
-    { name: string; className?: string, children?: any; toolbar?: ReactNode }) 
-{
-    var [isHidden, setHidden] = useState<boolean>(false);
+export default function Dropdown({ name, hidden, collapsible, children, className, toolbar }: {
+    name: string;
+    hidden?: boolean;
+    collapsible?: boolean;
+    className?: string;
+    children?: any; 
+    toolbar?: ReactNode;
+}) {
+    collapsible = collapsible ?? true;
+
+    var [isHidden, setHidden] = useState<boolean>(hidden ?? false);
 
     return <div className={"w-full rounded-md outline-dashed outline-gray-200 outline-1 " + className ?? ''}>
-
-        <div 
+        <div
             className="p-5 bg-gray-100"
-            onClick={() => setHidden(!isHidden)}>
+            onClick={() => {
+                if (collapsible!) setHidden(!isHidden);
+            }}>
 
             <span className="align-middle w-fit">
                 <span className="font-semibold uppercase">{name}</span>
@@ -21,10 +29,12 @@ export default function Dropdown({ name, children, className, toolbar }:
                 </span>
             </span>
             <div className="float-right">
-                <RegularChevronDown 
+                {collapsible 
+                ? <RegularChevronDown
                     className={`w-6 h-6 fill-gray-400 ${isHidden ? 'rotate-180 hover:rotate-0' : 'hover:rotate-180'} hover:cursor-pointer transition-transform`}></RegularChevronDown>
+                : <></>}
             </div>
-            
+
         </div>
 
         <div className={isHidden ? 'hidden' : 'block'}>
