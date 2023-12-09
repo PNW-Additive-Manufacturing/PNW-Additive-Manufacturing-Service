@@ -25,7 +25,7 @@ function UserRow({user, onChange}: {user: User, onChange: ((email: string, oldPe
       <td className="">
         <div className="bg-transparent rounded-sm w-full">
           <input type="hidden" name="user-email" value={user.email}/>
-          <select name="permission-admin" defaultValue={user.permission} onChange={change} className="rounded-md m-0 p-0 inline-block text-black bg-transparent border-gray-700 border">
+          <select name="permission-admin" defaultValue={user.permission} onChange={change} className="rounded-md m-0 p-1 inline-block text-black bg-transparent border-gray-700 border">
             <option value="admin">Administrator</option>
             <option value="maintainer">Maintainer</option>
             <option value="user">Normal User</option>

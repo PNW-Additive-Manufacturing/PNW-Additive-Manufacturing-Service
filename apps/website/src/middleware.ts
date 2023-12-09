@@ -9,7 +9,11 @@ import { Permission, SESSION_COOKIE } from "./app/api/util/Constants";
 const ROOT_FOLDER_FILE_WHITELIST = [
   '/favicon.ico',
   '/robots.txt',
-]
+];
+
+const USER_BLACKLIST = [
+  "/api"
+];
 
 export async function middleware(request: NextRequest) {
   const nextUrl = request.nextUrl.pathname;
@@ -65,6 +69,11 @@ export async function middleware(request: NextRequest) {
   //automatically force redirect to correct dashboard
   if(nextUrl.startsWith(`/dashboard/${Permission.admin}`) && permission !== Permission.admin) {
     return NextResponse.redirect(new URL(`/dashboard/${permission}`, request.url));
+  }
+
+  //don't allow user to access API
+  if(permission == Permission.user && USER_BLACKLIST.find((url) => nextUrl.startsWith(url))) {
+    return NextResponse.redirect(new URL(`/dashboard/${Permission.user}`, request.url));
   }
   
   //continue to current URL without issues

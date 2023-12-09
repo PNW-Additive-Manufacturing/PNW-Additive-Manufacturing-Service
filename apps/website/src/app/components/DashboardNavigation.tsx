@@ -18,14 +18,15 @@ export default function SidebarNavigation({items, className}:
         className?: string
     })
 {
-    return <div className={className + " flex"} style={{backgroundColor: "rgb(243, 243, 243)", height: "100vh", minWidth: "90px"}}>
-        <div className="p-4 w-full h-full">
-            <Image className="p-0.5 mt-4 m-auto" src="/assets/logo.svg" alt="Icon" width={65} height={65}></Image>
-            <div className="flex items-center flex-col gap-4 pt-8 pb-4 w-full h-full">
-                {items.map(item => <div><a href={item.route}>
-                    <span className="w-full h-fit px-3 pb-2 rounded-lg">{item.icon(`w-7 h-7 ${item.active ? 'fill-blue-600' : ''}`)}</span>
-                </a></div>)}
-            </div>
+    const activeItem = items.find(i => i.active);
+
+    return<div className="p-2 h-fit w-screen lg:p-4 lg:w-fit lg:h-screen" style={{backgroundColor: "rgb(242, 242, 242)"}}>
+        <div className="flex justify-center items-center sm:flex-row lg:flex-col gap-8 py-2">
+            {activeItem == null ? null : <p className='font-medium lg:hidden'>{activeItem.name}</p>}
+            <Image className="hidden lg:block p-1.5 lg:p-1" src="/assets/logo.svg" alt="Icon" width={65} height={65}></Image>
+            {items.map(item => <div key={item.name}><a href={`/dashboard/maintainer/${item.route}`}>
+                <span className="inline rounded-lg">{item.icon(`inline w-7 h-7 ${item.active ? 'fill-blue-600' : 'fill-gray-500'}`)}</span>
+            </a></div>)}
         </div>
     </div>
-} 
+}

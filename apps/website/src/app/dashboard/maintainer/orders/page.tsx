@@ -6,14 +6,24 @@ import { Canvas, useLoader } from '@react-three/fiber';
 import ModelViewer from '@/app/components/ModelViewer';
 import { BoxGeometry, BufferGeometry, Camera, Euler, PerspectiveCamera, Vector2, Vector3 } from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
-import { RegularLayers, RegularSearchAlt, RegularSpinnerSolid, RegularChevronDown, RegularChevronDownCircle, RegularArrowUp, RegularCog, RegularEye, RegularCheckmarkCircle, RegularBan, RegularPlus, RegularCart, RegularWarning, RegularCrossCircle, RegularCheckmark } from 'lineicons-react';
+import { RegularKeywordResearch, RegularCog, RegularCart, RegularWarning, RegularCrossCircle, RegularCheckmark, RegularUser } from 'lineicons-react';
 import UserSpan from '@/app/components/UserSpan';
 import PrinterSpan from '@/app/components/PrinterSpan';
 import SidebarNavigation from '@/app/components/DashboardNavigation';
 import db from "@/app/api/Database";
-import { InlinePrinterSelector } from './InlinePrinterSelector';
-import { ProgressBar } from './ProgressBar';
-import { InlineFile } from './InlineFile';
+import { InlinePrinterSelector } from '../../../components/InlinePrinterSelector';
+import { ProgressBar } from '../../../components/ProgressBar';
+import { InlineFile } from '../../../components/InlineFile';
+import PartAcceptButton from './PartAcceptButton';
+import PartDenyButton from './PartDenyButton';
+import PartCompleteButton from './PartCompleteButton';
+import PartFailedButton from './PartFailedButton';
+import PartBeginPrintingButton from './PartBeginPrintingButton';
+import Dropdown from '../../../components/Dropdown';
+import InlineStatus from '../../../components/InlineStatus';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+import { DateOptions } from '@/app/api/util/Constants';
 
 interface PrintersContext {
     Printers: string[]
@@ -23,42 +33,60 @@ async function RunningPartsTable() {
     var parts = await db`select p.*, owneremail from part as p, request as r where (p.status='printing' or p.status='printed' or p.status='failed') and p.requestid = r.id`;
     var filaments = await db`select id, material, color from filament where id in ${db(parts.map((p) => p.assignedfilamentid))}`;
     var models = await db`select * from model where id in ${ db(parts.map((p) => p.modelid)) }`;
-
     var printers = await db`select * from printer;` as {name: string, model: string}[];
 
-    return <table className='w-full overflow-y-auto' style={{ maxHeight: "60vh" }}>
+    return <table className='w-full overflow-y-scroll overflow-x-scroll' style={{ maxHeight: "60vh" }}>
         <thead>
             <tr>
                 <td>Part Name</td>
                 <td>Quantity</td>
+                <td>Filament</td>
                 <td>Status</td>
                 <td>User</td>
                 <td>Printer</td>
+                <td>Actions</td>
             </tr>
         </thead>
         <tbody>
             {parts.map(part => {
-
-
                 const model = models.find(m => m.id === part.modelid)!;
                 const filament = filaments.find(f => f.id === part.assignedfilamentid);
-                // const preferredEmail = (part.owneremail as string).split("@")[0];
                 
                 return <tr>
-                    <td><InlineFile filename={model.name}></InlineFile></td>
+                    <td><InlineFile filename={model.name} filepath={model.filepath}></InlineFile></td>
                     <td>{part.quantity}</td>
-                    <td>{part.status === 'printing' ? 
-                        // <span><ProgressBar color='rgb(130, 199, 237)' percentage={60}></ProgressBar></span>
-                        <span className='px-2 py-1 rounded-lg text-base bg-blue-200'>Printing</span>
-                        : part.status === 'printed' ? 
-                        <span className='text-green-500'>Completed</span>
-                        : <span className='text-red-500'>Failed</span>}</td>
-                    {/* <td>{part.lastname} {preferredEmail ?? part.owneremail}</td> */}
-                    <td>{part.lastname} {part.owneremail}</td>
+                    <td>{filament?.material.toUpperCase()} {filament?.color}</td>
+                    <td>{part.status == 'printing'
+                            ? <InlineStatus status='Printing' color='bg-blue-200'></InlineStatus>
+                            : part.status == 'printed'
+                            ? <InlineStatus status='Printed' color='bg-green-200'></InlineStatus>
+                            : part.status == 'failed'
+                            ? <InlineStatus status='Failed' color='bg-red-200'></InlineStatus>
+                            : <></>}</td>
+                    <td>
+                        {part.lastname} {part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}
+                    </td>
                     <td><InlinePrinterSelector
                         partId={part.id}    
                         printers={printers} 
                         selection={part.assignedprintername}></InlinePrinterSelector></td>
+                    <td>
+                        {part.status == 'printing'
+                        ? <div className='flex gap-2'>
+                            <PartCompleteButton part={part.id}></PartCompleteButton>
+                            <PartFailedButton part={part.id}></PartFailedButton>
+                        </div>
+                        : part.status == 'pending'
+                        ? <div className='flex gap-2'>
+                            <PartAcceptButton part={part.id}></PartAcceptButton>
+                            <PartDenyButton part={part.id}></PartDenyButton>
+                        </div>
+                        : part.status == 'queued' 
+                        ? <div>
+                            <PartBeginPrintingButton part={part.id}></PartBeginPrintingButton>
+                        </div>
+                        : <></>}
+                    </td>
                 </tr>
             })}
         </tbody>
@@ -66,51 +94,42 @@ async function RunningPartsTable() {
 }
 
 async function QueuedPartsTable() {
-    var parts = await db`select * from part where status='queued'`;
+    var parts = await db`select p.*, r.owneremail from part as p, request as r where p.status='queued' and p.requestid=r.id`;
     var models = await db`select * from model where id in ${ db(parts.map((p) => p.modelid)) }`;
     var filaments = await db`select id, material, color from filament where id in ${db(parts.map((p) => p.assignedfilamentid))}`;
+    var printers = await db`select * from printer;` as {name: string, model: string}[];
 
     return <table className='w-full overflow-y-auto' style={{ maxHeight: "60vh" }}>
         <thead>
             <tr>
-                <td>Filename</td>
-                <td>Printer</td>
-                <td>Progress</td>
+                <td>Part Name</td>
+                <td>Quantity</td>
                 <td>Filament</td>
                 <td>User</td>
+                <td>Printer</td>
+                <td>Actions</td>
             </tr>
         </thead>
         <tbody>
-            {parts.map((part, index) => <tr key={part.id}>
-
-                <td>{models.find((m) => m.id === part.modelid)?.name}</td>
-                <td>INSERT PRINTER SELECTOR</td>
-                {/* <td><InlinePrinterSelector selectedPrinter={part.assignedprintername}></InlinePrinterSelector></td> */}
-                <td><ProgressBar color="blue" percentage={50}></ProgressBar></td>
-                <td>{filaments.find((f)=>f.id === part.assignedfilamentid)?.material} {filaments.find((f)=>f.id === part.assignedfilamentid)?.color}</td>
-                <td>Someone</td>
-            </tr>)}
-            {/* <tr>
-            <td><InlineFile filename='companion_cube.stl'></InlineFile></td>
-            <td>Ender 3 V2</td>
-            <td><ProgressBar color='rgb(174, 236, 169)' percentage={100}></ProgressBar></td>
-            <td>Ben</td>
-            <td>$5</td>
-        </tr>
-        <tr>
-            <td><InlineFile filename='avatar.stl'></InlineFile></td>
-            <td>Ender 3 V2</td>
-            <td><ProgressBar color='rgb(130, 199, 237)' percentage={50}></ProgressBar></td>
-            <td>Ben</td>
-            <td>$20</td>
-        </tr>
-        <tr>
-            <td><InlineFile filename='insane_mount.stl'></InlineFile></td>
-            <td>Ender 3 V2</td>
-            <td><ProgressBar color='rgb(207, 83, 72)' percentage={100}></ProgressBar></td>
-            <td>Aaron</td>
-            <td>$10</td>
-        </tr> */}
+            {parts.map((part, index) => {
+                let model = models.find((m) => m.id === part.modelid)!;
+                let filament = filaments.find(f => f.id === part.assignedfilamentid);
+                return (
+                    <tr key={part.id}>
+                        <td><InlineFile filename={model.name} filepath={model.filepath}></InlineFile></td>
+                        <td>{part.quantity}</td>
+                        <td>{filament?.material.toUpperCase()} {filament?.color}</td>
+                        <td>{part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}</td>
+                        <td><InlinePrinterSelector
+                            partId={part.id}    
+                            printers={printers} 
+                            selection={part.assignedprintername}></InlinePrinterSelector></td>
+                        <td>
+                            <PartBeginPrintingButton part={part.id}></PartBeginPrintingButton>
+                        </td>
+                    </tr>
+                );
+            })}
         </tbody>
     </table>
 }
@@ -124,33 +143,105 @@ async function PendingReviewPartsTable()
     return <table className='w-full overflow-y-auto' style={{ maxHeight: "60vh" }}>
         <thead>
             <tr>
-                <td>Model</td>
-                <td>User</td>
+                <td>Part Name</td>
                 <td>Quantity</td>
-                <td>File</td>
+                <td>Filament</td>
+                <td>User</td>
                 <td>Actions</td>
             </tr>
         </thead>
         <tbody>
-            {parts.map(part => <tr key={part.id}>
-                <td>{models.find((m) => m.id === part.modelid)?.name}</td>
-                <td>{part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}</td>
-                <td>{part.quantity}</td>
-                <td><a download={true} className="text-blue-500 underline" href={`/api/download/?file=${models.find((m) => m.id === part.modelid)?.filepath}`}>Download</a></td>
-                <td>
-                    <a>
-                        <button className="inline mx-2 text-base w-fit px-2 py-1 bg-green-500 border-none rounded-md">Accept</button>
-                        <button className="inline text-base w-fit px-2 py-1 bg-red-400 border-none rounded-md">Deny</button>
-                        {/* <RegularCrossCircle className='inline w-6 h-6 fill-green-400'></RegularCrossCircle> */}
-                        {/* <RegularCheckmark className='inline w-6 h-6 fill-red-400'></RegularCheckmark> */}
-                    </a>
-                </td>
-            </tr>)}
+            {parts.map(part => {
+                let model = models.find((m) => m.id === part.modelid)!;
+                let filament = filaments.find(f => f.id === part.assignedfilamentid);
+                return (<tr key={part.id}>
+                    <td><InlineFile filename={model.name} filepath={model.filepath}></InlineFile></td>
+                    <td>{part.quantity}</td>
+                    <td>{filament?.material.toUpperCase()} {filament?.color}</td>
+                    <td>{part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}</td>
+                    <td className='flex gap-2'> 
+                        <PartAcceptButton part={part.id}></PartAcceptButton>
+                        <PartDenyButton part={part.id}></PartDenyButton>
+                    </td>
+                </tr>
+                );
+            })}
         </tbody>
     </table>
 }
 
-export default function Maintainer() {
+async function RequestPartsOnlyTable({request}: {request: number}) {
+    var parts = await db`select * from part where requestid = ${request}`;
+    var filaments = await db`select id, material, color from filament where id in ${db(parts.map((p) => p.assignedfilamentid))}`;
+    var models = await db`select * from model where id in ${ db(parts.map((p) => p.modelid)) }`;
+    var printers = await db`select * from printer;` as {name: string, model: string}[];
+
+    return <table className='w-full overflow-y-scroll overflow-x-scroll' style={{ maxHeight: "60vh" }}>
+        <thead>
+            <tr>
+                <td>Part Name</td>
+                <td>Quantity</td>
+                <td>Filament</td>
+                <td>Status</td>
+                <td>Printer</td>
+                <td>Actions</td>
+            </tr>
+        </thead>
+        <tbody>
+            {parts.map(part => {
+                const model = models.find(m => m.id === part.modelid)!;
+                const filament = filaments.find(f => f.id === part.assignedfilamentid);
+                
+                return <tr>
+                    <td><InlineFile filename={model.name} filepath={model.filepath}></InlineFile></td>
+                    <td>{part.quantity} / {part.quantity}</td>
+                    <td>{filament?.material.toUpperCase()} {filament?.color}</td>
+                    <td>
+                        {part.status == 'printing'
+                            ? <InlineStatus status='Printing' color='bg-blue-200'></InlineStatus>
+                            : part.status == 'printed'
+                            ? <InlineStatus status='Printed' color='bg-green-200'></InlineStatus>
+                            : part.status == 'failed'
+                            ? <InlineStatus status='Failed' color='bg-red-200'></InlineStatus>
+                            : part.status == 'queued'
+                            ? <InlineStatus status='Queued' color='bg-amber-200'></InlineStatus>
+                            : part.status == 'pending'
+                            ? <InlineStatus status='Pending Approval' color='bg-gray-200'></InlineStatus>
+                            : <InlineStatus status={part.status} color='bg-gray-200'></InlineStatus>}
+                    </td>
+                    <td><InlinePrinterSelector
+                        partId={part.id}    
+                        printers={printers} 
+                        selection={part.assignedprintername}></InlinePrinterSelector></td>
+                    <td>
+                        {part.status == 'printing'
+                        ? <div className='flex gap-2'>
+                            <PartCompleteButton part={part.id}></PartCompleteButton>
+                            <PartFailedButton part={part.id}></PartFailedButton>
+                        </div>
+                        : part.status == 'pending'
+                        ? <div className='flex gap-2'>
+                            <PartAcceptButton part={part.id}></PartAcceptButton>
+                            <PartDenyButton part={part.id}></PartDenyButton>
+                        </div>
+                        : part.status == 'queued' 
+                        ? <div>
+                            <PartBeginPrintingButton part={part.id}></PartBeginPrintingButton>
+                        </div>
+                        : <></>}
+                    </td>
+                </tr>
+            })}
+        </tbody>
+    </table>
+}
+
+export default async function Maintainer({params}: {params: any}) {
+    const requests = await db`select * from request order by submittime asc`;
+    const parts = await db`select * from part order by id asc;`;
+
+    console.log(params);
+
     return (
         <main>
             <Navbar links={[
@@ -159,8 +250,8 @@ export default function Maintainer() {
                 { name: "Logout", path: "/user/logout" }
             ]} />
 
-            <div className='flex'>
-                <SidebarNavigation className='w-28' items={[
+            <div className='flex flex-col lg:flex-row'>
+                <SidebarNavigation items={[
                     {
                         name: "Orders",
                         route: "orders",
@@ -175,149 +266,68 @@ export default function Maintainer() {
                     }
                 ]}></SidebarNavigation>
 
-                <div className='w-4/6 h-screen overflow-y-auto p-12' style={{ minWidth: "900px" }}>
-                    <div className='m-auto' style={{ minWidth: "900px", maxWidth: "1100px" }}>
-                        <h1 className='text-2xl mb-7'>Orders</h1>
-                        {/* <p className='text-lg mb-2'>Insights</p>
-                        <div className='flex flex-row gap-4'>
-                            <div className='rounded-xl py-4 px-6 w-fit h-fit bg-amber-300 bg-opacity-20'>
-                                <span className=''>Running Orders: </span>
-                                <span className='font-semibold'>5</span>
-                            </div>
-                            <div className='rounded-lg py-4 px-6 w-fit h-fit bg-sky-600 bg-opacity-20'>
-                                <span className=''>Queued Orders: </span>
-                                <span className='font-semibold'>10</span>
-                            </div>
-                            <div className='rounded-lg py-4 px-6 w-fit h-fit bg-slate-500 bg-opacity-20'>
-                                <span className=''>Waiting for Review: </span>
-                                <span className='font-semibold'>10</span>
-                            </div>
-                        </div> */}
+                <div className='w-full m-auto h-screen p-12 overflow-y-scroll'>
+                    {/* <div className='flex flex-row gap-4'>
+                        <div className='rounded-xl py-4 px-6 w-fit h-fit bg-amber-300 bg-opacity-20'>
+                            <span className=''>Running Orders: </span>
+                            <span className='font-semibold'>5</span>
+                        </div>
+                        <div className='rounded-lg py-4 px-6 w-fit h-fit bg-sky-600 bg-opacity-20'>
+                            <span className=''>Queued Orders: </span>
+                            <span className='font-semibold'>10</span>
+                        </div>
+                        <div className='rounded-lg py-4 px-6 w-fit h-fit bg-slate-500 bg-opacity-20'>
+                            <span className=''>Waiting for Review: </span>
+                            <span className='font-semibold'>10</span>
+                        </div>
+                    </div> */}
 
-                        <h2 className='mt-12'>Processing Orders</h2>
-                        <RunningPartsTable></RunningPartsTable>
-                        {/* <table className='w-full overflow-y-auto' style={{ maxHeight: "60vh" }}>
-                            <thead>
-                                <tr>
-                                    <td>Part Name</td>
-                                    <td>Printer</td>
-                                    <td>Progress</td>
-                                    <td>User</td>
-                                    <td>Cost</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><InlineFile filename='companion_cube.stl'></InlineFile></td>
-                                    <td>Ender 3 V2</td>
-                                    <td><ProgressBar color='rgb(174, 236, 169)' percentage={100}></ProgressBar></td>
-                                    <td>Ben</td>
-                                    <td>$5</td>
-                                </tr>
-                                <tr>
-                                    <td><InlineFile filename='avatar.stl'></InlineFile></td>
-                                    <td>Ender 3 V2</td>
-                                    <td><ProgressBar color='rgb(130, 199, 237)' percentage={50}></ProgressBar></td>
-                                    <td>Ben</td>
-                                    <td>$20</td>
-                                </tr>
-                                <tr>
-                                    <td><InlineFile filename='insane_mount.stl'></InlineFile></td>
-                                    <td>Ender 3 V2</td>
-                                    <td><ProgressBar color='rgb(207, 83, 72)' percentage={100}></ProgressBar></td>
-                                    <td>Aaron</td>
-                                    <td>$10</td>
-                                </tr>
-                            </tbody>
-                        </table> */}
+                    <div className='w-full xl:w-3/4 lg:m-auto'>                        
+                        <Dropdown name='Orders'>
+                            <table className='w-full overflow-x'>
+                                <thead>
+                                    <tr>
+                                        <td>User</td>
+                                        <td>Parts</td>
+                                        <td>Status</td>
+                                        <td>Notes</td>
+                                        <td>Submitted At</td>
+                                        <td>Actions</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {requests.map(req => {
+                                        const reqParts = parts.filter(p => p.requestid == req.id);
+                                        
+                                        return <tr>
+                                            <td>{req.owneremail.substring(0, req.owneremail.lastIndexOf('@'))}</td>
+                                            <td>{req.name || `${reqParts.length} Part(s)`}</td>
+                                            <td>{req.isfulfilled 
+                                                    ? <InlineStatus status="Fulfilled" color='bg-green-200'></InlineStatus>
+                                                    : <InlineStatus status='In Progress' color='bg-blue-200'></InlineStatus>
+                                            }</td>
+                                            <td>{req.notes || <span className="text-gray-500">None supplied</span>}</td>
+                                            <td>{req.submittime.toLocaleString("en-US", DateOptions)}</td>
+                                            <td>
+                                                <Link href={`/dashboard/maintainer/orders/${req.id}`}>View</Link>
+                                            </td>
+                                        </tr>
+                                    })}
+                                </tbody>
+                            </table>
+                        </Dropdown>
 
-                        <h2 className='mt-12'>Queued Parts</h2>
-                        <QueuedPartsTable></QueuedPartsTable>
+                        <Dropdown name='Processing Parts' className='mt-8'>
+                            <RunningPartsTable></RunningPartsTable>
+                        </Dropdown>
 
-                        <h2 className='mt-12'>Pending Review Parts</h2>
-                        <PendingReviewPartsTable></PendingReviewPartsTable>
+                        <Dropdown name='Queued Parts' className='mt-8'>
+                            <QueuedPartsTable></QueuedPartsTable>
+                        </Dropdown>
 
-                        {/* <table className='w-full overflow-y-auto' style={{maxHeight: "60vh"}}>
-                        <thead>
-                            <tr>
-                                <td className='w-5'>Position</td>
-                                <td>Filename</td>
-                                <td>Printer</td>
-                                <td>User</td>
-                                <td>Filament</td>
-                                <td>Date</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><InlinePrinterSelector selectedPrinter='Ender 3 V2'></InlinePrinterSelector></td>
-                                <td>Ryan</td>
-                                <td>$20</td>
-                                <td>{new Date().toLocaleDateString("en-US")}</td>
-                            </tr>
-                            <tr>
-                                <td className='flex items-center'>
-                                    <span className='m-auto pr-8'>2 <RegularArrowUp className='ml-2 inline w-5 h-5 fill-slate-500'></RegularArrowUp></span>
-                                </td>
-                                <td><InlineFile filename='gear.stl'></InlineFile></td>
-                                <td><InlinePrinterSelector selectedPrinter='Ender 5 S1'></InlinePrinterSelector></td>
-                                <td>David</td>
-                                <td>$30</td>
-                                <td>{new Date().toLocaleDateString("en-US")}</td>
-                            </tr>
-                            <tr>
-                                <td className='flex items-center'>
-                                    <span className='m-auto pr-8'>3 <RegularArrowUp className='ml-2 inline w-5 h-5 fill-slate-500'></RegularArrowUp></span>
-                                </td>
-                                <td><InlineFile filename='drone_arm.stl'></InlineFile></td>
-                                <td><InlinePrinterSelector fill='fill-red-400' hoveredColor='fill-red-300'></InlinePrinterSelector>
-                                </td>
-                                <td>David</td>
-                                <td>$30</td>
-                                <td>{new Date().toLocaleDateString("en-US")}</td>
-                            </tr>
-                            <tr>
-                                <td className='flex items-center'>
-                                    <span className='m-auto pr-8'>4 <RegularArrowUp className='ml-2 inline w-5 h-5 fill-slate-500'></RegularArrowUp></span>
-                                </td>
-                                <td><InlineFile filename='gear.stl'></InlineFile></td>
-                                <td><InlinePrinterSelector selectedPrinter='Ender 5 S1'></InlinePrinterSelector></td>
-                                <td>David</td>
-                                <td>$30</td>
-                                <td>{new Date().toLocaleDateString("en-US")}</td>
-                            </tr>
-                            <tr>
-                                <td className='flex items-center'>
-                                    <span className='m-auto pr-8'>4 <RegularArrowUp className='ml-2 inline w-5 h-5 fill-slate-500'></RegularArrowUp></span>
-                                </td>
-                                <td><InlineFile filename='something.stl'></InlineFile></td>
-                                <td><InlinePrinterSelector selectedPrinter='Ender 5 S1'></InlinePrinterSelector></td>
-                                <td>Someone</td>
-                                <td>$30</td>
-                                <td>{new Date().toLocaleDateString("en-US")}</td>
-                            </tr>
-                            <tr>
-                                <td className='flex items-center'>
-                                    <span className='m-auto pr-8'>4 <RegularArrowUp className='ml-2 inline w-5 h-5 fill-slate-500'></RegularArrowUp></span>
-                                </td>
-                                <td><InlineFile filename='something.stl'></InlineFile></td>
-                                <td><InlinePrinterSelector selectedPrinter='Ender 5 S1'></InlinePrinterSelector></td>
-                                <td>Someone</td>
-                                <td>$30</td>
-                                <td>{new Date().toLocaleDateString("en-US")}</td>
-                            </tr>
-                            <tr>
-                                <td className='flex items-center'>
-                                    <span className='m-auto pr-8'>4 <RegularArrowUp className='ml-2 inline w-5 h-5 fill-slate-500'></RegularArrowUp></span>
-                                </td>
-                                <td><InlineFile filename='something.stl'></InlineFile></td>
-                                <td><InlinePrinterSelector></InlinePrinterSelector></td>
-                                <td>Someone</td>
-                                <td>$30</td>
-                                <td>{new Date().toLocaleDateString("en-US")}</td>
-                            </tr>
-                        </tbody>
-                    </table> */}
+                        <Dropdown name='Pending Parts' className='mt-8'>
+                            <PendingReviewPartsTable></PendingReviewPartsTable>
+                        </Dropdown>
                     </div>
                 </div>
             </div>

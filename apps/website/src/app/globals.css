@@ -135,9 +135,10 @@ table thead tr td {
 }
 table tbody tr {
   border-bottom: 2px solid rgb(238, 238, 238);
+  height: 65px;
 }
 table tbody tr td {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   padding: 1rem 0rem 1rem 0rem;
 }
 table thead tr td:last-child

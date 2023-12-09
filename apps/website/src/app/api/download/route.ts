@@ -2,8 +2,9 @@ import { getFile } from "@/app/api/server-actions/download";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-  console.log(request.url)
-  let filepath = request.url.substring(request.url.lastIndexOf("?file=") + 6);
+
+  //no need to check JWT because that is checked by middleware
+  let filepath = request.nextUrl.searchParams.get("file");
 
 
   if(!filepath) {

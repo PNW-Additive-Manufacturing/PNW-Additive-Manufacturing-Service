@@ -27,3 +27,11 @@ export interface Part {
   filamentmaterial: string,
   filamentcolor: string
 }
+
+export const DateOptions = {
+  year: "2-digit",
+  month: "numeric",
+  day: "numeric",
+  hour: "numeric",
+  minute: "numeric"
+};
