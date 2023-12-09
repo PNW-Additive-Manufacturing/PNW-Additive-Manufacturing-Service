@@ -4,9 +4,10 @@ import GenericFormServerAction from "@/app/components/GenericFormServerAction";
 import { Input } from "@/app/components/Input";
 import { addPrinter } from "@/app/api/server-actions/printer";
 import { Navbar } from "@/app/components/Navigation";
+
 export default async function Page() {
   return (
-  <main>
+    <main>
       <Navbar links={[
         {name: "Add Printer", path: "/dashboard/admin/printers/addprinter"}
       ]}/>

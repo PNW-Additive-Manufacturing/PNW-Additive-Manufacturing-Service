@@ -324,7 +324,7 @@ export default async function Maintainer({params}: {params: any}) {
                             </table>
                         </Dropdown>
 
-                        <Dropdown name='Processing Parts' className='mt-8'>
+                        <Dropdown name='Active Parts' className='mt-8'>
                             <RunningPartsTable></RunningPartsTable>
                         </Dropdown>
 
