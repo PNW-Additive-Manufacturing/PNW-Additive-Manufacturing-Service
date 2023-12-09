@@ -8,7 +8,7 @@ import { Canvas, useLoader } from '@react-three/fiber';
 import ModelViewer from '@/app/components/ModelViewer';
 import { BoxGeometry, BufferGeometry, Camera, Euler, PerspectiveCamera, Vector2, Vector3 } from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
-import { RegularLayers, RegularSearchAlt, RegularSpinnerSolid, RegularChevronDown, RegularCog, RegularEye, RegularCheckmarkCircle, RegularBan, RegularCart } from 'lineicons-react';
+import { RegularLayers, RegularSearchAlt, RegularSpinnerSolid, RegularChevronDown, RegularCog, RegularEye, RegularCheckmarkCircle, RegularBan, RegularCart, RegularCrossCircle } from 'lineicons-react';
 import UserSpan from '@/app/components/UserSpan';
 import PrinterSpan from '@/app/components/PrinterSpan';
 import SidebarNavigation from '@/app/components/DashboardNavigation';
@@ -81,21 +81,25 @@ export default function Maintainer()
 {
     return (
         <main className='flex'>
-            <SidebarNavigation className='w-28' items={[
-
-                {
-                    name: "Orders",
-                    route: "orders",
-                    icon: (className) => <RegularCart className={`${className}`}></RegularCart>,
-                    active: false
-                },
-                {
-                    name: "Printers",
-                    route: "printers",
-                    icon: (className) => <RegularCog className={`${className}`}></RegularCog>,
-                    active: true
-                }
-
+            <SidebarNavigation items={[
+            {
+                name: "Orders",
+                route: "orders",
+                icon: (className) => <RegularCart className={`${className}`}></RegularCart>,
+                active: false
+            },
+            {
+                name: "Printers",
+                route: "printers",
+                icon: (className) => <RegularCog className={`${className}`}></RegularCog>,
+                active: true
+            },
+            {
+                name: "Filaments",
+                route: "filaments",
+                icon: (className) => <RegularCrossCircle className={`${className}`}></RegularCrossCircle>,
+                active: false
+            }
             ]}></SidebarNavigation>
 
             <div className='bg-purple-400 w-3/6 h-screen'></div>

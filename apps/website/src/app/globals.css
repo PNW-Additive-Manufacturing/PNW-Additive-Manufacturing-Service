@@ -127,7 +127,7 @@ table thead {
   text-transform: uppercase;
     margin: 2rem 1rem 1rem 2rem;
 }
-table thead tr td {
+table thead tr td, table thead tr th {
   font-size: 0.8rem;
   border-radius: 50%;
   color: rgb(100, 100, 100);

@@ -2,6 +2,7 @@
 
 import db from "@/app/api/Database";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export async function setPartPrinter(prevState: string, data: FormData): Promise<string>
 {
@@ -49,4 +50,51 @@ export async function setPartState(prevState: string, data: FormData): Promise<s
     
     revalidatePath('/dashboard/maintainer');
     return '';
+}
+
+export async function addFilament(prevState: string, data: FormData) : Promise<string> {
+    var material = (data.get("filament-material") as string).toLowerCase();
+    var color = (data.get("filament-color") as string).toLowerCase();
+
+    try {
+        let result = await db`insert into filament (material, color, instock) values(${material}, ${color}, true) returning id`;
+        if(result.count == 0) {
+            return "Failed to add filament!";
+        }
+    } catch(e: any) {
+        return "Failed to add filament with error: " + e.message;
+    }
+
+    //successful
+    redirect("/dashboard/maintainer/filaments");
+}
+
+export async function setFilamentInStock(prevState: string, data: FormData): Promise<string> {
+    var material = (data.get("filament-material") as string).toLowerCase();
+    var color = (data.get("filament-color") as string).toLowerCase();
+    var instock = (data.get("filament-instock") as string) === "true";
+
+
+    try {
+        await db`update filament set instock=${instock} where material=${material} and color=${color}`;
+    } 
+    catch(e: any) 
+    {
+        return "Failed to update filament with error: " + e.message;
+    }
+
+    return "";
+}
+
+export async function deleteFilament(prevState: string, data: FormData) : Promise<string> {
+    var material = (data.get("filament-material") as string).toLowerCase();
+    var color = (data.get("filament-color") as string).toLowerCase();
+
+    try {
+        await db`delete from filament where material=${material} and color=${color}`;
+    } catch(e: any) {
+        return "Failed to add filament with error: " + e.message;
+    }
+
+    return "";
 }

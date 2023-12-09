@@ -2,7 +2,7 @@
 
 import { redirect, usePathname } from "next/navigation";
 import { Navbar } from '@/app/components/Navigation'
-import { RegularKeywordResearch, RegularCog, RegularCart } from 'lineicons-react';
+import { RegularKeywordResearch, RegularCog, RegularCart, RegularCrossCircle } from 'lineicons-react';
 import SidebarNavigation from '@/app/components/DashboardNavigation';
 import db from "@/app/api/Database";
 import { InlinePrinterSelector } from '../../../../components/InlinePrinterSelector';
@@ -106,18 +106,24 @@ export default async function OrderMaintainer({params}: {params: any}) {
 
             <div className='flex flex-col lg:flex-row'>
                 <SidebarNavigation items={[
-                    {
-                        name: "Orders",
-                        route: "orders",
-                        icon: (className) => <RegularCart className={`${className}`}></RegularCart>,
-                        active: true
-                    },
-                    {
-                        name: "Printers",
-                        route: "printers",
-                        icon: (className) => <RegularCog className={`${className}`}></RegularCog>,
-                        active: false
-                    }
+                {
+                    name: "Orders",
+                    route: "orders",
+                    icon: (className) => <RegularCart className={`${className}`}></RegularCart>,
+                    active: true
+                },
+                {
+                    name: "Printers",
+                    route: "printers",
+                    icon: (className) => <RegularCog className={`${className}`}></RegularCog>,
+                    active: false
+                },
+                {
+                    name: "Filaments",
+                    route: "filaments",
+                    icon: (className) => <RegularCrossCircle className={`${className}`}></RegularCrossCircle>,
+                    active: false
+                }
                 ]}></SidebarNavigation>
 
                 <div className='w-full h-screen p-12 overflow-y-scroll'>
@@ -145,7 +151,7 @@ export default async function OrderMaintainer({params}: {params: any}) {
                                                     ? <InlineStatus status="Fulfilled" color='bg-green-200'></InlineStatus>
                                                     : <InlineStatus status='In Progress' color='bg-blue-200'></InlineStatus>
                                             }</td>
-                                            <td>{req.notes || <span className="text-gray-500">None supplied</span>}</td>
+                                            <td className="truncate">{req.notes || <span className="text-gray-500">None supplied</span>}</td>
                                             <td>{req.submittime.toLocaleString("en-US", DateOptions)}</td>
                                             <td>
                                                 <Link href={req.id == orderId ? '/dashboard/maintainer/orders' : `/dashboard/maintainer/orders/${req.id}`}>View</Link>

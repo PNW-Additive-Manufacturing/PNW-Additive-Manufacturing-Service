@@ -95,6 +95,7 @@ async function RunningPartsTable() {
 
 async function QueuedPartsTable() {
     var parts = await db`select p.*, r.owneremail from part as p, request as r where p.status='queued' and p.requestid=r.id`;
+    var parts = await db`select p.*, r.owneremail from part as p, request as r where p.status='queued' and p.requestid=r.id`;
     var models = await db`select * from model where id in ${ db(parts.map((p) => p.modelid)) }`;
     var filaments = await db`select id, material, color from filament where id in ${db(parts.map((p) => p.assignedfilamentid))}`;
     var printers = await db`select * from printer;` as {name: string, model: string}[];
@@ -262,6 +263,12 @@ export default async function Maintainer({params}: {params: any}) {
                         name: "Printers",
                         route: "printers",
                         icon: (className) => <RegularCog className={`${className}`}></RegularCog>,
+                        active: false
+                    },
+                    {
+                        name: "Filaments",
+                        route: "filaments",
+                        icon: (className) => <RegularCrossCircle className={`${className}`}></RegularCrossCircle>,
                         active: false
                     }
                 ]}></SidebarNavigation>
