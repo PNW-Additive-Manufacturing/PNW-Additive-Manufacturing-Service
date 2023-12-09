@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { CSSProperties } from 'react';
 
 export interface NavigationItem 
 {
@@ -12,15 +13,18 @@ export interface NavigationItem
  * Navigation Sidebar for Dashboards.
  * @returns 
  */
-export default function SidebarNavigation({items, className}: 
+export default function SidebarNavigation({items, className, style}: 
     {
         items: NavigationItem[],
-        className?: string
+        className?: string,
+        style?: CSSProperties
     })
 {
     const activeItem = items.find(i => i.active);
 
-    return<div className="p-2 h-fit w-screen lg:p-4 lg:w-fit lg:h-screen" style={{backgroundColor: "rgb(242, 242, 242)"}}>
+    console.log(style);
+
+    return<div className="p-2 h-fit w-screen lg:p-4 lg:w-fit lg:h-screen" style={Object.assign({backgroundColor: "rgb(242, 242, 242)"}, style)}>
         <div className="flex justify-center items-center sm:flex-row lg:flex-col gap-8 py-2">
             {activeItem == null ? null : <p className='font-medium lg:hidden'>{activeItem.name}</p>}
             <Image className="hidden lg:block p-1.5 lg:p-1" src="/assets/logo.svg" alt="Icon" width={65} height={65}></Image>

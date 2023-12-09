@@ -105,7 +105,7 @@ export default async function OrderMaintainer({params}: {params: any}) {
             ]} />
 
             <div className='flex flex-col lg:flex-row'>
-                <SidebarNavigation items={[
+                <SidebarNavigation style={{height: 'calc(100vh - 72px)'}} items={[
                 {
                     name: "Orders",
                     route: "orders",
@@ -126,8 +126,8 @@ export default async function OrderMaintainer({params}: {params: any}) {
                 }
                 ]}></SidebarNavigation>
 
-                <div className='w-full h-screen p-12 overflow-y-scroll'>
-                    <div className='w-full xl:w-3/4 lg:m-auto'>                        
+                <div className='w-full p-12 overflow-y-scroll' style={{maxHeight: 'calc(100vh - 72px)'}}>
+                    <div className='w-full xl:w-3/4 lg:mx-auto'>               
                         <Dropdown name='Orders'>
                             <table className='w-full overflow-x'>
                                 <thead>

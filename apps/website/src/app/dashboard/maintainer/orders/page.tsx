@@ -252,7 +252,7 @@ export default async function Maintainer({params}: {params: any}) {
             ]} />
 
             <div className='flex flex-col lg:flex-row'>
-                <SidebarNavigation items={[
+                <SidebarNavigation style={{height: 'calc(100vh - 72px)'}} items={[
                     {
                         name: "Orders",
                         route: "orders",
@@ -273,7 +273,8 @@ export default async function Maintainer({params}: {params: any}) {
                     }
                 ]}></SidebarNavigation>
 
-                <div className='w-full m-auto h-screen p-12 overflow-y-scroll'>
+                <div className='w-full p-12 overflow-y-scroll' style={{maxHeight: 'calc(100vh - 72px)'}}>
+
                     {/* <div className='flex flex-row gap-4'>
                         <div className='rounded-xl py-4 px-6 w-fit h-fit bg-amber-300 bg-opacity-20'>
                             <span className=''>Running Orders: </span>
@@ -289,7 +290,7 @@ export default async function Maintainer({params}: {params: any}) {
                         </div>
                     </div> */}
 
-                    <div className='w-full xl:w-3/4 lg:m-auto'>                        
+                    <div className='w-full xl:w-3/4 lg:mx-auto'>
                         <Dropdown name='Orders'>
                             <table className='w-full overflow-x'>
                                 <thead>
