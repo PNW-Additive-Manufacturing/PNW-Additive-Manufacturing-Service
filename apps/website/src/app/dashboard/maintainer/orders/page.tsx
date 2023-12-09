@@ -39,10 +39,10 @@ async function RunningPartsTable() {
         <thead>
             <tr>
                 <td>Part Name</td>
+                <td>User</td>
+                <td>Status</td>
                 <td>Quantity</td>
                 <td>Filament</td>
-                <td>Status</td>
-                <td>User</td>
                 <td>Printer</td>
                 <td>Actions</td>
             </tr>
@@ -54,18 +54,17 @@ async function RunningPartsTable() {
                 
                 return <tr>
                     <td><InlineFile filename={model.name} filepath={model.filepath}></InlineFile></td>
-                    <td>{part.quantity}</td>
-                    <td>{filament?.material.toUpperCase()} {filament?.color}</td>
+                    <td>{part.lastname} {part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}</td>
                     <td>{part.status == 'printing'
                             ? <InlineStatus status='Printing' color='bg-blue-200'></InlineStatus>
                             : part.status == 'printed'
                             ? <InlineStatus status='Printed' color='bg-green-200'></InlineStatus>
                             : part.status == 'failed'
                             ? <InlineStatus status='Failed' color='bg-red-200'></InlineStatus>
-                            : <></>}</td>
-                    <td>
-                        {part.lastname} {part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}
+                            : <></>}
                     </td>
+                    <td>{part.quantity}</td>
+                    <td>{filament?.material.toUpperCase()} {filament?.color}</td>
                     <td><InlinePrinterSelector
                         partId={part.id}    
                         printers={printers} 
@@ -104,9 +103,9 @@ async function QueuedPartsTable() {
         <thead>
             <tr>
                 <td>Part Name</td>
+                <td>User</td>
                 <td>Quantity</td>
                 <td>Filament</td>
-                <td>User</td>
                 <td>Printer</td>
                 <td>Actions</td>
             </tr>
@@ -118,9 +117,9 @@ async function QueuedPartsTable() {
                 return (
                     <tr key={part.id}>
                         <td><InlineFile filename={model.name} filepath={model.filepath}></InlineFile></td>
+                        <td>{part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}</td>
                         <td>{part.quantity}</td>
                         <td>{filament?.material.toUpperCase()} {filament?.color}</td>
-                        <td>{part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}</td>
                         <td><InlinePrinterSelector
                             partId={part.id}    
                             printers={printers} 
@@ -145,9 +144,9 @@ async function PendingReviewPartsTable()
         <thead>
             <tr>
                 <td>Part Name</td>
+                <td>User</td>
                 <td>Quantity</td>
                 <td>Filament</td>
-                <td>User</td>
                 <td>Actions</td>
             </tr>
         </thead>
@@ -157,9 +156,9 @@ async function PendingReviewPartsTable()
                 let filament = filaments.find(f => f.id === part.assignedfilamentid);
                 return (<tr key={part.id}>
                     <td><InlineFile filename={model.name} filepath={model.filepath}></InlineFile></td>
+                    <td>{part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}</td>
                     <td>{part.quantity}</td>
                     <td>{filament?.material.toUpperCase()} {filament?.color}</td>
-                    <td>{part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}</td>
                     <td className='flex gap-2'> 
                         <PartAcceptButton part={part.id}></PartAcceptButton>
                         <PartDenyButton part={part.id}></PartDenyButton>
@@ -291,12 +290,12 @@ export default async function Maintainer({params}: {params: any}) {
                     </div> */}
 
                     <div className='w-full xl:w-3/4 lg:mx-auto'>
-                        <Dropdown name='Orders'>
+                        <Dropdown name='Requests'>
                             <table className='w-full overflow-x'>
                                 <thead>
                                     <tr>
+                                        <td>Request Name</td>
                                         <td>User</td>
-                                        <td>Parts</td>
                                         <td>Status</td>
                                         <td>Notes</td>
                                         <td>Submitted At</td>
@@ -308,8 +307,8 @@ export default async function Maintainer({params}: {params: any}) {
                                         const reqParts = parts.filter(p => p.requestid == req.id);
                                         
                                         return <tr>
-                                            <td>{req.owneremail.substring(0, req.owneremail.lastIndexOf('@'))}</td>
                                             <td>{req.name || `${reqParts.length} Part(s)`}</td>
+                                            <td>{req.owneremail.substring(0, req.owneremail.lastIndexOf('@'))}</td>
                                             <td>{req.isfulfilled 
                                                     ? <InlineStatus status="Fulfilled" color='bg-green-200'></InlineStatus>
                                                     : <InlineStatus status='In Progress' color='bg-blue-200'></InlineStatus>

@@ -11,7 +11,7 @@ export default function Dropdown({ name, children, className, toolbar }:
     return <div className={"w-full rounded-md outline-dashed outline-gray-200 outline-1 " + className ?? ''}>
 
         <div 
-            className="p-5 bg-gray-100"
+            className="p-3 bg-gray-100"
             onClick={() => setHidden(!isHidden)}>
 
             <span className="align-middle w-fit">
