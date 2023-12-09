@@ -313,10 +313,13 @@ export default async function Maintainer({params}: {params: any}) {
                                                     ? <InlineStatus status="Fulfilled" color='bg-green-200'></InlineStatus>
                                                     : <InlineStatus status='In Progress' color='bg-blue-200'></InlineStatus>
                                             }</td>
-                                            <td>{req.notes || <span className="text-gray-500">None supplied</span>}</td>
+                                            <td>{req.notes || <span className="text-gray-400">None supplied</span>}</td>
                                             <td>{req.submittime.toLocaleString("en-US", DateOptions)}</td>
                                             <td>
-                                                <Link href={`/dashboard/maintainer/orders/${req.id}`}>View</Link>
+                                                <Link
+                                                    className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
+                                                    href={`/dashboard/maintainer/orders/${req.id}`}>View
+                                                </Link>
                                             </td>
                                         </tr>
                                     })}

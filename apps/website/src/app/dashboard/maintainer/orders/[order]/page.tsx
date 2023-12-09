@@ -41,7 +41,7 @@ async function RequestPartsOnlyTable({request}: {request: number}) {
                 
                 return <tr>
                     <td><InlineFile filename={model.name} filepath={model.filepath}></InlineFile></td>
-                    <td>{part.quantity} / {part.quantity}</td>
+                    <td>{part.quantity}</td>
                     <td>{filament?.material.toUpperCase()} {filament?.color}</td>
                     <td>
                         {part.status == 'printing'
@@ -128,12 +128,12 @@ export default async function OrderMaintainer({params}: {params: any}) {
 
                 <div className='w-full p-12 overflow-y-scroll' style={{maxHeight: 'calc(100vh - 72px)'}}>
                     <div className='w-full xl:w-3/4 lg:mx-auto'>               
-                        <Dropdown name='Orders'>
+                        <Dropdown name='Requests'>
                             <table className='w-full overflow-x'>
                                 <thead>
                                     <tr>
+                                        <td>Request Name</td>
                                         <td>User</td>
-                                        <td>Parts</td>
                                         <td>Status</td>
                                         <td>Notes</td>
                                         <td>Submitted At</td>
@@ -145,16 +145,19 @@ export default async function OrderMaintainer({params}: {params: any}) {
                                         const reqParts = parts.filter(p => p.requestid == req.id);
                                         
                                         return <tr className={req.id == quiredOrder.id ? 'outline outline-blue-200' : ''}>
-                                            <td>{req.owneremail.substring(0, req.owneremail.lastIndexOf('@'))}</td>
                                             <td>{req.name || `${reqParts.length} Part(s)`}</td>
+                                            <td>{req.owneremail.substring(0, req.owneremail.lastIndexOf('@'))}</td>
                                             <td>{req.isfulfilled 
                                                     ? <InlineStatus status="Fulfilled" color='bg-green-200'></InlineStatus>
                                                     : <InlineStatus status='In Progress' color='bg-blue-200'></InlineStatus>
                                             }</td>
-                                            <td className="truncate">{req.notes || <span className="text-gray-500">None supplied</span>}</td>
+                                            <td className="truncate">{req.notes || <span className="text-gray-400">None supplied</span>}</td>
                                             <td>{req.submittime.toLocaleString("en-US", DateOptions)}</td>
                                             <td>
-                                                <Link href={req.id == orderId ? '/dashboard/maintainer/orders' : `/dashboard/maintainer/orders/${req.id}`}>View</Link>
+                                                <Link
+                                                    className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
+                                                    href={req.id == orderId ? '/dashboard/maintainer/orders' : `/dashboard/maintainer/orders/${req.id}`}>View
+                                                </Link>
                                             </td>
                                         </tr>
 
