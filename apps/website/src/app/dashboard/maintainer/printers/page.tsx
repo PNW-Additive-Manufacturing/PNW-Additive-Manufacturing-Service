@@ -81,7 +81,7 @@ export default function Maintainer()
 {
     return (
         <main className='flex'>
-            <SidebarNavigation items={[
+            <SidebarNavigation style={{height: 'calc(100vh - 72px)'}} items={[
             {
                 name: "Orders",
                 route: "orders",

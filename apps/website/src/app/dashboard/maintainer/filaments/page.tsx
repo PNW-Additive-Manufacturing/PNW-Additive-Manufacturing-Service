@@ -21,7 +21,7 @@ export default async function Page() {
         {name: "Add Filament", path: "/dashboard/maintainer/filaments/addfilament"}
       ]}/>
       <div className='flex flex-col lg:flex-row'>
-        <SidebarNavigation items={[
+        <SidebarNavigation style={{height: 'calc(100vh - 72px)'}} items={[
           {
               name: "Orders",
               route: "orders",
@@ -42,7 +42,7 @@ export default async function Page() {
           }
         ]}></SidebarNavigation>
 
-        <div className='w-full h-full p-12 overflow-y-scroll'>
+        <div className='w-full p-12 overflow-y-scroll' style={{height: 'calc(100vh - 72px)'}}>
           <FilamentList initialFilaments={filaments}/>
         </div>
       
