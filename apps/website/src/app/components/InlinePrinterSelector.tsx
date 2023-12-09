@@ -19,7 +19,7 @@ export function InlinePrinterSelector({ selection, printers, fill, hoveredColor,
     fill = fill ?? 'fill-slate-200';
     hoveredColor = hoveredColor ?? 'fill-slate-400';
 
-    return <select
+    return <select 
         defaultValue={selection == null ? 'unassigned' : selection}
         className={`bg-transparent ${className}`}
         onChange={ev => transition(async () => {
@@ -30,6 +30,6 @@ export function InlinePrinterSelector({ selection, printers, fill, hoveredColor,
         })}
     >
         <option value="unassigned">Unassigned</option>
-        {printers.map(option => <option value={option.name}>{option.model}</option>)}
+        {printers.map(option => <option key={option.name} value={option.name}>{option.model}</option>)}
     </select>;
 }

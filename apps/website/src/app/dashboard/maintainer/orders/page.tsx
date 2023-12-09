@@ -52,7 +52,7 @@ async function RunningPartsTable() {
                 const model = models.find(m => m.id === part.modelid)!;
                 const filament = filaments.find(f => f.id === part.assignedfilamentid);
                 
-                return <tr>
+                return <tr key={part.id}>
                     <td><InlineFile filename={model.name} filepath={model.filepath}></InlineFile></td>
                     <td>{part.lastname} {part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}</td>
                     <td>{part.status == 'printing'
@@ -306,7 +306,7 @@ export default async function Maintainer({params}: {params: any}) {
                                     {requests.map(req => {
                                         const reqParts = parts.filter(p => p.requestid == req.id);
                                         
-                                        return <tr>
+                                        return <tr key={req.id}>
                                             <td>{req.name || `${reqParts.length} Part(s)`}</td>
                                             <td>{req.owneremail.substring(0, req.owneremail.lastIndexOf('@'))}</td>
                                             <td>{req.isfulfilled 
