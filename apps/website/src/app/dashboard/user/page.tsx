@@ -43,15 +43,6 @@ export default async function Request() {
 					<RequestList requests={completedRequests} />
 				</Dropdown>
 			</div>
-			
-
-			{/* <div className="bg-white rounded-sm p-14 pt-7 w-full left">
-				<h1 className="w-full pb-4 pt-0 text-left">Pending Requests</h1>
-				<RequestList requests={pendingRequests} />
-
-				<h1 className="w-full pb-4 pt-10 text-left">Completed Requests</h1>
-				<RequestList requests={completedRequests} />
-			</div> */}
 		</main>
 	)
 }
