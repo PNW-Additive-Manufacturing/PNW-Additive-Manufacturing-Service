@@ -1,16 +1,26 @@
-"use client"
-
-import { Navbar } from '@/app/components/Navigation'
+import { AccountDetails, ColorfulRequestPrintButton, Navbar } from '@/app/components/Navigation'
+import Link from 'next/link'
 
 export default function NotFound() {
 
-  return (
-    <main>      
-        <Navbar links={[]}/>
+	return (
+		<main>
+			<Navbar 
+				links={[
+					{
+						name: "Orders",
+						path: "/dashboard/user"
+					}
+				]}
+				specialElements={<>
+					<ColorfulRequestPrintButton/>
+					<AccountDetails/>
+				</>} 
+			/>
 
-        <div className="bg-white rounded-sm p-14 w-full">
-            <h1 className="w-full p-20 text-center text-3xl">404 - This page could not be found.</h1>
-        </div>
-    </main>
-  )
+			<div className="bg-white rounded-sm p-14 w-full">
+				<h1 className="w-full p-20 text-center text-3xl">404 - Page Not Found</h1>
+			</div>
+		</main>
+	)
 }

@@ -1,13 +1,16 @@
 "use client"
 
 import { RegularChevronDown } from "lineicons-react";
-import { ReactNode, useState } from "react";
+import { CSSProperties, ReactNode, useState } from "react";
 
-export default function Dropdown({ name, hidden, collapsible, children, className, toolbar }: {
+export default function Dropdown({ name, icon, hidden, collapsible, children, className, headerBackground, headerText, toolbar }: {
     name: string;
+    icon?: JSX.Element,
     hidden?: boolean;
     collapsible?: boolean;
     className?: string;
+    headerBackground?: string;
+    headerText?: string;
     children?: any; 
     toolbar?: ReactNode;
 }) {
@@ -18,13 +21,14 @@ export default function Dropdown({ name, hidden, collapsible, children, classNam
     return <div className={"w-full rounded-md outline-dashed outline-gray-200 outline-1 " + className ?? ''}>
 
         <div
-            className="p-3 bg-gray-100"
+            className={`p-3 ${headerBackground ?? 'bg-cool-black'} ${headerText ?? 'text-white'}`}
             onClick={() => {
                 if (collapsible!) setHidden(!isHidden);
             }}>
 
-            <span className="align-middle w-fit">
-                <span className="font-semibold uppercase">{name}</span>
+            <span className={`align-middle w-fit`}>
+                {icon == null ? <></> : icon }
+                <span className="font-semibold tracking-wide uppercase">{name}</span>
                 <span className="ml-4">
                     {(toolbar == null ? <></> : toolbar) as ReactNode}
                 </span>

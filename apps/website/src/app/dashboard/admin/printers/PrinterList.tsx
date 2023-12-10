@@ -32,7 +32,7 @@ export function PrinterList({initialPrinters} : {initialPrinters: Printer[]}) {
   return (
     <>
       <p className="text-red-600">{error}</p>
-      <table className="bg-white mt-5 m-auto w-9/10">
+      <table className="bg-white w-full">
         <thead>
           <tr className="text-gray-400">
             <th className="text-left pl-5">Name</th>

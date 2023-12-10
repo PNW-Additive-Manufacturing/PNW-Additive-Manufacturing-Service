@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Image from 'next/image'
 import { RegularSearchAlt, RegularLayers } from "lineicons-react"
+import { createContext } from 'react'
 // import { Navbar, NavbarLink } from "./components/Navigation";
 
 

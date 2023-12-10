@@ -2,42 +2,45 @@
 import db from '@/app/api/Database';
 import { Navbar } from '@/app/components/Navigation';
 import { PrinterList, Printer } from './PrinterList';
-
-/*
-CREATE TABLE Printer (
-  Name varchar(120) NOT NULL PRIMARY KEY, -- Bob, Joe, Cnacer
-  Model varchar(120) NOT NULL,
-  Dimensions int[3] NOT NULL DEFAULT '{}',
-  SupportedMaterials varchar(10)[] NOT NULL,
-  OutOfOrder bool NOT NULL DEFAULT false,
-  CommunicationStrategy varchar,
-  CommunicationStrategyOptions varchar,
-  Queue SMALLINT[] NOT NULL DEFAULT '{}'
-);
-*/
-
+import Dropdown from '@/app/components/Dropdown';
+import GenericFormServerAction from '@/app/components/GenericFormServerAction';
+import { Input } from '@/app/components/Input';
+import { addPrinter } from '@/app/api/server-actions/printer';
 
 export default async function Page() {
-  let printers: Printer[] = (await db`select * from printer`).map((p) => {
-    return {
-      name: p.name,
-      model: p.model,
-      dimensions: p.dimensions,
-      communicationstrategy: p.communicationstrategy
-    };
-  });
-  return (
-    <main>
-      <Navbar links={[
-        {name: "Request a Print", path: "/request-part"},
-        {name: "User Dashboard", path: "/dashboard/user"},
-        {name: "Maintainer Dashboard", path: "/dashboard/maintainer"},
-        {name: "Manage Users", path: "/dashboard/admin"},
-        {name: "Add Printer", path: "/dashboard/admin/printers/addprinter"},
-        {name: "Logout", path: "/user/logout"}
-      ]}/>
+	let printers: Printer[] = (await db`select * from printer`).map((p) => {
+		return {
+			name: p.name,
+			model: p.model,
+			dimensions: p.dimensions,
+			communicationstrategy: p.communicationstrategy
+		};
+	});
+	return <>
 
-      <PrinterList initialPrinters={printers}/>
-    </main>
-  );
+		<div className='w-full md:w-2/3 lg:1/3 md:mx-auto'>
+			<Dropdown name='Printers' collapsible={false}>
+				<PrinterList initialPrinters={printers} />
+
+				<Dropdown hidden={true} name='Configure new Printer'>
+					<GenericFormServerAction serverAction={addPrinter} submitName="Add Printer" submitPendingName="Adding Printer...">
+						<Input label="Printer Name" name="printer-name" type="text" id="printer-name" placeholder="ex: Printer 1" />
+						<Input label="Printer Model" name="printer-model" type="text" id="printer-model" placeholder="ex: Creality Ender 3" />
+						<div className="font-semibold">
+							<p className="uppercase br-2">Dimensions in mm</p>
+							<span>
+								<input className="w-40 inline-block" type="number" name="printer-dimension1" placeholder="x"></input>
+								<input className="w-40 inline-block" type="number" name="printer-dimension2" placeholder="y"></input>
+								<input className="w-40 inline-block" type="number" name="printer-dimension3" placeholder="z"></input>
+
+							</span>
+						</div>
+						<Input label="Communication Strategy" name="printer-communication" type="text" id="printer-communication" placeholder="MoonRaker, Serial, or Bambu" />
+						<Input label="Communication Strategy Options" name="printer-communication-options" type="text" id="printer-communication-options" placeholder="Host, Extruder Count, Has Heated Bed" />
+
+					</GenericFormServerAction>
+				</Dropdown>
+			</Dropdown>
+		</div>
+	</>
 }

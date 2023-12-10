@@ -1,38 +1,6 @@
-import { UserList, User, ListOfUserList } from '@/app/components/UserList'
-import { getUsers } from '@/app/api/util/GetUsers';
-import { Navbar } from '@/app/components/Navigation'
+import { redirect } from "next/navigation";
 
-
-
-export default async function Admin() {
-
-    //grab initial lists of users and their permissions and place it into the ListOfUserList
-    //client component
-
-    let resUser = await getUsers('user');
-    let users: User[] = resUser.map((row: any) => {return {email: row.email, name1: row.firstname, name2: row.lastname, permission: row.permission}});
-    //console.log(resUser);
-
-    let resMaintainer = await getUsers('maintainer') as any;
-    let maintainers: User[] = resMaintainer.map((row: any) => {return {email: row.email, name1: row.firstname, name2: row.lastname, permission: row.permission}});
-    //console.log(resMaintainer);
-
-    let resAdmin = await getUsers('admin') as any;
-    let admins: User[] = resAdmin.map((row: any) => {return {email: row.email, name1: row.firstname, name2: row.lastname, permission: row.permission}});
-    //console.log(resAdmin);
-
-    return (
-        <main>
-            <Navbar links={[
-                {name: "Request a Print", path: "/request-part"},
-                {name: "User Dashboard", path: "/dashboard/user"},
-                {name: "Maintainer Dashboard", path: "/dashboard/maintainer"},
-                {name: "Printers", path: "/dashboard/admin/printers"},
-                {name: "Logout", path: "/user/logout"},
-            ]}/>
-
-            <ListOfUserList admins={admins} normUsers={users} maintainers={maintainers}/>
-            
-        </main>
-    );
+export default function Maintainer() 
+{
+    redirect('users');
 }

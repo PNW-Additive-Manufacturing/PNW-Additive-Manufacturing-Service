@@ -14,6 +14,8 @@
   --pnw-blue: #7ca6c0;
   --pnw-gold-light: #f7f2e6;
   --pnw-black: #000000;
+
+  --nav-height: 4rem;
 }
 
 * {
@@ -61,16 +63,13 @@ input, textarea {
   /* width: 15rem; */
   background-color: rgb(var(--background-rgb));
 }
-/* button {
-  background-color: white;
-  border: 0px;
-  font-weight: bold;
-  font-size: 0.9rem;
-  outline: 2px solid var(--ascent-rgb);
-} */
-button:hover, button:active {
-  background-color: var(--ascent-rgb);
+button, input[type="submit"]
+{
+  background-color: var(--pnw-gold);
+}
+button:hover, input[type="submit"]:hover, button:active {
   color: rgb(64, 64, 64);
+  background-color: var(--pnw-gold);
   transition: 0.05s;
   color: white;
 }
@@ -140,6 +139,12 @@ table thead tr td, table thead tr th {
   border-radius: 50%;
   color: rgb(100, 100, 100);
   padding: 1rem 2rem 0.5rem 0rem;
+  font-weight: normal;
+  text-align: left;
+}
+table thead tr td:first-child, table thead tr th:first-child
+{
+  padding-left: 1rem;
 }
 table tbody tr {
   border-top: 2px solid rgb(238, 238, 238);
@@ -154,7 +159,7 @@ table thead tr td:last-child, table thead tr th:last-child
 {
   padding-right: 0rem;
 }
-tr td:first-child
+table tbody tr td:first-child
 {
   padding-left: 1rem;
 }

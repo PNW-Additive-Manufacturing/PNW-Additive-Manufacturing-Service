@@ -19,11 +19,11 @@ import PartFailedButton from '.././PartFailedButton';
 import PartBeginPrintingButton from '.././PartBeginPrintingButton';
 import RequestFulfilledButton from "../RequestFulfilledButton";
 
-async function RequestPartsOnlyTable({request}: {request: number}) {
+async function RequestPartsOnlyTable({ request }: { request: number }) {
     var parts = await db`select * from part where requestid = ${request}`;
     var filaments = await db`select id, material, color from filament where id in ${db(parts.map((p) => p.assignedfilamentid))}`;
-    var models = await db`select * from model where id in ${ db(parts.map((p) => p.modelid)) }`;
-    var printers = await db`select * from printer;` as {name: string, model: string}[];
+    var models = await db`select * from model where id in ${db(parts.map((p) => p.modelid))}`;
+    var printers = await db`select * from printer;` as { name: string, model: string }[];
 
     return <table className='w-full overflow-y-scroll overflow-x-scroll' style={{ maxHeight: "60vh" }}>
         <thead>
@@ -32,15 +32,15 @@ async function RequestPartsOnlyTable({request}: {request: number}) {
                 <td>Quantity</td>
                 <td>Filament</td>
                 <td>Status</td>
-                <td>Printer</td>
-                <td>Actions</td>
+                <td className='hidden lg:table-cell'>Printer</td>
+                <td className='hidden lg:table-cell'>Actions</td>
             </tr>
         </thead>
         <tbody>
             {parts.map(part => {
                 const model = models.find(m => m.id === part.modelid)!;
                 const filament = filaments.find(f => f.id === part.assignedfilamentid);
-                
+
                 return <tr>
                     <td><InlineFile filename={model.name} filepath={model.filepath}></InlineFile></td>
                     <td>{part.quantity}</td>
@@ -49,35 +49,35 @@ async function RequestPartsOnlyTable({request}: {request: number}) {
                         {part.status == 'printing'
                             ? <InlineStatus status='Printing' color='bg-blue-200'></InlineStatus>
                             : part.status == 'printed'
-                            ? <InlineStatus status='Printed' color='bg-green-200'></InlineStatus>
-                            : part.status == 'failed'
-                            ? <InlineStatus status='Failed' color='bg-red-200'></InlineStatus>
-                            : part.status == 'queued'
-                            ? <InlineStatus status='Queued' color='bg-amber-200'></InlineStatus>
-                            : part.status == 'pending'
-                            ? <InlineStatus status='Pending Approval' color='bg-gray-200'></InlineStatus>
-                            : <InlineStatus status={part.status} color='bg-gray-200'></InlineStatus>}
+                                ? <InlineStatus status='Printed' color='bg-green-200'></InlineStatus>
+                                : part.status == 'failed'
+                                    ? <InlineStatus status='Failed' color='bg-red-200'></InlineStatus>
+                                    : part.status == 'queued'
+                                        ? <InlineStatus status='Queued' color='bg-amber-200'></InlineStatus>
+                                        : part.status == 'pending'
+                                            ? <InlineStatus status='Pending Approval' color='bg-gray-200'></InlineStatus>
+                                            : <InlineStatus status={part.status} color='bg-gray-200'></InlineStatus>}
                     </td>
-                    <td><InlinePrinterSelector
-                        partId={part.id}    
-                        printers={printers} 
+                    <td className='hidden lg:table-cell'><InlinePrinterSelector
+                        partId={part.id}
+                        printers={printers}
                         selection={part.assignedprintername}></InlinePrinterSelector></td>
-                    <td>
+                    <td className='hidden lg:table-cell'>
                         {part.status == 'printing'
-                        ? <div className='flex gap-2'>
-                            <PartCompleteButton part={part.id}></PartCompleteButton>
-                            <PartFailedButton part={part.id}></PartFailedButton>
-                        </div>
-                        : part.status == 'pending'
-                        ? <div className='flex gap-2'>
-                            <PartAcceptButton part={part.id}></PartAcceptButton>
-                            <PartDenyButton part={part.id}></PartDenyButton>
-                        </div>
-                        : part.status == 'queued' 
-                        ? <div>
-                            <PartBeginPrintingButton part={part.id}></PartBeginPrintingButton>
-                        </div>
-                        : <></>}
+                            ? <div className='flex gap-2'>
+                                <PartCompleteButton part={part.id}></PartCompleteButton>
+                                <PartFailedButton part={part.id}></PartFailedButton>
+                            </div>
+                            : part.status == 'pending'
+                                ? <div className='flex gap-2'>
+                                    <PartAcceptButton part={part.id}></PartAcceptButton>
+                                    <PartDenyButton part={part.id}></PartDenyButton>
+                                </div>
+                                : part.status == 'queued'
+                                    ? <div>
+                                        <PartBeginPrintingButton part={part.id}></PartBeginPrintingButton>
+                                    </div>
+                                    : <></>}
                     </td>
                 </tr>
             })}
@@ -85,9 +85,8 @@ async function RequestPartsOnlyTable({request}: {request: number}) {
     </table>
 }
 
-export default async function OrderMaintainer({params}: {params: any}) {
-    if (params.order == null || Number.isNaN(Number(params.order)))
-    {
+export default async function OrderMaintainer({ params }: { params: any }) {
+    if (params.order == null || Number.isNaN(Number(params.order))) {
         return redirect("/dashboard/maintainer");
     }
     const orderId = Number(params.order);
@@ -98,88 +97,51 @@ export default async function OrderMaintainer({params}: {params: any}) {
     if (quiredOrder == null) return redirect("/dashboard/maintainer");
     const parts = await db`select * from part where requestid=${orderId} order by id asc;`;
 
-    return (
-        <main>
-            <Navbar links={[
-                { name: "Request a Print", path: "/request-part" },
-                { name: "User Dashboard", path: "/dashboard/user" },
-                { name: "Maintainer Dashboard", path: "/dashboard/maintainer" },
-                { name: "Logout", path: "/user/logout" }
-            ]} />
+    return <div className='w-full xl:w-3/4 lg:mx-auto bg-white bg-opacity-40 lg:p-2 xl:p-5'>
+        <Dropdown name='Requests'>
+            <table className='w-full overflow-x'>
+                <thead>
+                    <tr>
+                        <td>Parts</td>
+                        <td>User</td>
+                        <td>Status</td>
+                        <td className='hidden lg:table-cell'>Notes</td>
+                        <td>Submitted</td>
+                        <td className='hidden lg:table-cell'>Actions</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {requests.map(req => {
+                        const reqParts = parts.filter(p => p.requestid == req.id);
 
-            <div className='flex flex-col lg:flex-row'>
-                <SidebarNavigation style={{height: 'calc(100vh - 72px)'}} items={[
-                {
-                    name: "Orders",
-                    route: "orders",
-                    icon: (className) => <RegularCart className={`${className}`}></RegularCart>,
-                    active: true
-                },
-                {
-                    name: "Printers",
-                    route: "printers",
-                    icon: (className) => <RegularCog className={`${className}`}></RegularCog>,
-                    active: false
-                },
-                {
-                    name: "Filaments",
-                    route: "filaments",
-                    icon: (className) => <RegularCrossCircle className={`${className}`}></RegularCrossCircle>,
-                    active: false
-                }
-                ]}></SidebarNavigation>
+                        return <tr className={req.id == quiredOrder.id ? 'outline outline-blue-200' : ''}>
+                            <td>{req.name || `${reqParts.length} Part(s)`}</td>
+                            <td>{req.owneremail.substring(0, req.owneremail.lastIndexOf('@'))}</td>
+                            <td>{req.isfulfilled
+                                ? <InlineStatus status="Fulfilled" color='bg-green-200'></InlineStatus>
+                                : <InlineStatus status='In Progress' color='bg-blue-200'></InlineStatus>
+                            }</td>
+                            <td className='hidden lg:table-cell truncate'>{req.notes || <span className="text-gray-500">None supplied</span>}</td>
+                            <td>{req.submittime.toLocaleString("en-US", DateOptions)}</td>
+                            <td>
+                                <div className='hidden lg:flex gap-2'>
+                                    <Link
+                                        className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
+                                        href={req.id == orderId ? '/dashboard/maintainer/orders' : `/dashboard/maintainer/orders/${req.id}`}>View
+                                    </Link>
+                                    {req.isfulfilled ? <></> : <RequestFulfilledButton request={req.id}></RequestFulfilledButton>}
+                                </div>
+                            </td>
+                        </tr>
 
-                <div className='w-full p-12 overflow-y-scroll' style={{maxHeight: 'calc(100vh - 72px)'}}>
-                    <div className='w-full xl:w-3/4 lg:mx-auto'>               
-                        <Dropdown name='Requests'>
-                            <table className='w-full overflow-x'>
-                                <thead>
-                                    <tr>
-                                        <td>Parts</td>
-                                        <td>User</td>
-                                        <td>Status</td>
-                                        <td>Notes</td>
-                                        <td>Submitted At</td>
-                                        <td>Actions</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {requests.map(req => {
-                                        const reqParts = parts.filter(p => p.requestid == req.id);
-                                        
-                                        return <tr className={req.id == quiredOrder.id ? 'outline outline-blue-200' : ''}>
-                                            <td>{req.name || `${reqParts.length} Part(s)`}</td>
-                                            <td>{req.owneremail.substring(0, req.owneremail.lastIndexOf('@'))}</td>
-                                            <td>{req.isfulfilled 
-                                                    ? <InlineStatus status="Fulfilled" color='bg-green-200'></InlineStatus>
-                                                    : <InlineStatus status='In Progress' color='bg-blue-200'></InlineStatus>
-                                            }</td>
-                                            <td className="truncate">{req.notes || <span className="text-gray-500">None supplied</span>}</td>
-                                            <td>{req.submittime.toLocaleString("en-US", DateOptions)}</td>
-                                            <td>
-                                                <div className='flex gap-2'>
-                                                    <Link
-                                                        className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
-                                                        href={req.id == orderId ? '/dashboard/maintainer/orders' : `/dashboard/maintainer/orders/${req.id}`}>View
-                                                    </Link>
-                                                    <RequestFulfilledButton request={req.id}></RequestFulfilledButton>
-                                                </div>
-                                            </td>
-                                        </tr>
+                    })}
+                </tbody>
+            </table>
+        </Dropdown>
 
-                                    })}
-                                </tbody>
-                            </table>
-                        </Dropdown>
+        <Dropdown name={`Parts for ${quiredOrder.name}`} className='mt-8'>
+            <RequestPartsOnlyTable request={quiredOrder.id}></RequestPartsOnlyTable>
+        </Dropdown>
 
-                        <Dropdown name={`Parts for ${quiredOrder.name}`} className='mt-8'>
-                            <RequestPartsOnlyTable request={quiredOrder.id}></RequestPartsOnlyTable>
-                        </Dropdown>
-
-                    </div>
-                </div>
-            </div>
-        </main>
-    );
+    </div>
 }
-

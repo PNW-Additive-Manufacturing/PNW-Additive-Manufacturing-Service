@@ -3,6 +3,7 @@
 import { changePermission } from "@/app/api/server-actions/account";
 import { ChangeEvent, useState, useTransition } from "react";
 import { Permission } from "../api/util/Constants";
+import Dropdown from "./Dropdown";
 
 export interface User {
     email: string,
@@ -135,18 +136,17 @@ export function ListOfUserList({normUsers, maintainers, admins}: {normUsers: Use
     });
   };
 
-  return (
-    <div className="bg-white rounded-sm p-14 pt-7 w-full left">
+  return <>
+      <Dropdown name={`Administrators (${adminArray.length})`}>
+        <UserList users={adminArray} onChange={onChange}/>
+      </Dropdown>
 
-      <h1 className="w-full pb-4 pt-0 text-left">Admin List</h1>
-      <UserList users={adminArray} onChange={onChange}/>
+      <Dropdown name={`Maintainers (${maintainArray.length})`} className="mt-8">
+        <UserList users={maintainArray} onChange={onChange}/>
+      </Dropdown>
 
-      <h1 className="w-full pb-4 pt-10 text-left">Maintainer List</h1>
-      <UserList users={maintainArray} onChange={onChange}/>
-
-      <h1 className="w-full pb-4 pt-10 text-left">User List</h1>
-      <UserList users={normUsers} onChange={onChange}/>
-
-    </div>
-  );
+      <Dropdown name={`Users (${normUsers.length})`} hidden={true} className="mt-8">
+        <UserList users={normUsers} onChange={onChange}/>
+      </Dropdown>
+    </>
 }

@@ -10,16 +10,6 @@ import { ChangeEventHandler, LegacyRef, Ref, useRef, useState } from "react";
 import { RegularAddFiles, RegularEmptyFile, RegularTrashCan } from 'lineicons-react';
 import QuantityInput from "./QuantityInput";
 
-
-function SubmitButton() {
-	let { pending } = useFormStatus();
-	return (
-		<div className="bg-white rounded-sm font-semibold p-0 w-full">
-			<input disabled={pending} type="submit" value={pending ? "Contacting our Server..." : "Submit Request"} />
-		</div>
-	)
-}
-
 function AddPartButton({onChange}: {onChange: ChangeEventHandler<HTMLInputElement>})
 {
 	var inputRef = useRef<LegacyRef<HTMLInputElement>>();
@@ -68,7 +58,12 @@ export function RequestPartForm({ filaments, children }: { filaments: Filament[]
 								? parts[0].ModelName
 								: "Enter the name of the request"} />
 
-				<Dropdown name='Parts' collapsible={false}>
+				<Dropdown 
+					name='Parts' 
+					collapsible={false}
+					headerBackground='bg-gray-100'
+					headerText="text-cool-black text-bold"
+				>
 					<div className=''>
 						<div className="">
 							<table className={`w-full ${parts.length > 0 ? 'mb-2' : ''}`}>
@@ -140,8 +135,13 @@ export function RequestPartForm({ filaments, children }: { filaments: Filament[]
 
 				<p className="text-sm text-red-500">{error}</p>
 
-				<div className="rounded-sm font-semibold p-0 w-full">
-					<input disabled={pending || parts.length == 0} type="submit" value={pending ? "Contacting our Server..." : "Submit Request"} />
+				<div className="rounded-sm p-0 w-full">
+					<input 
+						className="font-semibold text-cool-black"
+						style={{color: 'rgb(48 48 48)', backgroundColor: 'hsl(33, 100%, 52.9%)', background: 'linear-gradient(45deg, hsl(33, 100%, 52.9%) 0%, hsl(58.2, 100%, 68%) 100%)'}}
+						disabled={pending || parts.length == 0} 
+						type="submit" 
+						value={pending ? "Contacting our Server..." : "Submit 3D Printing Request"}/>
 				</div>
 			</div>
 		</form>

@@ -1,58 +1,24 @@
-
 import db from "@/app/api/Database";
 import { Filament, FilamentList } from "./FilamentTable";
-import { Navbar } from "@/app/components/Navigation";
-import SidebarNavigation from "@/app/components/DashboardNavigation";
-import { RegularCart, RegularCog, RegularCrossCircle } from "lineicons-react";
 import Dropdown from "@/app/components/Dropdown";
+import { FilamentForm } from "./FilamentForm";
 
 export default async function Page() {
-  let filaments: Filament[] = (await db`select * from filament`).map((f) => {
-    return {
-      material: f.material,
-      color: f.color,
-      instock: f.instock
-    };
-  });
+	let filaments: Filament[] = (await db`select * from filament`).map((f) => {
+		return {
+			material: f.material,
+			color: f.color,
+			instock: f.instock
+		};
+	});
 
-  return (
-    <main>
-      <Navbar links={[
-        { name: "Request a Print", path: "/request-part" },
-        { name: "User Dashboard", path: "/dashboard/user" },
-        { name: "Maintainer Dashboard", path: "/dashboard/maintainer" },
-        { name: "Add Filament", path: "/dashboard/maintainer/filaments/addfilament" },
-        { name: "Logout", path: "/user/logout" }
-      ]}/>
-      <div className='flex flex-col lg:flex-row'>
-        <SidebarNavigation style={{height: 'calc(100vh - 72px)'}} items={[
-          {
-              name: "Requests",
-              route: "orders",
-              icon: (className) => <RegularCart className={`${className}`}></RegularCart>,
-              active: false
-          },
-          {
-              name: "Printers",
-              route: "printers",
-              icon: (className) => <RegularCog className={`${className}`}></RegularCog>,
-              active: false
-          },
-          {
-              name: "Filaments",
-              route: "filaments",
-              icon: (className) => <RegularCrossCircle className={`${className}`}></RegularCrossCircle>,
-              active: true
-          }
-        ]}></SidebarNavigation>
+	return <div className='w-full xl:w-3/4 lg:mx-auto'>
+		<Dropdown name="Filament" collapsible={false}>
+			<FilamentList initialFilaments={filaments} />
 
-        <div className='w-full lg:w-2/3 mx-auto p-12 overflow-y-scroll' style={{height: 'calc(100vh - 72px)'}}>
-          <Dropdown name="Filament" collapsible={false}>
-            <FilamentList initialFilaments={filaments}/>
-          </Dropdown>
-        </div>
-      
-      </div>
-    </main>
-  )
+			<Dropdown name="Add Filament" hidden={true}>
+				<FilamentForm/>
+			</Dropdown>
+		</Dropdown>
+	</div>
 }

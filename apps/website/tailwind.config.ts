@@ -12,10 +12,15 @@ const config: Config = {
       colors: {
         "pnw-gold": "var(--pnw-gold)",
         "pnw-gold-light": "var(--pnw-gold-light)",
-        "indicator-inactive": "#94a3b8"
+        "indicator-inactive": "#94a3b8",
+        "cool-black": "#303030"
+      },
+      backgroundColor: {
+        "pnw-mystic": 'hsl(33, 100%, 52.9%)'
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-linear-pnw-mystic': 'linear-gradient(45deg, hsl(33, 100%, 52.9%) 0%, hsl(58.2, 100%, 68%) 100%)',
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
@@ -23,6 +28,10 @@ const config: Config = {
         '1/8': '12.5%',
         '1/10': '10%',
         '9/10': '90%'
+      },
+      height: {
+        'nav': 'var(--nav-height)',
+        'remaining-screen-with-nav': 'calc(100vh - var(--nav-height))'
       }
     },
   },
