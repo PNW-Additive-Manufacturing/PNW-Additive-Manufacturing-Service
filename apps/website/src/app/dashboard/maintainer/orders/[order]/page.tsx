@@ -7,15 +7,17 @@ import SidebarNavigation from '@/app/components/DashboardNavigation';
 import db from "@/app/api/Database";
 import { InlinePrinterSelector } from '../../../../components/InlinePrinterSelector';
 import { InlineFile } from '../../../../components/InlineFile';
+import Dropdown from '../../../../components/Dropdown';
+import InlineStatus from '../../../../components/InlineStatus';
+import Link from "next/link";
+import { DateOptions } from "@/app/api/util/Constants";
+//Buttons
 import PartAcceptButton from '.././PartAcceptButton';
 import PartDenyButton from '.././PartDenyButton';
 import PartCompleteButton from '.././PartCompleteButton';
 import PartFailedButton from '.././PartFailedButton';
 import PartBeginPrintingButton from '.././PartBeginPrintingButton';
-import Dropdown from '../../../../components/Dropdown';
-import InlineStatus from '../../../../components/InlineStatus';
-import Link from "next/link";
-import { DateOptions } from "@/app/api/util/Constants";
+import RequestFulfilledButton from "../RequestFulfilledButton";
 
 async function RequestPartsOnlyTable({request}: {request: number}) {
     var parts = await db`select * from part where requestid = ${request}`;
@@ -101,6 +103,7 @@ export default async function OrderMaintainer({params}: {params: any}) {
             <Navbar links={[
                 { name: "Request a Print", path: "/request-part" },
                 { name: "User Dashboard", path: "/dashboard/user" },
+                { name: "Maintainer Dashboard", path: "/dashboard/maintainer" },
                 { name: "Logout", path: "/user/logout" }
             ]} />
 
@@ -158,6 +161,7 @@ export default async function OrderMaintainer({params}: {params: any}) {
                                                     className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
                                                     href={req.id == orderId ? '/dashboard/maintainer/orders' : `/dashboard/maintainer/orders/${req.id}`}>View
                                                 </Link>
+                                                <RequestFulfilledButton req={req.id}></RequestFulfilledButton>
                                             </td>
                                         </tr>
 

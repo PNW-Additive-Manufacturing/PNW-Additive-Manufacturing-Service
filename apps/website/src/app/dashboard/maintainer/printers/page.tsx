@@ -80,31 +80,40 @@ var printers: DashboardPrinter[] = [
 export default function Maintainer() 
 {
     return (
-        <main className='flex'>
-            <SidebarNavigation style={{height: 'calc(100vh - 72px)'}} items={[
-            {
-                name: "Orders",
-                route: "orders",
-                icon: (className) => <RegularCart className={`${className}`}></RegularCart>,
-                active: false
-            },
-            {
-                name: "Printers",
-                route: "printers",
-                icon: (className) => <RegularCog className={`${className}`}></RegularCog>,
-                active: true
-            },
-            {
-                name: "Filaments",
-                route: "filaments",
-                icon: (className) => <RegularCrossCircle className={`${className}`}></RegularCrossCircle>,
-                active: false
-            }
-            ]}></SidebarNavigation>
+        <main>
+            <Navbar links={[
+                { name: "Request a Print", path: "/request-part" },
+                { name: "User Dashboard", path: "/dashboard/user" },
+                { name: "Maintainer Dashboard", path: "/dashboard/maintainer" },
+                { name: "Logout", path: "/user/logout" }
+            ]} />
 
-            <div className='bg-purple-400 w-3/6 h-screen'></div>
-            
-            <div className='bg-amber-100 w-96 h-screen'></div>
+            <div className='flex'>
+                <SidebarNavigation style={{height: 'calc(100vh - 72px)'}} items={[
+                {
+                    name: "Orders",
+                    route: "orders",
+                    icon: (className) => <RegularCart className={`${className}`}></RegularCart>,
+                    active: false
+                },
+                {
+                    name: "Printers",
+                    route: "printers",
+                    icon: (className) => <RegularCog className={`${className}`}></RegularCog>,
+                    active: true
+                },
+                {
+                    name: "Filaments",
+                    route: "filaments",
+                    icon: (className) => <RegularCrossCircle className={`${className}`}></RegularCrossCircle>,
+                    active: false
+                }
+                ]}></SidebarNavigation>
+
+                <div className='bg-purple-400 w-3/6 h-screen'></div>
+                
+                <div className='bg-amber-100 w-96 h-screen'></div>
+            </div>
         </main>
     );
 }

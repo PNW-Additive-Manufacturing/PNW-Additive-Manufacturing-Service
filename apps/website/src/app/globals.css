@@ -134,6 +134,7 @@ table thead tr td, table thead tr th {
   padding: 1rem 2rem 0.5rem 0rem;
 }
 table tbody tr {
+  border-top: 2px solid rgb(238, 238, 238);
   border-bottom: 2px solid rgb(238, 238, 238);
   height: 65px;
 }

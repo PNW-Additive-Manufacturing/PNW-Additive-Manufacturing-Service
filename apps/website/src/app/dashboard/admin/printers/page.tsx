@@ -29,7 +29,12 @@ export default async function Page() {
   return (
     <main>
       <Navbar links={[
-        {name: "Add Printer", path: "/dashboard/admin/printers/addprinter"}
+        {name: "Request a Print", path: "/request-part"},
+        {name: "User Dashboard", path: "/dashboard/user"},
+        {name: "Maintainer Dashboard", path: "/dashboard/maintainer"},
+        {name: "Manage Users", path: "/dashboard/admin"},
+        {name: "Add Printer", path: "/dashboard/admin/printers/addprinter"},
+        {name: "Logout", path: "/user/logout"}
       ]}/>
 
       <PrinterList initialPrinters={printers}/>

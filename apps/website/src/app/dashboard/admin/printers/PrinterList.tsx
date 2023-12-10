@@ -26,7 +26,6 @@ export function PrinterList({initialPrinters} : {initialPrinters: Printer[]}) {
       }
 
       setPrinters(printers.filter((p) => p.name !== printerName));
-
     })
   };
 
@@ -38,9 +37,9 @@ export function PrinterList({initialPrinters} : {initialPrinters: Printer[]}) {
           <tr className="text-gray-400">
             <th className="text-left pl-5">Name</th>
             <th className="text-left">Model</th>
-            <th className="text-left">Dimensions</th>
+            <th className="text-left">Dimensions in mm</th>
             <th className="text-left">Communication Strategy</th>
-            <th className='text-left pr-5'>Actions</th>
+            <th className='text-left pr-2'>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -49,7 +48,7 @@ export function PrinterList({initialPrinters} : {initialPrinters: Printer[]}) {
             <td className='text-left'>{p.model}</td>
             <td className='text-left'>{p.dimensions[0]} x {p.dimensions[1]} x {p.dimensions[2]}</td>
             <td className='text-left'>{p.communicationstrategy}</td>
-            <td className='text-left pr-5'><button className='bg-red-500 p-1 rounded-lg border-none' onClick={(e) => clickHandler(p.name)}>Delete</button></td>
+            <td className='text-left pr-2'><button className='bg-red-500 p-1 rounded-lg border-none' onClick={(e) => clickHandler(p.name)}>Delete</button></td>
           </tr>)}
         </tbody>
       </table>

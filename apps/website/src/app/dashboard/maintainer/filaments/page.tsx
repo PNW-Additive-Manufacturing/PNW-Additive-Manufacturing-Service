@@ -18,13 +18,16 @@ export default async function Page() {
   return (
     <main>
       <Navbar links={[
-        {name: "Maintainer Dashboard", path: "/dashboard/maintainer"},
-        {name: "Add Filament", path: "/dashboard/maintainer/filaments/addfilament"}
+        { name: "Request a Print", path: "/request-part" },
+        { name: "User Dashboard", path: "/dashboard/user" },
+        { name: "Maintainer Dashboard", path: "/dashboard/maintainer" },
+        { name: "Add Filament", path: "/dashboard/maintainer/filaments/addfilament" },
+        { name: "Logout", path: "/user/logout" }
       ]}/>
       <div className='flex flex-col lg:flex-row'>
         <SidebarNavigation style={{height: 'calc(100vh - 72px)'}} items={[
           {
-              name: "Orders",
+              name: "Requests",
               route: "orders",
               icon: (className) => <RegularCart className={`${className}`}></RegularCart>,
               active: false

@@ -240,20 +240,19 @@ export default async function Maintainer({params}: {params: any}) {
     const requests = await db`select * from request order by submittime asc`;
     const parts = await db`select * from part order by id asc;`;
 
-    console.log(params);
-
     return (
         <main>
             <Navbar links={[
                 { name: "Request a Print", path: "/request-part" },
                 { name: "User Dashboard", path: "/dashboard/user" },
+                { name: "Maintainer Dashboard", path: "/dashboard/maintainer" },
                 { name: "Logout", path: "/user/logout" }
             ]} />
 
             <div className='flex flex-col lg:flex-row'>
                 <SidebarNavigation style={{height: 'calc(100vh - 72px)'}} items={[
                     {
-                        name: "Orders",
+                        name: "Requests",
                         route: "orders",
                         icon: (className) => <RegularCart className={`${className}`}></RegularCart>,
                         active: true

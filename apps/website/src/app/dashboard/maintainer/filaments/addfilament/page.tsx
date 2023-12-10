@@ -17,9 +17,11 @@ export default function Page() {
   return (
     <main>
         <Navbar links={[
-          {name: "Maintainer Dashboard", path: "/dashboard/maintainer"},
-          {name: "Filaments", path: "/dashboard/maintainer/filaments"}
-
+          { name: "Request a Print", path: "/request-part" },
+          { name: "User Dashboard", path: "/dashboard/user" },
+          { name: "Maintainer Dashboard", path: "/dashboard/maintainer" },
+          { name: "Filaments", path: "/dashboard/maintainer/filaments" },
+          { name: "Logout", path: "/user/logout" }
         ]}/>
 
         <FilamentForm/>
