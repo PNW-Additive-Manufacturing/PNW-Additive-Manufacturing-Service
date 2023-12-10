@@ -19,7 +19,7 @@ export async function middleware(request: NextRequest) {
   const nextUrl = request.nextUrl.pathname;
 
   //allow non-logged in users to access login and create account screens
-  if(nextUrl.startsWith("/user/login") || nextUrl.startsWith("/user/create-account")) {
+  if(nextUrl.startsWith("/user/login") || nextUrl.startsWith("/user/create-account") || nextUrl === "/") {
     return NextResponse.next();
   }
 

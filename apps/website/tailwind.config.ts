@@ -13,7 +13,8 @@ const config: Config = {
         "pnw-gold": "var(--pnw-gold)",
         "pnw-gold-light": "var(--pnw-gold-light)",
         "indicator-inactive": "#94a3b8",
-        "cool-black": "#303030"
+        "cool-black": "#303030",
+        "pnw-mystic": 'hsl(33, 100%, 52.9%)'
       },
       backgroundColor: {
         "pnw-mystic": 'hsl(33, 100%, 52.9%)'
