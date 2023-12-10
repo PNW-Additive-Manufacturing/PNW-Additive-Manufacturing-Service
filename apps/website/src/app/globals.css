@@ -75,7 +75,7 @@ button:hover, button:active {
   color: white;
 }
 button:hover, input:hover, textarea:hover, input::selection, input::marker {
-  outline: 2px solid var(--ascent-rgb);
+  /* outline: 2px solid var(--ascent-rgb); */
 }
 button:hover, input[type="submit"]:hover, select:hover{
   cursor: pointer;
@@ -88,17 +88,25 @@ input, textarea, button {
   display: block;
   width: auto;
   width: -moz-available;
-  border-left: 4px solid var(--ascent-rgb);
-  border-top-left-radius: 0px;
-  border-bottom-left-radius: 0px;
   font-weight: lighter;
   color: rgb(64, 64, 64);
   margin-bottom: 0.9rem;
 }
 input[type="submit"], button {
-  background-color: var(--ascent-rgb);
+  /* background-color: var(--ascent-rgb); */
+  background-color: #303030;
   color: white;
   font-weight: bold;
+}
+input[type="submit"][disabled], button[disabled]
+{
+  background-color: #505050;
+}
+
+button {
+  background-color: #303030;
+  color: white;
+  font-size: smaller;
 }
 
 tr:nth-child(even) {
@@ -139,7 +147,7 @@ table tbody tr {
   height: 65px;
 }
 table tbody tr td {
-  font-size: 1.1rem;
+  font-size: 1rem;
   padding: 1rem 0rem 1rem 0rem;
 }
 table thead tr td:last-child, table thead tr th:last-child

@@ -1,31 +1,149 @@
 "use client"
 
 import { useFormState, useFormStatus } from "react-dom";
+import { Input, InputBig } from '@/app/components/Input';
 import { requestPart } from "@/app/api/server-actions/request-part";
+import Dropdown from "./Dropdown";
+import { Filament } from "../dashboard/maintainer/filaments/FilamentTable";
+import { FilamentSelector } from "./FilamentSelector";
+import { ChangeEventHandler, LegacyRef, Ref, useRef, useState } from "react";
+import { RegularAddFiles, RegularEmptyFile, RegularTrashCan } from 'lineicons-react';
+import QuantityInput from "./QuantityInput";
 
 
 function SubmitButton() {
-  let {pending} = useFormStatus();
-  return (
-    <div className="bg-white rounded-sm font-semibold p-0 pb-10 w-full">
-      <input type="submit" value={pending ? "Submitting Request..." : "Submit Request"}/>
-    </div>
-  )
+	let { pending } = useFormStatus();
+	return (
+		<div className="bg-white rounded-sm font-semibold p-0 w-full">
+			<input disabled={pending} type="submit" value={pending ? "Contacting our Server..." : "Submit Request"} />
+		</div>
+	)
 }
 
+function AddPartButton({onChange}: {onChange: ChangeEventHandler<HTMLInputElement>})
+{
+	var inputRef = useRef<LegacyRef<HTMLInputElement>>();
+
+	return <>
+		<input className='hidden' ref={inputRef as any} hidden type="file" accept=".stl" multiple={true} onChange={ev => {
+			ev.preventDefault();
+			onChange(ev);
+			ev.currentTarget.value = '';
+		}}/>
+		<button className="w-full px-4 py-2 mb-0 text-sm" onClick={ev => {
+			ev.preventDefault();
+			(inputRef.current?.valueOf() as HTMLInputElement).click();
+		}}>
+			<RegularAddFiles className="inline mr-2 w-4 h-4 fill-white"></RegularAddFiles>
+			Add More Files
+		</button>
+	</>
+}
+
+interface PartData
+{
+	File: File;
+	ModelName: string;
+	Quantity: number;
+	FilamentId: number;
+}
 
 //TODO: Make this work for more generic forms
-export function RequestPartForm({children} : {children: any}) : JSX.Element {
-  let [error, formAction] = useFormState<string, FormData>(requestPart, "");
+export function RequestPartForm({ filaments, children }: { filaments: Filament[], children?: any }): JSX.Element {
+	let [error, formAction] = useFormState<string, FormData>(requestPart, "");
+	let { pending } = useFormStatus();
 
-  return (
-    <form action={formAction}>
-      <div className="bg-white rounded-sm p-14 pt-10 pb-10 w-full">
-        {children}
-        <p className="text-sm text-red-500">{error}</p>
+	let [parts, updateParts] = useState<PartData[]>([]);
 
-        <SubmitButton/>
-      </div>
-    </form>
-  )
+	return (
+		<form action={(formData) => {
+			for (var part of parts) formData.append("file", part.File);
+			formAction(formData)
+		}}>
+			<div className="bg-white rounded-sm w-full">
+				<Input label="Request Name" type="text" id="name" name="requestname" 
+					placeholder={parts.length > 1 
+								? `${parts[0].ModelName} & ${parts.length - 1} More` 
+								: parts.length > 0
+								? parts[0].ModelName
+								: "Enter the name of the request"} />
+
+				<Dropdown name='Parts' collapsible={false}>
+					<div className=''>
+						<div className="">
+							<table className={`w-full ${parts.length > 0 ? 'mb-2' : ''}`}>
+								<tbody>
+									{parts.map(part => {
+										console.log(part);
+
+										return <tr key={part.ModelName} className="bg-gray-100 p-0">
+											<td>
+												<RegularEmptyFile className="inline w-5 h-5 fill-gray-500 text-purple-200 mr-2"></RegularEmptyFile> 
+												{part.File.name}
+											</td>
+											<td>
+												<div className="flex items-center">
+													<span className="mr-2 text-gray-600 text-base">Quantity</span>
+													<QuantityInput defaultQuantity={part.Quantity} name='quantity' min={1} max={8}></QuantityInput>
+												</div>
+											</td>
+											<td>
+												<div className="flex items-center">
+													<span className="mr-2 text-gray-600 text-base">Filament</span>
+													<div className="bg-white rounded-sm px-2">
+														<FilamentSelector
+															filaments={filaments}></FilamentSelector>
+													</div>
+												</div>
+											</td>
+											<td>
+												<RegularTrashCan 
+													className="w-5 h-5 mr-5 fill-red-200 hover:fill-red-400 hover:cursor-pointer"
+													onClick={() => updateParts(parts.filter(p => p.File.name != part.File.name))}></RegularTrashCan>
+											</td>
+										</tr>
+									})}
+								</tbody>
+							</table>
+
+							<div className={`p-4 ${parts.length > 0 ? 'pt-2' : 'pt-4'}`}>
+								<AddPartButton onChange={ev => {
+									ev.preventDefault();
+
+									if (ev.currentTarget.files == null) return;
+
+									var newParts: PartData[] = (Array.from(Array(ev.currentTarget.files.length).keys())).map(i => {
+										const f = ev.currentTarget.files![i];
+										return {
+											File: f,
+											ModelName: f.name.substring(0, f.name.lastIndexOf('.')),
+											FilamentId: 1,
+											Quantity: 1
+										}
+									})
+
+									updateParts([
+										...parts,
+										...newParts
+									]);
+								}}></AddPartButton>
+							</div>
+						</div>
+					</div>
+				</Dropdown>
+								
+				<br></br>
+
+				<Dropdown className="mb-6" name="Notes">
+					<InputBig id="notes" placeholder="Anything else we should know?" className="bg-white"/>
+				</Dropdown>
+
+				<p className="text-sm text-red-500">{error}</p>
+
+				<div className="rounded-sm font-semibold p-0 w-full">
+					<input disabled={pending || parts.length == 0} type="submit" value={pending ? "Contacting our Server..." : "Submit Request"} />
+				</div>
+			</div>
+		</form>
+	)
 }

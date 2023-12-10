@@ -135,7 +135,7 @@ export default async function OrderMaintainer({params}: {params: any}) {
                             <table className='w-full overflow-x'>
                                 <thead>
                                     <tr>
-                                        <td>Request Name</td>
+                                        <td>Parts</td>
                                         <td>User</td>
                                         <td>Status</td>
                                         <td>Notes</td>
@@ -154,7 +154,7 @@ export default async function OrderMaintainer({params}: {params: any}) {
                                                     ? <InlineStatus status="Fulfilled" color='bg-green-200'></InlineStatus>
                                                     : <InlineStatus status='In Progress' color='bg-blue-200'></InlineStatus>
                                             }</td>
-                                            <td className="truncate">{req.notes || <span className="text-gray-400">None supplied</span>}</td>
+                                            <td className="truncate">{req.notes || <span className="text-gray-500">None supplied</span>}</td>
                                             <td>{req.submittime.toLocaleString("en-US", DateOptions)}</td>
                                             <td>
                                                 <div className='flex gap-2'>
@@ -162,7 +162,7 @@ export default async function OrderMaintainer({params}: {params: any}) {
                                                         className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
                                                         href={req.id == orderId ? '/dashboard/maintainer/orders' : `/dashboard/maintainer/orders/${req.id}`}>View
                                                     </Link>
-                                                    <RequestFulfilledButton req={req.id}></RequestFulfilledButton>
+                                                    <RequestFulfilledButton request={req.id}></RequestFulfilledButton>
                                                 </div>
                                             </td>
                                         </tr>

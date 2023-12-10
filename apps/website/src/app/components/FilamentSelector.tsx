@@ -3,7 +3,9 @@
 import { ChangeEvent, useState, useEffect } from "react";
 
 
-export function FilamentSelector({filaments}: {filaments: Array<{material: string, color: string}>}) {
+export function FilamentSelector({filaments, defaultValue, nameTransform}: 
+  {filaments: Array<{material: string, color: string}>, defaultValue?: number, nameTransform?: (name: string) => string}) 
+{
 
   if(filaments.length == 0) {
     return (
@@ -68,11 +70,11 @@ export function FilamentSelector({filaments}: {filaments: Array<{material: strin
 
   return (
     <>
-      <select id='filament-material' name="material" onChange={onChangeMaterial} defaultValue={selectedMaterial}>
+      <select className="bg-transparent" id='filament-material' name={nameTransform ? nameTransform("material") : "material"} onChange={onChangeMaterial} defaultValue={selectedMaterial}>
         {materials.map((m, index) => <option key={m} value={m.toLowerCase()}>{m.toUpperCase()}</option>)}
         <option value="">Other</option>
       </select>
-      <select id="filament-color" name="color" onChange={onChangeColor} defaultValue={selectedColor}>
+      <select className="bg-transparent" id="filament-color" name={nameTransform ? nameTransform("color") : "color"} onChange={onChangeColor} defaultValue={selectedColor}>
         {colors.map((c, index) => <option key={c} value={c.toLowerCase()}>{c.toLowerCase()}</option>)}
         <option value="">Other</option>
       </select>

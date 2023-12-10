@@ -5,6 +5,8 @@ import { Navbar } from '@/app/components/Navigation'
 import { RequestPartForm} from '@/app/components/RequestPartForm';
 import { FilamentSelector } from '@/app/components/FilamentSelector';
 import { getFilamentList } from '@/app/api/server-actions/request-part';
+import Dropdown from '../components/Dropdown';
+import { Filament } from '../dashboard/maintainer/filaments/FilamentTable';
 
 /*
     This MUST be a server component to work because the FilamentSelector is a client side component
@@ -27,25 +29,11 @@ export default async function Request() {
                 {name: "Logout", path: "/user/logout"}
             ]}/>
 
-            <RequestPartForm>
-                <h1 className="w-full pb-4 text-left">Request a Print</h1>
+            <div className='w-full md:w-3/4 lg:w-3/5 bg-white h-screen mx-auto px-8 py-4'>
+                <h1 className="w-full pb-4 text-center">Request a Print</h1>
+                <RequestPartForm filaments={filaments as Filament[]}></RequestPartForm>
+            </div>
 
-                <Input label="Request Name" type="text" id="name" name="requestname" placeholder="Enter the name of the request"/>
-
-                <div className="font-semibold">
-                    <p className="uppercase br-2">{"STL Part File"}</p>
-                    <input type="file" id="model" accept=".stl" name="file" multiple={true}/>
-                    
-                </div>
-
-                <div className="pt-3 pb-4">
-                    <p className="uppercase font-semibold br-2">{"Filament"}</p>
-                    <FilamentSelector filaments={filaments}/>
-                </div>
-
-                <InputBig label="Notes" id="notes" name="notes" placeholder="Anything else we should know?"/>
-                
-            </RequestPartForm>
             {/* <StlViewer
                 style={style}
                 orbitControls={true}

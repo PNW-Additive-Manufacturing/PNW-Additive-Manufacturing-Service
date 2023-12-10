@@ -50,11 +50,9 @@ export async function setRequestFulfilled(data: FormData): Promise<string>
     var isfulfilled = data.get("isfulfilled") as string;
     if (requestId == null) return "Missing argument: request_id";
     if (isfulfilled == null) return "Missing argument: isfulfilled"
-
-    var request = await db`select status from request where id=${requestId}`;
-    if (request.count == 0) return "No request found";
     
-    await db`update request set isfulfilled=true where id=${requestId} returning id`;
+    var [request] = await db`update request set isfulfilled=true where id=${requestId} returning id`;
+    if (request.count == 0) return "No request found";
     
     revalidatePath('/dashboard/maintainer');
     return '';

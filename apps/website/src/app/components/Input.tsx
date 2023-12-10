@@ -9,10 +9,10 @@ export function Input({ label, type, id, name, placeholder }: { label: string, t
     )
 }
 
-export function InputBig({ label, id, name, placeholder }: { label: string, id: string, name?: string, placeholder: string }): JSX.Element {
+export function InputBig({ label, id, name, placeholder, className }: { label?: string, id: string, name?: string, placeholder: string, className?: string }): JSX.Element {
     return (
-        <div className="font-semibold">
-            <p className="uppercase br-2">{label}</p>
+        <div className={`font-semibold ${className == null ? '' : className}`}>
+            {label ? <p className="uppercase br-2">{label}</p> : <></>}
             <textarea className="" id={id} name={name} rows={4} cols={100} placeholder={placeholder}></textarea>
         </div>
     )

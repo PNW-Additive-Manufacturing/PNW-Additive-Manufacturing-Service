@@ -12,19 +12,17 @@ import PrinterSpan from '@/app/components/PrinterSpan';
 import SidebarNavigation from '@/app/components/DashboardNavigation';
 import db from "@/app/api/Database";
 import { InlinePrinterSelector } from '../../../components/InlinePrinterSelector';
-import { ProgressBar } from '../../../components/ProgressBar';
 import { InlineFile } from '../../../components/InlineFile';
-import Dropdown from '../../../components/Dropdown';
-import InlineStatus from '../../../components/InlineStatus';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
-import { DateOptions } from '@/app/api/util/Constants';
-//Buttons
 import PartAcceptButton from './PartAcceptButton';
 import PartDenyButton from './PartDenyButton';
 import PartCompleteButton from './PartCompleteButton';
 import PartFailedButton from './PartFailedButton';
 import PartBeginPrintingButton from './PartBeginPrintingButton';
+import Dropdown from '../../../components/Dropdown';
+import InlineStatus from '../../../components/InlineStatus';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+import { DateOptions } from '@/app/api/util/Constants';
 import RequestFulfilledButton from './RequestFulfilledButton';
 
 interface PrintersContext {
@@ -41,10 +39,10 @@ async function RunningPartsTable() {
         <thead>
             <tr>
                 <td>Part Name</td>
-                <td>User</td>
-                <td>Status</td>
                 <td>Quantity</td>
                 <td>Filament</td>
+                <td>Status</td>
+                <td>User</td>
                 <td>Printer</td>
                 <td>Actions</td>
             </tr>
@@ -54,19 +52,20 @@ async function RunningPartsTable() {
                 const model = models.find(m => m.id === part.modelid)!;
                 const filament = filaments.find(f => f.id === part.assignedfilamentid);
                 
-                return <tr key={part.id}>
+                return <tr>
                     <td><InlineFile filename={model.name} filepath={model.filepath}></InlineFile></td>
-                    <td>{part.lastname} {part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}</td>
+                    <td>{part.quantity}</td>
+                    <td>{filament?.material.toUpperCase()} {filament?.color}</td>
                     <td>{part.status == 'printing'
                             ? <InlineStatus status='Printing' color='bg-blue-200'></InlineStatus>
                             : part.status == 'printed'
                             ? <InlineStatus status='Printed' color='bg-green-200'></InlineStatus>
                             : part.status == 'failed'
                             ? <InlineStatus status='Failed' color='bg-red-200'></InlineStatus>
-                            : <></>}
+                            : <></>}</td>
+                    <td>
+                        {part.lastname} {part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}
                     </td>
-                    <td>{part.quantity}</td>
-                    <td>{filament?.material.toUpperCase()} {filament?.color}</td>
                     <td><InlinePrinterSelector
                         partId={part.id}    
                         printers={printers} 
@@ -105,9 +104,9 @@ async function QueuedPartsTable() {
         <thead>
             <tr>
                 <td>Part Name</td>
-                <td>User</td>
                 <td>Quantity</td>
                 <td>Filament</td>
+                <td>User</td>
                 <td>Printer</td>
                 <td>Actions</td>
             </tr>
@@ -119,9 +118,9 @@ async function QueuedPartsTable() {
                 return (
                     <tr key={part.id}>
                         <td><InlineFile filename={model.name} filepath={model.filepath}></InlineFile></td>
-                        <td>{part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}</td>
                         <td>{part.quantity}</td>
                         <td>{filament?.material.toUpperCase()} {filament?.color}</td>
+                        <td>{part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}</td>
                         <td><InlinePrinterSelector
                             partId={part.id}    
                             printers={printers} 
@@ -146,9 +145,9 @@ async function PendingReviewPartsTable()
         <thead>
             <tr>
                 <td>Part Name</td>
-                <td>User</td>
                 <td>Quantity</td>
                 <td>Filament</td>
+                <td>User</td>
                 <td>Actions</td>
             </tr>
         </thead>
@@ -158,9 +157,9 @@ async function PendingReviewPartsTable()
                 let filament = filaments.find(f => f.id === part.assignedfilamentid);
                 return (<tr key={part.id}>
                     <td><InlineFile filename={model.name} filepath={model.filepath}></InlineFile></td>
-                    <td>{part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}</td>
                     <td>{part.quantity}</td>
                     <td>{filament?.material.toUpperCase()} {filament?.color}</td>
+                    <td>{part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}</td>
                     <td className='flex gap-2'> 
                         <PartAcceptButton part={part.id}></PartAcceptButton>
                         <PartDenyButton part={part.id}></PartDenyButton>
@@ -242,19 +241,20 @@ export default async function Maintainer({params}: {params: any}) {
     const requests = await db`select * from request order by submittime asc`;
     const parts = await db`select * from part order by id asc;`;
 
+    console.log(params);
+
     return (
         <main>
             <Navbar links={[
                 { name: "Request a Print", path: "/request-part" },
                 { name: "User Dashboard", path: "/dashboard/user" },
-                { name: "Maintainer Dashboard", path: "/dashboard/maintainer" },
                 { name: "Logout", path: "/user/logout" }
             ]} />
 
             <div className='flex flex-col lg:flex-row'>
                 <SidebarNavigation style={{height: 'calc(100vh - 72px)'}} items={[
                     {
-                        name: "Requests",
+                        name: "Orders",
                         route: "orders",
                         icon: (className) => <RegularCart className={`${className}`}></RegularCart>,
                         active: true
@@ -295,7 +295,7 @@ export default async function Maintainer({params}: {params: any}) {
                             <table className='w-full overflow-x'>
                                 <thead>
                                     <tr>
-                                        <td>Request Name</td>
+                                        <td>Parts</td>
                                         <td>User</td>
                                         <td>Status</td>
                                         <td>Notes</td>
@@ -307,23 +307,21 @@ export default async function Maintainer({params}: {params: any}) {
                                     {requests.map(req => {
                                         const reqParts = parts.filter(p => p.requestid == req.id);
                                         
-                                        return <tr key={req.id}>
+                                        return <tr>
                                             <td>{req.name || `${reqParts.length} Part(s)`}</td>
                                             <td>{req.owneremail.substring(0, req.owneremail.lastIndexOf('@'))}</td>
                                             <td>{req.isfulfilled 
                                                     ? <InlineStatus status="Fulfilled" color='bg-green-200'></InlineStatus>
                                                     : <InlineStatus status='In Progress' color='bg-blue-200'></InlineStatus>
                                             }</td>
-                                            <td>{req.notes || <span className="text-gray-400">None supplied</span>}</td>
+                                            <td>{req.notes || <span className="text-gray-500">None supplied</span>}</td>
                                             <td>{req.submittime.toLocaleString("en-US", DateOptions)}</td>
-                                            <td>
-                                                <div className='flex gap-2'>
-                                                    <Link
-                                                        className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
-                                                        href={`/dashboard/maintainer/orders/${req.id}`}>View
-                                                    </Link>
-                                                    <RequestFulfilledButton req={req.id}></RequestFulfilledButton>
-                                                </div>
+                                            <td className='flex gap-2'>
+                                                <Link
+                                                    className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
+                                                    href={`/dashboard/maintainer/orders/${req.id}`}>View
+                                                </Link>
+                                                <RequestFulfilledButton request={req.id}></RequestFulfilledButton>
                                             </td>
                                         </tr>
                                     })}
