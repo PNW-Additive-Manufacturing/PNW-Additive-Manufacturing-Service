@@ -14,16 +14,18 @@ import db from "@/app/api/Database";
 import { InlinePrinterSelector } from '../../../components/InlinePrinterSelector';
 import { ProgressBar } from '../../../components/ProgressBar';
 import { InlineFile } from '../../../components/InlineFile';
-import PartAcceptButton from './PartAcceptButton';
-import PartDenyButton from './PartDenyButton';
-import PartCompleteButton from './PartCompleteButton';
-import PartFailedButton from './PartFailedButton';
-import PartBeginPrintingButton from './PartBeginPrintingButton';
 import Dropdown from '../../../components/Dropdown';
 import InlineStatus from '../../../components/InlineStatus';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { DateOptions } from '@/app/api/util/Constants';
+//Buttons
+import PartAcceptButton from './PartAcceptButton';
+import PartDenyButton from './PartDenyButton';
+import PartCompleteButton from './PartCompleteButton';
+import PartFailedButton from './PartFailedButton';
+import PartBeginPrintingButton from './PartBeginPrintingButton';
+import RequestFulfilledButton from './RequestFulfilledButton';
 
 interface PrintersContext {
     Printers: string[]
@@ -315,10 +317,13 @@ export default async function Maintainer({params}: {params: any}) {
                                             <td>{req.notes || <span className="text-gray-400">None supplied</span>}</td>
                                             <td>{req.submittime.toLocaleString("en-US", DateOptions)}</td>
                                             <td>
-                                                <Link
-                                                    className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
-                                                    href={`/dashboard/maintainer/orders/${req.id}`}>View
-                                                </Link>
+                                                <div className='flex gap-2'>
+                                                    <Link
+                                                        className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
+                                                        href={`/dashboard/maintainer/orders/${req.id}`}>View
+                                                    </Link>
+                                                    <RequestFulfilledButton req={req.id}></RequestFulfilledButton>
+                                                </div>
                                             </td>
                                         </tr>
                                     })}

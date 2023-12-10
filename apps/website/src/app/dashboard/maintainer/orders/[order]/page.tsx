@@ -157,11 +157,13 @@ export default async function OrderMaintainer({params}: {params: any}) {
                                             <td className="truncate">{req.notes || <span className="text-gray-400">None supplied</span>}</td>
                                             <td>{req.submittime.toLocaleString("en-US", DateOptions)}</td>
                                             <td>
-                                                <Link
-                                                    className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
-                                                    href={req.id == orderId ? '/dashboard/maintainer/orders' : `/dashboard/maintainer/orders/${req.id}`}>View
-                                                </Link>
-                                                <RequestFulfilledButton req={req.id}></RequestFulfilledButton>
+                                                <div className='flex gap-2'>
+                                                    <Link
+                                                        className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
+                                                        href={req.id == orderId ? '/dashboard/maintainer/orders' : `/dashboard/maintainer/orders/${req.id}`}>View
+                                                    </Link>
+                                                    <RequestFulfilledButton req={req.id}></RequestFulfilledButton>
+                                                </div>
                                             </td>
                                         </tr>
 
