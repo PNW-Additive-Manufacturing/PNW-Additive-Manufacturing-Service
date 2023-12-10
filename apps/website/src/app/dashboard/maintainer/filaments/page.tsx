@@ -13,12 +13,12 @@ export default async function Page() {
 	});
 
 	return <div className='w-full xl:w-3/4 lg:mx-auto'>
-		<Dropdown name="Filament" collapsible={false}>
+		<Dropdown name="Filaments" collapsible={true}>
 			<FilamentList initialFilaments={filaments} />
-
-			<Dropdown name="Add Filament" hidden={true}>
-				<FilamentForm/>
-			</Dropdown>
 		</Dropdown>
+		<Dropdown name="Add Filament" hidden={true} className='mt-8'>
+			<FilamentForm/>
+		</Dropdown>
+	
 	</div>
 }

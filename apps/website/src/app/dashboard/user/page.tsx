@@ -4,6 +4,7 @@ import { AccountDetails, ColorfulRequestPrintButton, Navbar } from '@/app/compon
 import { getJwtPayload } from '@/app/api/util/JwtHelper';
 import { redirect } from 'next/navigation';
 import { Request } from "@/app/api/util/Constants";
+import Dropdown from "@/app/components/Dropdown";
 
 export default async function Request() {
 	let email: string;
@@ -33,14 +34,24 @@ export default async function Request() {
 			/>
 
 			<h1 className="w-full p-4 pt-1 pb-1 text-left">{`Welcome, ${name}!`}</h1>
+					
+			<div className='w-full xl:w-3/4 lg:mx-auto'>
+				<Dropdown className="my-8" name="Pending Requests">
+					<RequestList requests={pendingRequests} />
+				</Dropdown>
+				<Dropdown className="mb-8" name="Completed Requests">
+					<RequestList requests={completedRequests} />
+				</Dropdown>
+			</div>
+			
 
-			<div className="bg-white rounded-sm p-14 pt-7 w-full left">
+			{/* <div className="bg-white rounded-sm p-14 pt-7 w-full left">
 				<h1 className="w-full pb-4 pt-0 text-left">Pending Requests</h1>
 				<RequestList requests={pendingRequests} />
 
 				<h1 className="w-full pb-4 pt-10 text-left">Completed Requests</h1>
 				<RequestList requests={completedRequests} />
-			</div>
+			</div> */}
 		</main>
 	)
 }

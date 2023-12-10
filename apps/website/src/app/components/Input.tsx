@@ -13,7 +13,7 @@ export function InputBig({ label, id, name, placeholder, className }: { label?: 
     return (
         <div className={`font-semibold ${className == null ? '' : className}`}>
             {label ? <p className="uppercase br-2">{label}</p> : <></>}
-            <textarea className="" id={id} name={name} rows={4} cols={100} placeholder={placeholder}></textarea>
+            <textarea className="box-border resize-y w-full" id={id} name={name} rows={4} placeholder={placeholder}></textarea>
         </div>
     )
 }

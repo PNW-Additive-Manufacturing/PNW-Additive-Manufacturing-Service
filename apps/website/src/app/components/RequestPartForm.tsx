@@ -42,7 +42,6 @@ interface PartData
 export function RequestPartForm({ filaments, children }: { filaments: Filament[], children?: any }): JSX.Element {
 	let [error, formAction] = useFormState<string, FormData>(requestPart, "");
 	let { pending } = useFormStatus();
-
 	let [parts, updateParts] = useState<PartData[]>([]);
 
 	return (
@@ -86,8 +85,7 @@ export function RequestPartForm({ filaments, children }: { filaments: Filament[]
 												<div className="flex items-center">
 													<span className="mr-2 text-gray-600 text-base">Filament</span>
 													<div className="bg-white rounded-sm px-2">
-														<FilamentSelector
-															filaments={filaments}></FilamentSelector>
+														<FilamentSelector filaments={filaments}></FilamentSelector>
 													</div>
 												</div>
 											</td>
@@ -130,7 +128,7 @@ export function RequestPartForm({ filaments, children }: { filaments: Filament[]
 				<br></br>
 
 				<Dropdown className="mb-6" name="Notes">
-					<InputBig id="notes" placeholder="Anything else we should know?" className="bg-white"/>
+					<InputBig id="notes" name="notes" placeholder="Anything else we should know?" className="bg-white"/>
 				</Dropdown>
 
 				<p className="text-sm text-red-500">{error}</p>

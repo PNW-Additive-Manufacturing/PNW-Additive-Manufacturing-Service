@@ -286,7 +286,7 @@ export default async function Maintainer({ params }: { params: any }) {
                                         className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
                                         href={`/dashboard/maintainer/orders/${req.id}`}>View
                                     </Link>
-                                    <RequestFulfilledButton request={req.id}></RequestFulfilledButton>
+                                    {req.isfulfilled ? <></> : <RequestFulfilledButton request={req.id}></RequestFulfilledButton>}
                                 </td>
                             </tr>
                         })}

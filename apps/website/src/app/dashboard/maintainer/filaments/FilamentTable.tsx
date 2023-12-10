@@ -27,7 +27,6 @@ export function FilamentList({initialFilaments} : {initialFilaments: Filament[]}
       }
 
       setFilamentList(filaments.filter((f) => f.material !== filamentMaterial || f.color !== filamentColor));
-
     })
   };
 
@@ -43,7 +42,6 @@ export function FilamentList({initialFilaments} : {initialFilaments: Filament[]}
       form.append("filament-material", filament.material);
       form.append("filament-color", filament.color);
       form.append("filament-instock", newInStock);
-
 
       let errorMessage = await setFilamentInStock('', form);
       if(errorMessage) {
@@ -82,7 +80,6 @@ export function FilamentList({initialFilaments} : {initialFilaments: Filament[]}
               <select className="bg-transparent" onChange={(e) => changeHandler(e, f)} defaultValue={f.instock ? "true" : "false"}>
                 <option value="true">true</option>
                 <option value="false">false</option>
-
               </select>
             </td>
             <td className='text-left pr-5'><button className='bg-red-600 px-2 py-1 w-fit rounded-lg border-none' onClick={(e) => clickHandler(f.material, f.color)}>Delete</button></td>
@@ -92,4 +89,3 @@ export function FilamentList({initialFilaments} : {initialFilaments: Filament[]}
     </>
   )
 }
-

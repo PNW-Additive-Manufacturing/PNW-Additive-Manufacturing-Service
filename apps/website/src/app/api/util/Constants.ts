@@ -32,6 +32,6 @@ export const DateOptions = {
   year: "2-digit",
   month: "numeric",
   day: "numeric",
-  // hour: "numeric",
-  // minute: "numeric"
+  hour: "numeric",
+  minute: "numeric"
 };
