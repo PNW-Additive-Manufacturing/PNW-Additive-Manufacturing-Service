@@ -28,10 +28,12 @@ export interface Part {
   filamentcolor: string
 }
 
-export const DateOptions = {
+export const DateOptions: Intl.DateTimeFormatOptions = {
   year: "2-digit",
   month: "numeric",
   day: "numeric",
-  hour: "numeric",
-  minute: "numeric"
+  // hour: "numeric",
+  // minute: "numeric",
+  hour: undefined,
+  minute: undefined
 };

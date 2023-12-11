@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { RegularSearchAlt, RegularLayers, RegularCart, RegularCog, RegularCrossCircle } from "lineicons-react"
 import { AccountDetails, ColorfulRequestPrintButton, Navbar } from '@/app/components/Navigation'
 import SidebarNavigation from '@/app/components/DashboardNavigation'
+import FilamentSpoolIcon from '@/app/components/icons/FilamentSpoolIcon'
 // import { Navbar, NavbarLink } from "./components/Navigation";
 
 
@@ -16,10 +17,10 @@ export default function MaintainerLayout({
 }) {
 	return <main>
 		<Navbar 
-			includeIcon={false} 
 			links={[
 				{ name: "User Dashboard", path: "/dashboard/user" }]}
 			specialElements={<AccountDetails/>}
+			style={{marginBottom: "0px"}}
 		/>
 
 		<div className='flex flex-col lg:flex-row'>
@@ -28,17 +29,17 @@ export default function MaintainerLayout({
 					name: "Requests",
 					route: "orders",
 					icon: (className) => <RegularCart className={`${className}`}></RegularCart>,
-					active: true
+					active: false
 				},
 				{
 					name: "Filaments",
 					route: "filaments",
-					icon: (className) => <RegularCrossCircle className={`${className}`}></RegularCrossCircle>,
+						icon: (className, active) => <FilamentSpoolIcon className={`${className} ${active ? 'fill-amber-600' : 'fill-cool-black '}`}/>,
 					active: false
 				}
 			]}></SidebarNavigation>
 
-			<div className='w-full p-2 lg:p-12 overflow-y-scroll' style={{ maxHeight: 'calc(100vh - 72px)' }}>
+			<div className='w-full p-2 pt-4 lg:p-12 overflow-y-scroll' style={{ maxHeight: 'calc(100vh - 72px)' }}>
 				{children}
 			</div>
 		</div>

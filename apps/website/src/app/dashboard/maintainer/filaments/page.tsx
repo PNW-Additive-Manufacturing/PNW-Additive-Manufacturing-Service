@@ -1,6 +1,6 @@
 import db from "@/app/api/Database";
 import { Filament, FilamentList } from "./FilamentTable";
-import Dropdown from "@/app/components/Dropdown";
+import DropdownSection from "@/app/components/DropdownSection";
 import { FilamentForm } from "./FilamentForm";
 
 export default async function Page() {
@@ -13,12 +13,12 @@ export default async function Page() {
 	});
 
 	return <div className='w-full xl:w-3/4 lg:mx-auto'>
-		<Dropdown name="Filaments" collapsible={true}>
+		<DropdownSection name="Filaments" collapsible={true}>
 			<FilamentList initialFilaments={filaments} />
-		</Dropdown>
-		<Dropdown name="Add Filament" hidden={true} className='mt-8'>
+		</DropdownSection>
+		<DropdownSection name="Add Filament" hidden={true}>
 			<FilamentForm/>
-		</Dropdown>
+		</DropdownSection>
 	
 	</div>
 }

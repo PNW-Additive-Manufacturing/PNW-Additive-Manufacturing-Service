@@ -7,7 +7,7 @@ import SidebarNavigation from '@/app/components/DashboardNavigation';
 import db from "@/app/api/Database";
 import { InlinePrinterSelector } from '../../../../components/InlinePrinterSelector';
 import { InlineFile } from '../../../../components/InlineFile';
-import Dropdown from '../../../../components/Dropdown';
+import DropdownSection from '../../../../components/DropdownSection';
 import InlineStatus from '../../../../components/InlineStatus';
 import Link from "next/link";
 import { DateOptions } from "@/app/api/util/Constants";
@@ -98,7 +98,7 @@ export default async function OrderMaintainer({ params }: { params: any }) {
     const parts = await db`select * from part where requestid=${orderId} order by id asc;`;
 
     return <div className='w-full xl:w-3/4 lg:mx-auto bg-white bg-opacity-40 lg:p-2 xl:p-5'>
-        <Dropdown name='Requests'>
+        <DropdownSection name='Requests'>
             <table className='w-full overflow-x'>
                 <thead>
                     <tr>
@@ -137,11 +137,11 @@ export default async function OrderMaintainer({ params }: { params: any }) {
                     })}
                 </tbody>
             </table>
-        </Dropdown>
+        </DropdownSection>
 
-        <Dropdown name={`Parts for ${quiredOrder.name}`} className='mt-8'>
+        <DropdownSection name={`Parts for ${quiredOrder.name}`} className='mt-8'>
             <RequestPartsOnlyTable request={quiredOrder.id}></RequestPartsOnlyTable>
-        </Dropdown>
+        </DropdownSection>
 
     </div>
 }

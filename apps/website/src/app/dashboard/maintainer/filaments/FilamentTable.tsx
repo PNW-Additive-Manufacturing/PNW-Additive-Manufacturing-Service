@@ -2,6 +2,7 @@
 
 import { ChangeEvent, useState, useTransition } from "react";
 import { deleteFilament, setFilamentInStock } from "@/app/api/server-actions/maintainer";
+import Table from "@/app/components/Table";
 
 export interface Filament {
   material: string,
@@ -63,7 +64,7 @@ export function FilamentList({initialFilaments} : {initialFilaments: Filament[]}
   return (
     <>
       <p className="text-red-600">{error}</p>
-      <table className="w-full">
+      <Table>
         <thead>
           <tr className="">
             <th className="text-left pl-5">Material</th>
@@ -85,7 +86,7 @@ export function FilamentList({initialFilaments} : {initialFilaments: Filament[]}
             <td className='text-left pr-5'><button className='bg-red-600 px-2 py-1 w-fit rounded-lg border-none' onClick={(e) => clickHandler(f.material, f.color)}>Delete</button></td>
           </tr>)}
         </tbody>
-      </table>
+      </Table>
     </>
   )
 }

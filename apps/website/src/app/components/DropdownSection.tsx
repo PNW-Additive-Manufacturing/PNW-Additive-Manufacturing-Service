@@ -3,7 +3,7 @@
 import { RegularChevronDown } from "lineicons-react";
 import { CSSProperties, ReactNode, useState } from "react";
 
-export default function Dropdown({ name, icon, hidden, collapsible, children, className, headerBackground, headerText, toolbar }: {
+export default function DropdownSection({ name, icon, hidden, collapsible, children, className, headerBackground, headerText, toolbar }: {
     name: string;
     icon?: JSX.Element,
     hidden?: boolean;
@@ -18,7 +18,7 @@ export default function Dropdown({ name, icon, hidden, collapsible, children, cl
 
     var [isHidden, setHidden] = useState<boolean>(hidden ?? false);
 
-    return <div className={"w-full rounded-md outline-dashed outline-gray-200 outline-1 " + className ?? ''}>
+    return <div className={"w-full outline-dashed outline-gray-200 outline-1 " + className ?? ''}>
 
         <div
             className={`p-3 ${headerBackground ?? 'bg-cool-black'} ${headerText ?? 'text-white'}`}

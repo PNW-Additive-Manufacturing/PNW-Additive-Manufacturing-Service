@@ -1,6 +1,7 @@
 import { DateOptions, Request } from "@/app/api/util/Constants";
 import { PartList } from '@/app/components/PartList';
 import { getParts } from '@/app/api/util/GetParts';
+import Table from "./Table";
 
 async function RequestRow({request}: {request: Request}): Promise<JSX.Element> {
   let parts = await getParts(request.id);
@@ -14,8 +15,7 @@ async function RequestRow({request}: {request: Request}): Promise<JSX.Element> {
 }
 
 export function RequestList({requests}: {requests: Request[]}): JSX.Element {
-  return (
-    <table className="bg-white m-auto w-full">
+  return <Table className="bg-white m-auto w-full">
       <thead>
         <tr className="text-left">
           <th className="w-1/4 text-gray-400">Request</th>
@@ -30,6 +30,5 @@ export function RequestList({requests}: {requests: Request[]}): JSX.Element {
       <tbody>
         {requests.map((e) => <RequestRow key={e.name} request={e} />)}
       </tbody>
-    </table>
-  )
+    </Table>
 }

@@ -3,7 +3,7 @@
 import { changePermission } from "@/app/api/server-actions/account";
 import { ChangeEvent, useState, useTransition } from "react";
 import { Permission } from "../api/util/Constants";
-import Dropdown from "./Dropdown";
+import DropdownSection from "./DropdownSection";
 
 export interface User {
     email: string,
@@ -137,16 +137,16 @@ export function ListOfUserList({normUsers, maintainers, admins}: {normUsers: Use
   };
 
   return <>
-      <Dropdown name={`Administrators (${adminArray.length})`}>
+      <DropdownSection name={`Administrators (${adminArray.length})`}>
         <UserList users={adminArray} onChange={onChange}/>
-      </Dropdown>
+      </DropdownSection>
 
-      <Dropdown name={`Maintainers (${maintainArray.length})`} className="mt-8">
+      <DropdownSection name={`Maintainers (${maintainArray.length})`} className="mt-8">
         <UserList users={maintainArray} onChange={onChange}/>
-      </Dropdown>
+      </DropdownSection>
 
-      <Dropdown name={`Users (${normUsers.length})`} hidden={true} className="mt-8">
+      <DropdownSection name={`Users (${normUsers.length})`} hidden={true} className="mt-8">
         <UserList users={normUsers} onChange={onChange}/>
-      </Dropdown>
+      </DropdownSection>
     </>
 }

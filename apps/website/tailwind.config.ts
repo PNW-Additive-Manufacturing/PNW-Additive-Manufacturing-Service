@@ -14,7 +14,7 @@ const config: Config = {
         "pnw-gold-light": "var(--pnw-gold-light)",
         "indicator-inactive": "#94a3b8",
         "cool-black": "#303030",
-        "pnw-mystic": 'hsl(33, 100%, 52.9%)'
+        "pnw-mystic": 'hsl(33, 100%, 52.9%)',
       },
       backgroundColor: {
         "pnw-mystic": 'hsl(33, 100%, 52.9%)'
@@ -31,6 +31,7 @@ const config: Config = {
         '9/10': '90%'
       },
       height: {
+        '5.5': "1.375rem",
         'nav': 'var(--nav-height)',
         'remaining-screen-with-nav': 'calc(100vh - var(--nav-height))'
       }

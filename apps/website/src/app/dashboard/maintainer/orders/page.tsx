@@ -18,16 +18,13 @@ import PartDenyButton from './PartDenyButton';
 import PartCompleteButton from './PartCompleteButton';
 import PartFailedButton from './PartFailedButton';
 import PartBeginPrintingButton from './PartBeginPrintingButton';
-import Dropdown from '../../../components/Dropdown';
+import DropdownSection from '../../../components/DropdownSection';
 import InlineStatus from '../../../components/InlineStatus';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { DateOptions } from '@/app/api/util/Constants';
 import RequestFulfilledButton from './RequestFulfilledButton';
-
-interface PrintersContext {
-    Printers: string[]
-}
+import Table from '@/app/components/Table';
 
 async function RunningPartsTable() {
     var parts = await db`select p.*, owneremail from part as p, request as r where (p.status='printing' or p.status='printed' or p.status='failed') and p.requestid = r.id`;
@@ -35,16 +32,16 @@ async function RunningPartsTable() {
     var models = await db`select * from model where id in ${db(parts.map((p) => p.modelid))}`;
     var printers = await db`select * from printer;` as { name: string, model: string }[];
 
-    return <table className='w-full overflow-y-scroll overflow-x-scroll' style={{ maxHeight: "60vh" }}>
+    return <Table className='w-full overflow-y-scroll overflow-x-scroll' style={{ maxHeight: "60vh" }}>
         <thead>
             <tr>
                 <th>Part Name</th>
                 <th>Quantity</th>
-                <th className='hidden lg:table-cell'>Filament</th>
+                <th>Filament</th>
                 <th>Status</th>
                 <th>User</th>
-                <th className='hidden lg:table-cell'>Printer</th>
-                <th className='hidden lg:table-cell'>Actions</th>
+                <th>Printer</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -55,7 +52,7 @@ async function RunningPartsTable() {
                 return <tr>
                     <td><InlineFile filename={model.name} filepath={model.filepath}></InlineFile></td>
                     <td>{part.quantity}</td>
-                    <td className='hidden lg:table-cell'>{filament?.material.toUpperCase()} {filament?.color}</td>
+                    <td>{filament?.material.toUpperCase()} {filament?.color}</td>
                     <td>{part.status == 'printing'
                         ? <InlineStatus status='Printing' color='bg-blue-200'></InlineStatus>
                         : part.status == 'printed'
@@ -66,11 +63,11 @@ async function RunningPartsTable() {
                     <td>
                         {part.lastname} {part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}
                     </td>
-                    <td className='hidden lg:table-cell'><InlinePrinterSelector
+                    <td><InlinePrinterSelector
                         partId={part.id}
                         printers={printers}
                         selection={part.assignedprintername}></InlinePrinterSelector></td>
-                    <td className='hidden lg:table-cell'>
+                    <td className='flex gap-2'>
                         {part.status == 'printing'
                             ? <div className='flex gap-2'>
                                 <PartCompleteButton part={part.id}></PartCompleteButton>
@@ -90,7 +87,7 @@ async function RunningPartsTable() {
                 </tr>
             })}
         </tbody>
-    </table>
+    </Table>
 }
 
 async function QueuedPartsTable() {
@@ -99,15 +96,15 @@ async function QueuedPartsTable() {
     var filaments = await db`select id, material, color from filament where id in ${db(parts.map((p) => p.assignedfilamentid))}`;
     var printers = await db`select * from printer;` as { name: string, model: string }[];
 
-    return <table className='w-full overflow-y-scroll overflow-x-scroll' style={{ maxHeight: "60vh" }}>
+    return <Table style={{ maxHeight: "60vh" }}>
         <thead>
             <tr>
-                <td>Part Name</td>
-                <td>Quantity</td>
-                <td>Filament</td>
-                <td>User</td>
-                <td className='hidden lg:table-cell'>Printer</td>
-                <td className='hidden lg:table-cell'>Actions</td>
+                <th>Part Name</th>
+                <th>Quantity</th>
+                <th>Filament</th>
+                <th>User</th>
+                <th>Printer</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -120,18 +117,18 @@ async function QueuedPartsTable() {
                         <td>{part.quantity}</td>
                         <td>{filament?.material.toUpperCase()} {filament?.color}</td>
                         <td>{part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}</td>
-                        <td className='hidden lg:table-cell'><InlinePrinterSelector
+                        <td><InlinePrinterSelector
                             partId={part.id}
                             printers={printers}
-                            selection={part.assignedprintername}></InlinePrinterSelector></td>
-                        <td className='hidden lg:table-cell'>
-                            <PartBeginPrintingButton part={part.id}></PartBeginPrintingButton>
+                            selection={part.assignedprintername}/></td>
+                        <td>
+                            <PartBeginPrintingButton part={part.id}/>
                         </td>
                     </tr>
                 );
             })}
         </tbody>
-    </table>
+    </Table>
 }
 
 async function PendingReviewPartsTable() {
@@ -139,14 +136,14 @@ async function PendingReviewPartsTable() {
     var models = await db`select * from model where id in ${db(parts.map((p) => p.modelid))}`;
     var filaments = await db`select id, material, color from filament where id in ${db(parts.map((p) => p.assignedfilamentid))}`;
 
-    return <table className='w-full overflow-y-auto' style={{ maxHeight: "60vh" }}>
+    return <Table style={{ maxHeight: "60vh" }}>
         <thead>
             <tr>
-                <td>Part Name</td>
-                <td>Quantity</td>
-                <td>Filament</td>
-                <td>User</td>
-                <td className='hidden lg:table-cell'>Actions</td>
+                <th>Part Name</th>
+                <th>Quantity</th>
+                <th>Filament</th>
+                <th>User</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -158,7 +155,7 @@ async function PendingReviewPartsTable() {
                     <td>{part.quantity}</td>
                     <td>{filament?.material.toUpperCase()} {filament?.color}</td>
                     <td>{part.owneremail.substring(0, part.owneremail.lastIndexOf('@'))}</td>
-                    <td className='hidden lg:flex gap-2'>
+                    <td className='flex gap-2'>
                         <PartAcceptButton part={part.id}></PartAcceptButton>
                         <PartDenyButton part={part.id}></PartDenyButton>
                     </td>
@@ -166,73 +163,7 @@ async function PendingReviewPartsTable() {
                 );
             })}
         </tbody>
-    </table>
-}
-
-async function RequestPartsOnlyTable({ request }: { request: number }) {
-    var parts = await db`select * from part where requestid = ${request}`;
-    var filaments = await db`select id, material, color from filament where id in ${db(parts.map((p) => p.assignedfilamentid))}`;
-    var models = await db`select * from model where id in ${db(parts.map((p) => p.modelid))}`;
-    var printers = await db`select * from printer;` as { name: string, model: string }[];
-
-    return <table className='w-full overflow-y-scroll overflow-x-scroll' style={{ maxHeight: "60vh" }}>
-        <thead>
-            <tr>
-                <td>Part Name</td>
-                <td>Quantity</td>
-                <td>Filament</td>
-                <td>Status</td>
-                <td>Printer</td>
-                <td>Actions</td>
-            </tr>
-        </thead>
-        <tbody>
-            {parts.map(part => {
-                const model = models.find(m => m.id === part.modelid)!;
-                const filament = filaments.find(f => f.id === part.assignedfilamentid);
-
-                return <tr>
-                    <td><InlineFile filename={model.name} filepath={model.filepath}></InlineFile></td>
-                    <td>{part.quantity} / {part.quantity}</td>
-                    <td>{filament?.material.toUpperCase()} {filament?.color}</td>
-                    <td>
-                        {part.status == 'printing'
-                            ? <InlineStatus status='Printing' color='bg-blue-200'></InlineStatus>
-                            : part.status == 'printed'
-                                ? <InlineStatus status='Printed' color='bg-green-200'></InlineStatus>
-                                : part.status == 'failed'
-                                    ? <InlineStatus status='Failed' color='bg-red-200'></InlineStatus>
-                                    : part.status == 'queued'
-                                        ? <InlineStatus status='Queued' color='bg-amber-200'></InlineStatus>
-                                        : part.status == 'pending'
-                                            ? <InlineStatus status='Pending Approval' color='bg-gray-200'></InlineStatus>
-                                            : <InlineStatus status={part.status} color='bg-gray-200'></InlineStatus>}
-                    </td>
-                    <td><InlinePrinterSelector
-                        partId={part.id}
-                        printers={printers}
-                        selection={part.assignedprintername}></InlinePrinterSelector></td>
-                    <td>
-                        {part.status == 'printing'
-                            ? <div className='flex gap-2'>
-                                <PartCompleteButton part={part.id}></PartCompleteButton>
-                                <PartFailedButton part={part.id}></PartFailedButton>
-                            </div>
-                            : part.status == 'pending'
-                                ? <div className='flex gap-2'>
-                                    <PartAcceptButton part={part.id}></PartAcceptButton>
-                                    <PartDenyButton part={part.id}></PartDenyButton>
-                                </div>
-                                : part.status == 'queued'
-                                    ? <div>
-                                        <PartBeginPrintingButton part={part.id}></PartBeginPrintingButton>
-                                    </div>
-                                    : <></>}
-                    </td>
-                </tr>
-            })}
-        </tbody>
-    </table>
+    </Table>
 }
 
 export default async function Maintainer({ params }: { params: any }) {
@@ -256,16 +187,16 @@ export default async function Maintainer({ params }: { params: any }) {
                     </div> */}
 
         <div className='w-full xl:w-3/4 lg:mx-auto bg-white bg-opacity-40 lg:p-2 xl:p-5'>
-            <Dropdown name='Requests'>
-                <table className='w-full overflow-x'>
+            <DropdownSection name='Requests'>
+                <Table>
                     <thead>
                         <tr>
-                            <td>Parts</td>
-                            <td>User</td>
-                            <td>Status</td>
-                            <td className='hidden lg:table-cell'>Notes</td>
-                            <td>Submitted</td>
-                            <td className='hidden lg:table-cell'>Actions</td>
+                            <th>Parts</th>
+                            <th>User</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                            <th>Submitted</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -279,9 +210,9 @@ export default async function Maintainer({ params }: { params: any }) {
                                     ? <InlineStatus status="Fulfilled" color='bg-green-200'></InlineStatus>
                                     : <InlineStatus status='In Progress' color='bg-blue-200'></InlineStatus>
                                 }</td>
-                                <td className='hidden lg:table-cell truncate'>{req.notes || <span className="text-gray-500">None supplied</span>}</td>
+                                <td className='max-w-xl truncate'>{req.notes || <span className="text-gray-500">None supplied</span>}</td>
                                 <td>{req.submittime.toLocaleString("en-US", DateOptions)}</td>
-                                <td className='hidden lg:flex gap-2'>
+                                <td className='flex gap-2'>
                                     <Link
                                         className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
                                         href={`/dashboard/maintainer/orders/${req.id}`}>View
@@ -291,20 +222,20 @@ export default async function Maintainer({ params }: { params: any }) {
                             </tr>
                         })}
                     </tbody>
-                </table>
-            </Dropdown>
+                </Table>
+            </DropdownSection>
 
-            <Dropdown name='Active Parts' className='mt-8'>
+            <DropdownSection name='Active Parts' className='mt-8'>
                 <RunningPartsTable></RunningPartsTable>
-            </Dropdown>
+            </DropdownSection>
 
-            <Dropdown name='Queued Parts' className='mt-8'>
+            <DropdownSection name='Queued Parts' className='mt-8'>
                 <QueuedPartsTable></QueuedPartsTable>
-            </Dropdown>
+            </DropdownSection>
 
-            <Dropdown name='Pending Parts' className='mt-8'>
+            <DropdownSection name='Pending Parts' className='mt-8'>
                 <PendingReviewPartsTable></PendingReviewPartsTable>
-            </Dropdown>
+            </DropdownSection>
         </div>
     </>
 }
