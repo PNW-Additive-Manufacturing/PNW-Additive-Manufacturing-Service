@@ -1,14 +1,8 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import Image from 'next/image'
 import { RegularSearchAlt, RegularLayers, RegularCart, RegularCog, RegularCrossCircle } from "lineicons-react"
 import { AccountDetails, ColorfulRequestPrintButton, Navbar } from '@/app/components/Navigation'
 import SidebarNavigation from '@/app/components/DashboardNavigation'
 import FilamentSpoolIcon from '@/app/components/icons/FilamentSpoolIcon'
-// import { Navbar, NavbarLink } from "./components/Navigation";
 
-
-const inter = Inter({ subsets: ['latin'] })
 
 export default function MaintainerLayout({
 	children,
@@ -34,7 +28,7 @@ export default function MaintainerLayout({
 				{
 					name: "Filaments",
 					route: "filaments",
-						icon: (className, active) => <FilamentSpoolIcon className={`${className} ${active ? 'fill-amber-600' : 'fill-cool-black '}`}/>,
+					icon: (className, active) => <FilamentSpoolIcon className={`${className} ${active ? 'fill-amber-600' : 'fill-cool-black '}`}/>,
 					active: false
 				}
 			]}></SidebarNavigation>

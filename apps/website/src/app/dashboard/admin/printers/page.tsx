@@ -2,7 +2,7 @@
 import db from '@/app/api/Database';
 import { Navbar } from '@/app/components/Navigation';
 import { PrinterList, Printer } from './PrinterList';
-import DropdownSection from '@/app/components/Dropdown';
+import DropdownSection from '@/app/components/DropdownSection';
 import GenericFormServerAction from '@/app/components/GenericFormServerAction';
 import { Input } from '@/app/components/Input';
 import { addPrinter } from '@/app/api/server-actions/printer';
@@ -22,6 +22,7 @@ export default async function Page() {
 			<DropdownSection name='Printers' collapsible={true}>
 				<PrinterList initialPrinters={printers} />
 			</DropdownSection>
+
 			<DropdownSection hidden={true} name='Configure new Printer' className='mt-8'>
 				<GenericFormServerAction serverAction={addPrinter} submitName="Add Printer" submitPendingName="Adding Printer...">
 					<Input label="Printer Name" name="printer-name" type="text" id="printer-name" placeholder="ex: Printer 1" />
@@ -36,7 +37,6 @@ export default async function Page() {
 					</div>
 					<Input label="Communication Strategy" name="printer-communication" type="text" id="printer-communication" placeholder="MoonRaker, Serial, or Bambu" />
 					<Input label="Communication Strategy Options" name="printer-communication-options" type="text" id="printer-communication-options" placeholder="Host, Extruder Count, Has Heated Bed" />
-
 				</GenericFormServerAction>
 			</DropdownSection>
 			

@@ -3,7 +3,6 @@ import { getUsers } from '@/app/api/util/GetUsers';
 import { Navbar } from '@/app/components/Navigation'
 
 export default async function Admin() {
-
     //grab initial lists of users and their permissions and place it into the ListOfUserList
     //client component
 
