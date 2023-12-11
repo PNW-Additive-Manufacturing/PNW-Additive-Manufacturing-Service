@@ -18,6 +18,7 @@ import PartCompleteButton from '.././PartCompleteButton';
 import PartFailedButton from '.././PartFailedButton';
 import PartBeginPrintingButton from '.././PartBeginPrintingButton';
 import RequestFulfilledButton from "../RequestFulfilledButton";
+import Table from "@/app/components/Table";
 
 async function RequestPartsOnlyTable({ request }: { request: number }) {
     var parts = await db`select * from part where requestid = ${request}`;
@@ -25,15 +26,15 @@ async function RequestPartsOnlyTable({ request }: { request: number }) {
     var models = await db`select * from model where id in ${db(parts.map((p) => p.modelid))}`;
     var printers = await db`select * from printer;` as { name: string, model: string }[];
 
-    return <table className='w-full overflow-y-scroll overflow-x-scroll' style={{ maxHeight: "60vh" }}>
+    return <Table style={{ maxHeight: "60vh" }}>
         <thead>
             <tr>
-                <td>Part Name</td>
-                <td>Quantity</td>
-                <td>Filament</td>
-                <td>Status</td>
-                <td className='hidden lg:table-cell'>Printer</td>
-                <td className='hidden lg:table-cell'>Actions</td>
+                <th>Part Name</th>
+                <th>Quantity</th>
+                <th>Filament</th>
+                <th>Status</th>
+                <th>Printer</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -58,11 +59,11 @@ async function RequestPartsOnlyTable({ request }: { request: number }) {
                                             ? <InlineStatus status='Pending Approval' color='bg-gray-200'></InlineStatus>
                                             : <InlineStatus status={part.status} color='bg-gray-200'></InlineStatus>}
                     </td>
-                    <td className='hidden lg:table-cell'><InlinePrinterSelector
+                    <td><InlinePrinterSelector
                         partId={part.id}
                         printers={printers}
                         selection={part.assignedprintername}></InlinePrinterSelector></td>
-                    <td className='hidden lg:table-cell'>
+                    <td>
                         {part.status == 'printing'
                             ? <div className='flex gap-2'>
                                 <PartCompleteButton part={part.id}></PartCompleteButton>
@@ -82,7 +83,7 @@ async function RequestPartsOnlyTable({ request }: { request: number }) {
                 </tr>
             })}
         </tbody>
-    </table>
+    </Table>
 }
 
 export default async function OrderMaintainer({ params }: { params: any }) {
@@ -99,15 +100,15 @@ export default async function OrderMaintainer({ params }: { params: any }) {
 
     return <div className='w-full xl:w-3/4 lg:mx-auto bg-white bg-opacity-40 lg:p-2 xl:p-5'>
         <DropdownSection name='Requests'>
-            <table className='w-full overflow-x'>
+            <Table className='w-full overflow-x'>
                 <thead>
                     <tr>
-                        <td>Parts</td>
-                        <td>User</td>
-                        <td>Status</td>
-                        <td className='hidden lg:table-cell'>Notes</td>
-                        <td>Submitted</td>
-                        <td className='hidden lg:table-cell'>Actions</td>
+                        <th>Parts</th>
+                        <th>User</th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                        <th>Submitted</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -121,22 +122,20 @@ export default async function OrderMaintainer({ params }: { params: any }) {
                                 ? <InlineStatus status="Fulfilled" color='bg-green-200'></InlineStatus>
                                 : <InlineStatus status='In Progress' color='bg-blue-200'></InlineStatus>
                             }</td>
-                            <td className='hidden lg:table-cell truncate'>{req.notes || <span className="text-gray-500">None supplied</span>}</td>
+                            <td className='max-w-md truncate'>{req.notes || <span className="text-gray-500">None supplied</span>}</td>
                             <td>{req.submittime.toLocaleString("en-US", DateOptions)}</td>
-                            <td>
-                                <div className='hidden lg:flex gap-2'>
-                                    <Link
-                                        className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
-                                        href={req.id == orderId ? '/dashboard/maintainer/orders' : `/dashboard/maintainer/orders/${req.id}`}>View
-                                    </Link>
-                                    {req.isfulfilled ? <></> : <RequestFulfilledButton request={req.id}></RequestFulfilledButton>}
-                                </div>
+                            <td className="flex gap-2">
+                                <Link
+                                    className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
+                                    href={req.id == orderId ? '/dashboard/maintainer/orders' : `/dashboard/maintainer/orders/${req.id}`}>View
+                                </Link>
+                                {req.isfulfilled ? <></> : <RequestFulfilledButton request={req.id}></RequestFulfilledButton>}
                             </td>
                         </tr>
 
                     })}
                 </tbody>
-            </table>
+            </Table>
         </DropdownSection>
 
         <DropdownSection name={`Parts for ${quiredOrder.name}`} className='mt-8'>

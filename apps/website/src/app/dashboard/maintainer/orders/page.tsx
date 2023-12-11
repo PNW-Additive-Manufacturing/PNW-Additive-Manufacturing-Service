@@ -210,7 +210,7 @@ export default async function Maintainer({ params }: { params: any }) {
                                     ? <InlineStatus status="Fulfilled" color='bg-green-200'></InlineStatus>
                                     : <InlineStatus status='In Progress' color='bg-blue-200'></InlineStatus>
                                 }</td>
-                                <td className='max-w-xl truncate'>{req.notes || <span className="text-gray-500">None supplied</span>}</td>
+                                <td className='max-w-md truncate'>{req.notes || <span className="text-gray-500">None supplied</span>}</td>
                                 <td>{req.submittime.toLocaleString("en-US", DateOptions)}</td>
                                 <td className='flex gap-2'>
                                     <Link
