@@ -1,9 +1,7 @@
 "use client"
 
 import { Input } from '@/app/components/Input';
-import { Navbar } from '@/app/components/Navigation'
 import { useFormState, useFormStatus } from 'react-dom';
-
 import { tryCreateAccount } from '@/app/api/server-actions/account';
 
 function SubmitButton() {
@@ -23,7 +21,6 @@ async function clientSideValidation(prevState: string, formData: FormData) {
     }
 
     return await tryCreateAccount(prevState, formData);
-
 }
 
 export default function CreateAccount() {
@@ -31,8 +28,6 @@ export default function CreateAccount() {
     let [error, formAction] = useFormState<string, FormData>(clientSideValidation, "");
 
     return <>
-        <Navbar links={[]} />
-
         <div className="w-full lg:w-2/3 xl:w-1/3 lg:mx-auto mt-8 bg-white p-10">
             <h1 className="w-full pb-4 text-right">Signing up for
                 <span className="text-pnw-gold font-bold" style={{fontFamily: "Coda" }}> PNW</span>

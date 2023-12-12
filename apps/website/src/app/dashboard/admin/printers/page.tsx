@@ -1,6 +1,5 @@
 
 import db from '@/app/api/Database';
-import { Navbar } from '@/app/components/Navigation';
 import { PrinterList, Printer } from './PrinterList';
 import DropdownSection from '@/app/components/DropdownSection';
 import GenericFormServerAction from '@/app/components/GenericFormServerAction';
@@ -17,7 +16,6 @@ export default async function Page() {
 		};
 	});
 	return <>
-
 		<div className='w-full md:w-2/3 lg:1/3 md:mx-auto'>
 			<DropdownSection name='Printers' collapsible={true}>
 				<PrinterList initialPrinters={printers} />
@@ -39,7 +37,6 @@ export default async function Page() {
 					<Input label="Communication Strategy Options" name="printer-communication-options" type="text" id="printer-communication-options" placeholder="Host, Extruder Count, Has Heated Bed" />
 				</GenericFormServerAction>
 			</DropdownSection>
-			
 		</div>
 	</>
 }

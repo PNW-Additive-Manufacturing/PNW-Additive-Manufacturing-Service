@@ -1,8 +1,6 @@
 import { RegularUser } from "lineicons-react"
-import { AccountDetails, Navbar } from '@/app/components/Navigation'
 import SidebarNavigation from '@/app/components/DashboardNavigation'
 import GenericPrinterIcon from '@/app/components/icons/GenericPrinterIcon'
-
 
 export default function AdminLayout({
 	children,
@@ -10,14 +8,6 @@ export default function AdminLayout({
 	children: React.ReactNode
 }) {
 	return <main>
-		<Navbar 
-			links={[
-				{ name: "User Dashboard", path: "/dashboard/user" },
-				{ name: "Maintainer Dashboard", path: "/dashboard/maintainer" }]}
-			specialElements={<AccountDetails/>}
-			style={{marginBottom: "0px"}}
-		/>
-
 		<div className='flex flex-col lg:flex-row'>
 			<SidebarNavigation items={[
 				{

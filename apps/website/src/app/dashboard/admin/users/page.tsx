@@ -1,10 +1,8 @@
 import { UserList, User, ListOfUserList } from '@/app/components/UserList'
 import { getUsers } from '@/app/api/util/GetUsers';
-import { Navbar } from '@/app/components/Navigation'
 
 export default async function Admin() {
-    //grab initial lists of users and their permissions and place it into the ListOfUserList
-    //client component
+    //grab initial lists of users and their permissions and place it into the ListOfUserList client component
 
     let resUser = await getUsers('user');
     let users: User[] = resUser.map((row: any) => {return {email: row.email, name1: row.firstname, name2: row.lastname, permission: row.permission}});

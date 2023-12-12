@@ -1,6 +1,5 @@
 import { RequestList } from '@/app/components/RequestList'
 import { getRequests } from '@/app/api/util/GetRequests';
-import { AccountDetails, ColorfulRequestPrintButton, Navbar } from '@/app/components/Navigation'
 import { getJwtPayload } from '@/app/api/util/JwtHelper';
 import { redirect } from 'next/navigation';
 import { Request } from "@/app/api/util/Constants";
@@ -24,14 +23,7 @@ export default async function Request() {
 	let completedRequests: Request[] = resCompletedRequest.map((row: any) => { return { id: row.id, name: row.name, date: row.submittime, isFulfilled: row.isfulfilled } });
 
 	return (
-		<main>
-			<Navbar
-				links={[]}
-				specialElements={<>
-					<ColorfulRequestPrintButton/>
-					<AccountDetails/>
-				</>}
-			/>					
+		<main>				
 			<div className='w-full xl:w-3/4 px-2 lg:mx-auto'>
 				<div className=''>
 					{/* Possibly show little bits of information of the user here? */}
@@ -41,6 +33,7 @@ export default async function Request() {
 				<DropdownSection className="my-8" name="Pending Requests">
 					<RequestList requests={pendingRequests} />
 				</DropdownSection>
+				
 				<DropdownSection className="mb-8" name="Completed Requests">
 					<RequestList requests={completedRequests} />
 				</DropdownSection>

@@ -7,7 +7,8 @@ const sql = postgres({
   database: process.env.DATABASE_NAME!,
   username: process.env.DATABASE_USERNAME!,
   password: process.env.DATABASE_PASSWORD!,
-  max: 100
+  max: 100,
+  idle_timeout: 10
 });
 
 

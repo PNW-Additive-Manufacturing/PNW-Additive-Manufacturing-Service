@@ -1,8 +1,6 @@
 import { RegularSearchAlt, RegularLayers, RegularCart, RegularCog, RegularCrossCircle } from "lineicons-react"
-import { AccountDetails, ColorfulRequestPrintButton, Navbar } from '@/app/components/Navigation'
 import SidebarNavigation from '@/app/components/DashboardNavigation'
 import FilamentSpoolIcon from '@/app/components/icons/FilamentSpoolIcon'
-
 
 export default function MaintainerLayout({
 	children,
@@ -10,13 +8,6 @@ export default function MaintainerLayout({
 	children: React.ReactNode
 }) {
 	return <main>
-		<Navbar 
-			links={[
-				{ name: "User Dashboard", path: "/dashboard/user" }]}
-			specialElements={<AccountDetails/>}
-			style={{marginBottom: "0px"}}
-		/>
-
 		<div className='flex flex-col lg:flex-row'>
 			<SidebarNavigation items={[
 				{

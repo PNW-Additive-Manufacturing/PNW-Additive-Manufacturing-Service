@@ -2,7 +2,6 @@
 
 import { useFormState, useFormStatus } from "react-dom";
 
-
 function SubmitButton({className, name, pendingName} : {className?: string, name: string, pendingName?: string}) {
   let {pending} = useFormStatus();
   return (
@@ -11,7 +10,6 @@ function SubmitButton({className, name, pendingName} : {className?: string, name
       </div>
   )
 }
-
 
 //TODO: Make this work for more generic forms
 export default function GenericFormServerAction({className, submitButtonClassName, serverAction, submitName, submitPendingName, children} : {

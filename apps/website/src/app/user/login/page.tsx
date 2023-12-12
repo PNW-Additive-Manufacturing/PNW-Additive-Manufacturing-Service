@@ -1,7 +1,6 @@
 "use client"
 
 import { Input } from '@/app/components/Input';
-import { Navbar } from '@/app/components/Navigation';
 import { tryLogin } from '@/app/api/server-actions/account';
 import { useFormState, useFormStatus } from 'react-dom';
 
@@ -15,8 +14,6 @@ export default function Login() {
     let [error, formAction] = useFormState<string, FormData>(tryLogin, "");
 
     return <>
-        <Navbar links={[]} />
-
         <div className='w-full lg:w-2/3 xl:w-1/3 lg:mx-auto mt-8 bg-white p-10'>
             <h1 className="w-full pb-4 text-right">Logging into  
                 <span className="text-pnw-gold font-bold" style={{fontFamily: "Coda" }}> PNW</span>

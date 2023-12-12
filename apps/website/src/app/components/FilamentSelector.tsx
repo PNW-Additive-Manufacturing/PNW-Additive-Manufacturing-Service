@@ -2,7 +2,6 @@
 
 import { ChangeEvent, useState, useEffect } from "react";
 
-
 export function FilamentSelector({filaments, defaultValue, nameTransform}: 
   {filaments: Array<{material: string, color: string}>, defaultValue?: number, nameTransform?: (name: string) => string}) 
 {
@@ -22,7 +21,6 @@ export function FilamentSelector({filaments, defaultValue, nameTransform}:
 
   let [error, setError] = useState("");
 
-
   //get list of all unique colors and materials
   let colorSet = new Set<string>();
   let materialSet = new Set<string>()
@@ -36,11 +34,9 @@ export function FilamentSelector({filaments, defaultValue, nameTransform}:
   let colors = Array.from(colorSet);
   let materials = Array.from(materialSet);
 
-  
   let [selectedMaterial, setSelectedMaterial] = useState(filaments[0].material);
   let [selectedColor, setSelectedColor] = useState(filaments[0].color);
 
-  
   //useEffect is called after each React render call when one of the variables from useState in the dependency
   //list (2nd parameter) are changed.
   useEffect(() => {
@@ -56,7 +52,6 @@ export function FilamentSelector({filaments, defaultValue, nameTransform}:
      //when any variables in this list are changed, the useEffect callback will be called
   }, [filaments, selectedColor, selectedMaterial]);
   
-
 
   let onChangeMaterial = function (e: ChangeEvent<HTMLSelectElement>) {
     //will call callback in useEffect function

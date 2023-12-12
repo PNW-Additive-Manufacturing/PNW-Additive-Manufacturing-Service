@@ -1,15 +1,3 @@
-import Image from 'next/image'
-import HorizontalWrap from '@/app/components/HorizontalWrap';
-import { Navbar } from '@/app/components/Navigation'
-import { CSSProperties, createContext, useContext, useDebugValue, useRef } from 'react';
-import { Canvas, useLoader } from '@react-three/fiber';
-import ModelViewer from '@/app/components/ModelViewer';
-import { BoxGeometry, BufferGeometry, Camera, Euler, PerspectiveCamera, Vector2, Vector3 } from 'three';
-import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
-import { RegularKeywordResearch, RegularCog, RegularCart, RegularWarning, RegularCrossCircle, RegularCheckmark, RegularUser, RegularCustomer, RegularTicket } from 'lineicons-react';
-import UserSpan from '@/app/components/UserSpan';
-import PrinterSpan from '@/app/components/PrinterSpan';
-import SidebarNavigation from '@/app/components/DashboardNavigation';
 import db from "@/app/api/Database";
 import { InlinePrinterSelector } from '../../../components/InlinePrinterSelector';
 import { InlineFile } from '../../../components/InlineFile';
@@ -20,7 +8,6 @@ import PartFailedButton from './PartFailedButton';
 import PartBeginPrintingButton from './PartBeginPrintingButton';
 import DropdownSection from '../../../components/DropdownSection';
 import InlineStatus from '../../../components/InlineStatus';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { DateOptions } from '@/app/api/util/Constants';
 import RequestFulfilledButton from './RequestFulfilledButton';

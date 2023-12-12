@@ -3,7 +3,6 @@
 import { RegularChevronDown, RegularMenu, RegularSearchAlt, RegularUser } from "lineicons-react"
 import { CSSProperties, DetailedHTMLProps, HTMLAttributes, useState } from "react";
 import Image from 'next/image'
-import { getJwtPayload } from "../api/util/JwtHelper";
 import Link from "next/link";
 import UserIcon from "./icons/UserIcon";
 
@@ -14,17 +13,16 @@ function NavbarLink({ name, path }: { name: string, path: string }) {
 export function AccountDetails() {
     const [expanded, setExpanded] = useState<boolean>(false);
 
-    return <div className={`bg-gray-100  h-10 ${expanded ? 'rounded-t-md' : 'rounded-md'}`}>
+    return <div onClick={() => setExpanded(() => !expanded)} className={`bg-gray-100  h-10 ${expanded ? 'rounded-t-md' : 'rounded-md'} hover:cursor-pointer`}>
+        
         <div className="flex flex-row items-center gap-1 px-4">
             <UserIcon className="h-5.5 aspect-square md:hidden" style={{ fill: "rgb(64, 64, 64)" }} />
             Account
             <div className="ml-auto align-bottom">
-                <RegularChevronDown
-                    className={`aspect-square h-10 ${expanded ? 'rotate-180' : 'rotate-0'} transition-transform hover:cursor-pointer`}
-                    onClick={() => setExpanded(() => !expanded)} />
+                <RegularChevronDown className={`aspect-square h-10 ${expanded ? 'rotate-180' : 'rotate-0'} transition-transform`}/>
             </div>
         </div>
-        
+
         <div
             className={`${expanded ? 'border-t-2 border-solid border-gray-200' : 'hidden'} rounded-b-md bottom-0 w-full h-fit bg-gray-100 flex flex-col gap-4 px-4 py-2`}
             style={{ position: "relative" }}>

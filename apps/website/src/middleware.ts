@@ -27,7 +27,7 @@ export async function middleware(request: NextRequest) {
   //a GET request to /logout is completed, the logout feature is here.
   //I could use an API endpoint, but I would prefer to not have both /logout and /api/logout routes
   if(nextUrl.startsWith("/user/logout")) {
-   // cookies().delete(SESSION_COOKIE);
+    // cookies().delete(SESSION_COOKIE);
     let res = NextResponse.next();
     //delete session cookie from response.
     res.cookies.delete(SESSION_COOKIE);
@@ -43,7 +43,6 @@ export async function middleware(request: NextRequest) {
   if(ROOT_FOLDER_FILE_WHITELIST.find((item) => item == nextUrl)) {
     return NextResponse.next();
   }
-
 
   //check if JWT exists and is valid
   let jwtPayload: {email: string, permission: string} | null;

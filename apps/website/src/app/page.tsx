@@ -1,4 +1,3 @@
-import { AccountDetails, Navbar } from '@/app/components/Navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -23,19 +22,8 @@ function GithubProject() {
 }
 
 export default async function Home() {
-
 	return (
 		<main>
-			<Navbar
-				links={[
-					{ name: "User Dashboard", path: "/dashboard/user" },
-					{ name: "Maintainer Dashboard", path: "/dashboard/maintainer" },
-					{ name: "Admin Dashboard", path: "/dashboard/admin" }]}
-				specialElements={<>
-					<AccountDetails />
-				</>}
-			/>
-
 			<div className="p-10 px-8 w-full">
 				<div className='w-fit mx-auto'>
 					<h1 className="w-fit mb-6 text-3xl">
@@ -43,7 +31,10 @@ export default async function Home() {
 						<span className='text-pnw-gold'> PNW </span>
 						Additive Manufacturing Service
 					</h1>
-					<p style={{maxWidth: "600px"}} className='overflow-hidden w-full sm:w-3/4 md:w-2/3 pb-10'>Created by the PNW Additive Manufacturing Club, this service enables PNW students, and faculty members to explore the world of 3D Printing.</p>
+
+					<p style={{maxWidth: "600px"}} className='overflow-hidden w-full sm:w-3/4 md:w-2/3 pb-10'>
+						Created by the PNW Additive Manufacturing Club, this service enables PNW students, and faculty members to explore the world of 3D Printing.
+					</p>
 					
 					<Link href={"/request-part"} className='block w-fit px-5 py-3 text-lg bg-gradient-linear-pnw-mystic tracking-wider font-semibold uppercase rounded-md'>
 						Request a Print
@@ -54,7 +45,6 @@ export default async function Home() {
 						<DiscordServer />
 					</div>
 				</div>
-
 			</div>
 		</main>
 	)

@@ -1,11 +1,9 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import Image from 'next/image'
-import { RegularSearchAlt, RegularLayers } from "lineicons-react"
-import { createContext } from 'react'
-// import { Navbar, NavbarLink } from "./components/Navigation";
-
+import { getJwtPayload } from './api/util/JwtHelper'
+import { Permission } from './api/util/Constants'
+import { AccountDetails, ColorfulRequestPrintButton, Navbar } from '@/app/components/Navigation'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,11 +19,19 @@ export const metadata: Metadata = {
 	}
 }
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: {
 	children: React.ReactNode
 }) {
+	let permission: Permission|null;
+	try {
+		let jwtPayload = await getJwtPayload();
+		permission = jwtPayload?.permission as Permission;
+	} catch {
+		permission = null;
+	}
+	
 	return (
 		<html lang="en" className='h-full'>
 			<head>
@@ -37,7 +43,30 @@ export default function RootLayout({
 			</head>
 
 			<body className={inter.className} style={{height: "100vh"}}>
-				{children}
+				<main>
+					<Navbar
+						links={(() => {
+							if (permission == null) { return [] }
+							let elements: { name: string, path: string }[] = [];
+							elements.push({ name: "User Dashboard", path: "/dashboard/user" });
+							if (permission == Permission.maintainer || permission == Permission.admin) {
+								elements.push({ name: "Maintainer Dashboard", path: "/dashboard/maintainer" });
+							}
+							if (permission == Permission.admin) {
+								elements.push({ name: "Admin Dashboard", path: "/dashboard/admin" });
+							}
+							return elements;
+						})()}
+
+						specialElements={(() => {
+							if (permission != null) return <> <ColorfulRequestPrintButton/> <AccountDetails/> </>;
+							else return <ColorfulRequestPrintButton/>;
+						})()}
+						style={{marginBottom: "0px"}}
+					/>
+
+					{children}
+				</main>
 			</body>
 		</html>
 	)

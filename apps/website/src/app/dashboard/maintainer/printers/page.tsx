@@ -2,7 +2,6 @@
 
 import Image from 'next/image'
 import HorizontalWrap from '@/app/components/HorizontalWrap';
-import { Navbar } from '@/app/components/Navigation'
 import { CSSProperties, useDebugValue, useRef, useState } from 'react';
 import { Canvas, useLoader } from '@react-three/fiber';
 import ModelViewer from '@/app/components/ModelViewer';
@@ -81,13 +80,6 @@ export default function Maintainer()
 {
     return (
         <main>
-            <Navbar links={[
-                { name: "Request a Print", path: "/request-part" },
-                { name: "User Dashboard", path: "/dashboard/user" },
-                { name: "Maintainer Dashboard", path: "/dashboard/maintainer" },
-                { name: "Logout", path: "/user/logout" }
-            ]} />
-
             <div className='flex'>
                 <SidebarNavigation style={{height: 'calc(100vh - 72px)'}} items={[
                 {

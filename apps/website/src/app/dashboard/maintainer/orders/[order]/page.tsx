@@ -1,9 +1,6 @@
 'use server'
 
 import { redirect, usePathname } from "next/navigation";
-import { Navbar } from '@/app/components/Navigation'
-import { RegularKeywordResearch, RegularCog, RegularCart, RegularCrossCircle } from 'lineicons-react';
-import SidebarNavigation from '@/app/components/DashboardNavigation';
 import db from "@/app/api/Database";
 import { InlinePrinterSelector } from '../../../../components/InlinePrinterSelector';
 import { InlineFile } from '../../../../components/InlineFile';

@@ -1,10 +1,7 @@
 "use server"
 
-import { AccountDetails, Navbar } from '@/app/components/Navigation'
 import { RequestPartForm} from '@/app/components/RequestPartForm';
-import { FilamentSelector } from '@/app/components/FilamentSelector';
 import { getFilamentList } from '@/app/api/server-actions/request-part';
-import DropdownSection from '../components/DropdownSection';
 import { Filament } from '../dashboard/maintainer/filaments/FilamentTable';
 
 /*
@@ -23,12 +20,6 @@ export default async function Request() {
 
     return (
         <main>
-            <Navbar 
-                links={[
-                    {name: "User Dashboard", path: "/dashboard/user"}]}
-                specialElements={<AccountDetails/>}
-            />
-
             <div 
                 className='w-full lg:w-10/12 xl:w-3/5 bg-white h-fit rounded-md mx-auto p-4 lg:p-10 mt-8'
                 style={{maxWidth: "850px"}}
