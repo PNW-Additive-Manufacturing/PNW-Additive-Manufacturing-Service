@@ -95,7 +95,7 @@ export default async function OrderMaintainer({ params }: { params: any }) {
     if (quiredOrder == null) return redirect("/dashboard/maintainer");
     const parts = await db`select * from part where requestid=${orderId} order by id asc;`;
 
-    return <div className='w-full xl:w-5/6 lg:mx-auto bg-white bg-opacity-40'>
+    return <div className='w-full xl:w-5/6 lg:mx-auto'>
         <DropdownSection name='Requests'>
             <Table className='w-full overflow-x'>
                 <thead>
@@ -129,7 +129,6 @@ export default async function OrderMaintainer({ params }: { params: any }) {
                                 {req.isfulfilled ? <></> : <RequestFulfilledButton request={req.id}></RequestFulfilledButton>}
                             </td>
                         </tr>
-
                     })}
                 </tbody>
             </Table>

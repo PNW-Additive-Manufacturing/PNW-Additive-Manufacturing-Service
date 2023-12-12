@@ -24,7 +24,7 @@ export default async function Request() {
 
 	return (
 		<main>				
-			<div className='w-full xl:w-3/4 px-2 lg:mx-auto'>
+			<div className='w-full xl:w-3/4 lg:mx-auto px-2'>
 				<div className=''>
 					{/* Possibly show little bits of information of the user here? */}
 					<h1 className='text-xl'>{`Welcome, ${name}!`}</h1>

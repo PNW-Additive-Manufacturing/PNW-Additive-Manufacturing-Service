@@ -13,7 +13,7 @@ export default async function Admin() {
     let resAdmin = await getUsers('admin') as any;
     let admins: User[] = resAdmin.map((row: any) => {return {email: row.email, name1: row.firstname, name2: row.lastname, permission: row.permission}});
 
-    return <div>
+    return <div className='w-full xl:w-3/4 lg:mx-auto'>
         <ListOfUserList admins={admins} normUsers={users} maintainers={maintainers}/>
     </div>
 }

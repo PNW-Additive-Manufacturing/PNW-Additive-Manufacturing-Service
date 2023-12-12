@@ -48,24 +48,26 @@ export default async function RootLayout({
 						links={(() => {
 							if (permission == null) { return [] }
 							let elements: { name: string, path: string }[] = [];
-							elements.push({ name: "User Dashboard", path: "/dashboard/user" });
+							elements.push({ name: "User", path: "/dashboard/user" });
 							if (permission == Permission.maintainer || permission == Permission.admin) {
-								elements.push({ name: "Maintainer Dashboard", path: "/dashboard/maintainer" });
+								elements.push({ name: "Maintainer", path: "/dashboard/maintainer" });
 							}
 							if (permission == Permission.admin) {
-								elements.push({ name: "Admin Dashboard", path: "/dashboard/admin" });
+								elements.push({ name: "Admin", path: "/dashboard/admin" });
 							}
 							return elements;
 						})()}
 
 						specialElements={(() => {
 							if (permission != null) return <> <ColorfulRequestPrintButton/> <AccountDetails/> </>;
-							else return <ColorfulRequestPrintButton/>;
+							else return <AccountDetails/>;
 						})()}
 						style={{marginBottom: "0px"}}
 					/>
 
-					{children}
+					<div className='w-full'>
+						{children}
+					</div>
 				</main>
 			</body>
 		</html>

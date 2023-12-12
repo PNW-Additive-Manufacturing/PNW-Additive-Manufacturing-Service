@@ -23,7 +23,7 @@ export default function SidebarNavigation({items, className, style}:
 {
     const activeItem = items.find(i => i.active);
 
-    return<div className="p-2 h-fit w-screen lg:p-4 lg:px-8 lg:w-fit lg:h-remaining-screen-with-nav" style={Object.assign({backgroundColor: "rgb(242, 242, 242)"}, style)}>
+    return<div className="p-2 h-fit w-full lg:p-4 lg:px-8 lg:w-fit lg:h-remaining-screen-with-nav" style={Object.assign({backgroundColor: "rgb(242, 242, 242)"}, style)}>
         <div className="flex justify-center items-center sm:flex-row lg:flex-col gap-8 py-2">
             {activeItem == null ? null : <p className='font-medium lg:hidden'>{activeItem.name}</p>}
             {items.map(item => <div key={item.name}><Link href={`/dashboard/maintainer/${item.route}`}>

@@ -53,8 +53,10 @@ h1, h2, h3, h4 {
   font-family: "Helvetica";
   font-weight: bolder;
 }
-
-input,button, textarea {
+input:focus, textarea:focus{
+  outline:solid 2px black;
+}
+input, button, textarea {
   border-radius: 5px;
   padding: 1rem 1.2rem 1rem 1.2rem;
 }

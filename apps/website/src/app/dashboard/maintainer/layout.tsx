@@ -24,7 +24,7 @@ export default function MaintainerLayout({
 				}
 			]}></SidebarNavigation>
 
-			<div className='w-full p-2 pt-4 lg:p-12 overflow-y-scroll' style={{ maxHeight: 'calc(100vh - 72px)' }}>
+			<div className='w-full p-2 pt-4 xl:p-12' style={{ maxHeight: 'calc(100vh - 72px)' }}>
 				{children}
 			</div>
 		</div>

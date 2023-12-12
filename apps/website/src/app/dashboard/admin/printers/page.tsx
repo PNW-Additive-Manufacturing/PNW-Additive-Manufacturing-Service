@@ -16,7 +16,7 @@ export default async function Page() {
 		};
 	});
 	return <>
-		<div className='w-full md:w-2/3 lg:1/3 md:mx-auto'>
+		<div className='w-full xl:w-3/4 lg:mx-auto'>
 			<DropdownSection name='Printers' collapsible={true}>
 				<PrinterList initialPrinters={printers} />
 			</DropdownSection>

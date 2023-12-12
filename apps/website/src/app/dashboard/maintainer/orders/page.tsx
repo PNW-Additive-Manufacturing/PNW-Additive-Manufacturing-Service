@@ -173,7 +173,7 @@ export default async function Maintainer({ params }: { params: any }) {
                         </div>
                     </div> */}
 
-        <div className='w-full xl:w-5/6 lg:mx-auto bg-white bg-opacity-40'>
+        <div className='w-full xl:w-5/6 lg:mx-auto'>
             <DropdownSection name='Requests'>
                 <Table>
                     <thead>
