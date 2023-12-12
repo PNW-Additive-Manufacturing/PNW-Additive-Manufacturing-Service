@@ -19,7 +19,7 @@ async function RunningPartsTable() {
     var models = await db`select * from model where id in ${db(parts.map((p) => p.modelid))}`;
     var printers = await db`select * from printer;` as { name: string, model: string }[];
 
-    return <Table className='w-full overflow-y-scroll overflow-x-scroll' style={{ maxHeight: "60vh" }}>
+    return <Table style={{ maxHeight: "60vh" }}>
         <thead>
             <tr>
                 <th>Part Name</th>
@@ -173,7 +173,7 @@ export default async function Maintainer({ params }: { params: any }) {
                         </div>
                     </div> */}
 
-        <div className='w-full xl:w-3/4 lg:mx-auto bg-white bg-opacity-40 lg:p-2 xl:p-5'>
+        <div className='w-full xl:w-5/6 lg:mx-auto bg-white bg-opacity-40'>
             <DropdownSection name='Requests'>
                 <Table>
                     <thead>

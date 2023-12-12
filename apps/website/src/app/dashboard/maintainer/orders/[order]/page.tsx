@@ -95,7 +95,7 @@ export default async function OrderMaintainer({ params }: { params: any }) {
     if (quiredOrder == null) return redirect("/dashboard/maintainer");
     const parts = await db`select * from part where requestid=${orderId} order by id asc;`;
 
-    return <div className='w-full xl:w-3/4 lg:mx-auto bg-white bg-opacity-40 lg:p-2 xl:p-5'>
+    return <div className='w-full xl:w-5/6 lg:mx-auto bg-white bg-opacity-40'>
         <DropdownSection name='Requests'>
             <Table className='w-full overflow-x'>
                 <thead>

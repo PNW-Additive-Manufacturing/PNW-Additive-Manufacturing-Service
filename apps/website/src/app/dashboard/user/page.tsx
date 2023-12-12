@@ -27,7 +27,7 @@ export default async function Request() {
 			<div className='w-full xl:w-3/4 px-2 lg:mx-auto'>
 				<div className=''>
 					{/* Possibly show little bits of information of the user here? */}
-					<h1 className='text-2xl'>{`Welcome, ${name}!`}</h1>
+					<h1 className='text-xl'>{`Welcome, ${name}!`}</h1>
 				</div>
 
 				<DropdownSection className="my-8" name="Pending Requests">
