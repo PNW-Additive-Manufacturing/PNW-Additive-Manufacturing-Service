@@ -161,21 +161,6 @@ export default async function Maintainer({ params }: { params: any }) {
     const parts = await db`select * from part order by id asc;`;
 
     return <>
-        <SidebarNavigation items={[
-            {
-                name: "Requests",
-                route: "orders",
-                icon: (className) => <RegularCart className={`${className}`}></RegularCart>,
-                active: true
-            },
-            {
-                name: "Filaments",
-                route: "filaments",
-                icon: (className, active) => <FilamentSpoolIcon className={`${className} ${active ? 'fill-amber-600' : 'fill-cool-black '}`} />,
-                active: false
-            }
-        ]}></SidebarNavigation>
-
         <DropdownSection className="mt-4" name='Requests'>
             <Table>
                 <thead>

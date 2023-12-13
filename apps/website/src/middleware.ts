@@ -31,8 +31,8 @@ export async function middleware(request: NextRequest) {
     let res = NextResponse.next();
     //delete session cookie from response.
     res.cookies.delete(SESSION_COOKIE);
-    //return res;
-    return res.redirect(new URL("/", request.url));
+    return res;
+    //return NextResponse.redirect(new URL("/", request.url));
   }
 
   //all assets, nextjs stuff, are allowed

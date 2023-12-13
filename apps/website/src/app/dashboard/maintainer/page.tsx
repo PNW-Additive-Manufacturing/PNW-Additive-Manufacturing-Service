@@ -12,6 +12,13 @@ export default async function Maintainer()
 {
 	let jwtPayload = await getJwtPayload();
 
+    let permission: Permission|null;
+	try {
+		permission = jwtPayload?.permission as Permission;
+	} catch {
+		permission = null;
+	}
+
     const orderCount = (await db`select COUNT(*) from request where isfulfilled=false`)[0] as {count: number};
 
     return <>
