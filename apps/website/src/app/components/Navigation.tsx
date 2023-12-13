@@ -63,17 +63,26 @@ export function Navbar({ links, includeIcon, specialElements, style }:
     currentPathSegments = currentPathSegments.slice(1, currentPathSegments.length - 1);
 
     return <div className="top-0 sticky">
-        <div className="w-full h-nav bg-white">
-            <HorizontalWrap>
+        <div className="w-full h-nav px-4 bg-white">
             <nav className='flex flex-row h-full overflow-x-clip w-full items-center align-middle mb-8'
                 style={Object.assign({ boxShadow: "0px 3px 10px 0px rgba(232, 232, 232, 0.1)" }, style ?? {})}>
 
                 <Link href="/" className=" flex-none gap-2 items-center mr-2">
                     <Image className="h-full" src="/assets/logo.svg" width={60} height={100} alt="PNW AM Logo" />
                 </Link>
-                <div className="w-fit whitespace-nowrap mr-auto pr-3 text-xl hidden lg:block tracking-wide flex-auto" style={{ maxWidth: 'max(0px, calc((100% - 120px)*999))' }}>
+                <div className="hidden lg:block w-fit whitespace-nowrap mr-fit pr-3 text-xl tracking-wide flex-fit" style={{ maxWidth: 'max(0px, calc((100% - 120px)*999))' }}>
                     <span className="text-pnw-gold" style={{ fontFamily: "Coda" }}>PNW </span>
                     <span>Additive Manufacturing</span>
+                </div>
+
+                <div className="hidden xl:block whitespace-nowrap px-5 py-3 place-self-center text-xs sm:text-sm font-light">
+                    <a className="capitalize" href='/'>Home</a>
+                    {currentPathSegments.map((segment, index, arr) => {
+                        const segments = arr.slice(0, index + 1);
+                        const fullPath = `/${segments.join('/')}`;
+                        const pathname = segment;
+                        return <a className="capitalize" href={fullPath}>{` / ${pathname}`}</a>;
+                    })}
                 </div>
 
                 {/* Long List of links and dropdown */}
@@ -99,22 +108,17 @@ export function Navbar({ links, includeIcon, specialElements, style }:
                     </> : <></>}
                 </div>
             </nav>
-            </HorizontalWrap>
         </div>
-        <div className="bg-gray-100">
-            <HorizontalWrap className="px-5 py-3 text-xs sm:text-sm font-light">
-            <a className="capitalize" href='/'>Home</a>
+        <div className="xl:hidden bg-gray-100">
+            <div className="px-5 py-3 text-xs sm:text-sm font-light">
+                <a className="capitalize" href='/'>Home</a>
                 {currentPathSegments.map((segment, index, arr) => {
                     const segments = arr.slice(0, index + 1);
                     const fullPath = `/${segments.join('/')}`;
                     const pathname = segment;
-
                     return <a className="capitalize" href={fullPath}>{` / ${pathname}`}</a>;
                 })}
-                {/* <div className="float-right">
-                    AM MOTTO
-                </div> */}
-            </HorizontalWrap>
+            </div>
         </div>
     </div>
 }
