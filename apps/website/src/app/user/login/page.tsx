@@ -14,7 +14,7 @@ export default function Login() {
     let [error, formAction] = useFormState<string, FormData>(tryLogin, "");
 
     return <>
-        <div className='w-full lg:w-2/3 xl:w-1/3 lg:mx-auto mt-8 bg-white p-10'>
+        <div className='w-full lg:w-2/3 xl:w-1/3 lg:mx-auto bg-white p-10'>
             <h1 className="w-full pb-4 text-right">Logging into  
                 <span className="text-pnw-gold font-bold" style={{fontFamily: "Coda" }}> PNW</span>
                 <span style={{color: "var(--pnw-black)", fontFamily: "Coda" }}> Additive Manufacturing Service</span>

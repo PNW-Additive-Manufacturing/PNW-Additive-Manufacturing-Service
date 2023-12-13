@@ -23,21 +23,19 @@ export default async function Request() {
 	let completedRequests: Request[] = resCompletedRequest.map((row: any) => { return { id: row.id, name: row.name, date: row.submittime, isFulfilled: row.isfulfilled } });
 
 	return (
-		<main>				
-			<div className='w-full xl:w-3/4 lg:mx-auto px-2'>
-				<div className=''>
-					{/* Possibly show little bits of information of the user here? */}
-					<h1 className='text-xl'>{`Welcome, ${name}!`}</h1>
-				</div>
-
-				<DropdownSection className="my-8" name="Pending Requests">
-					<RequestList requests={pendingRequests} />
-				</DropdownSection>
-				
-				<DropdownSection className="mb-8" name="Completed Requests">
-					<RequestList requests={completedRequests} />
-				</DropdownSection>
+		<main>
+			<div>
+				{/* Possibly show little bits of information of the user here? */}
+				<div className="text-2xl md:text-3xl mb-10">Welcome, {name}!</div>
 			</div>
+
+			<DropdownSection className="my-8" name="Pending Requests">
+				<RequestList requests={pendingRequests} />
+			</DropdownSection>
+			
+			<DropdownSection className="mb-8" name="Completed Requests">
+				<RequestList requests={completedRequests} />
+			</DropdownSection>
 		</main>
 	)
 }

@@ -65,7 +65,7 @@ export default async function RootLayout({
 						style={{marginBottom: "0px"}}
 					/>
 
-					<div className='w-full'>
+					<div className='w-full mt-8'>
 						{children}
 					</div>
 				</main>

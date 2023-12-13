@@ -12,7 +12,7 @@ export default async function Page() {
 		};
 	});
 
-	return <div className='w-full xl:w-3/4 lg:mx-auto'>
+	return <>
 		<DropdownSection name="Filaments" collapsible={true}>
 			<FilamentList initialFilaments={filaments} />
 		</DropdownSection>
@@ -20,6 +20,5 @@ export default async function Page() {
 		<DropdownSection name="Add Filament" className='mt-8' hidden={true}>
 			<FilamentForm/>
 		</DropdownSection>
-	
-	</div>
+	</>
 }
