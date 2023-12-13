@@ -48,13 +48,13 @@ export default async function RootLayout({
 						links={(() => {
 							if (permission == null) { return [] }
 							let elements: { name: string, path: string }[] = [];
-							elements.push({ name: "User", path: "/dashboard/user" });
+							elements.push({ name: "View Requests", path: "/dashboard/user" });
 							if (permission == Permission.maintainer || permission == Permission.admin) {
-								elements.push({ name: "Maintainer", path: "/dashboard/maintainer" });
+								elements.push({ name: "Maintainer Dashboard", path: "/dashboard/maintainer" });
 							}
-							if (permission == Permission.admin) {
-								elements.push({ name: "Admin", path: "/dashboard/admin" });
-							}
+							// if (permission == Permission.admin) {
+							// 	elements.push({ name: "Admin", path: "/dashboard/admin" });
+							// }
 							return elements;
 						})()}
 

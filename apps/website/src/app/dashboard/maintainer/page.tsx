@@ -20,13 +20,14 @@ export default async function Maintainer()
 	}
 
     const orderCount = (await db`select COUNT(*) from request where isfulfilled=false`)[0] as {count: number};
+    const userCount = (await db`select COUNT(*) from account`)[0] as {count: number};
 
     return <>
         <div className="text-3xl mb-10">Welcome, {jwtPayload?.firstname} {jwtPayload?.lastname}!</div>
 
         <a href="/dashboard/maintainer/orders" className="sm:max-w-sm block"><button className="flex items-center w-full text-base font-normal">
             <RegularCart className="inline-block w-12 h-12 mr-auto fill-gray-300"></RegularCart>
-            <span>View {orderCount.count} Orders</span>
+            <span>View {orderCount.count} Requests</span>
         </button></a>
         {/* <a href="/dashboard/maintainer/printers" className="w-96 block"><button className="flex items-center text-lg font-normal">
             <GenericPrinterIcon className="inline-block w-12 h-12 mr-auto fill-gray-100"></GenericPrinterIcon>
@@ -36,5 +37,21 @@ export default async function Maintainer()
             <FilamentSpoolIcon className="inline-block w-12 h-12 mr-auto fill-gray-300"></FilamentSpoolIcon>
             <span>Manage Filament</span>
         </button></a>
+						
+        {(() => {
+            if (permission != Permission.admin) {
+                return null;
+            }
+            return (<div>
+                <a href="/dashboard/admin/users" className="w-full sm:max-w-sm block"><button className="flex items-center w-full text-base font-normal">
+                    <RegularLicense className="inline-block w-12 h-12 mr-auto fill-gray-300"></RegularLicense>
+                    <span>Manage {userCount.count} Accounts</span>
+                </button></a>
+                <a href="/dashboard/admin/printers" className="w-full sm:max-w-sm block"><button className="flex items-center w-full text-base font-normal">
+                    <GenericPrinterIcon className="inline-block w-12 h-12 mr-auto fill-gray-300"></GenericPrinterIcon>
+                    <span>Manage Printers</span>   
+                </button></a>
+            </div>);
+        })()}
     </>
 }
