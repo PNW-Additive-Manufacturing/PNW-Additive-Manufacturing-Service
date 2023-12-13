@@ -16,7 +16,6 @@ export default async function Page() {
 		};
 	});
 	return <>
-		<div className='w-full xl:w-3/4 lg:mx-auto'>
 			<DropdownSection name='Printers' collapsible={true}>
 				<PrinterList initialPrinters={printers} />
 			</DropdownSection>
@@ -37,6 +36,5 @@ export default async function Page() {
 					<Input label="Communication Strategy Options" name="printer-communication-options" type="text" id="printer-communication-options" placeholder="Host, Extruder Count, Has Heated Bed" />
 				</GenericFormServerAction>
 			</DropdownSection>
-		</div>
 	</>
 }

@@ -4,6 +4,7 @@ import { changePermission } from "@/app/api/server-actions/account";
 import { ChangeEvent, useState, useTransition } from "react";
 import { Permission } from "../api/util/Constants";
 import DropdownSection from "./DropdownSection";
+import Table from "./Table";
 
 export interface User {
     email: string,
@@ -39,7 +40,7 @@ function UserRow({user, onChange}: {user: User, onChange: ((email: string, oldPe
 
 export function UserList({users, onChange}: {users: User[], onChange: ((email: string, oldPermission: string, newPermission: string) => void)}): JSX.Element {
   return (
-    <table className="bg-white m-auto w-full">
+    <Table className="bg-white m-auto">
       <thead>
         <tr className="text-gray-400">
           <th className="text-left">Email</th>
@@ -51,7 +52,7 @@ export function UserList({users, onChange}: {users: User[], onChange: ((email: s
       <tbody>
         {users.map((e) => <UserRow key={e.email} user={e} onChange={onChange}/>)}
       </tbody>
-    </table>
+    </Table>
   )
 }
 

@@ -10,7 +10,7 @@ import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { RegularLayers, RegularSearchAlt, RegularSpinnerSolid, RegularChevronDown, RegularCog, RegularEye, RegularCheckmarkCircle, RegularBan, RegularCart, RegularCrossCircle } from 'lineicons-react';
 import UserSpan from '@/app/components/UserSpan';
 import PrinterSpan from '@/app/components/PrinterSpan';
-import SidebarNavigation from '@/app/components/DashboardNavigation';
+import { SidebarNavigation } from '@/app/components/SidebarNavigation';
 
 enum PrinterState 
 {
@@ -102,9 +102,6 @@ export default function Maintainer()
                 }
                 ]}></SidebarNavigation>
 
-                <div className='bg-purple-400 w-3/6 h-screen'></div>
-                
-                <div className='bg-amber-100 w-96 h-screen'></div>
             </div>
         </main>
     );

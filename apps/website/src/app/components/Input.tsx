@@ -2,7 +2,7 @@ import { ChangeEventHandler, HTMLInputTypeAttribute, use, useEffect, useState } 
 
 export function Input({ label, type, id, name, placeholder }: { label: string, type: HTMLInputTypeAttribute, id: string, name?: string, placeholder: string }): JSX.Element {
     return (
-        <div className="font-semibold w-full">
+        <div className="font-semibold w-full p-2">
             <p className="br-2 mb-2">{label}</p>
             <input className="w-full" id={id} name={name} type={type} size={50} placeholder={placeholder}></input>
         </div>
