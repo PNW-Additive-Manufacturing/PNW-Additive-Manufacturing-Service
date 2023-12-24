@@ -30,7 +30,7 @@ export async function addPrinter(prevState: string, formData: FormData) : Promis
   }
 
   //successful!
-  redirect("/dashboard/admin/printers");
+  redirect("/dashboard/maintainer/printers");
 }
 
 export async function deletePrinter(prevState: string, formData: FormData) : Promise<string> {

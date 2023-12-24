@@ -52,9 +52,6 @@ export default async function RootLayout({
 							if (permission == Permission.maintainer || permission == Permission.admin) {
 								elements.push({ name: "Maintainer Dashboard", path: "/dashboard/maintainer" });
 							}
-							// if (permission == Permission.admin) {
-							// 	elements.push({ name: "Admin", path: "/dashboard/admin" });
-							// }
 							return elements;
 						})()}
 

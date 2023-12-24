@@ -56,7 +56,7 @@ export function Navbar({ links, includeIcon, specialElements, style }:
     }): JSX.Element {
     includeIcon = includeIcon ?? true;
 
-    const [itemsExpanded, setExpanded] = useState<boolean>(false);
+    let [itemsExpanded, setExpanded] = useState<boolean>(false);
 
     const currentPath = usePathname();
     let currentPathSegments = currentPath.split("/");

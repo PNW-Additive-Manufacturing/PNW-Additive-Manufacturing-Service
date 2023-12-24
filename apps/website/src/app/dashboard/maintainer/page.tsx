@@ -3,7 +3,6 @@
 import { Permission } from "@/app/api/util/Constants";
 import { getJwtPayload } from "@/app/api/util/JwtHelper";
 import { RegularCart, RegularLicense } from "lineicons-react";
-import Link from "next/link";
 import db from "@/app/api/Database";
 import GenericPrinterIcon from "@/app/components/icons/GenericPrinterIcon";
 import FilamentSpoolIcon from "@/app/components/icons/FilamentSpoolIcon";
@@ -25,6 +24,7 @@ export default async function Maintainer()
     return <>
         <div className="text-3xl mb-10">Welcome, {jwtPayload?.firstname} {jwtPayload?.lastname}!</div>
 
+        {/* Maintainer Screens */}
         <a href="/dashboard/maintainer/orders" className="sm:max-w-sm block"><button className="flex items-center w-full text-base font-normal">
             <RegularCart className="inline-block w-12 h-12 mr-auto fill-gray-300"></RegularCart>
             <span>View {orderCount.count} Requests</span>
@@ -37,17 +37,18 @@ export default async function Maintainer()
             <FilamentSpoolIcon className="inline-block w-12 h-12 mr-auto fill-gray-300"></FilamentSpoolIcon>
             <span>Manage Filament</span>
         </button></a>
-						
+		
+        {/* Admin Only Screens */}
         {(() => {
             if (permission != Permission.admin) {
                 return null;
             }
             return (<div>
-                <a href="/dashboard/admin/users" className="w-full sm:max-w-sm block"><button className="flex items-center w-full text-base font-normal">
+                <a href="/dashboard/maintainer/users" className="w-full sm:max-w-sm block"><button className="flex items-center w-full text-base font-normal">
                     <RegularLicense className="inline-block w-12 h-12 mr-auto fill-gray-300"></RegularLicense>
                     <span>Manage {userCount.count} Accounts</span>
                 </button></a>
-                <a href="/dashboard/admin/printers" className="w-full sm:max-w-sm block"><button className="flex items-center w-full text-base font-normal">
+                <a href="/dashboard/maintainer/printers" className="w-full sm:max-w-sm block"><button className="flex items-center w-full text-base font-normal">
                     <GenericPrinterIcon className="inline-block w-12 h-12 mr-auto fill-gray-300"></GenericPrinterIcon>
                     <span>Manage Printers</span>   
                 </button></a>

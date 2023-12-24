@@ -1,109 +1,40 @@
-"use client"
 
-import Image from 'next/image'
-import HorizontalWrap from '@/app/components/HorizontalWrap';
-import { CSSProperties, useDebugValue, useRef, useState } from 'react';
-import { Canvas, useLoader } from '@react-three/fiber';
-import ModelViewer from '@/app/components/ModelViewer';
-import { BoxGeometry, BufferGeometry, Camera, Euler, PerspectiveCamera, Vector2, Vector3 } from 'three';
-import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
-import { RegularLayers, RegularSearchAlt, RegularSpinnerSolid, RegularChevronDown, RegularCog, RegularEye, RegularCheckmarkCircle, RegularBan, RegularCart, RegularCrossCircle } from 'lineicons-react';
-import UserSpan from '@/app/components/UserSpan';
-import PrinterSpan from '@/app/components/PrinterSpan';
-import { SidebarNavigation } from '@/app/components/SidebarNavigation';
+import db from '@/app/api/Database';
+import { PrinterList, Printer } from './PrinterList';
+import DropdownSection from '@/app/components/DropdownSection';
+import GenericFormServerAction from '@/app/components/GenericFormServerAction';
+import { Input } from '@/app/components/Input';
+import { addPrinter } from '@/app/api/server-actions/printer';
 
-enum PrinterState 
-{
-    Standby = "Standby",
-    Printing = "Printing",
-    Paused = "Paused"
+export default async function Page() {
+	let printers: Printer[] = (await db`select * from printer`).map((p) => {
+		return {
+			name: p.name,
+			model: p.model,
+			dimensions: p.dimensions,
+			communicationstrategy: p.communicationstrategy
+		};
+	});
+	return <>
+		<DropdownSection name='Printers' collapsible={true}>
+			<PrinterList initialPrinters={printers} />
+		</DropdownSection>
+
+		<DropdownSection hidden={true} name='Configure new Printer' className='mt-8'>
+			<GenericFormServerAction serverAction={addPrinter} submitName="Add Printer" submitPendingName="Adding Printer...">
+				<Input label="Printer Name" name="printer-name" type="text" id="printer-name" placeholder="ex: Printer 1" />
+				<Input label="Printer Model" name="printer-model" type="text" id="printer-model" placeholder="ex: Creality Ender 3" />
+				<div className="font-semibold">
+					<p className="uppercase br-2">Dimensions in mm</p>
+					<span>
+						<input className="w-40 inline-block" type="number" name="printer-dimension1" placeholder="x"></input>
+						<input className="w-40 inline-block" type="number" name="printer-dimension2" placeholder="y"></input>
+						<input className="w-40 inline-block" type="number" name="printer-dimension3" placeholder="z"></input>
+					</span>
+				</div>
+				<Input label="Communication Strategy" name="printer-communication" type="text" id="printer-communication" placeholder="MoonRaker, Serial, or Bambu" />
+				<Input label="Communication Strategy Options" name="printer-communication-options" type="text" id="printer-communication-options" placeholder="Host, Extruder Count, Has Heated Bed" />
+			</GenericFormServerAction>
+		</DropdownSection>
+	</>
 }
-interface DashboardPrinter 
-{   
-    Model: string,
-    State: PrinterState,
-    Color: string,
-    Dimensions: [number, number, number]
-}
-enum PartState {
-    Queued = "Queued",
-    Printing = "Printing",
-    Failed = "Failed",
-    Printed = "Printed"
-}
-interface Order
-{
-    Username: string,
-    Parts: {
-        Name: string,
-        // State: PartState,
-        Progress: number
-        AssignedPrinter: DashboardPrinter,
-    }[]
-}
-
-var printers: DashboardPrinter[] = [
-    {
-        Model: "Ender 3 V2",
-        State: PrinterState.Printing,
-        Color: "#3252a8",
-        Dimensions: [220, 220, 300]
-    },
-    {
-        Model: "Ender 5 S1",
-        State: PrinterState.Standby,
-        Color: "#e09034",
-        Dimensions: [220, 220, 350]
-    },
-    {
-        Model: "Bambu X1",
-        State: PrinterState.Standby,
-        Color: "#e00e12",
-        Dimensions: [220, 220, 350]
-    },
-    {
-        Model: "Bambu X1E",
-        State: PrinterState.Standby,
-        Color: "#208034",
-        Dimensions: [220, 220, 350]
-    },
-    {
-        Model: "Creality K1",
-        State: PrinterState.Standby,
-        Color: "#p92819",
-        Dimensions: [220, 220, 350]
-    },
-]
-
-
-export default function Maintainer() 
-{
-    return (
-        <main>
-            <div className='flex'>
-                <SidebarNavigation style={{height: 'calc(100vh - 72px)'}} items={[
-                {
-                    name: "Orders",
-                    route: "orders",
-                    icon: (className) => <RegularCart className={`${className}`}></RegularCart>,
-                    active: false
-                },
-                {
-                    name: "Printers",
-                    route: "printers",
-                    icon: (className) => <RegularCog className={`${className}`}></RegularCog>,
-                    active: true
-                },
-                {
-                    name: "Filaments",
-                    route: "filaments",
-                    icon: (className) => <RegularCrossCircle className={`${className}`}></RegularCrossCircle>,
-                    active: false
-                }
-                ]}></SidebarNavigation>
-
-            </div>
-        </main>
-    );
-}
-

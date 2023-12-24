@@ -67,7 +67,7 @@ export async function middleware(request: NextRequest) {
   }
 
   //automatically force redirect to correct dashboard
-  if(nextUrl.startsWith(`/dashboard/${Permission.admin}`) && permission !== Permission.admin) {
+  if(((nextUrl.startsWith(`/dashboard/maintainer/printers`)) || (nextUrl.startsWith(`/dashboard/maintainer/users`))) && permission !== Permission.admin) {
     return NextResponse.redirect(new URL(`/dashboard/${permission}`, request.url));
   }
 
