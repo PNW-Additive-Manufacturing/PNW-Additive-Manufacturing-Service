@@ -29,7 +29,7 @@ export default async function Maintainer()
             <RegularCart className="inline-block w-12 h-12 mr-auto fill-gray-300"></RegularCart>
             <span>View {orderCount.count} Requests</span>
         </button></a>
-        {/* <a href="/dashboard/maintainer/printers" className="w-96 block"><button className="flex items-center text-lg font-normal">
+        {/* <a href="/dashboard/maintainer/view-printers" className="w-96 block"><button className="flex items-center text-lg font-normal">
             <GenericPrinterIcon className="inline-block w-12 h-12 mr-auto fill-gray-100"></GenericPrinterIcon>
             <span>Control Printers</span>   
         </button></a> */}

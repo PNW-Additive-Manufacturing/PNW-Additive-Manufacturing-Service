@@ -75,7 +75,7 @@ export function Navbar({ links, includeIcon, specialElements, style }:
                     <span>Additive Manufacturing</span>
                 </div>
 
-                <div className="hidden xl:block whitespace-nowrap px-5 py-3 place-self-center text-xs sm:text-sm font-light">
+                <div className="hidden xl:block whitespace-nowrap px-5 py-3 place-self-center text-sm font-light">
                     <a className="capitalize" href='/'>Home</a>
                     {currentPathSegments.map((segment, index, arr) => {
                         const segments = arr.slice(0, index + 1);
@@ -110,7 +110,7 @@ export function Navbar({ links, includeIcon, specialElements, style }:
             </nav>
         </div>
         <div className="xl:hidden bg-gray-100">
-            <div className="px-5 py-3 text-xs sm:text-sm font-light">
+            <div className="px-5 py-3 text-sm font-light">
                 <a className="capitalize" href='/'>Home</a>
                 {currentPathSegments.map((segment, index, arr) => {
                     const segments = arr.slice(0, index + 1);
