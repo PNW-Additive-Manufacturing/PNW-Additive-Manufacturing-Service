@@ -21,17 +21,17 @@ export default function QuantityInput({name, defaultQuantity, min, max, classNam
         <div className="bg-white border border-gray-100 p-2 rounded-s-md hover:cursor-pointer" onClick={() => {
             setQuantityClamped(quantity + 1);
         }}><RegularPlus className="w-4 h-4 fill-slate-400"></RegularPlus></div>
-        <input name={name} max={max} min={min} onInput={ev => {    
+        <input id="quantity" name={name} max={max} min={min} onInput={ev => {
             ev.preventDefault(); // Do not submit form.
 
-            const inputNumber = Number(ev.currentTarget.value);
-            if (Number.isNaN(inputNumber)) 
-            {
+            var inputNumber:String|Number = Number(ev.currentTarget.value).toString();
+            inputNumber = Number(inputNumber.charAt(inputNumber.length-1));
+
+            if (Number.isNaN(inputNumber)) {
                 ev.currentTarget.value = '1';
                 return;
             }
-            
-            setQuantityClamped(Number(ev.currentTarget.value));
+            setQuantityClamped(inputNumber.valueOf());
         }} className="w-10 m-0 p-0 bg-white border-none rounded-none text-center hover:outline-none" value={quantity}></input>
         <div className="bg-white border border-gray-100 p-2 rounded-r-md hover:cursor-pointer" onClick={() => {
             setQuantityClamped(quantity - 1);
