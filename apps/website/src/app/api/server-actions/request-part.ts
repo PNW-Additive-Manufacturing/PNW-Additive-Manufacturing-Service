@@ -40,12 +40,21 @@ export async function requestPart(prevState: string, formData: FormData) {
   let material = formData.getAll('material') as string[];
   let quantity = formData.getAll("quantity") as string[];
 
+  requestName = requestName.trim()
+  if (requestName == "" && files != null) {
+    if (files.length > 1) {
+      requestName = `${files[0].name.substring(0, files[0].name.lastIndexOf("."))} & ${files.length - 1} More`;
+    } else {
+      requestName = files[0].name.substring(0, files[0].name.lastIndexOf("."));
+    }
+  }
+
   console.log(files);
   console.log(color);
   console.log(material);
   console.log(quantity);
 
-  if(files == null) {
+  if(files == null || files.length < 1) {
     return "You must submit one or more .stl files";
   }
 
