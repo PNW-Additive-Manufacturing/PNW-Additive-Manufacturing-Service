@@ -5,14 +5,15 @@
   NPM packages for the client
 */
 
-import { attemptLogin, createAccount } from "@/app/api/util/AccountHelper";
+import { attemptLogin, checkIfPasswordCorrect, createAccount, login, validatePassword } from "@/app/api/util/AccountHelper";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { getJwtPayload } from "@/app/api/util/JwtHelper";
+import { getJwtPayload, makeJwt } from "@/app/api/util/JwtHelper";
 import { Permission, SESSION_COOKIE } from "@/app/api/util/Constants";
 import { cookies } from "next/headers";
 
 import db from '@/app/api/Database';
+import { hashAndSaltPassword } from "../util/PasswordHelper";
 
 
 /*
@@ -94,6 +95,86 @@ export async function changePermission(prevState: string, formData: FormData): P
   } catch(e) {
     console.error(e);
     return "Failed to update permission on user!";
+  }
+
+  return "";
+}
+
+export async function getUserInfo(email: string): Promise<any | null> {
+  let res;
+  res = await db`select firstname, lastname from account where email=${email}`;
+  if(res.count === 0) {
+    throw new Error("No user exists with this email!");
+  }
+  return {
+    firstname: res[0].firstname,
+    lastname: res[0].lastname
+  };
+}
+
+export async function editName(prevState: string, formData: FormData) : Promise<string>{
+  let fname = formData.get("firstname") as string;
+  let lname = formData.get("lastname") as string;
+
+  //use try-catch in case JWT is invalid
+  let jwtPayload;
+  try {
+    jwtPayload = await getJwtPayload();
+    if(jwtPayload == null) {
+      throw new Error();
+    }
+  } catch(e) {
+    redirect("/user/login");
+  }
+
+  let res = await db`update account set firstname=${fname}, lastname=${lname} where email=${jwtPayload.email}`;
+  if(res.count === 0) {
+    return "Email does not exist!";
+  }
+
+  await login(jwtPayload.email, jwtPayload.permission as Permission, fname, lname, jwtPayload.jwt_expire_date);
+
+  return "";
+}
+
+export async function editPassword(prevState: string, formData: FormData) : Promise<string> {
+  let currentPassword = formData.get("password") as string;
+  let newPassword = formData.get("new_password") as string;
+  let confirmNewPassword = formData.get("confirm_new_password") as string;
+
+  if(newPassword !== confirmNewPassword) {
+    return "New Password and Confirm New Password fields do not match!";
+  }
+
+  let passwordErr = validatePassword(newPassword);
+  if(passwordErr) {
+    return passwordErr;
+  }
+
+  let jwtPayload;
+
+  try {
+    jwtPayload = await getJwtPayload();
+    if(jwtPayload == null) {
+      throw new Error("Invalid token!");
+    }
+
+  } catch(e) {
+    console.error(e);
+    redirect("/user/login");
+  }
+
+
+  if(!(await checkIfPasswordCorrect(jwtPayload.email, currentPassword))) {
+    return "Incorrect Password!";
+  }
+
+  let newHash = hashAndSaltPassword(newPassword);
+
+  let res = await db`update account set password=${newHash} where email=${jwtPayload.email}`;
+
+  if(res.count === 0) {
+    return `Cannot find user with email ${jwtPayload.email}`;
   }
 
   return "";

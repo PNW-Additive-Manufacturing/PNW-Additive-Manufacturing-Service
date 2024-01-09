@@ -14,19 +14,20 @@ export interface UserInfoJwt {
   email: string,
   permission: string,
   firstname: string,
-  lastname: string
+  lastname: string,
+  jwt_expire_date: Date
 }
 
-export async function makeJwt(email: string, permission: string, firstname: string, lastname: string) {
+export async function makeJwt(email: string, permission: string, firstname: string, lastname: string, expireDate?: Date) {
   return await new jose.SignJWT({
     email: email, 
     permission: permission,
     firstname: firstname,
-    lastname: lastname
+    lastname: lastname,
   })
   .setProtectedHeader({alg: 'HS256'})
   .setIssuedAt()
-  .setExpirationTime('2d')
+  .setExpirationTime(expireDate ?? '2d')
   .sign(new TextEncoder().encode(process.env.JWT_SECRET!));
 }
 
@@ -38,14 +39,18 @@ export async function getJwtPayload() {
 
   try {
     let payload = (await jose.jwtVerify(cookie.value, new TextEncoder().encode(process.env.JWT_SECRET!))).payload
+    console.log(new Date((payload.exp ?? 0) * 1000));
     return {
       email: payload.email as string, 
       permission: payload.permission as string,
       firstname: payload.firstname as string,
-      lastname: payload.lastname as string
+      lastname: payload.lastname as string,
+      //JWT stores their expiration dates in SECONDS, not milliseconds like Javascript Date
+      jwt_expire_date: new Date((payload.exp ?? 0) * 1000)
     };
   } catch(e: any) {
     console.error(e);
     throw new Error("Invalid Token! Log Back In!");
   }
 }
+
