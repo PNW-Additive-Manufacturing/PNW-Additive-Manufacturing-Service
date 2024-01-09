@@ -29,7 +29,7 @@ export function AccountDetails() {
             className={`${expanded ? 'border-t-2 border-solid border-gray-200' : 'hidden'} rounded-b-md bottom-0 w-full h-fit bg-gray-100 flex flex-col gap-4 px-4 py-2`}
             style={{ position: "relative" }}>
             <Link href='/user/create-account'>Create</Link>
-            {/* TODO: Add edit option*/}
+            <Link href="/user/profile">Edit Profile</Link>
             <Link href='/user/login'>Login</Link>
             <Link href='/user/logout'>Logout</Link>
         </div>

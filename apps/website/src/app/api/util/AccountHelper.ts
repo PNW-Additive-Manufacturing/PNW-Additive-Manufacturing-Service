@@ -44,7 +44,7 @@ export async function createAccount(email: string, firstName: string, lastName: 
   await login(email, permission as Permission, firstName, lastName);
 }
 
-function validatePassword(password: string) {
+export function validatePassword(password: string) {
   if(password.length < 8) {
     return "Password must be at least 8 characters!";
   }
@@ -98,8 +98,34 @@ export async function attemptLogin(email: string, password: string) {
   await login(email, permission, firstname, lastname);
 }
 
-export async function login(email: string, permission: Permission, firstname: string, lastname: string) {
-  let token = await makeJwt(email, permission, firstname, lastname);
+export async function checkIfPasswordCorrect(email: string, plaintextPassword: string) {
+  let res: postgres.RowList<postgres.Row[]>;
+  try {
+    res = await db`select password from account where email=${email}`;
+  } catch(e) {
+    console.error(e);
+    throw new Error("Error: Failed to access database!");
+  }
+  
+  if(res.count === 0) {
+    throw new Error(`No user exists with email ${email}!`);
+  }
+
+  let hash = res[0].password as string;
+
+
+  /* Because bcrypt ALWAYS uses 60 character long hashes and 
+     our database schema forces all password hashes to be 64 characters (padding with spaces if necessary),
+     I need to only take the first 60 characters of the hash from the database
+     to ensure that correct passwords will be accepted by the bcrypt compareSync function.
+  */
+  hash = hash.substring(0,60); 
+
+  return correctPassword(plaintextPassword, hash);
+}
+
+export async function login(email: string, permission: Permission, firstname: string, lastname: string, expireDate?: Date) {
+  let token = await makeJwt(email, permission, firstname, lastname, expireDate);
 
   //session cookie cannot be accessed via client-side javascript, making this safer than
   //just returning the token via JSON response. 
