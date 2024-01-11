@@ -8,13 +8,7 @@ import DropdownSection from '../../../../components/DropdownSection';
 import InlineStatus from '../../../../components/InlineStatus';
 import Link from "next/link";
 import { DateOptions } from "@/app/api/util/Constants";
-//Buttons
-import PartAcceptButton from '.././PartAcceptButton';
-import PartDenyButton from '.././PartDenyButton';
-import PartCompleteButton from '.././PartCompleteButton';
-import PartFailedButton from '.././PartFailedButton';
-import PartBeginPrintingButton from '.././PartBeginPrintingButton';
-import RequestFulfilledButton from "../RequestFulfilledButton";
+import { PartAcceptButton,PartDenyButton,PartBeginPrintingButton,PartCompleteButton,PartFailedButton,RequestFulfilledButton } from '../Buttons';
 import Table from "@/app/components/Table";
 
 async function RequestPartsOnlyTable({ request }: { request: number }) {

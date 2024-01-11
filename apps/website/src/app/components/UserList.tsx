@@ -89,8 +89,7 @@ export function ListOfUserList({normUsers, maintainers, admins}: {normUsers: Use
 
       let user: User;
       
-      //filter out user from correct array
-      //and update the state
+      //filter out user from correct array and update the state
       switch(oldPermission as Permission) {
         case Permission.user:
           user = userArray.find((u) => u.email == email)!;
