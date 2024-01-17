@@ -1,7 +1,8 @@
 "use client"
 
+import { Permission } from "@/app/api/util/Constants";
 import { RegularChevronDown, RegularMenu, RegularSearchAlt, RegularUser } from "lineicons-react"
-import { CSSProperties, DetailedHTMLProps, HTMLAttributes, useState } from "react";
+import { CSSProperties, DetailedHTMLProps, Fragment, HTMLAttributes, useState } from "react";
 import Image from 'next/image';
 import Link from "next/link";
 import UserIcon from "./icons/UserIcon";
@@ -12,7 +13,7 @@ function NavbarLink({ name, path }: { name: string, path: string }) {
     return <a href={path} className="rounded-md whitespace-nowrap md:rounded-none w-full p-4 md:p-0 bg-gray-100 sm:bg-transparent md:w-fit border-b-4 border-b-pnw-gold-light border-opacity-10 hover:text-pnw-gold active:text-pnw-gold" >{name}</a>
 }
 
-export function AccountDetails() {
+export function AccountDetails({ permission } : { permission : Permission|null }) {
     const [expanded, setExpanded] = useState<boolean>(false);
 
     return <div onClick={() => setExpanded(() => !expanded)} className={`bg-gray-100  h-10 ${expanded ? 'rounded-t-md' : 'rounded-md'} hover:cursor-pointer`}>
@@ -28,10 +29,19 @@ export function AccountDetails() {
         <div
             className={`${expanded ? 'border-t-2 border-solid border-gray-200' : 'hidden'} rounded-b-md bottom-0 w-full h-fit bg-gray-100 flex flex-col gap-4 px-4 py-2`}
             style={{ position: "relative" }}>
-            <Link href='/user/create-account'>Create</Link>
-            <Link href="/user/profile">Edit Profile</Link>
-            <Link href='/user/login'>Login</Link>
-            <Link href='/user/logout'>Logout</Link>
+            {(() => {
+                if (permission == null) {
+                    return (<Fragment>
+                        <Link href='/user/create-account'>Create</Link>
+                        <Link href='/user/login'>Login</Link>
+                    </Fragment>);
+                } else {
+                    return (<Fragment>
+                        <Link href="/user/profile">Edit Profile</Link>
+                        <Link href='/user/logout'>Logout</Link>
+                    </Fragment>);
+                }
+            })()}
         </div>
     </div>
 }

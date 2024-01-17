@@ -56,8 +56,8 @@ export default async function RootLayout({
 						})()}
 
 						specialElements={(() => {
-							if (permission != null) return <> <ColorfulRequestPrintButton/> <AccountDetails/> </>;
-							else return <AccountDetails/>;
+							if (permission != null) return <> <ColorfulRequestPrintButton/> <AccountDetails permission={permission}/> </>;
+							else return <AccountDetails permission={permission}/>;
 						})()}
 						style={{marginBottom: "0px"}}
 					/>
