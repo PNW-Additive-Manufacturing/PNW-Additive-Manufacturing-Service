@@ -5,7 +5,6 @@ import GenericFormServerAction from "@/app/components/GenericFormServerAction";
 import { Input } from "@/app/components/Input";
 import { useState } from "react";
 
-
 export function ChangePasswordForm({successCallback, errCallback} : {successCallback: () => void, errCallback: () => void }) {
   let [currentPassword, setCurrentPassword] = useState("");
   let [newPassword, setNewPassword] = useState("");

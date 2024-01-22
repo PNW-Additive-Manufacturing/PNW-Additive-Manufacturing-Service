@@ -25,11 +25,14 @@ export default async function RootLayout({
 	children: React.ReactNode
 }) {
 	let permission: Permission|null;
+	let email: String|null;
 	try {
 		let jwtPayload = await getJwtPayload();
 		permission = jwtPayload?.permission as Permission;
+		email = jwtPayload?.email as String;
 	} catch {
 		permission = null;
+		email = null;
 	}
 	
 	return (
@@ -56,8 +59,11 @@ export default async function RootLayout({
 						})()}
 
 						specialElements={(() => {
-							if (permission != null) return <> <ColorfulRequestPrintButton/> <AccountDetails permission={permission}/> </>;
-							else return <AccountDetails permission={permission}/>;
+							if (email) email = email.substring(0, email.lastIndexOf('@')) as String;
+							else email = "Account";
+
+							if (permission) return <> <ColorfulRequestPrintButton/> <AccountDetails permission={permission} email={email}/> </>;
+							else return <AccountDetails permission={permission} email={email}/>;
 						})()}
 						style={{marginBottom: "0px"}}
 					/>

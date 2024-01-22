@@ -39,7 +39,7 @@ export async function getJwtPayload() {
 
   try {
     let payload = (await jose.jwtVerify(cookie.value, new TextEncoder().encode(process.env.JWT_SECRET!))).payload
-    console.log(new Date((payload.exp ?? 0) * 1000));
+    //console.log(new Date((payload.exp ?? 0) * 1000));
     return {
       email: payload.email as string, 
       permission: payload.permission as string,

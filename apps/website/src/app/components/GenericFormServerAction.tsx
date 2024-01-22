@@ -5,7 +5,7 @@ import { useFormState, useFormStatus } from "react-dom";
 function SubmitButton({className, name, pendingName} : {className?: string, name: string, pendingName?: string}) {
   let {pending} = useFormStatus();
   return (
-      <div className={className ? className : "bg-white rounded-sm font-semibold p-14 pt-0 pb-10 pl-0 w-full"}>
+      <div className={className ? className : "bg-white rounded-sm font-semibold p-14 pt-0 pb-0 pl-0 w-full"}>
           <input type="submit" value={pending ? (pendingName ? pendingName : name) : name}/>
       </div>
   )
