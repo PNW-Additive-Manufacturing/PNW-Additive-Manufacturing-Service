@@ -53,21 +53,31 @@ export async function setRequestFulfilled(requestId: string, isfulfilled: boolea
     return '';
 }
 
-export async function addFilament(prevState: string, data: FormData) : Promise<string> {
+export async function addFilament(prevState: string, data: FormData) : Promise<{error: string | null, newMaterial: string | null, newColor: string | null, instock: boolean | null}> {
     var material = (data.get("filament-material") as string).toLowerCase();
     var color = (data.get("filament-color") as string).toLowerCase();
 
+    let newMaterial = null;
+    let newColor = null;
+    let instock = null;
+
     try {
-        let result = await db`insert into filament (material, color, instock) values(${material}, ${color}, true) returning id`;
+        let result = await db`insert into filament (material, color, instock) values(${material}, ${color}, true) returning material, color, instock`;
         if(result.count == 0) {
-            return "Failed to add filament!";
+            return {error: "Failed to add filament!", newColor: null, newMaterial: null, instock: null};
         }
+        result[0]
+        newMaterial = material.toUpperCase();
+        newColor = color.toLowerCase();
+        instock = true;
+
     } catch(e: any) {
-        return "Failed to add filament with error: " + e.message;
+        return {error: "Failed to add filament with error: " + e.message, newColor: null, newMaterial: null, instock: null};
     }
 
     //successful
-    redirect("/dashboard/maintainer/filaments");
+    return {error: null, newMaterial: newMaterial, newColor: newColor, instock: instock};
+    //redirect("/dashboard/maintainer/filaments");
 }
 
 export async function setFilamentInStock(prevState: string, data: FormData): Promise<string> {
