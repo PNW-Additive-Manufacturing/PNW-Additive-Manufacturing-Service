@@ -13,12 +13,7 @@ export default async function Page() {
 	});
 
 	return <>
-		<DropdownSection name="Filaments" collapsible={true}>
-			<FilamentList initialFilaments={filaments} />
-		</DropdownSection>
+		<FilamentList initialFilaments={filaments} />
 		
-		<DropdownSection name="Add Filament" className='mt-8' hidden={true}>
-			<FilamentForm/>
-		</DropdownSection>
 	</>
 }
