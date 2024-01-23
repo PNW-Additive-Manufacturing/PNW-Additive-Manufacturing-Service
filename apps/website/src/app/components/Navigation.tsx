@@ -7,20 +7,19 @@ import Image from 'next/image';
 import Link from "next/link";
 import UserIcon from "./icons/UserIcon";
 import { usePathname } from "next/navigation";
-import HorizontalWrap from "./HorizontalWrap";
 
 function NavbarLink({ name, path }: { name: string, path: string }) {
     return <a href={path} className="rounded-md whitespace-nowrap md:rounded-none w-full p-4 md:p-0 bg-gray-100 sm:bg-transparent md:w-fit border-b-4 border-b-pnw-gold-light border-opacity-10 hover:text-pnw-gold active:text-pnw-gold" >{name}</a>
 }
 
-export function AccountDetails({ permission } : { permission : Permission|null }) {
+export function AccountDetails({ permission, email } : { permission : Permission|null, email : String|null}) {
     const [expanded, setExpanded] = useState<boolean>(false);
 
     return <div onClick={() => setExpanded(() => !expanded)} className={`bg-gray-100  h-10 ${expanded ? 'rounded-t-md' : 'rounded-md'} hover:cursor-pointer`}>
 
         <div className="flex flex-row items-center gap-1 px-4">
             <UserIcon className="h-5.5 aspect-square md:hidden" style={{ fill: "rgb(64, 64, 64)" }} />
-            Account
+            {email}
             <div className="ml-auto align-bottom">
                 <RegularChevronDown className={`aspect-square h-10 ${expanded ? 'rotate-180' : 'rotate-0'} transition-transform`} />
             </div>

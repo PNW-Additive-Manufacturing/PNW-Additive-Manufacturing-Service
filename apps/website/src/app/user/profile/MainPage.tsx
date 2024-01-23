@@ -5,6 +5,7 @@ import GenericFormServerAction from "@/app/components/GenericFormServerAction";
 import { Input } from "@/app/components/Input";
 import { ChangePasswordForm } from "./ChangePasswordForm";
 import { useState } from "react";
+
 export default function EditPage({userInfo} : {userInfo: {firstname: string, lastname: string}}) {
   //boolean that displays a "change successful" message if true
   let [submitSuccess, setSubmitSuccess] = useState(false);
@@ -40,7 +41,6 @@ export default function EditPage({userInfo} : {userInfo: {firstname: string, las
 
       <div className="w-9/10 m-auto">
         <big className="text-green-600">{submitSuccess ? "Change Successful!" : ""}</big>
-        <h1>Your Profile</h1>
 
         <GenericFormServerAction serverAction={nameChangeAction} submitName="Edit Name" submitPendingName="Changing Name...">
           <Input label="First Name" type="text" id="firstname" name="firstname" placeholder="First Name" defaultValue={userInfo.firstname}/>
