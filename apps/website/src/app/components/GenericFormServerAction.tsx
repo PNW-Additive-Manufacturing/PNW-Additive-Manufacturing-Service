@@ -12,12 +12,13 @@ function SubmitButton({className, name, pendingName} : {className?: string, name
 }
 
 //TODO: Make this work for more generic forms
-export default function GenericFormServerAction({className, submitButtonClassName, serverAction, submitName, submitPendingName, children} : {
+export default function GenericFormServerAction({className, submitButtonClassName, serverAction, submitName, submitPendingName, clearOnSuccess, children} : {
   className?: string, 
   submitButtonClassName?: string,
   serverAction: ((state: string, formData: FormData) => Promise<string>), 
   submitName: string, 
-  submitPendingName?: string, 
+  submitPendingName?: string,
+  clearOnSuccess?: boolean, 
   children: any}
 ) : JSX.Element {
   let [error, formAction] = useFormState<any, FormData>(serverAction, "");
