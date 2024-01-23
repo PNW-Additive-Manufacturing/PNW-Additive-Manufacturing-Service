@@ -3,7 +3,7 @@
 import db from "@/app/api/Database";
 import { redirect } from "next/navigation";
 import DropdownSection from '../../../../components/DropdownSection';
-import { ActiveRequestsTable, CompletedRequestsTable, RequestPartsOnlyTable } from "../Tables";
+import { RequestsTable, RequestPartsOnlyTable } from "../Tables";
 
 
 export default async function OrderMaintainer({ params } : { params: any }) {
@@ -18,11 +18,11 @@ export default async function OrderMaintainer({ params } : { params: any }) {
         
         return <>
             <DropdownSection name='Active Requests' className="mt-4" hidden={quiredOrder.isfulfilled}>
-                <ActiveRequestsTable quiredOrder={quiredOrder}></ActiveRequestsTable>
+                <RequestsTable isFulfilled={false} quiredOrder={quiredOrder}></RequestsTable>
             </DropdownSection>
 
             <DropdownSection name='Completed Requests' className="mt-8" hidden={!quiredOrder.isfulfilled}>
-                <CompletedRequestsTable quiredOrder={quiredOrder}></CompletedRequestsTable>
+                <RequestsTable isFulfilled={true} quiredOrder={quiredOrder}></RequestsTable>
             </DropdownSection>
 
             <DropdownSection name={`Parts for ${quiredOrder.name}`} className='mt-8'>

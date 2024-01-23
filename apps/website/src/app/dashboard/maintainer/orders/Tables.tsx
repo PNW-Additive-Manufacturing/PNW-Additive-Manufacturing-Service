@@ -6,6 +6,7 @@ import InlineStatus from '../../../components/InlineStatus';
 import Link from 'next/link';
 import { DateOptions } from '@/app/api/util/Constants';
 import Table from '@/app/components/Table';
+import { ReactNode } from "react";
 
 export async function RunningPartsTable() {
     var parts = await db`select p.*, owneremail from part as p, request as r where (p.status='printing' or p.status='printed' or p.status='failed') and p.requestid = r.id`;
@@ -147,14 +148,14 @@ export async function PendingReviewPartsTable() {
     </Table>
 }
 
-export async function ActiveRequestsTable({ quiredOrder } : { quiredOrder? : any }) {
-    const activeRequests = await db`select * from request where isfulfilled='false' order by submittime asc`;
+export async function RequestsTable({ isFulfilled, quiredOrder } : { isFulfilled : boolean, quiredOrder? : any }) {
+    const activeRequests = await db`select * from request where isfulfilled=${isFulfilled} order by submittime asc`;
     const parts = await db`select * from part order by id asc;`;
 
     return <Table>
         <thead>
             <tr>
-                <th>Parts</th>
+                <th>Request Name</th>
                 <th>User</th>
                 <th>Notes</th>
                 <th>Submitted</th>
@@ -165,55 +166,37 @@ export async function ActiveRequestsTable({ quiredOrder } : { quiredOrder? : any
             {activeRequests.map(req => {
                 const reqParts = parts.filter(p => p.requestid == req.id);
 
-                return <tr className={quiredOrder && req.id == quiredOrder.id ? 'outline outline-blue-200' : ''}>
-                    <td>{req.name || `${reqParts.length} Part(s)`}</td>
-                    <td>{req.owneremail.substring(0, req.owneremail.lastIndexOf('@'))}</td>
-                    <td className='max-w-md truncate'>{req.notes || <span className="text-gray-500">None supplied</span>}</td>
-                    <td>{req.submittime.toLocaleString("en-US", DateOptions)}</td>
-                    <td className='flex gap-2'>
-                        <Link
-                            className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
-                            href={`/dashboard/maintainer/orders/${req.id}`}>View
-                        </Link>
-                        <RequestFulfilledButton request={req.id}></RequestFulfilledButton>
-                    </td>
-                </tr>
-            })}
-        </tbody>
-    </Table>
-}
-
-export async function CompletedRequestsTable({ quiredOrder } : { quiredOrder? : any }) {
-    const completedRequests = await db`select * from request where isfulfilled='true' order by submittime asc`;
-    const parts = await db`select * from part order by id asc;`;
-
-    return <Table>
-        <thead>
-            <tr>
-                <th>Parts</th>
-                <th>User</th>
-                <th>Notes</th>
-                <th>Submitted</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {completedRequests.map(req => {
-                const reqParts = parts.filter(p => p.requestid == req.id);
-
-                return <tr className={quiredOrder && req.id == quiredOrder.id ? 'outline outline-blue-200' : ''}>
-                    <td>{req.name || `${reqParts.length} Part(s)`}</td>
-                    <td>{req.owneremail.substring(0, req.owneremail.lastIndexOf('@'))}</td>
-                    <td className='max-w-md truncate'>{req.notes || <span className="text-gray-500">None supplied</span>}</td>
-                    <td>{req.submittime.toLocaleString("en-US", DateOptions)}</td>
-                    <td className='flex gap-2'>
-                        <Link
-                            className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
-                            href={`/dashboard/maintainer/orders/${req.id}`}>View
-                        </Link>
-                        <RequestReopenButton request={req.id}></RequestReopenButton>
-                    </td>
-                </tr>
+                return <>
+                    <tr className={quiredOrder && req.id == quiredOrder.id ? 'outline outline-blue-200' : ''}>
+                        <td>{req.name || `${reqParts.length} Part(s)`}</td>
+                        <td>{req.owneremail.substring(0, req.owneremail.lastIndexOf('@'))}</td>
+                        <td className='max-w-md truncate'>{req.notes || <span className="text-gray-500">None supplied</span>}</td>
+                        <td>{req.submittime.toLocaleString("en-US", DateOptions)}</td>
+                        <td className='flex gap-2'>
+                            <Link
+                                className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
+                                href={`/dashboard/maintainer/orders/${req.id}`}>View
+                            </Link>
+                            
+                            {(() => {
+                                if (isFulfilled) {
+                                    return (<RequestReopenButton request={req.id}></RequestReopenButton>);
+                                } else {
+                                    return (<RequestFulfilledButton request={req.id}></RequestFulfilledButton>);
+                                }
+                            })()}
+                        </td>
+                    </tr>
+                    {(() => {
+                        if (quiredOrder && req.id == quiredOrder.id) {
+                            return (<tr>
+                                <td colSpan={5} className={"bg-white"}>
+                                    <RequestPartsOnlyTable request={quiredOrder.id}></RequestPartsOnlyTable>
+                                </td>
+                            </tr>);
+                        }
+                    })()}
+                </>
             })}
         </tbody>
     </Table>

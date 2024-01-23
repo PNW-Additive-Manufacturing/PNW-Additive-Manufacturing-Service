@@ -1,14 +1,14 @@
 import DropdownSection from '../../../components/DropdownSection';
-import { ActiveRequestsTable, CompletedRequestsTable, RunningPartsTable, QueuedPartsTable, PendingReviewPartsTable } from "./Tables";
+import { RequestsTable, RunningPartsTable, QueuedPartsTable, PendingReviewPartsTable } from "./Tables";
 
 export default async function Maintainer({ params }: { params: any }) {
     return <>
         <DropdownSection name='Active Requests' className="mt-4">
-            <ActiveRequestsTable></ActiveRequestsTable>
+            <RequestsTable isFulfilled={false}></RequestsTable>
         </DropdownSection>
 
         <DropdownSection name='Completed Requests' className="mt-8" hidden={true}>
-            <CompletedRequestsTable></CompletedRequestsTable>
+            <RequestsTable isFulfilled={true}></RequestsTable>
         </DropdownSection>
 
         <DropdownSection name='Active Parts' className='mt-8'>
