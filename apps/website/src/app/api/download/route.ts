@@ -2,7 +2,6 @@ import { getFile } from "@/app/api/server-actions/download";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-
   //no need to check JWT because that is checked by middleware
   let filepath = request.nextUrl.searchParams.get("file");
 

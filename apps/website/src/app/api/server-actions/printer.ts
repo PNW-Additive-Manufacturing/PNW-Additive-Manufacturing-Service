@@ -1,10 +1,11 @@
 "use server"
 
 import db from "@/app/api/Database";
+import { Printer } from "@/app/dashboard/maintainer/printers/PrinterList";
 import { redirect } from "next/navigation";
 
 
-export async function addPrinter(prevState: string, formData: FormData) : Promise<string> {
+export async function addPrinter(prevState: string, formData: FormData) : Promise<{error: string | null, printer: Printer | null}> {
   let name = formData.get("printer-name") as string;
   let model = formData.get("printer-model") as string;
   let dimensions = [
@@ -17,20 +18,21 @@ export async function addPrinter(prevState: string, formData: FormData) : Promis
   let communicationStrat = formData.get("printer-communication") as string;
   let communicationStratOptions = formData.get("printer-communication-options") as string;
 
-
   try {
     let res = await db`insert into printer (name, model, dimensions, supportedmaterials, communicationstrategy, communicationstrategyoptions)
     values(${name},${model},${dimensions},${supportedMaterials},${communicationStrat},${communicationStratOptions}) returning name`;
   
     if(res.count == 0) {
-      return "Failed to add printer";
+      return {error: "Failed to add printer", printer: null};
     }
   } catch(e: any) {
-    return "Failed to add printer with error: " + e.message;
+    return {error: "Failed to add printer with error: " + e.message, printer: null};
   }
 
   //successful!
-  redirect("/dashboard/maintainer/printers");
+
+  return {error: null, printer: {name: name, model: model, dimensions: dimensions, communicationstrategy: communicationStrat}}
+
 }
 
 export async function deletePrinter(prevState: string, formData: FormData) : Promise<string> {

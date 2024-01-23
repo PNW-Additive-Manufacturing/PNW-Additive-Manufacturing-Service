@@ -90,7 +90,7 @@ export function Navbar({ links, includeIcon, specialElements, style }:
                         const segments = arr.slice(0, index + 1);
                         const fullPath = `/${segments.join('/')}`;
                         const pathname = segment;
-                        return <a className="capitalize" href={fullPath}>{` / ${pathname}`}</a>;
+                        return <a key={pathname} className="capitalize" href={fullPath}>{` / ${pathname}`}</a>;
                     })}
                 </div>
 
@@ -125,7 +125,7 @@ export function Navbar({ links, includeIcon, specialElements, style }:
                     const segments = arr.slice(0, index + 1);
                     const fullPath = `/${segments.join('/')}`;
                     const pathname = segment;
-                    return <a className="capitalize" href={fullPath}>{` / ${pathname}`}</a>;
+                    return <a key={pathname} className="capitalize" href={fullPath}>{` / ${pathname}`}</a>;
                 })}
             </div>
         </div>
