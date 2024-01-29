@@ -25,9 +25,9 @@ export default async function OrderMaintainer({ params } : { params: any }) {
                 <RequestsTable isFulfilled={true} quiredOrder={quiredOrder}></RequestsTable>
             </DropdownSection>
 
-            <DropdownSection name={`Parts for ${quiredOrder.name}`} className='mt-8'>
+            {/* <DropdownSection name={`Parts for ${quiredOrder.name}`} className='mt-8'>
                 <RequestPartsOnlyTable request={quiredOrder.id}></RequestPartsOnlyTable>
-            </DropdownSection>
+            </DropdownSection> */}
         </>
     })()} </>
 }

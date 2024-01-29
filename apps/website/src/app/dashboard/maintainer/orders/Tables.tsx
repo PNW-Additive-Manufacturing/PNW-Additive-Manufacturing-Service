@@ -173,10 +173,23 @@ export async function RequestsTable({ isFulfilled, quiredOrder } : { isFulfilled
                         <td className='max-w-md truncate'>{req.notes || <span className="text-gray-500">None supplied</span>}</td>
                         <td>{req.submittime.toLocaleString("en-US", DateOptions)}</td>
                         <td className='flex gap-2'>
-                            <Link
-                                className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
-                                href={`/dashboard/maintainer/orders/${req.id}`}>View
-                            </Link>
+                            {(() => {
+                                if (!quiredOrder || req.id != quiredOrder.id) {
+                                    return (
+                                        <Link
+                                            className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
+                                            href={`/dashboard/maintainer/orders/${req.id}`}>View
+                                        </Link>
+                                    );
+                                } else {
+                                    return (
+                                        <Link
+                                            className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
+                                            href={`/dashboard/maintainer/orders`}>Back
+                                        </Link>
+                                    );
+                                }
+                            })()}
                             
                             {(() => {
                                 if (isFulfilled) {

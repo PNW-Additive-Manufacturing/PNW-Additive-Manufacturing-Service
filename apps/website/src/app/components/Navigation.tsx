@@ -30,15 +30,15 @@ export function AccountDetails({ permission, email } : { permission : Permission
             style={{ position: "relative" }}>
             {(() => {
                 if (permission == null) {
-                    return (<Fragment>
-                        <Link href='/user/create-account'>Create</Link>
-                        <Link href='/user/login'>Login</Link>
-                    </Fragment>);
+                    return (<>
+                        <a href='/user/create-account'>Create</a>
+                        <a href='/user/login'>Login</a>
+                    </>);
                 } else {
-                    return (<Fragment>
-                        <Link href="/user/profile">Edit Profile</Link>
-                        <Link href='/user/logout'>Logout</Link>
-                    </Fragment>);
+                    return (<>
+                        <a href="/user/profile">Edit Profile</a>
+                        <a href='/user/logout'>Logout</a>
+                    </>);
                 }
             })()}
         </div>
