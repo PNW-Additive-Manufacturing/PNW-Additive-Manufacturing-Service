@@ -1,22 +1,26 @@
 "use client"
 
-import { Dispatch, MouseEventHandler, SetStateAction, useState, useTransition } from "react";
+import { Dispatch, MouseEventHandler, SetStateAction, createRef, useRef, useState, useTransition } from "react";
 import { addPrinter, deletePrinter } from "@/app/api/server-actions/printer";
 import DropdownSection from "@/app/components/DropdownSection";
 import GenericFormServerAction from "@/app/components/GenericFormServerAction";
 import { Input } from "@/app/components/Input";
+import { SupportedFilaments } from "./SupportedFilaments";
 
 export interface Printer {
   name: string,
   model: string,
+  supportedMaterials: string[],
   dimensions: number[],
   communicationstrategy: string | null
 }
 
-export function PrinterList({initialPrinters} : {initialPrinters: Printer[]}) {
+export function PrinterList({initialPrinters, filamentMaterials} : {initialPrinters: Printer[], filamentMaterials: string[]}) {
   var [printers, setPrinters] = useState(initialPrinters);
   var [pending, startTransition] = useTransition();
   var [error, setError] = useState("");
+
+  let supportedMaterialsRef = useRef([] as string[]);
 
   let [nameField, setNameField] = useState("");
   let [modelField, setModelField] = useState("");
@@ -64,6 +68,9 @@ export function PrinterList({initialPrinters} : {initialPrinters: Printer[]}) {
     setStratField("");
     setOptionsField("");
 
+    supportedMaterialsRef.current = [];
+
+
     window.scrollTo({
       top: 0,
 
@@ -83,6 +90,7 @@ export function PrinterList({initialPrinters} : {initialPrinters: Printer[]}) {
             <tr className="text-gray-400">
               <th className="text-left pl-5">Name</th>
               <th className="text-left">Model</th>
+              <th className="text-left">Materials</th>
               <th className="text-left">Dimensions in mm</th>
               <th className="text-left">Communication Strategy</th>
               <th className='text-left pr-2'>Actions</th>
@@ -92,6 +100,7 @@ export function PrinterList({initialPrinters} : {initialPrinters: Printer[]}) {
             {printers.map((p: Printer) => <tr id={p.name} key={p.name}>
               <td className='text-left pl-5'>{p.name}</td>
               <td className='text-left'>{p.model}</td>
+              <td className='text-left'>{p.supportedMaterials.join(",")}</td>
               <td className='text-left'>{p.dimensions[0]} x {p.dimensions[1]} x {p.dimensions[2]}</td>
               <td className='text-left'>{p.communicationstrategy}</td>
               <td className='text-left pr-2'><button className='bg-red-500 p-1 rounded-lg border-none' onClick={(e) => clickHandler(p.name)}>Delete</button></td>
@@ -135,6 +144,7 @@ export function PrinterList({initialPrinters} : {initialPrinters: Printer[]}) {
               />
             </span>
           </div>
+          <SupportedFilaments materialRef={supportedMaterialsRef} filamentOptions={filamentMaterials}/>
           <Input label="Communication Strategy" name="printer-communication" type="text" id="printer-communication" placeholder="MoonRaker, Serial, or Bambu" value={stratField} onChange={(e) => setStratField(e.target.value)}/>
           <Input label="Communication Strategy Options" name="printer-communication-options" type="text" id="printer-communication-options" placeholder="Host, Extruder Count, Has Heated Bed" value={optionsField} onChange={e => setOptionsField(e.target.value)}/>
         </GenericFormServerAction>

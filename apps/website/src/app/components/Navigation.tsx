@@ -53,7 +53,7 @@ export function ColorfulRequestPrintButton() {
 }
 
 function ScreenDimmer(props: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>) {
-    return <div className="absolute top-0 left-0 w-full h-screen bg-black bg-opacity-20" {...props} />
+    return <div className="absolute top-0 left-0 w-full h-screen bg-black bg-opacity-20 md:hidden" {...props} />
 }
 
 export function Navbar({ links, includeIcon, specialElements, style }:

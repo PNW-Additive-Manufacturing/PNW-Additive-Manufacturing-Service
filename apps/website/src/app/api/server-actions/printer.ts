@@ -14,7 +14,7 @@ export async function addPrinter(prevState: string, formData: FormData) : Promis
     Number(formData.get("printer-dimension3")),
     
   ];
-  let supportedMaterials: string[] = [];
+  let supportedMaterials: string[] = formData.getAll("supported_materials") as string[];
   let communicationStrat = formData.get("printer-communication") as string;
   let communicationStratOptions = formData.get("printer-communication-options") as string;
 
@@ -31,7 +31,7 @@ export async function addPrinter(prevState: string, formData: FormData) : Promis
 
   //successful!
 
-  return {error: null, printer: {name: name, model: model, dimensions: dimensions, communicationstrategy: communicationStrat}}
+  return {error: null, printer: {name: name, model: model, dimensions: dimensions, communicationstrategy: communicationStrat, supportedMaterials}}
 
 }
 
