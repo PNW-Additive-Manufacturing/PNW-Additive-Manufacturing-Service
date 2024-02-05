@@ -144,7 +144,9 @@ export function PrinterList({initialPrinters, filamentMaterials} : {initialPrint
               />
             </span>
           </div>
+          <p className="font-semibold w-full p-2 br-2 mb-2">Supported Filament Materials</p>
           <SupportedFilaments materialRef={supportedMaterialsRef} filamentOptions={filamentMaterials}/>
+
           <Input label="Communication Strategy" name="printer-communication" type="text" id="printer-communication" placeholder="MoonRaker, Serial, or Bambu" value={stratField} onChange={(e) => setStratField(e.target.value)}/>
           <Input label="Communication Strategy Options" name="printer-communication-options" type="text" id="printer-communication-options" placeholder="Host, Extruder Count, Has Heated Bed" value={optionsField} onChange={e => setOptionsField(e.target.value)}/>
         </GenericFormServerAction>

@@ -1,8 +1,8 @@
 import { ChangeEvent, MutableRefObject, useState } from "react";
 
 function FilamentMaterialItem({material, onDelete}: {material: string, onDelete: (material: string) => void}) {
-  return <span>
-    {material.toUpperCase()}<span onClick={e => onDelete(material)}>X</span>
+  return <span className="rounded p-1 mr-2 hover:cursor-pointer bg-slate-200" onClick={e => onDelete(material)}>
+    {material.toUpperCase()}<span className="pl-2 font-extrabold">X</span>
   </span>
 }
 
@@ -11,7 +11,7 @@ export function SupportedFilaments({filamentOptions, materialRef}: {filamentOpti
   
   let onChange = (e: ChangeEvent<HTMLSelectElement>) => {
     let val = e.target.value;
-    if(!materials.find((f) => f === val)) {
+    if(val && !materials.find((f) => f === val)) {
       let newArr = materials.slice(0);
       newArr.push(val);
       materialRef.current = newArr;
@@ -20,11 +20,12 @@ export function SupportedFilaments({filamentOptions, materialRef}: {filamentOpti
   };
   return (
     <>
-      <select onChange={onChange}>
+      <select className="p-2 rounded" onChange={onChange}>
+        <option value="" defaultChecked={true}>--Select a Filament--</option>
         {filamentOptions.map(f => <option key={f} value={f}>{f.toUpperCase()}</option>)}
       </select>
       {materials.map(f => <input key={f} type="hidden" name="supported_materials" value={f}/>)}
-      <div>
+      <div className="mt-2 p-2">
         {materials.map(f => <FilamentMaterialItem 
           key={f} 
           material={f} 
