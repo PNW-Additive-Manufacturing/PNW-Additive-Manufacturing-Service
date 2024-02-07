@@ -31,7 +31,7 @@ export async function addPrinter(prevState: string, formData: FormData) : Promis
 
   //successful!
 
-  return {error: null, printer: {name: name, model: model, dimensions: dimensions, communicationstrategy: communicationStrat, supportedMaterials}}
+  return {error: null, printer: {name: name, model: model, dimensions: dimensions, communicationstrategy: communicationStrat, supportedMaterials, communicationoptions: communicationStratOptions}}
 
 }
 

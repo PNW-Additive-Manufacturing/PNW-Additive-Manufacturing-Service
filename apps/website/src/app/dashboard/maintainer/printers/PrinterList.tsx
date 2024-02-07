@@ -1,37 +1,23 @@
 "use client"
 
-import { Dispatch, MouseEventHandler, SetStateAction, createRef, useRef, useState, useTransition } from "react";
-import { addPrinter, deletePrinter } from "@/app/api/server-actions/printer";
+import {useState, useTransition } from "react";
+import { deletePrinter } from "@/app/api/server-actions/printer";
 import DropdownSection from "@/app/components/DropdownSection";
-import GenericFormServerAction from "@/app/components/GenericFormServerAction";
-import { Input } from "@/app/components/Input";
-import { SupportedFilaments } from "./SupportedFilaments";
+import { PrinterForm } from "./PrinterForm";
 
 export interface Printer {
   name: string,
   model: string,
   supportedMaterials: string[],
   dimensions: number[],
-  communicationstrategy: string | null
+  communicationstrategy: string | null,
+  communicationoptions?: string 
 }
 
 export function PrinterList({initialPrinters, filamentMaterials} : {initialPrinters: Printer[], filamentMaterials: string[]}) {
   var [printers, setPrinters] = useState(initialPrinters);
   var [pending, startTransition] = useTransition();
   var [error, setError] = useState("");
-
-  let supportedMaterialsRef = useRef([] as string[]);
-
-  let [nameField, setNameField] = useState("");
-  let [modelField, setModelField] = useState("");
-  let [dimensionField1, setDimensionField1] = useState("");
-  let [dimensionField2, setDimensionField2] = useState("");
-  let [dimensionField3, setDimensionField3] = useState("");
-
-  let [stratField, setStratField] = useState("");
-  let [optionsField, setOptionsField] = useState("");
-
-
 
 
 
@@ -49,36 +35,19 @@ export function PrinterList({initialPrinters, filamentMaterials} : {initialPrint
     })
   };
 
-  let addPrinterAction = async (prevState: string, formData: FormData) => {
-    let result = await addPrinter(prevState, formData);
-    if(result.error) {
-      return result.error;
-    }
-
+  let addPrinterCallback = (p: Printer) => {
     let newList = printers.slice();
-    newList.push(result.printer!);
+    newList.push(p);
     setPrinters(newList);
-
-    setDimensionField1("");
-    setDimensionField2("");
-    setDimensionField3("");
-
-    setModelField("");
-    setNameField("");
-    setStratField("");
-    setOptionsField("");
-
-    supportedMaterialsRef.current = [];
-
 
     window.scrollTo({
       top: 0,
 
       behavior: "smooth"
-    })
-      
-    return "";
+    });
   };
+
+  
 
   return (
     <>
@@ -110,46 +79,7 @@ export function PrinterList({initialPrinters, filamentMaterials} : {initialPrint
       </DropdownSection>
 
       <DropdownSection hidden={true} name='Configure new Printer' className='mt-8'>
-        <GenericFormServerAction serverAction={addPrinterAction} submitName="Add Printer" submitPendingName="Adding Printer...">
-          <Input label="Printer Name" name="printer-name" type="text" id="printer-name" placeholder="ex: Printer 1" value={nameField} onChange={(e) => setNameField(e.target.value)}/>
-          <Input label="Printer Model" name="printer-model" type="text" id="printer-model" placeholder="ex: Creality Ender 3" value={modelField} onChange={(e) => setModelField(e.target.value) }/>
-          <div className="font-semibold">
-            <p className="uppercase br-2">Dimensions in mm</p>
-            <span>
-              <input 
-                className="w-40 inline-block" 
-                type="number" 
-                name="printer-dimension1" 
-                placeholder="x" 
-                value={dimensionField1} 
-                onChange={(e) => setDimensionField1(e.target.value)}
-              />
-              <input 
-                className="w-40 inline-block" 
-                type="number" 
-                name="printer-dimension2" 
-                placeholder="y"
-                value={dimensionField2}
-                onChange={(e) => setDimensionField2(e.target.value)}
-
-              />
-              <input 
-                className="w-40 inline-block" 
-                type="number" 
-                name="printer-dimension3" 
-                placeholder="z"
-                value={dimensionField3}
-                onChange={(e) => setDimensionField3(e.target.value)}
-
-              />
-            </span>
-          </div>
-          <p className="font-semibold w-full p-2 br-2 mb-2">Supported Filament Materials</p>
-          <SupportedFilaments materialRef={supportedMaterialsRef} filamentOptions={filamentMaterials}/>
-
-          <Input label="Communication Strategy" name="printer-communication" type="text" id="printer-communication" placeholder="MoonRaker, Serial, or Bambu" value={stratField} onChange={(e) => setStratField(e.target.value)}/>
-          <Input label="Communication Strategy Options" name="printer-communication-options" type="text" id="printer-communication-options" placeholder="Host, Extruder Count, Has Heated Bed" value={optionsField} onChange={e => setOptionsField(e.target.value)}/>
-        </GenericFormServerAction>
+        <PrinterForm addPrinterCallback={addPrinterCallback} filamentOptions={filamentMaterials}/>
 		  </DropdownSection>
     </>
   )
