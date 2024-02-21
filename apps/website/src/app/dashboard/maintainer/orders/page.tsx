@@ -1,26 +1,27 @@
 import DropdownSection from '../../../components/DropdownSection';
-import { RequestsTable, RunningPartsTable, QueuedPartsTable, PendingReviewPartsTable } from "./Tables";
+import { RequestsTable, RunningPartsTable, QueuedPartsTable, PendingReviewPartsTable } from "./TablesClient";
+import { PendingReviewPartsTableServer, QueuedPartsTableServer, RequestsTableServer, RunningPartsTableServer } from './TablesServer';
 
 export default async function Maintainer({ params }: { params: any }) {
     return <>
         <DropdownSection name='Active Requests' className="mt-4">
-            <RequestsTable isFulfilled={false}></RequestsTable>
+            <RequestsTableServer isFulfilled={false}></RequestsTableServer>
         </DropdownSection>
 
         <DropdownSection name='Completed Requests' className="mt-8" hidden={true}>
-            <RequestsTable isFulfilled={true}></RequestsTable>
+            <RequestsTableServer isFulfilled={true}></RequestsTableServer>
         </DropdownSection>
 
         <DropdownSection name='Active Parts' className='mt-8'>
-            <RunningPartsTable></RunningPartsTable>
+            <RunningPartsTableServer></RunningPartsTableServer>
         </DropdownSection>
 
         <DropdownSection name='Queued Parts' className='mt-8'>
-            <QueuedPartsTable></QueuedPartsTable>
+            <QueuedPartsTableServer></QueuedPartsTableServer>
         </DropdownSection>
 
         <DropdownSection name='Pending Parts' className='mt-8'>
-            <PendingReviewPartsTable></PendingReviewPartsTable>
+            <PendingReviewPartsTableServer></PendingReviewPartsTableServer>
         </DropdownSection>
     </>
 }
