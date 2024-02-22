@@ -35,6 +35,45 @@ export async function addPrinter(prevState: string, formData: FormData) : Promis
 
 }
 
+export async function updatePrinter(prevState: string, formData: FormData, oldName: string) : Promise<{error: string | null, printer: Printer | null}> {
+  let name = formData.get("printer-name") as string;
+  let model = formData.get("printer-model") as string;
+  let dimensions = [
+    Number(formData.get("printer-dimension1")),
+    Number(formData.get("printer-dimension2")),
+    Number(formData.get("printer-dimension3")),
+    
+  ];
+  let supportedMaterials: string[] = formData.getAll("supported_materials") as string[];
+  let communicationStrat = formData.get("printer-communication") as string;
+  let communicationStratOptions = formData.get("printer-communication-options") as string;
+
+  try {
+    let res = await db`
+      update printer 
+      SET 
+        name=${name}, 
+        model=${model}, 
+        dimensions=${dimensions}, 
+        supportedmaterials=${supportedMaterials}, 
+        communicationstrategy=${communicationStrat}, 
+        communicationstrategyoptions=${communicationStratOptions}
+      WHERE
+        name=${oldName}
+    `;
+    if(res.count == 0) {
+      return {error: "Failed to update printer", printer: null};
+    }
+  } catch(e: any) {
+    return {error: "Failed to update printer with error: " + e.message, printer: null};
+  }
+
+  //successful!
+
+  return {error: null, printer: {name: name, model: model, dimensions: dimensions, communicationstrategy: communicationStrat, supportedMaterials, communicationoptions: communicationStratOptions}}
+
+}
+
 export async function deletePrinter(prevState: string, formData: FormData) : Promise<string> {
   let name = formData.get("printer-name") as string;
 
