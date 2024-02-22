@@ -1,19 +1,15 @@
-import db from "@/app/api/Database";
+"use client"
+
 import { InlinePrinterSelector } from '../../../components/InlinePrinterSelector';
 import { InlineFile } from '../../../components/InlineFile';
 import { PartAcceptButton,PartDenyButton,PartBeginPrintingButton,PartCompleteButton,PartFailedButton,RequestFulfilledButton,RequestReopenButton } from './Buttons';
 import InlineStatus from '../../../components/InlineStatus';
-import Link from 'next/link';
 import { DateOptions } from '@/app/api/util/Constants';
 import Table from '@/app/components/Table';
-import { ReactNode } from "react";
+import { useEffect, useState, useTransition } from "react";
+import { GetRequestData } from "./TablesServer";
 
-export async function RunningPartsTable() {
-    var parts = await db`select p.*, owneremail from part as p, request as r where (p.status='printing' or p.status='printed' or p.status='failed') and p.requestid = r.id`;
-    var filaments = await db`select id, material, color from filament where id in ${db(parts.map((p) => p.assignedfilamentid))}`;
-    var models = await db`select * from model where id in ${db(parts.map((p) => p.modelid))}`;
-    var printers = await db`select * from printer;` as { name: string, model: string }[];
-
+export function RunningPartsTable({parts, filaments, models, printers} : {parts:any, filaments:any, models:any, printers:any}) {
     return <Table style={{ maxHeight: "60vh" }}>
         <thead>
             <tr>
@@ -27,9 +23,9 @@ export async function RunningPartsTable() {
             </tr>
         </thead>
         <tbody>
-            {parts.map(part => {
-                const model = models.find(m => m.id === part.modelid)!;
-                const filament = filaments.find(f => f.id === part.assignedfilamentid);
+            {parts.map((part:any) => {
+                const model = models.find((m:any) => m.id === part.modelid)!;
+                const filament = filaments.find((f:any) => f.id === part.assignedfilamentid);
 
                 return <tr>
                     <td><InlineFile filename={model.name} filepath={model.filepath}></InlineFile></td>
@@ -72,12 +68,7 @@ export async function RunningPartsTable() {
     </Table>
 }
 
-export async function QueuedPartsTable() {
-    var parts = await db`select p.*, r.owneremail from part as p, request as r where p.status='queued' and p.requestid=r.id`;
-    var models = await db`select * from model where id in ${db(parts.map((p) => p.modelid))}`;
-    var filaments = await db`select id, material, color from filament where id in ${db(parts.map((p) => p.assignedfilamentid))}`;
-    var printers = await db`select * from printer;` as { name: string, model: string }[];
-
+export function QueuedPartsTable({parts, filaments, models, printers} : {parts:any, filaments:any, models:any, printers:any}) {
     return <Table style={{ maxHeight: "60vh" }}>
         <thead>
             <tr>
@@ -90,9 +81,9 @@ export async function QueuedPartsTable() {
             </tr>
         </thead>
         <tbody>
-            {parts.map((part, index) => {
-                let model = models.find((m) => m.id === part.modelid)!;
-                let filament = filaments.find(f => f.id === part.assignedfilamentid);
+            {parts.map((part:any, index:any) => {
+                let model = models.find((m:any) => m.id === part.modelid)!;
+                let filament = filaments.find((f:any) => f.id === part.assignedfilamentid);
                 return (
                     <tr key={part.id}>
                         <td><InlineFile filename={model.name} filepath={model.filepath}></InlineFile></td>
@@ -113,11 +104,7 @@ export async function QueuedPartsTable() {
     </Table>
 }
 
-export async function PendingReviewPartsTable() {
-    var parts = await db`select p.*, owneremail from part as p, request as r where p.status='pending' and p.requestid = r.id`;
-    var models = await db`select * from model where id in ${db(parts.map((p) => p.modelid))}`;
-    var filaments = await db`select id, material, color from filament where id in ${db(parts.map((p) => p.assignedfilamentid))}`;
-
+export function PendingReviewPartsTable({parts, filaments, models} : {parts:any, filaments:any, models:any}) {
     return <Table style={{ maxHeight: "60vh" }}>
         <thead>
             <tr>
@@ -129,9 +116,9 @@ export async function PendingReviewPartsTable() {
             </tr>
         </thead>
         <tbody>
-            {parts.map(part => {
-                let model = models.find((m) => m.id === part.modelid)!;
-                let filament = filaments.find(f => f.id === part.assignedfilamentid);
+            {parts.map((part:any) => {
+                let model = models.find((m:any) => m.id === part.modelid)!;
+                let filament = filaments.find((f:any) => f.id === part.assignedfilamentid);
                 return (<tr key={part.id}>
                     <td><InlineFile filename={model.name} filepath={model.filepath}></InlineFile></td>
                     <td>{part.quantity}</td>
@@ -148,10 +135,9 @@ export async function PendingReviewPartsTable() {
     </Table>
 }
 
-export async function RequestsTable({ isFulfilled, quiredOrder } : { isFulfilled : boolean, quiredOrder? : any }) {
-    const activeRequests = await db`select * from request where isfulfilled=${isFulfilled} order by submittime asc`;
-    const parts = await db`select * from part order by id asc;`;
-
+export function RequestsTable({ parts, activeRequests, isFulfilled } : {parts : any, activeRequests : any, isFulfilled : boolean }) {
+    var [quiredOrder, setQuiredOrder] = useState(undefined) as [quiredOrder : number|undefined, setQuiredOrder : any];
+    
     return <Table>
         <thead>
             <tr>
@@ -163,30 +149,30 @@ export async function RequestsTable({ isFulfilled, quiredOrder } : { isFulfilled
             </tr>
         </thead>
         <tbody>
-            {activeRequests.map(req => {
-                const reqParts = parts.filter(p => p.requestid == req.id);
+            {activeRequests.map((req:any) => {
+                const reqParts = parts.filter((p:any) => p.requestid == req.id);
 
                 return <>
-                    <tr className={quiredOrder && req.id == quiredOrder.id ? 'outline outline-blue-200' : ''}>
+                    <tr className={quiredOrder && req.id == quiredOrder ? 'outline outline-blue-200' : ''}>
                         <td>{req.name || `${reqParts.length} Part(s)`}</td>
                         <td>{req.owneremail.substring(0, req.owneremail.lastIndexOf('@'))}</td>
                         <td className='max-w-md truncate'>{req.notes || <span className="text-gray-500">None supplied</span>}</td>
                         <td>{req.submittime.toLocaleString("en-US", DateOptions)}</td>
                         <td className='flex gap-2'>
                             {(() => {
-                                if (!quiredOrder || req.id != quiredOrder.id) {
+                                if (!quiredOrder || req.id != quiredOrder) {
                                     return (
-                                        <Link
-                                            className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
-                                            href={`/dashboard/maintainer/orders/${req.id}`}>View
-                                        </Link>
+                                        <div className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
+                                            onClick = {(e) => setQuiredOrder(req.id)}>
+                                            View
+                                        </div>
                                     );
                                 } else {
                                     return (
-                                        <Link
-                                            className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
-                                            href={`/dashboard/maintainer/orders`}>Back
-                                        </Link>
+                                        <div className={`text-base px-2 py-1 w-fit text-white rounded-md bg-gray-400 hover:cursor-pointer hover:bg-gray-500`}
+                                            onClick = {(e) => setQuiredOrder(undefined)}>
+                                            Back
+                                        </div>
                                     );
                                 }
                             })()}
@@ -201,10 +187,10 @@ export async function RequestsTable({ isFulfilled, quiredOrder } : { isFulfilled
                         </td>
                     </tr>
                     {(() => {
-                        if (quiredOrder && req.id == quiredOrder.id) {
+                        if (quiredOrder && req.id == quiredOrder) {
                             return (<tr>
                                 <td colSpan={5} className={"bg-white"}>
-                                    <RequestPartsOnlyTable request={quiredOrder.id}></RequestPartsOnlyTable>
+                                    <RequestPartsOnlyTable request={quiredOrder}></RequestPartsOnlyTable>
                                 </td>
                             </tr>);
                         }
@@ -215,11 +201,25 @@ export async function RequestsTable({ isFulfilled, quiredOrder } : { isFulfilled
     </Table>
 }
 
-export async function RequestPartsOnlyTable({ request }: { request: number }) {
-    var parts = await db`select * from part where requestid = ${request}`;
-    var filaments = await db`select id, material, color from filament where id in ${db(parts.map((p) => p.assignedfilamentid))}`;
-    var models = await db`select * from model where id in ${db(parts.map((p) => p.modelid))}`;
-    var printers = await db`select * from printer;` as { name: string, model: string }[];
+export function RequestPartsOnlyTable({ request }: { request: number }) {
+    const [pending, startTransition] = useTransition();
+
+    var [parts, setParts] =         useState([]) as [parts:any, setParts:any];
+    var [filaments, setFilaments] = useState([]) as [filaments:any, setFilaments:any];
+    var [models, setModels] =       useState([]) as [models:any, setModels:any];
+    var [printers, setPrinters] =   useState([]) as [printers:any, setPrinters:any];
+
+    useEffect(() => {
+        const updateData = async () => {
+            const requestData = await GetRequestData(request);
+
+            setParts(requestData.parts);
+            setFilaments(requestData.filaments);
+            setModels(requestData.models);
+            setPrinters(requestData.printers);
+        }
+        updateData();
+    }, [])
 
     return <Table style={{ maxHeight: "60vh" }}>
         <thead>
@@ -233,9 +233,9 @@ export async function RequestPartsOnlyTable({ request }: { request: number }) {
             </tr>
         </thead>
         <tbody>
-            {parts.map(part => {
-                const model = models.find(m => m.id === part.modelid)!;
-                const filament = filaments.find(f => f.id === part.assignedfilamentid);
+            {parts.map((part:any) => {
+                const model = models.find((m:any) => m.id === part.modelid)!;
+                const filament = filaments.find((f:any) => f.id === part.assignedfilamentid);
 
                 return <tr>
                     <td><InlineFile filename={model.name} filepath={model.filepath}></InlineFile></td>
