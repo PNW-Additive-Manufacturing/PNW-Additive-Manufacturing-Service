@@ -56,13 +56,13 @@ h1, h2, h3, h4 {
 input:focus, textarea:focus{
   outline:solid 2px black;
 }
-input, button, textarea {
+input, button, textarea, select {
   border-radius: 5px;
   padding: 1rem 1.2rem 1rem 1.2rem;
 }
-input, textarea {
+input, textarea, select {
   border: 0px;
-  /* width: 15rem; */
+  font-weight: normal;
   background-color: rgb(var(--background-rgb));
 }
 button, input[type="submit"]
@@ -75,9 +75,6 @@ button:hover, input[type="submit"]:hover, button:active {
   transition: 0.05s;
   color: white;
 }
-button:hover, input:hover, textarea:hover, input::selection, input::marker {
-  /* outline: 2px solid var(--ascent-rgb); */
-}
 button:hover, input[type="submit"]:hover, select:hover{
   cursor: pointer;
 }
@@ -85,13 +82,12 @@ button:hover, input[type="submit"]:hover, select:hover{
   margin: auto;
   font-family: 'Azeret Mono', monospace;
 }
-input, textarea, button {
+input, textarea, button, select {
   display: block;
   width: auto;
   width: -moz-available;
-  font-weight: lighter;
   color: rgb(64, 64, 64);
-  margin-bottom: 0.9rem;
+  margin-bottom: 1rem;
 }
 input[type="submit"], button {
   /* background-color: var(--ascent-rgb); */
@@ -145,7 +141,7 @@ table thead tr td, table thead tr th {
 }
 table thead tr td, table thead tr th, table tbody tr td
 {
-  padding: 1rem 2rem 0.5rem 0rem;
+  padding: 1rem 2rem 1rem 2rem;
 }
 table thead tr td:first-child, table thead tr th:first-child
 {
@@ -167,4 +163,9 @@ table thead tr td:last-child, table thead tr th:last-child
 table tbody tr td:first-child
 {
   padding-left: 1rem;
+}
+li {
+  list-style: disc outside none;
+  display: list-item;
+  margin-left: 1em;
 }

@@ -3,6 +3,7 @@
 import { RequestPartForm} from '@/app/components/RequestPartForm';
 import { getFilamentList } from '@/app/api/server-actions/request-part';
 import { Filament } from '../dashboard/maintainer/filaments/FilamentTable';
+import HorizontalWrap from '../components/HorizontalWrap';
 
 /*
     This MUST be a server component to work because the FilamentSelector is a client side component
@@ -19,33 +20,10 @@ export default async function Request() {
     let filaments = await getFilamentList();
 
     return (
-        <main>
-            <div 
-                className='w-full lg:w-10/12 xl:w-3/5 bg-white h-fit rounded-md mx-auto p-4 lg:p-10 mt-8'
-                style={{maxWidth: "850px"}}
-            >
-                {/* <h1 className="w-full pb-4 text-right">Request a Print</h1> */}
-                <RequestPartForm filaments={filaments as Filament[]}></RequestPartForm>
-            </div>
-
-            {/* <StlViewer
-                style={style}
-                orbitControls={true}
-                shadows={true}
-                showAxes={true}
-                allowFullScreen={true}
-                onFinishLoading={onFinishLoading}
-                onError={onError}
-                onErrorCapture={onError as any}
-                url={url}
-                modelProps={{
-
-                }}
-                floorProps={{
-                    gridLength: 4,
-                    gridWidth: 4
-                }}
-            /> */}
-        </main>
+        <HorizontalWrap>
+            <h1 className='text-3xl tracking-wide font-light my-4'>Fill out a Request</h1>
+            <p className='mb-4'>Utilizing our resources for rapid prototyping to final designs, we use top-notch consumer 3D Printers to ensure an outstanding result of your models.</p>
+            <RequestPartForm filaments={filaments as Filament[]}></RequestPartForm>
+        </HorizontalWrap>
     )
 }

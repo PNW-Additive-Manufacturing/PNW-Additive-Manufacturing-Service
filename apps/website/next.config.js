@@ -22,6 +22,28 @@ const nextConfig = {
   env: {
     API_ROOT: 'http:/localhost:5126',
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn.discordapp.com',
+        port: '',
+        pathname: "/**"
+      },
+      {
+        protocol: 'https',
+        hostname: 'static1.campusgroups.com',
+        port: '',
+        pathname: '/upload/pnw/**'
+      },
+      {
+        protocol: 'https',
+        hostname: 'mypnwlife.pnw.edu',
+        port: '',
+        pathname: '/images/ico/male_user_large.png'
+      }
+    ]
+  }
 }
 
 module.exports = nextConfig

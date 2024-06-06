@@ -17,7 +17,8 @@ const config: Config = {
         "pnw-mystic": 'hsl(33, 100%, 52.9%)',
       },
       backgroundColor: {
-        "pnw-mystic": 'hsl(33, 100%, 52.9%)'
+        "pnw-mystic": 'hsl(33, 100%, 52.9%)',
+        "background": "rgb(248, 248, 248)",
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { getJwtPayload } from './api/util/JwtHelper'
 import { Permission } from './api/util/Constants'
-import { AccountDetails, ColorfulRequestPrintButton, Navbar } from '@/app/components/Navigation'
+import { AccountDetails, ColorfulRequestPrintButton, Footer, Navbar } from '@/app/components/Navigation'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -46,32 +46,30 @@ export default async function RootLayout({
 			</head>
 
 			<body className={inter.className} style={{height: "100vh"}}>
-				<main>
-					<Navbar
-						links={(() => {
-							if (permission == null) { return [] }
-							let elements: { name: string, path: string }[] = [];
-							elements.push({ name: "View Requests", path: "/dashboard/user" });
-							if (permission == Permission.maintainer || permission == Permission.admin) {
-								elements.push({ name: "Maintainer Dashboard", path: "/dashboard/maintainer" });
-							}
-							return elements;
-						})()}
+				<Navbar
+					links={(() => {
+						if (permission == null) { return [] }
+						let elements: { name: string, path: string }[] = [];
+						elements.push({ name: "Orders", path: "/dashboard/user" });
+						if (permission == Permission.maintainer || permission == Permission.admin) {
+							elements.push({ name: "Dashboard", path: "/dashboard/maintainer" });
+						}
+						return elements;
+					})()}
 
-						specialElements={(() => {
-							if (email) email = email.substring(0, email.lastIndexOf('@')) as String;
-							else email = "Account";
+					specialElements={(() => {
+						if (email) email = email.substring(0, email.lastIndexOf('@')) as String;
+						else email = "Account";
 
-							if (permission) return <> <ColorfulRequestPrintButton/> <AccountDetails permission={permission} email={email}/> </>;
-							else return <AccountDetails permission={permission} email={email}/>;
-						})()}
-						style={{marginBottom: "0px"}}
-					/>
-
-					<div className='w-full mt-8'>
-						{children}
-					</div>
+						if (permission) return <> <ColorfulRequestPrintButton/> <AccountDetails permission={permission} email={email}/> </>;
+						else return <AccountDetails permission={permission} email={email}/>;
+					})()}
+					style={{marginBottom: "0px"}}
+				/>
+				<main className='w-full mt-4 px-0 h-full' style={{minHeight: "90%"}}>
+					{children}
 				</main>
+				<Footer/>
 			</body>
 		</html>
 	)

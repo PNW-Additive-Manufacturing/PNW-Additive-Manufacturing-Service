@@ -12,120 +12,130 @@ const uploadDir = path.join(process.cwd(), "uploads", "stl");
 
 
 export async function getFilamentList() {
-  let filaments = await db`select material, color from filament where instock=true`;
+	let filaments = await db`select material, color from filament where instock=true`;
 
-  let rtn: {material: string, color: string}[] = [];
+	let rtn: { material: string, color: string }[] = [];
 
-  for(let filament of filaments) {
-    rtn.push({material: filament.material, color: filament.color});
-  }
+	for (let filament of filaments) {
+		rtn.push({ material: filament.material, color: filament.color });
+	}
 
-  return rtn;
+	return rtn;
 }
 
 export async function requestPart(prevState: string, formData: FormData) {
-  console.log("Requesting Part");
-  let email: string;
-  try {
-    email = (await getJwtPayload())!.email;
-  } catch(e) {
-    return redirect("/user/login");
-  }
+	console.log("Requesting Part");
+	let email: string;
+	try {
+		email = (await getJwtPayload())!.email;
+	} catch (e) {
+		return redirect("/user/login");
+	}
 
 
-  let files = formData.getAll('file') as File[] | null;
-  let notes = formData.get('notes') as string;
-  let requestName = formData.get('requestname') as string;
-  let color = formData.getAll('color') as string[];
-  let material = formData.getAll('material') as string[];
-  let quantity = formData.getAll("quantity") as string[];
+	let files = formData.getAll('file') as File[] | null;
+	let notes = formData.get('notes') as string;
+	let requestName = formData.get('requestname') as string;
+	let color = formData.getAll('color') as string[];
+	let material = formData.getAll('material') as string[];
+	let quantity = formData.getAll("quantity") as string[];
 
-  requestName = requestName.trim()
-  if (requestName == "" && files != null) {
-    if (files.length > 1) {
-      requestName = `${files[0].name.substring(0, files[0].name.lastIndexOf("."))} & ${files.length - 1} More`;
-    } else {
-      requestName = files[0].name.substring(0, files[0].name.lastIndexOf("."));
-    }
-  }
+	requestName = requestName.trim()
+	if (requestName == "" && files != null) {
+		if (files.length > 1) {
+			requestName = `${files[0].name.substring(0, files[0].name.lastIndexOf("."))} & ${files.length - 1} More`;
+		} else {
+			requestName = files[0].name.substring(0, files[0].name.lastIndexOf("."));
+		}
+	}
 
-  console.log(files);
-  console.log(color);
-  console.log(material);
-  console.log(quantity);
+	console.log(files);
+	console.log(color);
+	console.log(material);
+	console.log(quantity);
 
-  if(files == null || files.length < 1) {
-    return "You must submit one or more .stl files";
-  }
+	if (files == null || files.length < 1) {
+		return "You must submit one or more .stl files";
+	}
 
-  let filepaths = files.map(f => f.name);
+	let filepaths = files.map(f => f.name);
 
-  let nonStlFile = filepaths.find((path) => !path.toLowerCase().endsWith(".stl"));
-  if(nonStlFile) {
-    return `The file ${nonStlFile} must be a .stl file`;
-  }
+	let nonStlFile = filepaths.find((path) => !path.toLowerCase().endsWith(".stl"));
+	if (nonStlFile) {
+		return `The file ${nonStlFile} must be a .stl file`;
+	}
 
-  let filenames = filepaths.map(path => path.substring(0, path.lastIndexOf(".")));
-  
-  try {
-    if(!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, {recursive: true});
-    }
-  } catch(e: any) {
-    return "Error, server cannot create uploads folder, try again later!";
-  } 
+	let filenames = filepaths.map(path => path.substring(0, path.lastIndexOf(".")));
 
-  //write all files to upload folder
-  try {
-    for(let i = 0; i < files.length; i++) {
-      const buffer = Buffer.from(await files[i].arrayBuffer());
-      fs.writeFileSync(`${uploadDir}${path.sep}${filenames[i]}.stl`, buffer);
-    }
-  } catch(e) {
-    return "Failed to save file with error: " + e;
-  }
+	try {
+		if (!fs.existsSync(uploadDir)) {
+			fs.mkdirSync(uploadDir, { recursive: true });
+		}
+	} catch (e: any) {
+		return "Error, server cannot create uploads folder, try again later!";
+	}
 
-  //update database 
-  try {
-    let success = await db.begin(async (sql) => {
-      
-      const [requestId] = await sql`insert into request (name, owneremail, notes) values (${requestName}, ${email}, ${notes}) returning id`;
+	//write all files to upload folder
+	try {
+		for (let i = 0; i < files.length; i++) {
+			const buffer = Buffer.from(await files[i].arrayBuffer());
+			fs.writeFileSync(`${uploadDir}${path.sep}${filenames[i]}.stl`, buffer);
+		}
+	} catch (e) {
+		return "Failed to save file with error: " + e;
+	}
 
-      for(let i = 0; i < files!.length; i++) {
-        // TODO: Replace separate filament queries with singular.
-        const filamentId = await sql`select id from filament where color=${color[i]} and material=${material[i]} and instock=true`;
+	//update database 
+	try {
+		let success = await db.begin(async (sql) => {
 
-        //if no filament with matching color and material was found,
-        //check if the user specified the 'Other' option in the web page (empty string == other)
-        if(filamentId.length === 0 && color && material) {
-          throw new Error(`No ${color} ${material} in stock`);
-        }
+			const [requestId] = await sql`insert into request (name, owneremail) values (${requestName}, ${email}) returning id`;
 
-        const [modelId] = await sql`insert into model (name, filepath, owneremail) values (${filenames[i]}, ${filenames[i] + ".stl"}, ${email}) returning id`;
+			if (notes != null)
+			{
+				await sql`INSERT INTO requestmessage (requestid, content, sender) VALUES (${requestId.id}, ${notes}, ${email})`;
+			}
 
-        const partId = await sql`
-          insert into part (requestid, modelid, quantity, assignedfilamentid) 
-          values (
-            ${requestId.id}, ${modelId.id}, ${quantity[i]}, ${!filamentId ? null : filamentId[0].id}
-          ) 
-          returning id;
-        `;
+			for (let i = 0; i < files!.length; i++) {
+				let partQuantity = Number.parseInt(quantity[i]);
+				if (partQuantity > 80) {
+					throw new Error("Quantity cannot exceed 80");
+				}
 
-        if(partId.count == 0) {
-          throw new Error(`Failed to insert part: #${i}!`);
-        }
-      }
+				// TODO: Replace separate filament queries with singular.
+				const filamentId = await sql`select id from filament where color=${color[i].toLowerCase()} and material=${material[i].toLowerCase()} and instock=true`;
 
-      return true;
-    });
+				//if no filament with matching color and material was found,
+				//check if the user specified the 'Other' option in the web page (empty string == other)
+				if (filamentId.length === 0 && color && material) {
+					throw new Error(`No ${color} ${material} in stock`);
+				}
 
-    if(!success) {
-      return "Failed to submit parts!";
-    }
-  } catch(e: any) {
-    e = e as Error;
-    return "Failed to submit part with error message: " + e.message;
-  }
+				const [modelId] = await sql`insert into model (name, filepath, owneremail) values (${filenames[i]}, ${filenames[i] + ".stl"}, ${email}) returning id`;
 
-  redirect("/dashboard/user");
+				const partId = await sql`
+				insert into part (requestid, modelid, quantity, assignedfilamentid) 
+				values (
+					${requestId.id}, ${modelId.id}, ${quantity[i]}, ${!filamentId ? null : filamentId[0].id}
+				) 
+				returning id;
+				`;
+
+				if (partId.count == 0) {
+					throw new Error(`Failed to insert part: #${i}!`);
+				}
+			}
+
+			return true;
+		});
+
+		if (!success) {
+			return "Failed to submit parts!";
+		}
+	} catch (e: any) {
+		e = e as Error;
+		return "Failed to Order: " + e.message;
+	}
+
+	redirect("/dashboard/user");
 }

@@ -3,6 +3,13 @@
 import db from "@/app/api/Database";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { Request } from "@/app/api/util/Constants";
+import { getAllRequests } from "../util/GetRequests";
+
+export async function getOrders(): Promise<Request[]>
+{
+    return (await getAllRequests()) as Request[];
+}
 
 export async function setPartPrinter(prevState: string, data: FormData): Promise<string>
 {

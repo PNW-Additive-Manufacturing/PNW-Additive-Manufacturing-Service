@@ -7,6 +7,7 @@ import Image from 'next/image';
 import Link from "next/link";
 import UserIcon from "./icons/UserIcon";
 import { usePathname } from "next/navigation";
+import HorizontalWrap from "./HorizontalWrap";
 
 function NavbarLink({ name, path }: { name: string, path: string }) {
     return <a href={path} className="rounded-md whitespace-nowrap md:rounded-none w-full p-4 md:p-0 bg-gray-100 sm:bg-transparent md:w-fit border-b-4 border-b-pnw-gold-light border-opacity-10 hover:text-pnw-gold active:text-pnw-gold" >{name}</a>
@@ -72,19 +73,23 @@ export function Navbar({ links, includeIcon, specialElements, style }:
     currentPathSegments = currentPathSegments.slice(1, currentPathSegments.length - 1);
 
     return <div className="top-0 sticky">
-        <div className="w-full h-nav px-4 bg-white">
+        <div className="w-full h-nav bg-white">
+            <HorizontalWrap>
             <nav className='flex flex-row h-full overflow-x-clip w-full items-center align-middle mb-8'
                 style={Object.assign({ boxShadow: "0px 3px 10px 0px rgba(232, 232, 232, 0.1)" }, style ?? {})}>
 
-                <Link href="/" className=" flex-none gap-2 items-center mr-2">
+                {/* <Link href="/" className=" flex-none gap-2 items-center mr-2">
                     <Image className="h-full" src="/assets/logo.svg" width={60} height={100} alt="PNW AM Logo" />
-                </Link>
-                <div className="hidden lg:block w-fit whitespace-nowrap mr-fit pr-3 text-xl tracking-wide flex-fit" style={{ maxWidth: 'max(0px, calc((100% - 120px)*999))' }}>
-                    <span className="text-pnw-gold" style={{ fontFamily: "Coda" }}>PNW </span>
-                    <span>Additive Manufacturing</span>
-                </div>
+                </Link> */}
 
-                <div className="hidden xl:block whitespace-nowrap px-5 py-3 place-self-center text-sm font-light">
+                <Link href="/" className=" flex-none gap-2 items-center mr-2">
+                    <div className="w-fit whitespace-nowrap mr-fit pr-3 text-xl tracking-wide flex-fit" style={{ maxWidth: 'max(0px, calc((100% - 120px)*999))' }}>
+                        <span className="text-pnw-gold" style={{ fontFamily: "Coda" }}>PNW </span>
+                        <span>Additive Manufacturing</span>
+                    </div>
+                </Link>
+
+                {/* <div className="hidden xl:block whitespace-nowrap px-5 py-3 place-self-center text-sm font-light">
                     <a className="capitalize" href='/'>Home</a>
                     {currentPathSegments.map((segment, index, arr) => {
                         const segments = arr.slice(0, index + 1);
@@ -92,7 +97,7 @@ export function Navbar({ links, includeIcon, specialElements, style }:
                         const pathname = segment;
                         return <a key={pathname} className="capitalize" href={fullPath}>{` / ${pathname}`}</a>;
                     })}
-                </div>
+                </div> */}
 
                 {/* Long List of links and dropdown */}
                 <div className="hidden md:flex ml-auto items-center justify-end tracking-wider gap-5">
@@ -117,6 +122,7 @@ export function Navbar({ links, includeIcon, specialElements, style }:
                     </> : <></>}
                 </div>
             </nav>
+            </HorizontalWrap>
         </div>
         <div className="xl:hidden bg-gray-100">
             <div className="px-5 py-3 text-sm font-light">
@@ -129,5 +135,29 @@ export function Navbar({ links, includeIcon, specialElements, style }:
                 })}
             </div>
         </div>
+    </div>
+}
+
+export function Footer(): JSX.Element
+{
+    return <div className="bg-cool-black w-full h-fit shadow-2xl">
+        <HorizontalWrap className="py-6">
+            <div className="inline-block mx-6">
+                <p className="font-bold text-gray-100 text-sm">About Us</p>
+                <a href="/team" className="text-gray-300 my-2 text-xs">Our Team</a>
+                <br/>
+                <a className="text-gray-300 my-2 text-xs">Printer Information</a>
+                <br/>
+                <a href="/schedule" className="text-gray-300 my-2 text-xs">Hours of Operation</a>
+            </div>
+            <div className="inline-block mx-6">
+                <p className="font-bold text-gray-100 text-sm">Get in Touch</p>
+                <a href="https://discord.gg/YtrnzPAfpV" target="_blank" className="text-gray-300 my-2 text-xs">Join our Discord</a>
+                <br/>
+                <a href="https://github.com/PNW-Additive-Manufacturing" target="_blank" className="text-gray-300 my-2 text-xs">Visit GitHub</a>
+                <br/>
+                <a className="text-gray-300 my-2 text-xs" href="mailto:pnw3d@pnw.edu">pnw3d@pnw.edu</a>
+            </div>
+        </HorizontalWrap>
     </div>
 }

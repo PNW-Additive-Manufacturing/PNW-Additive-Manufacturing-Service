@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import { Input } from '@/app/components/Input';
 import { useFormState, useFormStatus } from 'react-dom';

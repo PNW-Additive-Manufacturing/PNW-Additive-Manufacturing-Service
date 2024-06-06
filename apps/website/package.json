@@ -10,6 +10,7 @@
     "format": "eslint --fix --ext .js,.jsx ."
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.19",
     "@react-three/fiber": "^8.14.4",
     "@types/three": "^0.156.0",
     "bcrypt": "^5.1.1",
@@ -21,6 +22,7 @@
     "react": "latest",
     "react-dom": "latest",
     "react-stl-viewer": "^2.3.0",
+    "sharp": "^0.33.3",
     "three": "^0.157.0"
   },
   "devDependencies": {
