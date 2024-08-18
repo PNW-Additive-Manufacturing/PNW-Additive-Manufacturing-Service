@@ -1,19 +1,15 @@
 import db from "@/app/api/Database";
-import { Filament, FilamentList } from "./FilamentTable";
+import { FilamentList } from "./FilamentTable";
 import DropdownSection from "@/app/components/DropdownSection";
 import { FilamentForm } from "./FilamentForm";
+import FilamentServe from "@/app/Types/Filament/FilamentServe";
 
 export default async function Page() {
-	let filaments: Filament[] = (await db`select * from filament`).map((f) => {
-		return {
-			material: f.material,
-			color: f.color,
-			instock: f.instock
-		};
-	});
+	const filaments = await FilamentServe.queryAll();
 
-	return <>
-		<FilamentList initialFilaments={filaments} />
-		
-	</>
+	return (
+		<>
+			<FilamentList initialFilaments={filaments} />
+		</>
+	);
 }

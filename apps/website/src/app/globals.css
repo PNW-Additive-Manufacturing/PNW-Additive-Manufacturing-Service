@@ -34,21 +34,25 @@
   margin-left: 25%;
 }
 
+hr {
+	border-color: #c5c5c5;
+}
+
 body {
-  /* color: rgb(var(--foreground-rgb)); */
   color: rgb(64, 64, 64);
   background: rgb(var(--background-rgb));
   
-  /* font-family: Poppins, sans-serif; */
-  /* font-family: "Helvetica" !important; */
   font-family: Helvetica Neue,Helvetica,Arial,sans-serif; 
-  /* background: radial-gradient(circle at 100%, #333, #333 50%, #eee 75%, #333 75%); */
 }
 
+button {
+	text-decoration: none;
+	outline: none;
+	border: none;
+}
 p {
   color: rgb(64, 64, 64)
 }
-
 h1, h2, h3, h4 {
   font-family: "Helvetica";
   font-weight: bolder;
@@ -60,11 +64,24 @@ input, button, textarea, select {
   border-radius: 5px;
   padding: 1rem 1.2rem 1rem 1.2rem;
 }
+button 
+{
+	padding-top: 12px;
+	padding-bottom: 12px;
+}
 input, textarea, select {
   border: 0px;
   font-weight: normal;
   background-color: rgb(var(--background-rgb));
 }
+input, textarea, select 
+{
+	outline: solid 1px #d1d5db;
+}
+select {
+	padding-right: 10px;
+}
+
 button, input[type="submit"]
 {
   background-color: var(--pnw-gold);
@@ -72,6 +89,7 @@ button, input[type="submit"]
 button:hover, input[type="submit"]:hover, button:active {
   color: rgb(64, 64, 64);
   background-color: var(--pnw-gold);
+  fill: white;
   transition: 0.05s;
   color: white;
 }
@@ -90,22 +108,48 @@ input, textarea, button, select {
   margin-bottom: 1rem;
 }
 input[type="submit"], button {
-  /* background-color: var(--ascent-rgb); */
   background-color: #303030;
   color: white;
   font-weight: bold;
 }
-input[type="submit"][disabled], button[disabled]
+label
 {
-  background-color: #505050;
+	display: block;
+	margin-bottom: 8px;
+	font-weight: 500;
+	font-size: 0.875rem /* 14px */;
+    line-height: 1.25rem /* 20px */;
+	color: rgb(75, 85, 99)
+}
+input[type="submit"][disabled], button[disabled], textarea[disabled]
+{
+	opacity: 0.65;
+	cursor: not-allowed;
+}
+input, select[multiple]
+{
+	accent-color: var(--pnw-gold);
+}
+input:hover
+{
+	background-color: white;
+}
+select[multiple]
+{
+	width: 100%;
+	padding: 4px;
+	border-left: 4px solid var(--pnw-gold);
+	border-radius: 0px;
 }
 
 button {
-  background-color: #303030;
+  background-color: #2b2b2b;
   color: white;
-  font-size: smaller;
+  font-size: large;
+  font-weight: 500;
+  text-wrap: nowrap;
+  line-height: 1.25rem;
 }
-
 tr:nth-child(even) {
   background-color: rgba(231, 231, 231, 0.3);
 }
@@ -168,4 +212,9 @@ li {
   list-style: disc outside none;
   display: list-item;
   margin-left: 1em;
+}
+img
+{
+	object-fit: cover;
+	object-position: center;
 }

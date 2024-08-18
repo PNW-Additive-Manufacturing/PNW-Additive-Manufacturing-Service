@@ -14,6 +14,7 @@ const nextConfig = {
     }
     */
     config.plugins.push(new webpack.EnvironmentPlugin(myEnv));
+    
     return config;
   },
 
@@ -30,6 +31,12 @@ const nextConfig = {
         port: '',
         pathname: "/**"
       },
+	  {
+		protocol: 'https',
+		hostname: 'www.authenticatorapi.com',
+		port: '',
+		pathname: '/**'
+	  },
       {
         protocol: 'https',
         hostname: 'static1.campusgroups.com',

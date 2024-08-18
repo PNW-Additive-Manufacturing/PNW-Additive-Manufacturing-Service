@@ -1,15 +1,17 @@
-import postgres from 'postgres';
+"use server";
+
+import postgres from "postgres";
+import getConfig from "../getConfig";
+
+// TODO: https://github.com/porsager/postgres?tab=readme-ov-file#data-transformation
+// Set PostgresSQl to use camelCase!
 
 //TODO: very basic database connection (consider using pools later)
-const sql = postgres({
-  host: process.env.DATABASE_HOST!,
-  port: Number(process.env.DATABASE_PORT!),
-  database: process.env.DATABASE_NAME!,
-  username: process.env.DATABASE_USERNAME!,
-  password: process.env.DATABASE_PASSWORD!,
-  max: 100,
-  idle_timeout: 10
-});
+const envConfig = getConfig();
 
+const sql = postgres(envConfig.dbConnectionString, {
+	idle_timeout: 20,
+	max: 50
+});
 
 export default sql;

@@ -1,5 +1,17 @@
-export default function HorizontalWrap({children, className}: {children: any, className?: string}) {
-    return <div className={`mx-auto w-full px-5 py-3 lg:w-3/4 xl:w-3/4 ${className ?? ''}`}>
-        {children}
-    </div>
+export default function HorizontalWrap({
+	children,
+	className
+}: {
+	children: any;
+	className?: string;
+}) {
+	return (
+		<div
+			className={`mx-auto w-full px-4 py-3 lg:w-3/4 xl:w-3/4 ${
+				className ?? ""
+			}`}
+			style={{ maxWidth: "1500px" }}>
+			{children}
+		</div>
+	);
 }

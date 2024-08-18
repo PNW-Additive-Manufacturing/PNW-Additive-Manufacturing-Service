@@ -1,0 +1,313 @@
+"use client";
+
+import { cancelRequest } from "@/app/api/server-actions/request";
+import Account from "@/app/Types/Account/Account";
+import { isAllComplete, isAllPending } from "@/app/Types/Part/Part";
+import Request, {
+	getRequestStatus,
+	getRequestStatusColor,
+	getTotalCost,
+	hasQuote,
+	isAllPriced,
+	isAnyPartDenied,
+	isPaid,
+	RequestWithParts
+} from "@/app/Types/Request/Request";
+import {
+	RegularCog,
+	RegularCrossCircle,
+	RegularDatabase,
+	RegularEnvelope,
+	RegularExit,
+	RegularFiles,
+	RegularLink,
+	RegularPagination,
+	RegularShare,
+	RegularWallet
+} from "lineicons-react";
+import Link from "next/link";
+import { Suspense, useState } from "react";
+import { useFormState } from "react-dom";
+import { revokePart, setQuote } from "@/app/api/server-actions/maintainer";
+import PartEditor from "./PartEditor";
+import Filament from "@/app/Types/Filament/Filament";
+import DropdownSection from "@/app/components/DropdownSection";
+import { CodeBlock, CopyBlock } from "react-code-blocks";
+import RequestPricing from "@/app/components/Request/Pricing";
+import StatusPill from "@/app/components/StatusPill";
+
+export default function RequestEditor({
+	request,
+	requester,
+	availableFilaments
+}: {
+	request: RequestWithParts;
+	requester: Account;
+	availableFilaments: Filament[];
+}): JSX.Element {
+	const partsAllComplete = isAllComplete(request.parts);
+	const partsAllPriced = isAllPriced(request);
+	const waitingForPickup = partsAllComplete && !request.isFulfilled;
+	const _hasQuote = hasQuote(request);
+	const isQuotePaid = isPaid(request);
+
+	const [showActions, setShowActions] = useState(false);
+	const [showRevoke, setShowRevoke] = useState(false);
+	const [quoteState, setQuoteFormAction] = useFormState(setQuote, "");
+
+	return (
+		<>
+			<div className="lg:flex justify-between items-start">
+				<div className="w-full">
+					<h1 className="text-4xl font-thin">
+						Manage {request.name}
+					</h1>
+					<div className="mt-2 mb-5 lg:mb-0 flex items-center">
+						<StatusPill
+							statusColor={getRequestStatusColor(request)}
+							context={getRequestStatus(request)}></StatusPill>
+						{request.firstName} {request.lastName} placed this
+						request on{" "}
+						{request.submitTime.toLocaleDateString("en-us", {
+							weekday: "long",
+							month: "short",
+							day: "numeric"
+						})}
+						.
+					</div>
+				</div>
+				<div className="items-end flex w-full">
+					<div className="flex w-full gap-2 lg:justify-end max-lg:justify-between">
+						<Link href="/dashboard/maintainer/orders">
+							<button className="outline outline-1 outline-gray-300 bg-white text-black fill-black flex flex-row gap-2 justify-end items-center px-3 py-2 text-sm w-fit">
+								<RegularExit className="w-auto h-6 fill-inherit"></RegularExit>
+								Go Back
+							</button>
+						</Link>
+						<div className="flex gap-2">
+							<div className="relative">
+								<button
+									className={`px-3 py-2 mb-2 text-sm outline outline-1 outline-gray-300 bg-white text-black fill-black hover:fill-white`}
+									onClick={() =>
+										setShowActions(!showActions)
+									}>
+									Actions
+									<RegularCog
+										className={`${
+											showActions
+												? "rotate-180"
+												: "rotate-0"
+										} ml-2 w-6 h-auto fill-inherit inline transition-transform ease-in-out duration-500`}></RegularCog>
+								</button>
+								<div
+									className={`${
+										showActions ? "" : "hidden"
+									} absolute w-fit h-fit bg-white right-0 py-2 px-2 rounded-md flex flex-col gap-1 z-10 outline outline-1 outline-gray-300`}>
+									<button
+										className="px-3 py-2 text-sm mb-0 w-full bg-transparent text-black hover:text-black rounded-none hover:bg-transparent hover:underline"
+										disabled>
+										Download PDF
+										<RegularFiles className="ml-2 w-6 h-6 inline-block fill-black"></RegularFiles>
+									</button>
+									<button
+										className="bg-transparent px-3 py-2 text-sm mb-0 w-full text-red-700 hover:text-red-700 rounded-none hover:bg-transparent hover:underline"
+										type="button"
+										onClick={() => setShowRevoke(true)}
+										disabled={hasQuote(request)}>
+										Revoke Request
+										<RegularCrossCircle className="ml-2 w-6 h-6 inline-block fill-red-700"></RegularCrossCircle>
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<hr className="mb-4 lg:my-4" />
+
+			{request.isFulfilled ? (
+				<div className="w-full px-4 py-2 my-2 bg-green-400 font-light rounded-sm shadow-sm">
+					The request has been completed and picked up from the Design
+					Studio.
+				</div>
+			) : (
+				<></>
+			)}
+
+			{(!request.isFulfilled &&
+				isAllComplete(request.parts) &&
+				isQuotePaid) ?? (
+				<div className="w-full px-4 py-2 my-2 text-white bg-blue-400 font-light rounded-sm shadow-sm">
+					These parts are ready to be picked up from the Design
+					Studio.
+				</div>
+			)}
+
+			<div className="lg:flex gap-8">
+				<div className="lg:grow">
+					<div className="flex justify-between gap-2 w-full">
+						<div className="py-2 pr-1 text-right w-full">
+							Manage {request.parts.length}{" "}
+							{request.parts.length > 1 ? "Parts" : "Part"}
+						</div>
+					</div>
+
+					<div className="flex flex-col gap-6 mb-3">
+						{request.parts.map((part, index) => (
+							<PartEditor
+								request={request}
+								part={part}
+								index={index}
+								isQuoted={_hasQuote}
+								filaments={availableFilaments}></PartEditor>
+						))}
+					</div>
+
+					<DropdownSection
+						name="Developer Information"
+						icon={
+							<RegularPagination className="inline-block w-auto h-6 pb-0.5 ml-2 fill-pnw-gold" />
+						}
+						collapsible={true}
+						hidden={true}>
+						<div className="shadow-md rounded-md p-4 lg:p-6 bg-white mb-4 outline outline-1 outline-gray-300 hover:outline-gray-400 transition-all duration-75">
+							<div className="max-h-60 w-full text-sm overflow-scroll">
+								<CopyBlock
+									customStyle={{ width: "100%" }}
+									text={JSON.stringify(
+										{
+											...request,
+											parts: request.parts.map((part) => {
+												return {
+													...part,
+													// Remove nested request for clarity.
+													request: undefined
+												};
+											})
+										},
+										null,
+										4
+									)}
+									language="JSON"
+									showLineNumbers={false}
+									codeBlock={true}
+								/>
+							</div>
+						</div>
+					</DropdownSection>
+				</div>
+				<div className="lg:min-w-88">
+					<div className="py-2 pt-2 pl-1 w-full">Payment Details</div>
+					<div className="p-4 lg:p-6 rounded-t-sm shadow-sm bg-white font-light outline outline-2 outline-gray-200">
+						{isAllPriced(request) ? (
+							<RequestPricing request={request} />
+						) : (
+							<p>Request has not been Quoted.</p>
+						)}
+					</div>
+					{isQuotePaid ? (
+						<>
+							<AlreadyQuoteButton
+								request={request}></AlreadyQuoteButton>
+						</>
+					) : hasQuote(request) ? (
+						<button
+							className="mb-0 rounded-t-none py-4 shadow-md text-left"
+							type="button">
+							<div>Waiting for Payment</div>
+							<p className="text-white font-light text-sm mt-1">
+								{`${requester.firstName} ${requester.lastName} has been notified.`}
+							</p>
+						</button>
+					) : (
+						isAllPriced(request) && (
+							<>
+								<form action={setQuoteFormAction}>
+									<input
+										hidden
+										type="number"
+										name="requestId"
+										readOnly
+										value={request.id}></input>
+									<button
+										className="rounded-t-none py-4 shadow-md text-left flex justify-between w-full mb-0"
+										disabled={!partsAllPriced}>
+										<div>
+											Submit Quote for $
+											{getTotalCost(
+												request
+											).totalCost.toFixed(2)}
+											<p className="text-white font-light text-sm pt-1">
+												{`${requester.firstName} ${requester.lastName} will receive the quote.`}
+											</p>
+										</div>
+									</button>
+								</form>
+								<p className="text-red-500 text-base mt-2">
+									{quoteState}
+								</p>
+							</>
+						)
+					)}{" "}
+					<div className="py-2 pt-4 pl-1 w-full">
+						Requester Information
+					</div>
+					<div className="p-4 lg:p-6 rounded-sm shadow-sm bg-white font-light outline outline-2 outline-gray-200">
+						<p className="text-2xl">
+							{requester.firstName} {requester.lastName}
+						</p>
+						<a
+							className="text-base"
+							href={`mailto:${requester.email}`}>
+							{requester.email}
+						</a>
+						<div className="mt-2">
+							<ul>
+								<li key="joinedAt">
+									<p className="text-base">
+										Joined on{" "}
+										{requester.joinedAt.toLocaleDateString(
+											"en-us",
+											{
+												weekday: "long",
+												month: "short",
+												day: "numeric"
+											}
+										)}
+									</p>
+								</li>
+								<li key="lookupOnMyPNW">
+									<a
+										target="_blank"
+										href={`https://mypnwlife.pnw.edu/mobile_ws/v17/mobile_header_search?search=${request.firstName}%20${request.lastName}`}>
+										Lookup on MyPNW 🡕
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</>
+	);
+}
+
+function AlreadyQuoteButton({ request }: { request: Request }) {
+	return (
+		<button
+			className="rounded-t-none rounded-b-sm mb-0 py-4 shadow-md text-left bg-green-600"
+			disabled>
+			Quote Processed
+			<p className="text-white font-light text-sm">
+				Paid on{" "}
+				{request.quote!.paidAt!.toLocaleDateString("en-us", {
+					weekday: "long",
+					month: "short",
+					day: "numeric"
+				})}
+				.
+			</p>
+		</button>
+	);
+}

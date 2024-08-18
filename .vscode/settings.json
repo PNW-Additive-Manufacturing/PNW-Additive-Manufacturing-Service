@@ -1,4 +1,12 @@
 {
     "typescript.tsdk": "node_modules/typescript/lib",
-    "explorer.excludeGitIgnore": false
+    "explorer.excludeGitIgnore": false,
+    "[typescript]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
+    "[typescriptreact]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }

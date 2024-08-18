@@ -3,12 +3,20 @@
 ## About the project
 The PNW 3D Printing Service enables PNW students, and faculty members to utilize the Additive Manufacturing Club 3D printers through a user-friendly website. When requesting a print, you may decide which filament to be used, it's color, and the infill density configured when sliced. Pricing has yet to be determined. Depends on the filament, and amount used. May reflect how Purdue University operates their 3D Printing Services.
 
+## Pricing of Requests
+Due to 3D Printing commonly costing less than $5 in most cases, accounts will have a balance tied to them.
+
 ## Maintainer Dashboard
 Maintainers of the PNW 3D Printing Service will have the responsibility of maintaining the printers and handling commissions via the Maintainer Dashboard. The Maintainer Dashboard will display a list of all commissions, sorted by their state. Maintainers will be be approve, deny, mark as printing, and archive commissions here.
 
 ## Development
 Exactly how the PNW 3D Printing Service application will function is undetermined.
 Though, a few applications and libraries come to mind:
+
+### TODO:
+
+1. Filament previews with rich-photos.
+2. Dark mode :face_with_raised_eyebrow: 
 
 ### How to use
 * Start the Database
@@ -21,6 +29,12 @@ Though, a few applications and libraries come to mind:
 
 - When submitting and viewing a commission you'll be able to view the model are you printing utilizing the [ViewSTL library](https://www.viewstl.com/plugin/).
 - When viewing the commission while in the `Printing` status a video feed of the print will be embedded using [Mainsail's Crowsnest](https://github.com/mainsail-crew/crowsnest#documentation). *Though, as of writing, I am unsure how to integrate printers that come with webcams to [Crowsnest](https://github.com/mainsail-crew/crowsnest#documentation).*
+
+#### Stripe Payments
+While developing, use the Stripe CLI to forward events/triggers to your local machine. Set STRIPE_SECRET.
+```
+stripe listen --forward-to http://localhost:3000/api/hooks/stripe
+```
 
 ### Automation
 A potentially automated feature utilized by the maintainers of the printers would be starting prints through the [Maintainers Dashboard](#maintainer-dashboard) automatically via the upload G-Code when approved. To obtain this functionality we will need to communicate with the printer. Doing this depends on the MCU, the brain of a 3D printer, and the firmware it is running. For example, a possible implementation may utilize [Moonraker](https://github.com/Arksine/moonraker), a web-api to communicate with an MCU flashed with [Klipper firmware](https://github.com/Klipper3d/klipper). Communication with printers could also bring real-time statistics to a commission such as estimated time remaining, and etc.

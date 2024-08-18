@@ -6,51 +6,114 @@
 
 import * as jose from "jose";
 
-import {cookies} from "next/headers";
+import { cookies } from "next/headers";
 
 import { SESSION_COOKIE } from "@/app/api/util/Constants";
+import { z } from "zod";
+import { permission } from "process";
+import { AccountPermission } from "@/app/Types/Account/Account";
 
-export interface UserInfoJwt {
-  email: string,
-  permission: string,
-  firstname: string,
-  lastname: string,
-  jwt_expire_date: Date
+export interface UserJWT {
+	email: string;
+	permission: string;
+	firstname: string;
+	lastname: string;
+	isemailverified: boolean;
+	jwt_expire_date: Date;
+}
+export const UserJWTSchema = z.object({
+	email: z.string().email(),
+	permission: z.nativeEnum(AccountPermission),
+	firstname: z.string(),
+	lastname: z.string(),
+	isemailverified: z.boolean()
+});
+
+export async function makeJwt(
+	email: string,
+	permission: string,
+	firstname: string,
+	lastname: string,
+	isemailverified: boolean,
+	expireDate?: Date
+) {
+	if (isemailverified == undefined)
+		throw new Error("IsEmailVerified is missing!");
+
+	return await new jose.SignJWT({
+		email,
+		permission,
+		firstname,
+		lastname,
+		isemailverified: isemailverified
+	})
+		.setProtectedHeader({ alg: "HS512" })
+		.setIssuedAt()
+		.setExpirationTime(expireDate ?? "7d")
+		.sign(new TextEncoder().encode(process.env.JWT_SECRET!));
 }
 
-export async function makeJwt(email: string, permission: string, firstname: string, lastname: string, expireDate?: Date) {
-  return await new jose.SignJWT({
-    email: email, 
-    permission: permission,
-    firstname: firstname,
-    lastname: lastname,
-  })
-  .setProtectedHeader({alg: 'HS256'})
-  .setIssuedAt()
-  .setExpirationTime(expireDate ?? '2d')
-  .sign(new TextEncoder().encode(process.env.JWT_SECRET!));
+export async function getJwtPayload(): Promise<UserJWT> {
+	let cookie = cookies().get(SESSION_COOKIE);
+	if (cookie == undefined) throw new Error("Session cookie is undefined");
+
+	try {
+		let jwt = await jose.jwtVerify(
+			cookie.value,
+			new TextEncoder().encode(process.env.JWT_SECRET!)
+		);
+
+		const parsedPayload = UserJWTSchema.safeParse(jwt.payload);
+		if (!parsedPayload.success) {
+			throw new Error("Session was not validated correctly");
+		}
+
+		//console.log(new Date((payload.exp ?? 0) * 1000));
+		return {
+			email: parsedPayload.data.email as string,
+			permission: parsedPayload.data.permission as string,
+			firstname: parsedPayload.data.firstname as string,
+			lastname: parsedPayload.data.lastname as string,
+			isemailverified: parsedPayload.data.isemailverified as boolean,
+			//JWT stores their expiration dates in SECONDS, not milliseconds like Javascript Date
+			jwt_expire_date: new Date((jwt.payload.exp ?? 0) * 1000)
+		};
+	} catch (e: any) {
+		throw new Error("Invalid Token! Log Back In!");
+	}
 }
 
-export async function getJwtPayload() {
-  let cookie = cookies().get(SESSION_COOKIE);
-  if(!cookie) {
-    return null;
-  }
+export async function retrieveSafeJWTPayload(): Promise<UserJWT | null> {
+	let cookie = cookies().get(SESSION_COOKIE);
+	if (!cookie) return null;
 
-  try {
-    let payload = (await jose.jwtVerify(cookie.value, new TextEncoder().encode(process.env.JWT_SECRET!))).payload
-    //console.log(new Date((payload.exp ?? 0) * 1000));
-    return {
-      email: payload.email as string, 
-      permission: payload.permission as string,
-      firstname: payload.firstname as string,
-      lastname: payload.lastname as string,
-      //JWT stores their expiration dates in SECONDS, not milliseconds like Javascript Date
-      jwt_expire_date: new Date((payload.exp ?? 0) * 1000)
-    };
-  } catch(e: any) {
-    console.error(e);
-    throw new Error("Invalid Token! Log Back In!");
-  }
+	try {
+		let jwt = await jose.jwtVerify(
+			cookie.value,
+			new TextEncoder().encode(process.env.JWT_SECRET!)
+		);
+
+		const parsedPayload = UserJWTSchema.safeParse(jwt.payload);
+		if (!parsedPayload.success) {
+			console.error(
+				"JWT payload is invalid!",
+				parsedPayload.error.message
+			);
+			return null;
+		}
+
+		//console.log(new Date((payload.exp ?? 0) * 1000));
+		return {
+			email: parsedPayload.data.email as string,
+			permission: parsedPayload.data.permission as string,
+			firstname: parsedPayload.data.firstname as string,
+			lastname: parsedPayload.data.lastname as string,
+			isemailverified: parsedPayload.data.isemailverified as boolean,
+			//JWT stores their expiration dates in SECONDS, not milliseconds like Javascript Date
+			jwt_expire_date: new Date((jwt.payload.exp ?? 0) * 1000)
+		};
+	} catch (e: any) {
+		console.error(e);
+		return null;
+	}
 }
-

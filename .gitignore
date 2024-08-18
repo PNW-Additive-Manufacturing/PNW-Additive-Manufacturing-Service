@@ -6,6 +6,8 @@ ignored/
 # env
 .env
 
+uploads
+
 # Logs
 logs
 *.log
