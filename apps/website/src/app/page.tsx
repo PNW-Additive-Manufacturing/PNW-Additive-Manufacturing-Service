@@ -43,25 +43,6 @@ function GithubProject() {
 	);
 }
 
-export async function generateMetadata(
-	properties: any,
-	parent: ResolvingMetadata
-): Promise<Metadata> {
-	return Promise.resolve({
-		title: {
-			template: "%s | AMS of PNW",
-			default: "Purdue Northwest Additive Manufacturing Service"
-		},
-		description:
-			"Created by the PNW Additive Manufacturing Club, this service enables PNW students, and faculty members to explore the world of 3D Printing.",
-		icons: ["/assets/am_logo.png"],
-		openGraph: {
-			type: "website",
-			images: ["/assets/am_banner.png"]
-		}
-	});
-}
-
 export default async function Home() {
 	return (
 		<>
