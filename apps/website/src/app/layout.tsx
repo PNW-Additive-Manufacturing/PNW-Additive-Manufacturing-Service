@@ -26,7 +26,7 @@ export async function generateMetadata(
 		metadataBase: new URL(envConfig.hostURL),
 		title: {
 			template: "%s | AMS of PNW",
-			default: "Additive Manufacturing Service"
+			default: "PNW Additive Manufacturing Service"
 		},
 		description:
 			"Created by the PNW Additive Manufacturing Club, this service enables PNW students, and faculty members to explore the world of 3D Printing.",
