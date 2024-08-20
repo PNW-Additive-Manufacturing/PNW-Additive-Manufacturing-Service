@@ -3,7 +3,7 @@
 import ActionResponse from "@/app/api/server-actions/ActionResponse";
 import { payInvoice } from "@/app/api/server-actions/invoice";
 import { cancelRequest } from "@/app/api/server-actions/request";
-import { authContext } from "@/app/authProvider";
+import { AccountContext } from "@/app/ContextProviders";
 import ModelViewer from "@/app/components/ModelViewer";
 import StatusPill from "@/app/components/StatusPill";
 import { templatePNW } from "@/app/components/Swatch";
@@ -43,6 +43,7 @@ import RefundMessage from "@/app/components/Part/RefundMessage";
 import FilamentBlock from "@/app/experiments/FilamentBlock";
 import { formateDate } from "@/app/api/util/Constants";
 import Timeline from "@/app/components/Timeline";
+import HiddenInput from "@/app/components/HiddenInput";
 
 export default function RequestDetails({
 	request
@@ -364,33 +365,37 @@ function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 	const [revisedFile, setRevisedFile] = useState<File | undefined>(undefined);
 
 	return (
-		<div className="lg:flex gap-4 shadow-sm p-4 lg:p-6 rounded-sm bg-white outline outline-2 outline-gray-200">
-			<div className="max-lg:hidden w-fit text-lg text-center">
-				{index + 1}
-				<input type="checkbox" className="w-6 h-6 mx-auto mt-1"></input>
-			</div>
-			<div className="w-full">
-				<div className="lg:flex">
-					<div className="mr-4 mb-2 lg:max-w-44 w-full ">
-						<div className="shadow-sm">
-							<div
-								className={`w-full h-40 lg:h-48 outline-1 outline outline-gray-300 rounded-sm bg-gray-50 relative`}>
-								{revisedFile == undefined ? (
-									<ModelViewer
-										swatch={
-											part.supplementedFilament?.color ??
-											part.filament?.color
-										}
-										modelURL={`/api/download/model?modelId=${part.modelId}`}
-									/>
-								) : (
-									<ModelViewer
-										swatch={templatePNW()}
-										modelFile={revisedFile}
-									/>
-								)}
-							</div>
-							{/* {part.status == PartStatus.Denied && (
+		<div>
+			<div className="lg:flex gap-4 shadow-sm p-4 lg:p-6 rounded-sm bg-white outline outline-2 outline-gray-200">
+				<div className="max-lg:hidden w-fit text-lg text-center">
+					{index + 1}
+					<input
+						type="checkbox"
+						className="w-6 h-6 mx-auto mt-1"></input>
+				</div>
+				<div className="w-full">
+					<div className="lg:flex">
+						<div className="mr-4 mb-2 lg:max-w-44 w-full ">
+							<div className="shadow-sm">
+								<div
+									className={`w-full h-40 lg:h-48 outline-1 outline outline-gray-300 rounded-sm bg-gray-50 relative`}>
+									{revisedFile == undefined ? (
+										<ModelViewer
+											swatch={
+												part.supplementedFilament
+													?.color ??
+												part.filament?.color
+											}
+											modelURL={`/api/download/model?modelId=${part.modelId}`}
+										/>
+									) : (
+										<ModelViewer
+											swatch={templatePNW()}
+											modelFile={revisedFile}
+										/>
+									)}
+								</div>
+								{/* {part.status == PartStatus.Denied && (
 								<div className="bg-orange-400 p-2 rounded-b-sm text-sm text-white flex justify-between items-start">
 									<HiddenInput
 										className="hover:cursor-pointer"
@@ -432,52 +437,71 @@ function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 									</HiddenInput>
 								</div>
 							)} */}
+							</div>
+							<a
+								className="flex py-1 px-1.5 text-xs text-nowrap justify-between items-center opacity-50 hover:opacity-100"
+								href={`/api/download/model?modelId=${part.modelId}`}
+								download={`${part.model.name}.stl`}
+								target="_blank">
+								Download (
+								{`${Math.round(
+									part.model.fileSizeInBytes / 1000
+								)} kB`}
+								)
+								<RegularCloudDownload className="fill-cool-black w-6 h-6 p-0.5"></RegularCloudDownload>
+							</a>
 						</div>
-						<a
-							className="flex py-1 px-1.5 text-xs text-nowrap justify-between items-center opacity-50 hover:opacity-100"
-							href={`/api/download/model?modelId=${part.modelId}`}
-							download={`${part.model.name}.stl`}
-							target="_blank">
-							Download (
-							{`${Math.round(
-								part.model.fileSizeInBytes / 1000
-							)} kB`}
-							)
-							<RegularCloudDownload className="fill-cool-black w-6 h-6 p-0.5"></RegularCloudDownload>
-						</a>
-					</div>
 
-					<div className="w-full">
-						<div className="inline-block">
-							<StatusPill
-								className="mr-2"
-								statusColor={statusColor}
-								context={part.status}></StatusPill>
-						</div>
-						<span className="text-2xl block lg:inline mb">
-							{part.model.name} x{part.quantity}
-						</span>
-						<div>
-							<p className="my-0.5">
-								<span className="font-light">
-									{"Technology: "}
-								</span>
-								Fused Deposition Modeling
-							</p>
-							<p className="my-0.5">
-								<span className="font-light">
-									{"Profile: "}
-								</span>
-								High Quality (0.12mm)
-							</p>
-							<p className="my-0.5">
-								<span className="font-light">
-									{"Comment: "}
-								</span>
-								{"No comment provided."}
-							</p>
+						<div className="w-full">
+							<div className="inline-block">
+								<StatusPill
+									className="mr-2"
+									statusColor={statusColor}
+									context={part.status}></StatusPill>
+							</div>
+							<span className="text-2xl block lg:inline mb">
+								{part.model.name} x{part.quantity}
+							</span>
+							<div>
+								{part.status == PartStatus.Denied && (
+									<div className="text-red-500 w-fit">
+										<HiddenInput
+											required
+											className="inline"
+											type="file"
+											id="revision-model"
+											name="revision-model"
+											onChange={(f) => console.log(f)}>
+											<span className="underline">
+												Upload a revision
+											</span>
+										</HiddenInput>
+										<span>
+											: Model does not meet requirements (
+											{part.deniedReason})
+										</span>
+									</div>
+								)}
+								<p className="my-0.5">
+									<span className="font-light">
+										{"Technology: "}
+									</span>
+									Fused Deposition Modeling
+								</p>
+								<p className="my-0.5">
+									<span className="font-light">
+										{"Profile: "}
+									</span>
+									High Quality (0.12mm)
+								</p>
+								<p className="my-0.5">
+									<span className="font-light">
+										{"Comment: "}
+									</span>
+									{"No comment provided."}
+								</p>
 
-							{/* <p className="my-0.5 lg:hidden">
+								{/* <p className="my-0.5 lg:hidden">
 								{part.filament == undefined ? (
 									<>
 										<span className="font-light">
@@ -516,14 +540,14 @@ function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 								)}
 							</p> */}
 
-							<div className="mt-2 w-fit">
-								<FilamentBlock
-									filament={
-										part.supplementedFilament ??
-										part.filament!
-									}
-								/>
-								{/* {part.supplementedFilament && (
+								<div className="mt-2 w-fit">
+									<FilamentBlock
+										filament={
+											part.supplementedFilament ??
+											part.filament!
+										}
+									/>
+									{/* {part.supplementedFilament && (
 									<>
 										<p className="text-pnw-gold">
 											Supplemented For:
@@ -533,9 +557,9 @@ function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 										/>
 									</>
 								)} */}
-							</div>
+								</div>
 
-							{/* <div className="mt-2 w-fit">
+								{/* <div className="mt-2 w-fit">
 								<div className="shadow-sm rounded-sm p-2 bg-white outline outline-2 outline-gray-200">
 									<FilamentBlock
 										filament={
@@ -544,29 +568,29 @@ function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 								</div>
 							</div> */}
 
-							<RefundMessage part={part} />
+								<RefundMessage part={part} />
+							</div>
 						</div>
-						{part.status == PartStatus.Denied && (
-							<>
-								<Alert
-									className="w-full mt-3"
-									style={{ borderColor: "rgb(251 146 60)" }}
-									severity="error"
-									variant="outlined"
-									color="warning">
-									<AlertTitle>
-										{part.model.name} does not meet printing
-										requirements!
-									</AlertTitle>
-									<span>{part.deniedReason}</span>
-								</Alert>
-								<button className="p-2 mt-2 w-full text-sm flex items-center justify-center gap-2 fill-white mb-0">
-									Upload revised Model
-									<RegularCloudUpload></RegularCloudUpload>
-								</button>
-							</>
-						)}
 					</div>
+					{/* {part.status == PartStatus.Denied && (
+						<>
+							<Alert
+								className="w-full mt-3"
+								style={{ borderColor: "rgb(251 146 60)" }}
+								severity="error"
+								color="warning">
+								<AlertTitle>
+									{part.model.name} does not meet printing
+									requirements!
+								</AlertTitle>
+								<span>{part.deniedReason}</span>
+							</Alert>
+							<button className="p-2 mt-2 w-full text-sm flex items-center justify-center gap-2 fill-white mb-0">
+								Upload revised Model
+								<RegularCloudUpload></RegularCloudUpload>
+							</button>
+						</>
+					)} */}
 				</div>
 			</div>
 		</div>
@@ -591,7 +615,7 @@ function AlreadyPaidButton({ request }: { request: Request }) {
 }
 
 function RequestQuotePaymentButton({ request }: { request: RequestWithParts }) {
-	const { account } = useContext(authContext);
+	const { account } = useContext(AccountContext);
 	const partsAllPriced = isAllPriced(request);
 	const quoteAvailable = hasQuote(request);
 

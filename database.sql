@@ -96,7 +96,6 @@ CREATE TABLE Request (
   )
 );
 
-
 DROP TABLE IF EXISTS Model CASCADE;
 CREATE TABLE Model (
   Id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

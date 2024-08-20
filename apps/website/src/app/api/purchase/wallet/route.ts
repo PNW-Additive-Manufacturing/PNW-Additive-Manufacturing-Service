@@ -81,11 +81,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 			ActionResponse.Error(`Schema Failed: ${parsedData.error.message}`)
 		);
 
-	console.log(
-		`Purchasing \$${(parsedData.data.amountInCents / 100).toFixed(
-			2
-		)} through ${parsedData.data.paymentMethod.toUpperCase()}`
-	);
+	// console.log(
+	// 	`Purchasing \$${(parsedData.data.amountInCents / 100).toFixed(
+	// 		2
+	// 	)} through ${parsedData.data.paymentMethod.toUpperCase()}`
+	// );
 
 	const isPaymentMethodStripe =
 		parsedData.data.paymentMethod == WalletTransactionPaymentMethod.Stripe;
@@ -98,7 +98,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 				success_url: `${request.nextUrl.protocol}//${request.nextUrl.host}/user/wallet`,
 				cancel_url: `${request.nextUrl.protocol}//${request.nextUrl.host}/not-found`,
 				customer_email: account.email,
-				billing_address_collection: "required",
 				line_items: [
 					{
 						price_data: {

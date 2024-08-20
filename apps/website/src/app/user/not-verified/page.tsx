@@ -4,7 +4,7 @@ import { resendVerificationLink } from "@/app/api/server-actions/account";
 import ActionResponse, {
 	ActionResponsePayload
 } from "@/app/api/server-actions/ActionResponse";
-import { authContext } from "@/app/authProvider";
+import { AccountContext } from "@/app/ContextProviders";
 import FormLoadingSpinner from "@/app/components/FormLoadingSpinner";
 import HorizontalWrap from "@/app/components/HorizontalWrap";
 import { RegularEnvelope } from "lineicons-react";
@@ -26,7 +26,7 @@ function EmailSubmitButton({ email }: { email: string }) {
 
 	return (
 		<button
-			className={`w-full flex gap-2 m-0 text-sm text-left ${
+			className={`w-full flex gap-2 m-0 text-base text-left ${
 				showCompleted && "bg-green-600"
 			}`}
 			disabled={status.pending || showCompleted}>
@@ -50,7 +50,7 @@ export default function Page() {
 		ActionResponse.Incomplete<{ sentAt: Date; validUntil: Date }>()
 	);
 
-	const accountScope = useContext(authContext);
+	const accountScope = useContext(AccountContext);
 
 	if (!accountScope.isSingedIn) {
 		redirect("/not-found");
@@ -64,14 +64,26 @@ export default function Page() {
 					You must confirm your student or faculty email at PNW to use
 					this service.
 				</h2>
+				<h3 className="text-base font-normal text-gray-700">
+					Email{" "}
+					<a className="underline" href="mailto:support@pnw3d.com">
+						support@pnw3d.com
+					</a>{" "}
+					for support if required.
+				</h3>
 				<form action={formAction} className="mt-8">
 					<EmailSubmitButton email={accountScope.account!.email} />
 					{data.isComplete && data.errorMessage && (
-						<p className="text-red-500">{data.errorMessage}</p>
+						<>
+							<p className="text-red-500 mt-2">
+								An issue occurred. If this continues, email
+								support.
+							</p>
+						</>
 					)}
 					{data.isComplete && data.errorMessage == undefined && (
 						<>
-							<p className="text-sm mt-2">
+							<p>
 								Validation email is valid until{" "}
 								{data.data!.validUntil.toLocaleDateString(
 									"en-us",
@@ -81,15 +93,6 @@ export default function Page() {
 									}
 								)}
 								.
-							</p>
-							<p>
-								Didn't receive it? Check your spam or email{" "}
-								<a
-									className="underline"
-									href="mailto:support@pnw3d.com">
-									support@pnw3d.com
-								</a>{" "}
-								for support.
 							</p>
 						</>
 					)}

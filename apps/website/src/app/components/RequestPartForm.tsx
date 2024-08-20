@@ -13,13 +13,19 @@ import {
 	RegularPencil,
 	RegularTrashCan,
 	RegularShip,
-	RegularPackage
+	RegularPackage,
+	RegularArrowRight,
+	RegularCrossCircle
 } from "lineicons-react";
 import QuantityInput from "./QuantityInput";
 import Table from "./Table";
 import { Dialog, Tab } from "@headlessui/react";
 import Model from "../Types/Model/Model";
 import Filament from "../Types/Filament/Filament";
+import PopupFilamentSelector from "./PopupFilamentSelector";
+import ModelViewer from "./ModelViewer";
+import { modifyPart } from "../api/server-actions/maintainer";
+import { NamedSwatch, SwatchConfiguration, templatePNW } from "./Swatch";
 
 function AddPartButton({
 	onChange
@@ -61,7 +67,20 @@ interface PartData {
 	ModelName: string;
 	Quantity: number;
 	Material: string;
-	Color: string;
+	Color: SwatchConfiguration;
+}
+
+function RequestPartFormSubmit({ parts }: { parts: PartData[] }) {
+	const { pending } = useFormStatus();
+
+	return (
+		<button
+			type="submit"
+			disabled={pending || parts.length == 0}
+			className="bg-gradient-linear-pnw-mystic w-full mb-0 text-cool-black hover:text-black h-full">
+			{pending ? "Contacting our Server..." : "Submit Request"}
+		</button>
+	);
 }
 
 //TODO: Make this work for more generic forms
@@ -75,7 +94,6 @@ export function RequestPartForm({
 	children?: any;
 }): JSX.Element {
 	let [error, formAction] = useFormState<string, FormData>(requestPart, "");
-	let { pending } = useFormStatus();
 
 	let [parts, setParts] = useState<PartData[]>([]);
 	let [modifyingPart, setModifyingPart] = useState<PartData>();
@@ -86,80 +104,87 @@ export function RequestPartForm({
 				open={modifyingPart != null}
 				onClose={() => setModifyingPart(undefined)}
 				className="relative z-50">
-				{/* The backdrop, rendered as a fixed sibling to the panel container */}
 				<div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 
 				<div className="fixed inset-0 flex w-screen items-center justify-center shadow-lg">
-					<Dialog.Panel className="mx-auto max-w-sm rounded-md bg-white p-6">
-						<Dialog.Title className="mb-4">
-							<RegularEmptyFile className="inline w-5 h-5 fill-gray-500 text-purple-200 mr-2"></RegularEmptyFile>
-							{modifyingPart?.ModelName}
+					<Dialog.Panel className="mx-auto rounded-md bg-white p-6 max-lg:w-2/3">
+						<Dialog.Title className="mb-4 flex justify-between items-center">
+							<div className="flex items-center gap-2">
+								<RegularEmptyFile className="inline w-5 h-5 fill-gray-500"></RegularEmptyFile>
+								{modifyingPart?.ModelName}
+							</div>
+							<div className="flex gap-4">
+								<div
+									className="flex items-center gap-2 text-gray-500 fill-gray-500 hover:cursor-pointer"
+									onClick={() => {
+										parts.splice(
+											parts.indexOf(modifyingPart!),
+											1
+										);
+										setParts(parts);
+										setModifyingPart(undefined);
+									}}>
+									Remove
+									<RegularCrossCircle></RegularCrossCircle>
+								</div>
+								<div
+									className="flex items-center gap-2 fill-pnw-gold text-pnw-gold hover:cursor-pointer"
+									onClick={() => setModifyingPart(undefined)}>
+									Continue
+									<RegularArrowRight></RegularArrowRight>
+								</div>
+							</div>
 						</Dialog.Title>
+						<div className="lg:flex gap-4">
+							<div className="max-lg:hidden">
+								<label>View Model</label>
+								{modifyingPart?.File && (
+									<div className="w-88 aspect-square outline-gray-300 bg-gray-50 outline-1 outline rounded-sm relative shadow-sm">
+										<ModelViewer
+											modelFile={
+												modifyingPart.File
+											}></ModelViewer>
+									</div>
+								)}
+							</div>
 
-						<p className="font-semibold p-2 pl-0">Quantity</p>
-						<input
-							type="number"
-							min={1}
-							max={80}
-							required
-							defaultValue={modifyingPart?.Quantity ?? 1}
-							onChange={(v) => {
-								modifyingPart!.Quantity =
-									v.currentTarget.valueAsNumber;
-								setModifyingPart(modifyingPart);
-							}}></input>
+							<div>
+								<label>Quantity</label>
+								<input
+									type="number"
+									min={1}
+									max={80}
+									required
+									defaultValue={modifyingPart?.Quantity ?? 1}
+									onChange={(v) => {
+										modifyingPart!.Quantity =
+											v.currentTarget.valueAsNumber;
+										setModifyingPart(modifyingPart);
+									}}></input>
 
-						<p className="font-semibold p-2 pl-0">Technology</p>
-						<select defaultValue="fdm">
-							<option value="fdm">
-								Fused Deposition Modeling (FDM)
-							</option>
-						</select>
+								<label>Process</label>
+								<select defaultValue="fdm">
+									<option value="fdm">3D Printing</option>
+									<option disabled value="resin">
+										Resin (Coming 2024)
+									</option>
+								</select>
 
-						<p className="font-semibold p-2 pl-0">Filament</p>
-						<FilamentSelector
-							defaultMaterial={modifyingPart?.Material}
-							filaments={filaments}
-							onChange={(material, color) => {
-								modifyingPart!.Material = material;
-								modifyingPart!.Color = color;
-								setModifyingPart(modifyingPart);
-							}}></FilamentSelector>
-
-						<div className="mt-4">
-							<button
-								type="button"
-								className="inline-flex justify-center rounded-md border border-transparent bg-cool-black text-white text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-								onClick={() => {
-									let theseParts = parts;
-									let partIndex = theseParts.findIndex(
-										(p) =>
-											modifyingPart!.ModelName ==
-											p.ModelName
-									);
-
-									console.log(
-										"Updated Part: ",
-										modifyingPart
-									);
-
-									theseParts[partIndex] = modifyingPart!;
-									setParts(theseParts);
-									setModifyingPart(undefined);
-								}}>
-								Apply Changes
-							</button>
+								<label>Filament Preference</label>
+								<PopupFilamentSelector
+									filaments={filaments}
+									defaultFilament={{
+										colorName: modifyingPart?.Color.name,
+										material: modifyingPart?.Material
+									}}
+									onChange={(filament) => {
+										modifyingPart!.Material =
+											filament.material;
+										modifyingPart!.Color = filament.color;
+										setModifyingPart(modifyingPart);
+									}}></PopupFilamentSelector>
+							</div>
 						</div>
-
-						<button
-							className="bg-red-900"
-							onClick={() => {
-								parts.splice(parts.indexOf(modifyingPart!), 1);
-								setParts(parts);
-								setModifyingPart(undefined);
-							}}>
-							Delete
-						</button>
 					</Dialog.Panel>
 				</div>
 			</Dialog>
@@ -170,7 +195,7 @@ export function RequestPartForm({
 						formData.append("file", part.File);
 						formData.append("quantity", part.Quantity.toString());
 						formData.append("material", part.Material);
-						formData.append("color", part.Color);
+						formData.append("color", part.Color.name);
 					}
 					formAction(formData);
 				}}>
@@ -193,7 +218,7 @@ export function RequestPartForm({
 						/>
 
 						<div className="h-full">
-							<p className="font-semibold br-2 py-2">Comments</p>
+							<label>Comments</label>
 							<InputBig
 								id="notes"
 								name="notes"
@@ -207,30 +232,41 @@ export function RequestPartForm({
 					<div
 						className="col-start-1 col-span-2 row-start-1 row-span-3"
 						style={{ minWidth: "300px" }}>
-						<p className="font-semibold br-2 py-2">Models</p>
-
 						<div
 							className="overflow-x-auto"
 							style={{ minWidth: "25 rem" }}>
 							{parts.length > 0 ? (
 								<Table>
+									<thead>
+										<tr>
+											<th>Model</th>
+											<th>Filament</th>
+											<th>Quantity</th>
+										</tr>
+									</thead>
 									<tbody>
 										{parts.map((part) => (
-											<tr
-												key={part.ModelName}
-												className="bg-transparent h-fit outline-none border-0 block p-4 hover:cursor-pointer"
-												onClick={() =>
-													setModifyingPart(part)
-												}>
-												<RegularEmptyFile className="inline w-5 h-5 fill-gray-500 text-purple-200 mr-2"></RegularEmptyFile>
-												{part.File.name}
-
-												<span className="float-right">
-													{part.Material},{" "}
-													{part.Color} x{" "}
-													{part.Quantity}
-												</span>
-											</tr>
+											<>
+												<tr
+													className="hover:cursor-pointer"
+													onClick={() =>
+														setModifyingPart(part)
+													}>
+													<td
+														key={part.ModelName}
+														className="bg-transparent w-fit outline-none border-0 block p-4 hover:cursor-pointer">
+														<RegularEmptyFile className="inline w-5 h-5 fill-gray-500 mr-2"></RegularEmptyFile>
+														{part.File.name}
+													</td>
+													<td>
+														<NamedSwatch
+															swatch={
+																part.Color
+															}></NamedSwatch>
+													</td>
+													<td>x{part.Quantity}</td>
+												</tr>
+											</>
 										))}
 									</tbody>
 								</Table>
@@ -243,9 +279,9 @@ export function RequestPartForm({
 					</div>
 
 					<div className="col-start-3 col-span-1 row-start-3 row-span-1">
-						<span className="">
-							<div className="font-semibold p-2 pl-0">
-								<RegularQuestionCircle className="inline w-5 h-5 fill-cool-black text-purple-200 mr-2"></RegularQuestionCircle>
+						<div className="px-2 text-sm">
+							<div className="font-semibold p-2 pt-0 pl-0">
+								<RegularQuestionCircle className="inline w-4 h-4 fill-cool-black text-purple-200 mr-2"></RegularQuestionCircle>
 								What is next?
 							</div>
 							<p
@@ -256,7 +292,7 @@ export function RequestPartForm({
 							</p>
 
 							<div className="font-semibold p-2 pl-0">
-								<RegularPackage className="inline w-5 h-5 fill-cool-black text-purple-200 mr-2" />
+								<RegularPackage className="inline w-4 h-4 fill-cool-black text-purple-200 mr-2" />
 								Pick up
 							</div>
 							<p
@@ -265,31 +301,12 @@ export function RequestPartForm({
 								Pick up is available at the Design Studio on
 								Campus with your ID.
 							</p>
-						</span>
+						</div>
 					</div>
 
-					<p className="text-sm text-red-500 col-start-3 col-span-1">
-						{error}
-					</p>
-
 					<div className="rounded-sm p-0 w-full col-start-3 col-end-3 row-start-4 row-span-1 h-14">
-						<input
-							className="font-semibold text-cool-black w-full h-full"
-							style={{
-								color: "rgb(48 48 48)",
-								backgroundColor: "hsl(33, 100%, 52.9%)",
-								background:
-									"linear-gradient(45deg, hsl(33, 100%, 52.9%) 0%, hsl(58.2, 100%, 68%) 100%)",
-								marginBottom: "0px"
-							}}
-							disabled={pending || parts.length == 0}
-							type="submit"
-							value={
-								pending
-									? "Contacting our Server..."
-									: "Submit Request"
-							}
-						/>
+						<RequestPartFormSubmit
+							parts={parts}></RequestPartFormSubmit>
 					</div>
 
 					<div className="col-start-1 col-span-2 row-start-4 row-span-1 h-14">
@@ -319,7 +336,7 @@ export function RequestPartForm({
 												f.name.lastIndexOf(".")
 											),
 											Material: "PLA",
-											Color: "White",
+											Color: filaments.at(0)!.color,
 											Quantity: 1
 										};
 									});
@@ -328,6 +345,11 @@ export function RequestPartForm({
 							}}></AddPartButton>
 					</div>
 				</div>
+				{error && (
+					<p className="px-2 text-sm text-red-500 col-start-3 col-span-1">
+						{error}Hello
+					</p>
+				)}
 			</form>
 		</>
 	);

@@ -23,7 +23,7 @@ import Link from "next/link";
 import UserIcon from "./icons/UserIcon";
 import { usePathname } from "next/navigation";
 import HorizontalWrap from "./HorizontalWrap";
-import { authContext } from "../authProvider";
+import { AccountContext } from "../ContextProviders";
 import { CurrencySpan } from "./Spans";
 
 function NavbarLink({ name, path }: { name: string; path: string }) {
@@ -44,7 +44,7 @@ export function AccountDetails({
 	email: String | null;
 }) {
 	const [expanded, setExpanded] = useState<boolean>(false);
-	const accountDetails = useContext(authContext);
+	const accountDetails = useContext(AccountContext);
 
 	return accountDetails.isSingedIn ? (
 		<>
@@ -290,8 +290,8 @@ export function Footer(): JSX.Element {
 					<br />
 					<a
 						className="text-gray-300 my-2 text-xs"
-						href="mailto:pnw3d@pnw.edu">
-						pnw3d@pnw.edu
+						href="mailto:support@pnw3d.com">
+						support@pnw3d.com
 					</a>
 				</div>
 			</HorizontalWrap>

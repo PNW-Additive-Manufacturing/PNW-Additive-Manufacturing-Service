@@ -29,17 +29,18 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
 	if (!isOwner && JWT.permission == AccountPermission.User) {
 		// User does not have permission to access this resource!
-		return new NextResponse(null, { status: 403 });
+		return new NextResponse("Not Authenticated", { status: 403 });
 	}
 
 	const modelPath = getModelPath(model.ownerEmail, parsedData.data.modelId);
 
 	console.log(
-		`Downloading model #${parsedData.data.modelId} by ${model.ownerEmail} from ${modelPath}`
+		`Downloading model ${parsedData.data.modelId} by ${model.ownerEmail} from ${modelPath}`
 	);
 
 	if (!fs.existsSync(modelPath)) {
-		return new NextResponse(null, { status: 404 });
+		// redirect("/404");
+		return new NextResponse("Not Found", { status: 404 });
 	}
 
 	const bufferedData = fs.readFileSync(modelPath);

@@ -44,7 +44,8 @@ export default function DropdownSection({
 					{icon}
 				</div>
 			</div>
-			{isHidden ? <></> : <FocusOnMount>{children}</FocusOnMount>}
+			{/* {isHidden ? <></> : <FocusOnMount>{children}</FocusOnMount>} */}
+			{isHidden ? <></> : children}
 		</>
 	);
 

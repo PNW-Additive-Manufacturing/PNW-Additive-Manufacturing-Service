@@ -3,7 +3,6 @@ import Filament from "../Types/Filament/Filament";
 
 export default function FilamentBlock({ filament }: { filament: Filament }) {
 	return (
-		// <div className="shadow-sm rounded-sm p-3 bg-white outline outline-2 outline-gray-200">
 		<div className="px-1">
 			<div className="flex gap-3 items-center">
 				<div
@@ -20,9 +19,7 @@ export default function FilamentBlock({ filament }: { filament: Filament }) {
 					<p className="text-lg">
 						{filament.material} {filament.color.name}
 					</p>
-					{/* <p className="text-sm">{filament.color.name} | High-strength durability</p> */}
-					<p className="text-sm">High-strength & Durable.</p>
-					{/* <p className="text-sm">{filament.color.name}</p> */}
+					<p className="text-sm">{filament.details}</p>
 				</div>
 			</div>
 		</div>

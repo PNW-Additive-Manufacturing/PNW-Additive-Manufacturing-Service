@@ -124,13 +124,17 @@ export async function requestPart(prevState: string, formData: FormData) {
 
 			for (let i = 0; i < files!.length; i++) {
 				let partQuantity = Number.parseInt(quantity[i]);
-				if (partQuantity < 1) {
-					throw new Error("Quantity must at least be one!");
-				}
+				// if (partQuantity > 80) {
+				// 	throw new Error("Quantity cannot exceed 80");
+				// }
+
+				console.log(color[i]);
 
 				// TODO: Replace separate filament queries with singular.
 				const filamentId =
 					await sql`select id from filament where ColorName=${color[i]} and Material=${material[i]} and InStock=true`;
+
+				console.log(filamentId);
 
 				//if no filament with matching color and material was found,
 				//check if the user specified the 'Other' option in the web page (empty string == other)
@@ -138,6 +142,9 @@ export async function requestPart(prevState: string, formData: FormData) {
 					throw new Error(`No ${color} ${material} in stock`);
 				}
 
+				console.log(filenames[i]);
+
+				// const [modelId] = await sql`insert into model (name, filepath, owneremail) values (${filenames[i]}, ${filenames[i] + ".stl"}, ${email}) returning id`;
 				const modelRow =
 					await sql`insert into model (name, owneremail, filesizeinbytes) values (${filenames[i]}, ${account.email}, ${files[i].size}) returning id`;
 
@@ -146,6 +153,7 @@ export async function requestPart(prevState: string, formData: FormData) {
 				const buffer = Buffer.from(await files[i].arrayBuffer());
 
 				const modelPath = getModelPath(account.email, modelId);
+				console.log(modelPath);
 
 				fs.writeFileSync(modelPath, buffer);
 

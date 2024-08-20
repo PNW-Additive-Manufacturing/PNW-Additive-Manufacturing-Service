@@ -62,12 +62,16 @@ function PartRevokeForm({
 				// keepMounted
 				onClose={() => setShowRevoke(false)}
 				aria-describedby="alert-dialog-slide-description">
-				<div className="p-6">
-					<h2 className="text-2xl font-light mb-2">
-						Submit issues for {part.model.name}?
-					</h2>
-					<br />
-					<form action={revokeFormAction}>
+				<form
+					action={async (payload) => {
+						revokeFormAction(payload);
+						setShowRevoke(false);
+					}}>
+					<div className="py-6 px-9">
+						<h2 className="text-2xl font-light mb-2">
+							Decline {part.model.name} with Issues
+						</h2>
+						<br />
 						<input
 							type="number"
 							name="partId"
@@ -77,28 +81,17 @@ function PartRevokeForm({
 							hidden
 						/>
 
-						<label>DFM Violations</label>
-						<select
-							className="mt-2 border-l-4 border-l-pnw-gold"
-							name="dfm"
-							id="dfm"
-							multiple>
-							<option value="hollow">Confined Hollow</option>
-							<option value="floating">Floating Parts</option>
-							<option value="too_big">Too Large</option>
-						</select>
-
-						<label>Other Comments</label>
+						<label>DFM Violations / Comments</label>
 						<textarea
-							className="w-full mt-2"
+							className="mt-2 w-92"
 							name="reasonForRevoke"
-							placeholder="References to resolve selected issue."
+							placeholder="Too much support, thin edges, and etc."
 							required
 						/>
 						<button className="mb-0">Deny Model</button>
 						<span className="text-red-600">{revokeError}</span>
-					</form>
-				</div>
+					</div>
+				</form>
 			</Dialog>
 		</>
 	);
@@ -259,11 +252,14 @@ export default function PartEditor({
 											className="mr-2"
 											statusColor={selectedStatusColor}
 											defaultValue={part.status}>
-											<option
-												value={PartStatus.Pending}
-												key={PartStatus.Pending}>
-												Pending
-											</option>
+											{part.status !=
+												PartStatus.Denied && (
+												<option
+													value={PartStatus.Pending}
+													key={PartStatus.Pending}>
+													Pending
+												</option>
+											)}
 											{!isPriced(part) && (
 												<option
 													value={PartStatus.Denied}

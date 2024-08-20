@@ -6,6 +6,9 @@ import db from "@/app/api/Database";
 import GenericPrinterIcon from "@/app/components/icons/GenericPrinterIcon";
 import FilamentSpoolIcon from "@/app/components/icons/FilamentSpoolIcon";
 import { AccountPermission } from "@/app/Types/Account/Account";
+import getConfig from "@/app/getConfig";
+
+const envConfig = getConfig();
 
 export default async function Maintainer() {
 	let jwtPayload = await getJwtPayload();
@@ -67,6 +70,9 @@ export default async function Maintainer() {
 								<span>Manage {userCount.count} Accounts</span>
 							</button>
 						</a>
+
+						<div>Saving files to: {envConfig.uploadModelDir}</div>
+
 						{/* <a
 							href="/dashboard/maintainer/printers"
 							className="w-full sm:max-w-sm block">

@@ -1,7 +1,8 @@
 "use server";
 
-import { getTotalCost, RequestWithParts } from "@/app/Types/Request/Request";
-import nodemailer, { TransportOptions } from "nodemailer";
+import "server-only";
+import { RequestWithParts } from "@/app/Types/Request/Request";
+import nodemailer from "nodemailer";
 import DOMPurify from "isomorphic-dompurify";
 import getConfig from "@/app/getConfig";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
@@ -10,33 +11,20 @@ DOMPurify.setConfig({ USE_PROFILES: { html: false } });
 
 const envConfig = getConfig();
 
-let transportOptions: SMTPTransport.Options = {
+const transportOptions: SMTPTransport.Options = {
+	host: envConfig.email.host,
+	port: 587,
 	auth: {
-		user: envConfig.emailCredentials.user,
-		pass: envConfig.emailCredentials.password
+		user: envConfig.email.user,
+		pass: envConfig.email.password
 	}
 };
-
-if (envConfig.environment == "production") {
-	transportOptions = {
-		...transportOptions,
-		host: "smtppro.zoho.com",
-		port: 587
-	};
-} else if (envConfig.environment == "development") {
-	transportOptions = {
-		...transportOptions,
-		host: "smtp.ethereal.email",
-		port: 587
-	};
-}
-
 const transporter = nodemailer.createTransport(transportOptions);
 
 export async function sendEmail(to: string, subject: string, html: string) {
 	try {
 		const sessionInfo = await transporter.sendMail({
-			from: "Additive Manufacturing Service of PNW <noreply@pnw3d.com>",
+			from: `Additive Manufacturing Service of PNW <${envConfig.email.user}>`,
 			to,
 			subject,
 			html

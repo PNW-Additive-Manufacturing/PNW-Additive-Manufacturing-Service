@@ -23,7 +23,7 @@ export default function HiddenInput(
 	var inputRef = useRef<LegacyRef<HTMLInputElement> | undefined>();
 
 	return (
-		<div className={`w-full h-full ${attributes.className}`}>
+		<div className={`inline ${attributes.className} hover:cursor-pointer`}>
 			<input
 				{...{
 					...attributes,
@@ -38,7 +38,7 @@ export default function HiddenInput(
 				}}
 			/>
 			<div
-				className="w-full h-full"
+				className="inline"
 				onClick={(ev) => {
 					ev.preventDefault();
 					(inputRef.current?.valueOf() as HTMLInputElement).click();

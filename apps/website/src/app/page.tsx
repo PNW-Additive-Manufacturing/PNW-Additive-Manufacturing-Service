@@ -2,12 +2,7 @@
 
 import Image from "next/image";
 import HorizontalWrap from "./components/HorizontalWrap";
-import Head from "next/head";
-import GeolocationLookup from "./api/util/FindIP";
-import { NextRequest } from "next/server";
-import { headers } from "next/headers";
 import Gallery from "./components/Gallery";
-import { Metadata, ResolvingMetadata } from "next";
 
 function DiscordServer() {
 	return (
@@ -136,6 +131,20 @@ export default async function Home() {
 										<p className="text-base px-2 lg:text-center w-full font-light mt-2">
 											Design and print a handout for an
 											event.
+										</p>
+									</>,
+									<>
+										<div className="p-2 bg-gray-100 rounded-md shadow-sm mt-4 w-full h-84">
+											<Image
+												src="/assets/lion.jpg"
+												width={760}
+												height={760}
+												alt=""
+												className="w-full h-full bg-black rounded-md"></Image>
+										</div>
+										<p className="text-base px-2 lg:text-center w-full font-light mt-2">
+											A multi-assembly 3D-Printed low-poly
+											lion.
 										</p>
 									</>,
 									<>

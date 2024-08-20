@@ -1,6 +1,6 @@
 "use client";
 
-import { authContext } from "@/app/authProvider";
+import { AccountContext } from "@/app/ContextProviders";
 import FocusOnMount from "@/app/components/FocusOnMount";
 import { GenericUnitInput } from "@/app/components/Inputs";
 import { hasTwoStepAuthentication } from "@/app/Types/Account/Account";
@@ -10,7 +10,7 @@ import { useContext, useRef, useState } from "react";
 import QRCode from "react-qr-code";
 
 export default function TwoFactorSetupForm() {
-	const account = useContext(authContext).account!;
+	const account = useContext(AccountContext).account!;
 
 	const [twoAuthSecret, setTwoAuthSecret] = useState<string | undefined>(
 		undefined

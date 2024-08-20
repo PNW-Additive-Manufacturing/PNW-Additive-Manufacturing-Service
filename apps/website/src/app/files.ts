@@ -1,7 +1,8 @@
-import fs from "fs";
+import "server-only";
 import path from "path";
+import getConfig from "./getConfig";
 
-const uploadDir = path.join(process.cwd(), "uploads", "stl");
+const envConfig = getConfig();
 
 export function getModelPath(accountEmail: string, modelId: string) {
 	if (modelId == undefined) {
@@ -13,7 +14,7 @@ export function getModelPath(accountEmail: string, modelId: string) {
 		);
 	}
 
-	return `${uploadDir}${path.sep}${accountEmail.substring(
+	return `${envConfig.uploadModelDir}${path.sep}${accountEmail.substring(
 		0,
 		accountEmail.indexOf("@")
 	)}${path.sep}${modelId}.stl`;

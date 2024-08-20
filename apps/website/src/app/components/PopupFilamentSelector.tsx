@@ -1,17 +1,21 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { Input } from "../components/Input";
+import { Input } from "./Input";
 import Filament from "../Types/Filament/Filament";
-import { Swatch } from "../components/Swatch";
+import { Swatch } from "./Swatch";
 import { useDebounce } from "react-use";
-import { Label } from "../components/Inputs";
-import FilamentBlock from "./FilamentBlock";
+import { Label } from "./Inputs";
+import FilamentBlock from "../experiments/FilamentBlock";
 
 export default function PopupFilamentSelector({
-	filaments
+	filaments,
+	onChange,
+	defaultFilament
 }: {
 	filaments: Filament[];
+	defaultFilament?: { material?: string; colorName?: string };
+	onChange?: (chosenFilament: Filament) => void;
 }) {
 	const materials: string[] = [];
 	for (let filament of filaments) {
@@ -22,11 +26,16 @@ export default function PopupFilamentSelector({
 		if (!isExisting) materials.push(filament.material);
 	}
 
+	const isAnyAvailable = materials.length > 0;
+
 	const { register, watch, trigger } = useForm<{
 		material: string;
 		colorName: string;
 	}>({
-		defaultValues: {}
+		defaultValues: {
+			colorName: defaultFilament?.colorName,
+			material: defaultFilament?.material
+		}
 	});
 
 	const selectedMaterial = watch("material");
@@ -40,7 +49,11 @@ export default function PopupFilamentSelector({
 			filament.color.name == selectedColorName
 	);
 
-	return (
+	if (selectedFilament && onChange) {
+		onChange(selectedFilament);
+	}
+
+	return isAnyAvailable ? (
 		<>
 			<div className="full">
 				<div className="lg:flex gap-6 w-full">
@@ -58,7 +71,7 @@ export default function PopupFilamentSelector({
 					<div className="w-full">
 						<label>Colors</label>
 						<select
-							{...register("colorName", {})}
+							{...register("colorName")}
 							defaultValue={"No Selection"}>
 							<option>No Selection</option>
 							{filamentsMatchingMaterial.map((filament) => (
@@ -77,5 +90,7 @@ export default function PopupFilamentSelector({
 				)}
 			</div>
 		</>
+	) : (
+		<p>Filament is not available at this time.</p>
 	);
 }

@@ -1,11 +1,13 @@
 import AMSIcon from "./AMSIcon";
 
-export default function Error({
+export default function ErrorPrompt({
 	code,
-	details
+	details,
+	children
 }: {
-	code: number;
+	code: string;
 	details: string;
+	children?: React.ReactNode;
 }) {
 	return (
 		<>
@@ -17,6 +19,12 @@ export default function Error({
 			</h1>
 			<br />
 			<p className="text-center">{details}</p>
+			{children && (
+				<>
+					<br />
+					{children}
+				</>
+			)}
 		</>
 	);
 }

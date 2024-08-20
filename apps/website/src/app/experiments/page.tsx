@@ -4,7 +4,7 @@ import GenericFormServerAction from "../components/GenericFormServerAction";
 import HorizontalWrap from "../components/HorizontalWrap";
 import FilamentServe from "../Types/Filament/FilamentServe";
 import FilamentBlock from "./FilamentBlock";
-import PopupFilamentSelector from "./PopupFilamentSelector";
+import PopupFilamentSelector from "../components/PopupFilamentSelector";
 import SendTestEmailForm from "./SendTestEmailForm";
 
 export default async function Page() {

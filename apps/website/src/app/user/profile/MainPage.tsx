@@ -5,7 +5,7 @@ import GenericFormServerAction from "@/app/components/GenericFormServerAction";
 import { Input } from "@/app/components/Input";
 import { ChangePasswordForm } from "./ChangePasswordForm";
 import { useContext, useState } from "react";
-import { authContext } from "@/app/authProvider";
+import { AccountContext } from "@/app/ContextProviders";
 import { redirect } from "next/dist/server/api-utils";
 import { hasTwoStepAuthentication } from "@/app/Types/Account/Account";
 import Image from "next/image";
@@ -21,7 +21,7 @@ export default function EditPage({
 	//boolean that displays a "change successful" message if true
 	let [submitSuccess, setSubmitSuccess] = useState(false);
 
-	const account = useContext(authContext).account!;
+	const account = useContext(AccountContext).account!;
 
 	let scrollTopAfterSuccess = () => {
 		//smooth scroll to top of screen where Change Success message appears

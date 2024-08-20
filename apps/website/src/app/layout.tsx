@@ -9,7 +9,7 @@ import {
 	Navbar
 } from "@/app/components/Navigation";
 import { AccountPermission } from "./Types/Account/Account";
-import AuthProvider from "./authProvider";
+import { AccountProvider, ThemeProvider } from "./ContextProviders";
 import AccountServe from "./Types/Account/AccountServe";
 import HorizontalWrap from "./components/HorizontalWrap";
 import { headers } from "next/headers";
@@ -72,68 +72,72 @@ export default async function RootLayout({
 			</head>
 
 			<body className={inter.className} style={{ height: "100vh" }}>
-				<AuthProvider
+				<AccountProvider
 					account={
 						email == undefined
 							? undefined
 							: await AccountServe.queryByEmail(email)
 					}>
-					<Navbar
-						links={(() => {
-							if (permission == null) {
-								return [];
-							}
-							let elements: { name: string; path: string }[] = [];
-							elements.push({
-								name: "Your Orders",
-								path: "/dashboard/user"
-							});
-							if (
-								permission == AccountPermission.Maintainer ||
-								permission == AccountPermission.Admin
-							) {
+					<ThemeProvider>
+						<Navbar
+							links={(() => {
+								if (permission == null) {
+									return [];
+								}
+								let elements: { name: string; path: string }[] =
+									[];
 								elements.push({
-									name: "Management Panel",
-									path: "/dashboard/maintainer"
+									name: "Your Orders",
+									path: "/dashboard/user"
 								});
-							}
-							return elements;
-						})()}
-						specialElements={(() => {
-							if (email)
-								email = email.substring(
-									0,
-									email.lastIndexOf("@")
-								) as string;
-							else email = "Account";
+								if (
+									permission ==
+										AccountPermission.Maintainer ||
+									permission == AccountPermission.Admin
+								) {
+									elements.push({
+										name: "Management Panel",
+										path: "/dashboard/maintainer"
+									});
+								}
+								return elements;
+							})()}
+							specialElements={(() => {
+								if (email)
+									email = email.substring(
+										0,
+										email.lastIndexOf("@")
+									) as string;
+								else email = "Account";
 
-							if (permission)
-								return (
-									<>
-										{" "}
-										<ColorfulRequestPrintButton />{" "}
+								if (permission)
+									return (
+										<>
+											{" "}
+											<ColorfulRequestPrintButton />{" "}
+											<AccountDetails
+												permission={permission}
+												email={email}
+											/>{" "}
+										</>
+									);
+								else
+									return (
 										<AccountDetails
 											permission={permission}
 											email={email}
-										/>{" "}
-									</>
-								);
-							else
-								return (
-									<AccountDetails
-										permission={permission}
-										email={email}
-									/>
-								);
-						})()}
-					/>
-					<main
-						className="w-full lg:mt-4 px-0 h-fit"
-						style={{ minHeight: "95vh" }}>
-						{children}
-					</main>
-					<Footer />
-				</AuthProvider>
+										/>
+									);
+							})()}
+						/>
+						<main
+							className="w-full lg:mt-4 px-0 h-fit"
+							style={{ minHeight: "95vh" }}>
+							{children}
+						</main>
+						<Footer />
+					</ThemeProvider>
+				</AccountProvider>
 			</body>
 		</html>
 	);

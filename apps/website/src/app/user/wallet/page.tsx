@@ -1,7 +1,7 @@
 "use server";
 
 import { getJwtPayload } from "@/app/api/util/JwtHelper";
-import { authContext } from "@/app/authProvider";
+import { AccountContext } from "@/app/ContextProviders";
 import HorizontalWrap from "@/app/components/HorizontalWrap";
 import AccountServe from "@/app/Types/Account/AccountServe";
 import { WalletTransactionStatus } from "@/app/Types/Account/Wallet";

@@ -1,3 +1,5 @@
+import "server-only";
+import path from "path";
 import { z } from "zod";
 
 function errorMissingEnvironmentVariable(variableName: string) {
@@ -14,6 +16,9 @@ const environmentSchema = z.literal("development").or(z.literal("production"));
 
 export default function getConfig() {
 	const hostURL = process.env["COOLIFY_FQDN"] ?? "http://localhost:3000";
+	const uploadModelDir =
+		process.env["MODEL_UPLOAD_DIR"] ??
+		path.join(process.cwd(), "uploads", "stl");
 	const dbConnectionString = getProcessEnvironmentVariable("DB_CONNECTION");
 	const jwtSecret = getProcessEnvironmentVariable("JWT_SECRET");
 	const stripeAPIKey = getProcessEnvironmentVariable("STRIPE_API_KEY");
@@ -28,6 +33,7 @@ export default function getConfig() {
 
 	const emailUser = getProcessEnvironmentVariable("EMAIL_USER");
 	const emailPassword = getProcessEnvironmentVariable("EMAIL_USER_PASSWORD");
+	const emailHost = getProcessEnvironmentVariable("EMAIL_HOST");
 
 	return {
 		dbConnectionString,
@@ -35,10 +41,12 @@ export default function getConfig() {
 		stripeAPIKey,
 		stripeHookSecret,
 		hostURL,
+		uploadModelDir,
 		environment: parsedEnvironment.data,
-		emailCredentials: {
+		email: {
 			user: emailUser,
-			password: emailPassword
+			password: emailPassword,
+			host: emailHost
 		}
 	};
 }
