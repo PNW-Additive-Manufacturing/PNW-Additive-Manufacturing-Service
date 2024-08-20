@@ -31,8 +31,9 @@ export async function generateMetadata(
 		description:
 			"Created by the PNW Additive Manufacturing Club, this service enables PNW students, and faculty members to explore the world of 3D Printing.",
 		icons: ["/assets/am_logo.png"],
-		applicationName: "PNW Additive Manufacturing Service",
+		applicationName: "Purdue Northwest Additive Manufacturing Service",
 		category: "3D Printing",
+		themeColor: "#b1810b",
 		openGraph: {
 			type: "website",
 			siteName: "PNW Additive Manufacturing Service",
