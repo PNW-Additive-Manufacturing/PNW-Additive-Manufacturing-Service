@@ -347,7 +347,7 @@ export function RequestPartForm({
 				</div>
 				{error && (
 					<p className="px-2 text-sm text-red-500 col-start-3 col-span-1">
-						{error}Hello
+						{error}
 					</p>
 				)}
 			</form>

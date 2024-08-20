@@ -147,6 +147,10 @@ export async function requestPart(prevState: string, formData: FormData) {
 
 				const modelPath = getModelPath(account.email, modelId);
 
+				fs.mkdirSync(path.dirname(modelPath), {
+					recursive: true
+				});
+
 				fs.writeFileSync(modelPath, buffer);
 
 				const partId = await sql`
