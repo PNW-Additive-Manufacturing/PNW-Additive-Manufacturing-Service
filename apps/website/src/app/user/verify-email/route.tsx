@@ -16,13 +16,14 @@ export async function GET(request: NextRequest) {
 	const JWT = (await getJwtPayload())!;
 
 	// Validate verification token.
-	const verificationEntry =
-		await AccountServe.queryEmailVerification(verificationToken);
+	const verificationEntry = await AccountServe.queryEmailVerification(
+		verificationToken
+	);
 	if (verificationEntry == undefined) {
 		if (!JWT.isemailverified) {
 			// Email is not verified but doesn't have a verification entry!
 			return NextResponse.redirect(
-				new URL("/user/not-verified", request.url),
+				new URL("/user/not-verified", request.url)
 			);
 		}
 		return NextResponse.redirect(new URL("/not-found", request.url));
@@ -32,14 +33,14 @@ export async function GET(request: NextRequest) {
 		console.error(
 			"Verification code should not be used!",
 			JWT.email,
-			verificationEntry,
+			verificationEntry
 		);
 		return NextResponse.redirect(new URL("/not-found", request.url));
 	} else if (IsVerificationCodeExpired(verificationEntry)) {
 		// TODO: Send to awaiting verification page!
 		console.error("Code is expired!");
 		return NextResponse.redirect(
-			new URL("/user/not-verified", request.url),
+			new URL("/user/not-verified", request.url)
 		);
 	}
 
@@ -60,7 +61,7 @@ export async function GET(request: NextRequest) {
 		linkedAccount.permission,
 		linkedAccount.firstName,
 		linkedAccount.lastName,
-		true,
+		true
 	);
 
 	return NextResponse.redirect(new URL("/user/email-verified", request.url));

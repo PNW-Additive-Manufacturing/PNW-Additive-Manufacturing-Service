@@ -92,7 +92,7 @@ export default function Page() {
 										hour: "2-digit"
 									}
 								)}
-								.
+								. Please allow up to 5 minutes for an email.
 							</p>
 						</>
 					)}

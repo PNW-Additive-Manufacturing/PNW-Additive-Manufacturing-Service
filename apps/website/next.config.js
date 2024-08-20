@@ -20,9 +20,6 @@ const nextConfig = {
 
   trailingSlash: true,
 
-  env: {
-    API_ROOT: 'http:/localhost:5126',
-  },
   images: {
     remotePatterns: [
       {
