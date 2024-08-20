@@ -26,7 +26,7 @@ export async function generateMetadata(
 		metadataBase: new URL(envConfig.hostURL),
 		title: {
 			template: "%s | AMS of PNW",
-			default: "PNW Additive Manufacturing Service"
+			default: "Additive Manufacturing Service"
 		},
 		description:
 			"Created by the PNW Additive Manufacturing Club, this service enables PNW students, and faculty members to explore the world of 3D Printing.",
@@ -35,7 +35,7 @@ export async function generateMetadata(
 		category: "3D Printing",
 		openGraph: {
 			type: "website",
-			siteName: "PNW Additive Manufacturing Service",
+			siteName: "Purdue Northwest Additive Manufacturing Service",
 			images: [`${envConfig.hostURL}/assets/am_banner.png`]
 		}
 	});
