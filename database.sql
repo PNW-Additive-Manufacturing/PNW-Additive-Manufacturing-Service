@@ -18,6 +18,32 @@ CREATE TABLE Account (
   )
 );
 
+DROP TYPE IF EXISTS WalletTransactionPaymentMethod CASCADE;
+CREATE TYPE WalletTransactionPaymentMethod AS ENUM ('refund', 'gift', 'stripe', 'none');
+
+DROP TYPE IF EXISTS PaymentStatus CASCADE;
+CREATE TYPE PaymentStatus AS ENUM ('pending', 'paid', 'cancelled');
+
+DROP TABLE IF EXISTS WalletTransaction CASCADE;
+CREATE TABLE WalletTransaction (
+  Id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  AccountEmail VARCHAR(120) REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE,
+  AmountInCents BIGINT NOT NULL,
+  TaxInCents BIGINT NOT NULL,
+  FeesInCents BIGINT NOT NULL,
+  Status PaymentStatus NOT NULL DEFAULT 'pending',
+  PaidAt TIMESTAMP WITH TIME ZONE DEFAULT NULL,
+  PaymentMethod WalletTransactionPaymentMethod NOT NULL,
+  StripeCheckoutID VARCHAR,
+--   RefundedPartId SMALLSERIAL REFERENCES Request(Id) ON DELETE CASCADE ON UPDATE CASCADE, 
+  CONSTRAINT PAID_CHK CHECK (
+  	(Status = 'paid' AND PaidAt IS NOT NULL AND PaymentMethod='stripe' AND StripeCheckoutID IS NOT NULL) OR
+  	(Status = 'paid' AND PaidAt IS NOT NULL AND PaymentMethod='none') OR
+	-- (Status = 'paid' AND PaidAt IS NOT NULL AND PaymentMethod='refund' AND RefundedPartId IS NOT NULL) OR
+    (Status = 'pending')
+  )
+);
+
 DROP TABLE IF EXISTS AccountVerificationCode CASCADE;
 CREATE TABLE AccountVerificationCode (
   AccountEmail varchar(120) REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -70,20 +96,6 @@ CREATE TABLE Request (
   )
 );
 
-CREATE OR REPLACE FUNCTION prevent_price_change()
-RETURNS TRIGGER AS $$
-BEGIN
-    -- Check if the referenced Request's TotalPriceInCents is not null
-    IF (SELECT TotalPriceInCents FROM Request WHERE Id = NEW.RequestId) IS NOT NULL THEN
-        RAISE EXCEPTION 'Cannot modify part cost once itemized request is quoted!';
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-CREATE TRIGGER prevent_price_change_trigger
-BEFORE UPDATE OF PriceCents ON Part
-FOR EACH ROW
-EXECUTE FUNCTION prevent_price_change();
 
 DROP TABLE IF EXISTS Model CASCADE;
 CREATE TABLE Model (
@@ -122,28 +134,17 @@ CREATE TABLE Part (
   )
 );
 
-DROP TYPE IF EXISTS WalletTransactionPaymentMethod CASCADE;
-CREATE TYPE WalletTransactionPaymentMethod AS ENUM ('refund', 'gift', 'stripe', 'none');
-
-DROP TYPE IF EXISTS PaymentStatus CASCADE;
-CREATE TYPE PaymentStatus AS ENUM ('pending', 'paid', 'cancelled');
-
-DROP TABLE IF EXISTS WalletTransaction CASCADE;
-CREATE TABLE WalletTransaction (
-  Id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  AccountEmail VARCHAR(120) REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE,
-  AmountInCents BIGINT NOT NULL,
-  TaxInCents BIGINT NOT NULL,
-  FeesInCents BIGINT NOT NULL,
-  Status PaymentStatus NOT NULL DEFAULT 'pending',
-  PaidAt TIMESTAMP WITH TIME ZONE DEFAULT NULL,
-  PaymentMethod WalletTransactionPaymentMethod NOT NULL,
-  StripeCheckoutID VARCHAR,
---   RefundedPartId SMALLSERIAL REFERENCES Request(Id) ON DELETE CASCADE ON UPDATE CASCADE, 
-  CONSTRAINT PAID_CHK CHECK (
-  	(Status = 'paid' AND PaidAt IS NOT NULL AND PaymentMethod='stripe' AND StripeCheckoutID IS NOT NULL) OR
-  	(Status = 'paid' AND PaidAt IS NOT NULL AND PaymentMethod='none') OR
-	-- (Status = 'paid' AND PaidAt IS NOT NULL AND PaymentMethod='refund' AND RefundedPartId IS NOT NULL) OR
-    (Status = 'pending')
-  )
-);
+CREATE OR REPLACE FUNCTION prevent_price_change()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Check if the referenced Request's TotalPriceInCents is not null
+    IF (SELECT TotalPriceInCents FROM Request WHERE Id = NEW.RequestId) IS NOT NULL THEN
+        RAISE EXCEPTION 'Cannot modify part cost once itemized request is quoted!';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER prevent_price_change_trigger
+BEFORE UPDATE OF PriceCents ON Part
+FOR EACH ROW
+EXECUTE FUNCTION prevent_price_change();

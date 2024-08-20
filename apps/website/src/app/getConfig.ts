@@ -13,6 +13,7 @@ function getProcessEnvironmentVariable(variableName: string): string {
 const environmentSchema = z.literal("development").or(z.literal("production"));
 
 export default function getConfig() {
+	const hostURL = process.env["COOLIFY_FQDN"] ?? "http://localhost:3000";
 	const dbConnectionString = getProcessEnvironmentVariable("DB_CONNECTION");
 	const jwtSecret = getProcessEnvironmentVariable("JWT_SECRET");
 	const stripeAPIKey = getProcessEnvironmentVariable("STRIPE_API_KEY");
@@ -33,6 +34,7 @@ export default function getConfig() {
 		jwtSecret,
 		stripeAPIKey,
 		stripeHookSecret,
+		hostURL,
 		environment: parsedEnvironment.data,
 		emailCredentials: {
 			user: emailUser,

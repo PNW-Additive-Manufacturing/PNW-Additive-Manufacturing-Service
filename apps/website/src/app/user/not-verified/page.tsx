@@ -70,14 +70,28 @@ export default function Page() {
 						<p className="text-red-500">{data.errorMessage}</p>
 					)}
 					{data.isComplete && data.errorMessage == undefined && (
-						<p className="text-sm mt-2">
-							Validation email is valid until{" "}
-							{data.data!.validUntil.toLocaleDateString("en-us", {
-								weekday: "long",
-								hour: "2-digit"
-							})}
-							.
-						</p>
+						<>
+							<p className="text-sm mt-2">
+								Validation email is valid until{" "}
+								{data.data!.validUntil.toLocaleDateString(
+									"en-us",
+									{
+										weekday: "long",
+										hour: "2-digit"
+									}
+								)}
+								.
+							</p>
+							<p>
+								Didn't receive it? Check your spam or email{" "}
+								<a
+									className="underline"
+									href="mailto:support@pnw3d.com">
+									support@pnw3d.com
+								</a>{" "}
+								for support.
+							</p>
+						</>
 					)}
 				</form>
 			</div>

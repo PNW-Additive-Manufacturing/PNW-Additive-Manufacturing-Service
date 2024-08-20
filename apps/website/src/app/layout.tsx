@@ -12,24 +12,31 @@ import { AccountPermission } from "./Types/Account/Account";
 import AuthProvider from "./authProvider";
 import AccountServe from "./Types/Account/AccountServe";
 import HorizontalWrap from "./components/HorizontalWrap";
+import { headers } from "next/headers";
+import getConfig from "./getConfig";
 
 const inter = Inter({ subsets: ["latin"] });
+const envConfig = getConfig();
 
 export async function generateMetadata(
 	properties: any,
 	parent: ResolvingMetadata
 ): Promise<Metadata> {
 	return Promise.resolve({
+		metadataBase: new URL(envConfig.hostURL),
 		title: {
 			template: "%s | AMS of PNW",
-			default: "Purdue Northwest Additive Manufacturing Service"
+			default: "PNW Additive Manufacturing Service"
 		},
 		description:
 			"Created by the PNW Additive Manufacturing Club, this service enables PNW students, and faculty members to explore the world of 3D Printing.",
 		icons: ["/assets/am_logo.png"],
+		applicationName: "PNW Additive Manufacturing Service",
+		category: "3D Printing",
 		openGraph: {
 			type: "website",
-			images: ["/assets/am_banner.png"]
+			siteName: "PNW Additive Manufacturing Service",
+			images: [`${envConfig.hostURL}/assets/am_banner.png`]
 		}
 	});
 }
@@ -50,10 +57,6 @@ export default async function RootLayout({
 		email = null;
 	}
 
-	// TEMP
-	const account =
-		email == undefined ? undefined : await AccountServe.queryByEmail(email);
-
 	return (
 		<html lang="en" className="h-full">
 			<head>
@@ -68,7 +71,12 @@ export default async function RootLayout({
 			</head>
 
 			<body className={inter.className} style={{ height: "100vh" }}>
-				<AuthProvider account={account}>
+				<AuthProvider
+					account={
+						email == undefined
+							? undefined
+							: await AccountServe.queryByEmail(email)
+					}>
 					<Navbar
 						links={(() => {
 							if (permission == null) {

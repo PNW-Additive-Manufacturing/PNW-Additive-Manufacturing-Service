@@ -35,6 +35,7 @@ import { number, z } from "zod";
 import AccountServe from "@/app/Types/Account/AccountServe";
 import { sendEmail, verifyEmailTemplate } from "../util/Mail";
 import { WalletTransactionPaymentMethod } from "@/app/Types/Account/Wallet";
+import getConfig from "@/app/getConfig";
 
 /*
   Server Actions for Account-related server stuff
@@ -189,6 +190,8 @@ export async function editName(
 	return "";
 }
 
+const envConfig = getConfig();
+
 export async function resendVerificationLink(
 	prevState: ActionResponse,
 	formData: FormData
@@ -208,7 +211,7 @@ export async function resendVerificationLink(
 				JWTPayload.email,
 				"Confirm your Email",
 				await verifyEmailTemplate(
-					`http://localhost:3000/user/verify-email/?token=${verificationEntry.code}`
+					`${envConfig.hostURL}/user/verify-email/?token=${verificationEntry.code}`
 				)
 			)
 		);
