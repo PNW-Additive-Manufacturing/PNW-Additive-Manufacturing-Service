@@ -39,6 +39,7 @@ export default function Login() {
 							type="text"
 							id="email"
 							name="email"
+							required={true}
 							placeholder="Enter your PNW Email"
 						/>
 						<Input
@@ -46,6 +47,7 @@ export default function Login() {
 							type="password"
 							id="password"
 							name="password"
+							required={true}
 							placeholder="Enter your Password"
 						/>
 						<SubmitButton />

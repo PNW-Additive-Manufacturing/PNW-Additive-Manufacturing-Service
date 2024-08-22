@@ -13,30 +13,27 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { useContext, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
+import { Alert } from "@mui/material";
+import AMSIcon from "@/app/components/AMSIcon";
 
-function EmailSubmitButton({ email }: { email: string }) {
+function EmailSubmitButton() {
 	const status = useFormStatus();
-	const [prevPending, setPrevPending] = useState(status.pending);
 	const [showCompleted, setShowCompleted] = useState(false);
-
-	// Hacky way to determine if an action has been "completed" not just succeeded.
-	// if (status.pending != prevPending && prevPending == true)
-	// 	setShowCompleted(true);
-	if (prevPending != status.pending) setPrevPending(status.pending);
 
 	return (
 		<button
-			className={`w-full flex gap-2 m-0 text-base text-left ${
+			className={`w-fit flex gap-2 m-0 ${
 				showCompleted && "bg-green-600"
 			}`}
 			disabled={status.pending || showCompleted}>
 			<div className="flex gap-1">
-				{showCompleted ? "Sent to Inbox" : `Send Verification to`}
-				<div className="first-letter:uppercase">{email}</div>
+				{showCompleted
+					? "Sent to Inbox"
+					: status.pending
+					? "Sending Email"
+					: "Send Email"}
 			</div>
-			{status.pending && (
-				<FormLoadingSpinner className="mr-2 fill-white" />
-			)}
+			{status.pending && <FormLoadingSpinner className="fill-white" />}
 		</button>
 	);
 }
@@ -58,21 +55,24 @@ export default function Page() {
 
 	return (
 		<HorizontalWrap>
-			<div className="w-full lg:mx-auto lg:w-fit">
-				<h1 className="text-3xl font-light mt-8">Validate PNW Email</h1>
-				<h2 className="text-base font-normal text-gray-700 mt-4">
+			<div className="mx-auto w-fit">
+				<AMSIcon />
+				<h1 className="text-3xl mt-8">Validate PNW Email</h1>
+				<p className="mt-4">
 					You must confirm your student or faculty email at PNW to use
 					this service.
-				</h2>
-				<h3 className="text-base font-normal text-gray-700">
-					Email{" "}
-					<a className="underline" href="mailto:support@pnw3d.com">
-						support@pnw3d.com
-					</a>{" "}
-					for support if required.
-				</h3>
-				<form action={formAction} className="mt-8">
-					<EmailSubmitButton email={accountScope.account!.email} />
+				</p>
+
+				<form action={formAction} className="mt-6">
+					{data.isComplete ? (
+						<button
+							disabled={true}
+							className="w-fit mb-0 bg-pnw-gold">
+							Delivered
+						</button>
+					) : (
+						<EmailSubmitButton />
+					)}
 					{data.isComplete && data.errorMessage && (
 						<>
 							<p className="text-red-500 mt-2">
@@ -82,19 +82,10 @@ export default function Page() {
 						</>
 					)}
 					{data.isComplete && data.errorMessage == undefined && (
-						<>
-							<p>
-								Validation email is valid until{" "}
-								{data.data!.validUntil.toLocaleDateString(
-									"en-us",
-									{
-										weekday: "long",
-										hour: "2-digit"
-									}
-								)}
-								. Please allow up to 5 minutes for an email.
-							</p>
-						</>
+						<p className="mt-2">
+							Please wait, it may take 1-3 minutes for PNW to
+							process the email.
+						</p>
 					)}
 				</form>
 			</div>

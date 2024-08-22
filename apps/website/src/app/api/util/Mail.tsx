@@ -55,7 +55,7 @@ export async function emailTemplateDearUser(
 	content: string
 ) {
 	return emailTemplate(`
-		${`<p style="font-family: inherit; color: rgb(64, 64, 64);">
+		${`<p style="font-family: inherit; color: rgb(64, 64, 64); font-size: medium;">
 			Dear ${DOMPurify.sanitize(firstName)} ${DOMPurify.sanitize(lastName)},
 		</p>`}
 		${content}`);
@@ -63,7 +63,7 @@ export async function emailTemplateDearUser(
 
 export async function verifyEmailTemplate(verifyUrl: string) {
 	return emailTemplate(`
-		<p style="font-family: inherit; color: rgb(64, 64, 64);">
+		<p style="font-family: inherit; color: rgb(64, 64, 64); font-size: medium;">
 			To complete your registration, please verify your email address by clicking the button below.
 		</p>
 		<a href=${verifyUrl} target="_blank" style="font-family: inherit; text-decoration:none;">
@@ -77,7 +77,7 @@ export async function requestReceivedHTML(request: RequestWithParts) {
 		request.firstName,
 		request.lastName,
 		`
-		<p style="font-family: inherit; color: rgb(64, 64, 64);">
+		<p style="font-family: inherit; color: rgb(64, 64, 64); font-size: medium;">
 			Thank you for reaching out to us with your request for
 			<span style="text-decoration: underline;">${DOMPurify.sanitize(
 				request.name
@@ -92,13 +92,11 @@ export async function requestReceivedHTML(request: RequestWithParts) {
 }
 
 export async function requestQuotedHTML(request: RequestWithParts) {
-	// const formattedCost = getTotalCost(request).totalCost.toFixed(2);
-
 	return emailTemplateDearUser(
 		request.firstName,
 		request.lastName,
 		`
-		<p style="font-family: inherit; color: rgb(64, 64, 64);">
+		<p style="font-family: inherit; color: rgb(64, 64, 64); font-size: medium;">
 			We are pleased to inform you that your request for <span style="text-decoration: underline;">${DOMPurify.sanitize(
 				request.name
 			)}</span> has been approved and quoted.
