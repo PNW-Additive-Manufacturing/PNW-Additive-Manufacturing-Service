@@ -66,9 +66,7 @@ export default function ModelViewer({
 			if (modelFile != undefined) {
 				modelArrayBuffer = await modelFile.arrayBuffer();
 			} else if (modelURL != undefined) {
-				console.log(modelURL);
 				const request = await fetch(modelURL, { cache: "force-cache" });
-				// const request = await fetch(modelURL);
 
 				if (!request.ok) {
 					console.error("Request failed!", request.status);

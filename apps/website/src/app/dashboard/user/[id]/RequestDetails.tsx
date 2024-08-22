@@ -15,6 +15,7 @@ import {
 	PartWithModel
 } from "@/app/Types/Part/Part";
 import Request, {
+	getLastRefundDate,
 	getRequestStatus,
 	getRequestStatusColor,
 	hasQuote,
@@ -44,6 +45,7 @@ import FilamentBlock from "@/app/experiments/FilamentBlock";
 import { formateDate } from "@/app/api/util/Constants";
 import Timeline from "@/app/components/Timeline";
 import HiddenInput from "@/app/components/HiddenInput";
+import { RequestOverview } from "../../../components/RequestOverview";
 
 export default function RequestDetails({
 	request
@@ -81,7 +83,7 @@ export default function RequestDetails({
 				<div className="w-full">
 					<h1 className="text-4xl font-thin">{request.name}</h1>
 
-					<p className="max-lg:block mt-2">
+					<p className="max-lg:block mt-2 max-lg:mb-6">
 						You placed this request on{" "}
 						{request.submitTime.toLocaleDateString("en-us", {
 							weekday: "long",
@@ -94,14 +96,14 @@ export default function RequestDetails({
 				<div className="items-end flex w-full">
 					<div className="flex w-full gap-2 lg:justify-end max-lg:justify-between">
 						<Link href="/dashboard/user">
-							<button className="outline outline-1 outline-gray-300 bg-white text-black fill-black flex flex-row gap-2 justify-end items-center px-3 py-2 text-sm">
+							<button className="mb-0 outline outline-1 outline-gray-300 bg-white text-black fill-black flex flex-row gap-2 justify-end items-center px-3 py-2 text-sm">
 								<RegularExit className="w-auto h-6 fill-inherit"></RegularExit>
 								Go Back
 							</button>
 						</Link>
 						<div className="relative">
 							<button
-								className={`px-3 py-2 mb-2 text-sm outline outline-1 outline-gray-300 bg-white text-black fill-black hover:fill-white`}
+								className={`mb-0 px-3 py-2 text-sm outline outline-1 outline-gray-300 bg-white text-black fill-black hover:fill-white`}
 								onClick={() => setShowActions(!showActions)}>
 								Actions
 								<RegularCog
@@ -112,14 +114,14 @@ export default function RequestDetails({
 							<div
 								className={`${
 									showActions ? "" : "hidden"
-								} absolute w-fit h-fit bg-white right-0 py-2 px-2 rounded-md flex flex-col items-end z-10 gap-1 outline outline-1 outline-gray-300`}>
+								} mt-2 absolute w-fit h-fit bg-white right-0 py-2 px-2 rounded-md flex flex-col items-end z-10 gap-1 outline outline-1 outline-gray-300`}>
 								{/* <button
 									className="px-3 py-2 text-sm mb-0 w-full bg-transparent text-black hover:text-black rounded-none hover:bg-transparent hover:underline"
 									onClick={() => print()}>
 									Download PDF
 									<RegularFiles className="ml-2 w-6 h-6 inline-block fill-black"></RegularFiles>
 								</button> */}
-								<button
+								{/* <button
 									type="submit"
 									className="bg-transparent px-3 py-2 text-sm mb-0 w-full text-black hover:text-black hover:fill-black rounded-none hover:bg-transparent"
 									disabled={
@@ -128,7 +130,7 @@ export default function RequestDetails({
 									}>
 									Return or Replace
 									<RegularBriefcase className="ml-2 w-6 h-6 inline-block"></RegularBriefcase>
-								</button>
+								</button> */}
 								<form action={cancelFormAction}>
 									<input
 										type="number"
@@ -157,7 +159,7 @@ export default function RequestDetails({
 				</div>
 			</div>
 
-			<hr className="mb-4 lg:my-4" />
+			<hr className="my-4 lg:my-4" />
 
 			<div className="lg:flex gap-8">
 				<div className="lg:grow">
@@ -170,43 +172,29 @@ export default function RequestDetails({
 						</div>
 					</div>
 					<div className="flex flex-col gap-6">
-						{/* {isPaid(request) && (
-							<>
-								<div
-									className={`w-full h-1 bg-${getRequestStatusColor(
-										request
-									)}`}></div>
-								<div className="shadow-md rounded-b-md p-4 lg:p-6 bg-white mb-4 flex items-center">
-									<div className="text-4xl font-light mr-4">
-										%{calculatePercentagePrinted(request)}
-									</div>
-									<div>
-										{isAllComplete(request.parts) ? (
-											<>Completed</>
-										) : (
-											<>
-												<p className="font-bold">
-													Printing in Progress
-												</p>
-												Estimated completion in 1-3
-												business days.
-											</>
-										)}
-									</div>
-								</div>
-							</>
-						)} */}
+						{isAllComplete(request.parts) &&
+							!request.isFulfilled && (
+								<RequestOverview
+									title="Pickup at the PNW Design Studio"
+									description="See the operating hours of the AMS."
+								/>
+							)}
+						{request.isFulfilled && (
+							<RequestOverview
+								title="Request Fulfilled"
+								description={`Request was fulfilled on ${formateDate(
+									request.fulfilledAt!
+								)}.`}
+							/>
+						)}
 						{request.parts.map((part, index) => (
 							<PartDetails
 								part={part}
 								index={index}></PartDetails>
-							// <div className="border-2 border-blue-500 p-2 rounded-md">
-							// </div>
 						))}
 					</div>
 				</div>
 				<div className="lg:w-92">
-					{/* <div className="lg:w-1/4 h-fit max-lg:mt-4"> */}
 					<div className="py-2 pl-1 w-full">Request Overview</div>
 
 					<div className="shadow-sm p-4 lg:p-6 rounded-sm bg-white outline outline-2 outline-gray-200">
@@ -340,32 +328,16 @@ export default function RequestDetails({
 	);
 }
 
-function UtilitySphere({
-	radius,
-	position,
-	color
-}: {
-	radius: number;
-	position?: Vector3;
-	color?: Color;
-}) {
-	position = position ?? new Vector3(0, 0, 0);
-	color = color ?? new Color("rgb(255, 0, 0)");
-
-	return (
-		<mesh position={position}>
-			<sphereGeometry args={[radius]}></sphereGeometry>
-			<meshStandardMaterial color={color}></meshStandardMaterial>
-		</mesh>
-	);
-}
-
 function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 	let statusColor = getStatusColor(part.status);
 	const [revisedFile, setRevisedFile] = useState<File | undefined>(undefined);
 
 	return (
 		<div>
+			{/* <progress
+				value={2}
+				max={5}
+				className="rounded-none w-full accent-pnw-gold h-1.5 block"></progress> */}
 			<div className="lg:flex gap-4 shadow-sm p-4 lg:p-6 rounded-sm bg-white outline outline-2 outline-gray-200">
 				<div className="max-lg:hidden w-fit text-lg text-center">
 					{index + 1}
@@ -395,48 +367,6 @@ function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 										/>
 									)}
 								</div>
-								{/* {part.status == PartStatus.Denied && (
-								<div className="bg-orange-400 p-2 rounded-b-sm text-sm text-white flex justify-between items-start">
-									<HiddenInput
-										className="hover:cursor-pointer"
-										type="file"
-										accept=".stl"
-										id="revised-model-file"
-										name="revised-model-file"
-										disabled={revisedFile != undefined}
-										onChange={(file: File) => {
-											console.log(
-												"File was updated!",
-												file
-											);
-											setRevisedFile(file);
-										}}>
-										<>
-											{revisedFile == undefined ? (
-												<p className="lg:text-center text-white">
-													Upload revised Model
-												</p>
-											) : (
-												<div className="flex gap-2 justify-between items-center">
-													<p className="lg:text-center text-white">
-														{revisedFile.name}{" "}
-													</p>
-													<div className="flex gap-2 items-center">
-														<RegularCloudUpload className="fill-white w-5 h-5 opacity-50 hover:opacity-100"></RegularCloudUpload>
-														<RegularTrashCan
-															className="fill-white w-5 h-5 opacity-50 hover:opacity-100"
-															onClick={() =>
-																setRevisedFile(
-																	undefined
-																)
-															}></RegularTrashCan>
-													</div>
-												</div>
-											)}
-										</>
-									</HiddenInput>
-								</div>
-							)} */}
 							</div>
 							<a
 								className="flex py-1 px-1.5 text-xs text-nowrap justify-between items-center opacity-50 hover:opacity-100"
@@ -501,45 +431,6 @@ function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 									{"No comment provided."}
 								</p>
 
-								{/* <p className="my-0.5 lg:hidden">
-								{part.filament == undefined ? (
-									<>
-										<span className="font-light">
-											{"Filament: "}
-										</span>
-										No longer Available
-									</>
-								) : part.supplementedFilament == undefined ? (
-									<>
-										<span className="font-light">
-											{"Filament: "}
-										</span>
-										{`${part.filament.material.toUpperCase()} `}
-										<NamedSwatch
-											swatch={
-												part.filament.color
-											}></NamedSwatch>
-									</>
-								) : (
-									<>
-										<span className="font-light mr-1">
-											{"Supplemented Filament:"}
-										</span>
-										{`${part.filament!.material.toUpperCase()} `}
-										<NamedSwatch
-											swatch={
-												part.filament!.color
-											}></NamedSwatch>
-										<span>{" with"}</span>
-										{` ${part.supplementedFilament.material.toUpperCase()} `}
-										<NamedSwatch
-											swatch={
-												part.supplementedFilament.color
-											}></NamedSwatch>
-									</>
-								)}
-							</p> */}
-
 								<div className="mt-2 w-fit">
 									<FilamentBlock
 										filament={
@@ -547,50 +438,12 @@ function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 											part.filament!
 										}
 									/>
-									{/* {part.supplementedFilament && (
-									<>
-										<p className="text-pnw-gold">
-											Supplemented For:
-										</p>
-										<FilamentBlock
-											filament={part.supplementedFilament}
-										/>
-									</>
-								)} */}
 								</div>
-
-								{/* <div className="mt-2 w-fit">
-								<div className="shadow-sm rounded-sm p-2 bg-white outline outline-2 outline-gray-200">
-									<FilamentBlock
-										filament={
-											part.filament!
-										}></FilamentBlock>
-								</div>
-							</div> */}
 
 								<RefundMessage part={part} />
 							</div>
 						</div>
 					</div>
-					{/* {part.status == PartStatus.Denied && (
-						<>
-							<Alert
-								className="w-full mt-3"
-								style={{ borderColor: "rgb(251 146 60)" }}
-								severity="error"
-								color="warning">
-								<AlertTitle>
-									{part.model.name} does not meet printing
-									requirements!
-								</AlertTitle>
-								<span>{part.deniedReason}</span>
-							</Alert>
-							<button className="p-2 mt-2 w-full text-sm flex items-center justify-center gap-2 fill-white mb-0">
-								Upload revised Model
-								<RegularCloudUpload></RegularCloudUpload>
-							</button>
-						</>
-					)} */}
 				</div>
 			</div>
 		</div>

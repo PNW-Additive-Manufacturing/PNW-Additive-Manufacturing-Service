@@ -19,6 +19,11 @@ export default interface Request {
 		paidAt: Date;
 		totalPriceInCents: number;
 	};
+	refundRequest?: {
+		requestedAt: Date;
+		completedAt?: Date;
+		reason?: string;
+	};
 	isFulfilled: boolean;
 	fulfilledAt?: Date;
 	submitTime: Date;

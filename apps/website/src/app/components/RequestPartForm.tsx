@@ -56,7 +56,7 @@ function AddPartButton({
 					(inputRef.current?.valueOf() as HTMLInputElement).click();
 				}}>
 				<RegularAddFiles className="inline mr-2 w-4 h-4 fill-white"></RegularAddFiles>
-				Add More Files
+				Upload Model
 			</button>
 		</>
 	);
@@ -107,13 +107,13 @@ export function RequestPartForm({
 				<div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 
 				<div className="fixed inset-0 flex w-screen items-center justify-center shadow-lg">
-					<Dialog.Panel className="mx-auto rounded-md bg-white p-6 max-lg:w-2/3">
-						<Dialog.Title className="mb-4 flex justify-between items-center">
+					<Dialog.Panel className="rounded-md bg-white p-6 pb-10 max-lg:w-full max-lg:mx-4">
+						<Dialog.Title className="mb-4 flex max-lg:flex-col lg:justify-between lg:items-center gap-4">
 							<div className="flex items-center gap-2">
 								<RegularEmptyFile className="inline w-5 h-5 fill-gray-500"></RegularEmptyFile>
 								{modifyingPart?.ModelName}
 							</div>
-							<div className="flex gap-4">
+							<div className="flex max-lg:justify-between gap-4">
 								<div
 									className="flex items-center gap-2 text-gray-500 fill-gray-500 hover:cursor-pointer"
 									onClick={() => {
@@ -164,9 +164,11 @@ export function RequestPartForm({
 
 								<label>Process</label>
 								<select defaultValue="fdm">
-									<option value="fdm">3D Printing</option>
+									<option value="fdm">
+										3D Printing (FDM)
+									</option>
 									<option disabled value="resin">
-										Resin (Coming 2024)
+										Resin Printing (SLA)
 									</option>
 								</select>
 
@@ -199,7 +201,7 @@ export function RequestPartForm({
 					}
 					formAction(formData);
 				}}>
-				<div className="bg-white rounded-sm w-full grid auto-cols-auto auto-rows-auto p-6 gap-6">
+				<div className="bg-white rounded-sm w-full max-lg:flex flex-col lg:grid auto-cols-auto auto-rows-auto p-6 gap-6">
 					<div className="col-start-3 col-end-3 row-start-1 row-span-2 pt-2">
 						<Input
 							label="Request Name"
@@ -240,8 +242,12 @@ export function RequestPartForm({
 									<thead>
 										<tr>
 											<th>Model</th>
-											<th>Filament</th>
-											<th>Quantity</th>
+											<th className="max-lg:hidden">
+												Filament
+											</th>
+											<th className="max-lg:hidden">
+												Quantity
+											</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -258,28 +264,67 @@ export function RequestPartForm({
 														<RegularEmptyFile className="inline w-5 h-5 fill-gray-500 mr-2"></RegularEmptyFile>
 														{part.File.name}
 													</td>
-													<td>
+													<td className="max-lg:hidden ">
 														<NamedSwatch
 															swatch={
 																part.Color
 															}></NamedSwatch>
 													</td>
-													<td>x{part.Quantity}</td>
+													<td className="max-lg:hidden ">
+														x{part.Quantity}
+													</td>
 												</tr>
 											</>
 										))}
 									</tbody>
 								</Table>
 							) : (
-								<p className="w-fit mt-4 text-sm">
-									Upload a model to begin.
-								</p>
+								<>
+									<label>Models</label>
+									<p>Upload a model to begin.</p>
+								</>
 							)}
 						</div>
 					</div>
 
+					<div className="lg:hidden col-start-1 col-span-2 row-start-4 row-span-1 h-14">
+						<AddPartButton
+							onChange={(ev) => {
+								ev.preventDefault();
+
+								if (ev.currentTarget.files == null) return;
+
+								console.log(ev.currentTarget.files);
+
+								var newParts: PartData[] = Array.from(
+									Array(ev.currentTarget.files.length).keys()
+								)
+									.filter((index) => {
+										return (
+											ev.currentTarget.files![index]
+												.size < 20000000
+										);
+									})
+									.map((i) => {
+										const f = ev.currentTarget.files![i];
+										return {
+											File: f,
+											ModelName: f.name.substring(
+												0,
+												f.name.lastIndexOf(".")
+											),
+											Material: "PLA",
+											Color: filaments.at(0)!.color,
+											Quantity: 1
+										};
+									});
+
+								setParts([...parts, ...newParts]);
+							}}></AddPartButton>
+					</div>
+
 					<div className="col-start-3 col-span-1 row-start-3 row-span-1">
-						<div className="px-2 text-sm">
+						<div className="lg:px-2 text-sm">
 							<div className="font-semibold p-2 pt-0 pl-0">
 								<RegularQuestionCircle className="inline w-4 h-4 fill-cool-black text-purple-200 mr-2"></RegularQuestionCircle>
 								What is next?
@@ -309,7 +354,7 @@ export function RequestPartForm({
 							parts={parts}></RequestPartFormSubmit>
 					</div>
 
-					<div className="col-start-1 col-span-2 row-start-4 row-span-1 h-14">
+					<div className="max-lg:hidden col-start-1 col-span-2 row-start-4 row-span-1 h-14">
 						<AddPartButton
 							onChange={(ev) => {
 								ev.preventDefault();

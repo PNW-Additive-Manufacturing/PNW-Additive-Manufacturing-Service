@@ -31,6 +31,9 @@ export class RequestServe {
 
 		const requestRow = query.at(0)!;
 
+		const refundQuery =
+			await db`SELECT * FROM RequestRefund WHERE RequestId=${id}`;
+
 		let request: Request = {
 			id: requestRow.id,
 			name: requestRow.name,
@@ -48,6 +51,14 @@ export class RequestServe {
 							totalPriceInCents: Number.parseInt(
 								requestRow.totalpriceincents
 							)
+					  }
+					: undefined,
+			refundRequest:
+				refundQuery.length > 0
+					? {
+							requestedAt: refundQuery.at(0)!.requestedat,
+							completedAt: refundQuery.at(0)!.completedat,
+							reason: refundQuery.at(0)!.reason
 					  }
 					: undefined
 		};
@@ -80,6 +91,9 @@ export class RequestServe {
 
 		const requests: RequestWithParts[] = [];
 		for (let requestRow of query) {
+			const refundQuery =
+				await db`SELECT * FROM RequestRefund WHERE RequestId=${requestRow.id}`;
+
 			let request: Request = {
 				id: requestRow.id,
 				name: requestRow.name,
@@ -97,6 +111,14 @@ export class RequestServe {
 								totalPriceInCents: Number.parseInt(
 									requestRow.totalpriceincents
 								)
+						  }
+						: undefined,
+				refundRequest:
+					refundQuery.length > 0
+						? {
+								requestedAt: refundQuery.at(0)!.requestedat,
+								completedAt: refundQuery.at(0)!.completedat,
+								reason: refundQuery.at(0)!.reason
 						  }
 						: undefined
 			};
@@ -133,6 +155,9 @@ export class RequestServe {
 
 		const requests: RequestWithParts[] = [];
 		for (let requestRow of query) {
+			const refundQuery =
+				await db`SELECT * FROM RequestRefund WHERE RequestId=${requestRow.id}`;
+
 			let request: Request = {
 				id: requestRow.id,
 				name: requestRow.name,
@@ -150,6 +175,14 @@ export class RequestServe {
 								totalPriceInCents: Number.parseInt(
 									requestRow.totalpriceincents
 								)
+						  }
+						: undefined,
+				refundRequest:
+					refundQuery.length > 0
+						? {
+								requestedAt: refundQuery.at(0)!.requestedat,
+								completedAt: refundQuery.at(0)!.completedat,
+								reason: refundQuery.at(0)!.reason
 						  }
 						: undefined
 			};
@@ -180,6 +213,15 @@ export class RequestServe {
 		dbContext = dbContext ?? db;
 
 		await dbContext`UPDATE Request SET PaidAt=NOW() WHERE Id=${requestId}`;
+	}
+
+	public static async setAsFulfilled(
+		requestId: number,
+		dbContext?: postgres.Sql<{}>
+	) {
+		dbContext = dbContext ?? db;
+
+		await dbContext`UPDATE Request SET FulfilledAt=NOW() WHERE Id=${requestId}`;
 	}
 
 	public static async delete(

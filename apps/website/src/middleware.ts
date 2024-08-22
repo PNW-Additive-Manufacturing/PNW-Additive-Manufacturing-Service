@@ -9,11 +9,14 @@ import db from "@/app/api/Database";
 import { AccountPermission } from "./app/Types/Account/Account";
 import { revalidatePath } from "next/cache";
 import modelDownloadMiddleware from "./app/api/download/model/middleware";
+import getConfig from "./app/getConfig";
 
 //all root level files allowed to be accessed without logging in
 const ROOT_FOLDER_FILE_WHITELIST = ["/favicon.ico", "/robots.txt"];
 
 const USER_BLACKLIST = ["/api"];
+
+const envConfig = getConfig();
 
 export async function middleware(request: NextRequest) {
 	const nextUrl = request.nextUrl.pathname;
@@ -67,14 +70,14 @@ export async function middleware(request: NextRequest) {
 	} catch (e) {
 		console.log(e);
 		//if JWT does not exist or is invalid
-		return NextResponse.redirect(new URL("/user/login", request.url));
+		return NextResponse.redirect(envConfig.joinHostURL("/user/login"));
 	}
 
 	if (
 		nextUrl.startsWith("/experiments") &&
 		jwtPayload.permission == AccountPermission.User
 	) {
-		return NextResponse.redirect(new URL("/not-found", request.url));
+		return NextResponse.redirect(envConfig.joinHostURL("/not-found"));
 	}
 
 	let permission = jwtPayload.permission as AccountPermission;
@@ -96,14 +99,14 @@ export async function middleware(request: NextRequest) {
 			// Allow these pages
 		} else {
 			return NextResponse.redirect(
-				new URL(`/user/not-verified`, request.url)
+				envConfig.joinHostURL(`/user/not-verified`)
 			);
 		}
 	} else if (
 		nextUrl.startsWith("/user/not-verified") ||
 		nextUrl.startsWith("/user/verify-email")
 	) {
-		return NextResponse.redirect(new URL(`/`, request.url));
+		return NextResponse.redirect(envConfig.hostURL);
 	}
 
 	//automatically force redirect to correct dashboard
@@ -112,7 +115,7 @@ export async function middleware(request: NextRequest) {
 		permission == AccountPermission.User
 	) {
 		return NextResponse.redirect(
-			new URL(`/dashboard/${AccountPermission.User}`, request.url)
+			envConfig.joinHostURL(`/dashboard/${AccountPermission.User}`)
 		);
 	}
 
@@ -123,7 +126,7 @@ export async function middleware(request: NextRequest) {
 		permission !== AccountPermission.Admin
 	) {
 		return NextResponse.redirect(
-			new URL(`/dashboard/${permission}`, request.url)
+			envConfig.joinHostURL(`/dashboard/${permission}`)
 		);
 	}
 

@@ -108,7 +108,7 @@ export default async function Home() {
 												className="w-full h-full bg-black rounded-md"></Image>
 										</div>
 										<p className="text-base px-2 lg:text-center w-full font-light mt-2">
-											We offer top-of-the-line consumer 3D
+											We use top-of-the-line consumer 3D
 											Printers from{" "}
 											<a
 												href="https://bambulab.com/en/about-us"
@@ -143,8 +143,8 @@ export default async function Home() {
 												className="w-full h-full bg-black rounded-md"></Image>
 										</div>
 										<p className="text-base px-2 lg:text-center w-full font-light mt-2">
-											A multi-assembly 3D-Printed low-poly
-											lion.
+											Create multi-part art pieces for a
+											large scale.
 										</p>
 									</>,
 									<>
@@ -180,10 +180,9 @@ export default async function Home() {
 												className="w-full h-full bg-black rounded-md"></Image>
 										</div>
 										<p className="text-base px-2 lg:text-center w-full font-light mt-2">
-											Luke moreno competes three pound
-											competitions, utilizing a housing
-											crafted from ABS filament to
-											securely encase the electronics.
+											Luke moreno utilizes ABS filament to
+											securely encase the electronics for
+											three-pound Battle Bots.
 										</p>
 									</>
 								]}></Gallery>
@@ -207,7 +206,7 @@ export default async function Home() {
 								<div className="w-fit lg:pr-24 pt-2 border-t-2 border-t-gray-200">
 									Each production method offers different
 									benefits and drawbacks. We recommend taking
-									look at an excellent guide by{" "}
+									a look at an excellent guide by{" "}
 									<a
 										className="underline text-pnw-gold"
 										target="_blank"
@@ -227,21 +226,21 @@ export default async function Home() {
 									</div>
 								</div>
 								<div className="lg:text-center">
-									<div className="w-full lg:px-4 xl:w-64 py-3 border-b-2 border-b-pnw-gold">
+									<div className="w-full lg:px-4 xl:w-64 py-3 border-b-2 border-b-gray-300">
 										Resin Printing (SLA)
 									</div>
 									<div className="w-full lg:px-4 mt-2">
-										Coming 2025
+										Coming 2024 (S2)
 									</div>
 								</div>
-								<div className="lg:text-center">
+								{/* <div className="lg:text-center">
 									<div className="w-full lg:px-4 xl:w-64 py-3 border-b-2 border-b-gray-300">
 										Waterjet
 									</div>
 									<div className="w-full lg:px-4 mt-2">
 										In Design Studio
 									</div>
-								</div>
+								</div> */}
 							</div>
 						</div>
 					</HorizontalWrap>

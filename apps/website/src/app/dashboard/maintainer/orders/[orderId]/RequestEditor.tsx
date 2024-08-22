@@ -1,6 +1,9 @@
 "use client";
 
-import { cancelRequest } from "@/app/api/server-actions/request";
+import {
+	cancelRequest,
+	fulfillRequest
+} from "@/app/api/server-actions/request";
 import Account from "@/app/Types/Account/Account";
 import { isAllComplete, isAllPending } from "@/app/Types/Part/Part";
 import Request, {
@@ -14,6 +17,7 @@ import Request, {
 	RequestWithParts
 } from "@/app/Types/Request/Request";
 import {
+	RegularCheckBox,
 	RegularCog,
 	RegularCrossCircle,
 	RegularDatabase,
@@ -35,6 +39,8 @@ import DropdownSection from "@/app/components/DropdownSection";
 import { CodeBlock, CopyBlock } from "react-code-blocks";
 import RequestPricing from "@/app/components/Request/Pricing";
 import StatusPill from "@/app/components/StatusPill";
+import { RequestOverview } from "@/app/components/RequestOverview";
+import { formateDate } from "@/app/api/util/Constants";
 
 export default function RequestEditor({
 	request,
@@ -54,6 +60,7 @@ export default function RequestEditor({
 	const [showActions, setShowActions] = useState(false);
 	const [showRevoke, setShowRevoke] = useState(false);
 	const [quoteState, setQuoteFormAction] = useFormState(setQuote, "");
+	const [fulfillState, fulfillAction] = useFormState(fulfillRequest, "");
 
 	return (
 		<>
@@ -62,10 +69,7 @@ export default function RequestEditor({
 					<h1 className="text-4xl font-thin">
 						Manage {request.name}
 					</h1>
-					<div className="mt-2 mb-5 lg:mb-0 flex items-center">
-						<StatusPill
-							statusColor={getRequestStatusColor(request)}
-							context={getRequestStatus(request)}></StatusPill>
+					<p className="max-lg:block mt-2 max-lg:mb-6">
 						{request.firstName} {request.lastName} placed this
 						request on{" "}
 						{request.submitTime.toLocaleDateString("en-us", {
@@ -74,12 +78,12 @@ export default function RequestEditor({
 							day: "numeric"
 						})}
 						.
-					</div>
+					</p>
 				</div>
 				<div className="items-end flex w-full">
 					<div className="flex w-full gap-2 lg:justify-end max-lg:justify-between">
 						<Link href="/dashboard/maintainer/orders">
-							<button className="outline outline-1 outline-gray-300 bg-white text-black fill-black flex flex-row gap-2 justify-end items-center px-3 py-2 text-sm w-fit">
+							<button className="outline outline-1 outline-gray-300 bg-white text-black fill-black flex flex-row gap-2 justify-end items-center px-3 py-2 text-sm w-fit mb-0">
 								<RegularExit className="w-auto h-6 fill-inherit"></RegularExit>
 								Go Back
 							</button>
@@ -87,7 +91,7 @@ export default function RequestEditor({
 						<div className="flex gap-2">
 							<div className="relative">
 								<button
-									className={`px-3 py-2 mb-2 text-sm outline outline-1 outline-gray-300 bg-white text-black fill-black hover:fill-white`}
+									className={`px-3 py-2 text-sm outline outline-1 outline-gray-300 bg-white text-black fill-black hover:fill-white mb-0`}
 									onClick={() =>
 										setShowActions(!showActions)
 									}>
@@ -102,13 +106,31 @@ export default function RequestEditor({
 								<div
 									className={`${
 										showActions ? "" : "hidden"
-									} absolute w-fit h-fit bg-white right-0 py-2 px-2 rounded-md flex flex-col gap-1 z-10 outline outline-1 outline-gray-300`}>
-									<button
+									} mt-2 absolute w-fit h-fit bg-white right-0 py-2 px-2 rounded-md flex flex-col gap-1 z-10 outline outline-1 outline-gray-300`}>
+									{/* <button
 										className="px-3 py-2 text-sm mb-0 w-full bg-transparent text-black hover:text-black rounded-none hover:bg-transparent hover:underline"
 										disabled>
 										Download PDF
 										<RegularFiles className="ml-2 w-6 h-6 inline-block fill-black"></RegularFiles>
-									</button>
+									</button> */}
+									<form action={fulfillAction}>
+										<input
+											name="requestId"
+											value={request.id}
+											readOnly
+											hidden></input>
+										<button
+											className="bg-transparent px-3 py-2 text-sm mb-0 w-full text-black hover:text-black rounded-none hover:bg-transparent hover:underline"
+											type="submit"
+											onClick={() => setShowRevoke(true)}
+											disabled={
+												request.isFulfilled ||
+												!isAllComplete(request.parts)
+											}>
+											Mark as Fulfilled
+											<RegularCheckBox className="ml-2 w-6 h-6 inline-block fill-black"></RegularCheckBox>
+										</button>
+									</form>
 									<button
 										className="bg-transparent px-3 py-2 text-sm mb-0 w-full text-red-700 hover:text-red-700 rounded-none hover:bg-transparent hover:underline"
 										type="button"
@@ -124,25 +146,7 @@ export default function RequestEditor({
 				</div>
 			</div>
 
-			<hr className="mb-4 lg:my-4" />
-
-			{request.isFulfilled ? (
-				<div className="w-full px-4 py-2 my-2 bg-green-400 font-light rounded-sm shadow-sm">
-					The request has been completed and picked up from the Design
-					Studio.
-				</div>
-			) : (
-				<></>
-			)}
-
-			{(!request.isFulfilled &&
-				isAllComplete(request.parts) &&
-				isQuotePaid) ?? (
-				<div className="w-full px-4 py-2 my-2 text-white bg-blue-400 font-light rounded-sm shadow-sm">
-					These parts are ready to be picked up from the Design
-					Studio.
-				</div>
-			)}
+			<hr className="my-4 lg:my-4" />
 
 			<div className="lg:flex gap-8">
 				<div className="lg:grow">
@@ -154,6 +158,14 @@ export default function RequestEditor({
 					</div>
 
 					<div className="flex flex-col gap-6 mb-3">
+						{request.isFulfilled && (
+							<RequestOverview
+								title="Request Fulfilled"
+								description={`Request was fulfilled on ${formateDate(
+									request.fulfilledAt!
+								)}.`}
+							/>
+						)}
 						{request.parts.map((part, index) => (
 							<PartEditor
 								request={request}
@@ -197,7 +209,7 @@ export default function RequestEditor({
 						</div>
 					</DropdownSection>
 				</div>
-				<div className="lg:min-w-88">
+				<div className="lg:w-92">
 					<div className="py-2 pt-2 pl-1 w-full">Payment Details</div>
 					<div className="p-4 lg:p-6 rounded-t-sm shadow-sm bg-white font-light outline outline-2 outline-gray-200">
 						{isAllPriced(request) ? (
@@ -213,7 +225,7 @@ export default function RequestEditor({
 						</>
 					) : hasQuote(request) ? (
 						<button
-							className="mb-0 rounded-t-none py-4 shadow-md text-left"
+							className="mb-0 rounded-t-none py-4 shadow-md text-left w-full"
 							type="button">
 							<div>Waiting for Payment</div>
 							<p className="text-white font-light text-sm mt-1">
@@ -296,7 +308,7 @@ export default function RequestEditor({
 function AlreadyQuoteButton({ request }: { request: Request }) {
 	return (
 		<button
-			className="rounded-t-none rounded-b-sm mb-0 py-4 shadow-md text-left bg-green-600"
+			className="rounded-t-none rounded-b-sm mb-0 py-4 shadow-md text-left bg-green-600 w-full"
 			disabled>
 			Quote Processed
 			<p className="text-white font-light text-sm">

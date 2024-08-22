@@ -35,7 +35,7 @@ CREATE TABLE WalletTransaction (
   PaidAt TIMESTAMP WITH TIME ZONE DEFAULT NULL,
   PaymentMethod WalletTransactionPaymentMethod NOT NULL,
   StripeCheckoutID VARCHAR,
---   RefundedPartId SMALLSERIAL REFERENCES Request(Id) ON DELETE CASCADE ON UPDATE CASCADE, 
+--   RefundedPartId SERIAL REFERENCES Request(Id) ON DELETE CASCADE ON UPDATE CASCADE, 
   CONSTRAINT PAID_CHK CHECK (
   	(Status = 'paid' AND PaidAt IS NOT NULL AND PaymentMethod='stripe' AND StripeCheckoutID IS NOT NULL) OR
   	(Status = 'paid' AND PaidAt IS NOT NULL AND PaymentMethod='none') OR
@@ -83,7 +83,7 @@ CREATE TABLE Printer (
 
 DROP TABLE IF EXISTS Request CASCADE;
 CREATE TABLE Request (
-  Id SMALLSERIAL PRIMARY KEY,
+  Id SERIAL PRIMARY KEY,
   Name varchar(120) NOT NULL,
   OwnerEmail varchar(120) REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE,
   SubmitTime timestamp with time zone NOT NULL DEFAULT NOW(),
@@ -94,6 +94,14 @@ CREATE TABLE Request (
   	(PaidAt IS NOT NULL AND TotalPriceInCents IS NOT NULL) OR
     (PaidAt IS NULL)
   )
+);
+
+CREATE TABLE RequestRefund (
+  Id SERIAL PRIMARY KEY,
+  RequestId SERIAL REFERENCES Request(Id) ON DELETE CASCADE ON UPDATE CASCADE,
+  RequestedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  CompletedAt TIMESTAMP WITH TIME ZONE,
+  Reason VARCHAR(500)
 );
 
 DROP TABLE IF EXISTS Model CASCADE;
@@ -110,7 +118,7 @@ CREATE TYPE PartStatus AS ENUM ('denied', 'pending', 'printing', 'printed', 'fai
 DROP TABLE IF EXISTS Part CASCADE;
 CREATE TABLE Part (
   Id SMALLSERIAL PRIMARY KEY,
-  RequestId SMALLSERIAL REFERENCES Request(Id) ON DELETE CASCADE ON UPDATE CASCADE,
+  RequestId SERIAL REFERENCES Request(Id) ON DELETE CASCADE ON UPDATE CASCADE,
   ModelId UUID REFERENCES Model(Id) ON DELETE CASCADE ON UPDATE CASCADE,
   Quantity int NOT NULL CHECK (Quantity > 0 and Quantity <= 1000),
   Note VARCHAR(500)  CHECK (LENGTH(Note) > 0),

@@ -29,7 +29,7 @@ export default async function Page() {
 			<h1 className="text-3xl tracking-wide font-light">Your Orders</h1>
 			<br />
 
-			<div className="py-2 pr-2 w-full">Ongoing</div>
+			{/* <div className="py-2 pr-2 w-full">Ongoing</div> */}
 			{requests.length == 0 ? (
 				<div className="p-4 lg:p-6 shadow-sm rounded-md bg-white outline outline-1 outline-gray-300">
 					You do not have any ongoing orders!
@@ -63,7 +63,7 @@ export default async function Page() {
 													</div> */}
 												</div>
 												<div className="max-lg:hidden text-sm">
-													{isRefundAvailable(
+													{/* {isRefundAvailable(
 														request
 													) && (
 														<p className="mt-1">
@@ -76,7 +76,7 @@ export default async function Page() {
 																)
 															)}
 														</p>
-													)}
+													)} */}
 												</div>
 											</div>
 											<div className="lg:text-right text-sm lg:p-2">
@@ -95,8 +95,8 @@ export default async function Page() {
 										</div>
 										<Link
 											href={`/dashboard/user/${request.id}`}
-											className="bg-blue-500 flex justify-center align-middle px-6 py-2 rounded-r-md">
-											<RegularEnter className="fill-white w-10 h-auto"></RegularEnter>
+											className="bg-pnw-gold flex justify-center align-middle px-6 py-2 rounded-r-md">
+											<RegularEnter className="fill-cool-black w-10 h-auto"></RegularEnter>
 										</Link>
 									</div>
 								</div>

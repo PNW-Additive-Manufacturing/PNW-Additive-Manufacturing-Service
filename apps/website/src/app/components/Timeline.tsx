@@ -14,7 +14,11 @@ export default function Timeline({
 	const firstDisabledOptionIndex = options.findIndex(
 		(option) => option.disabled
 	);
-	options = options.slice(0, firstDisabledOptionIndex + 1);
+
+	options = options.slice(
+		0,
+		Math.min(firstDisabledOptionIndex + 1, options.length - 1)
+	);
 
 	return (
 		<>

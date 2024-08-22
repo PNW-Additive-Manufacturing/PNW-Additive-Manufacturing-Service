@@ -71,8 +71,6 @@ export default async function Maintainer() {
 							</button>
 						</a>
 
-						<div>Saving files to: {envConfig.uploadModelDir}</div>
-
 						{/* <a
 							href="/dashboard/maintainer/printers"
 							className="w-full sm:max-w-sm block">

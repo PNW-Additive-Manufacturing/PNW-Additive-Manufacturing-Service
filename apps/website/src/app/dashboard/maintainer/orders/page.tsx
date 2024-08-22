@@ -59,8 +59,8 @@ export default async function Maintainer({ params }: { params: any }) {
 									</div>
 									<Link
 										href={`/dashboard/maintainer/orders/${request.id}`}
-										className="bg-blue-500 flex justify-center align-middle px-6 py-2 rounded-r-md">
-										<RegularEnter className="fill-white w-10 h-auto"></RegularEnter>
+										className="bg-pnw-gold flex justify-center align-middle px-6 py-2 rounded-r-md">
+										<RegularEnter className="fill-cool-black w-10 h-auto"></RegularEnter>
 									</Link>
 								</div>
 							</div>

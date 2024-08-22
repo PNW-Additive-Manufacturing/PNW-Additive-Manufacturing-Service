@@ -28,43 +28,32 @@ export default async function Request() {
 
 	return (
 		<>
-			<div className="lg:hidden w-full mt-24 text-center">
-				Please use a desktop to fill a request!
-				<div className="mt-4 mx-auto w-fit">
-					<Link href={"/"}>
-						<button className="text-sm">Return Home</button>
-					</Link>
+			<HorizontalWrap>
+				<div className="max-lg:px-4">
+					<h1 className="text-3xl tracking-wide font-light my-4">
+						Fill out a Request
+					</h1>
+					<p className="mb-4">
+						Utilizing our resources for rapid prototyping to final
+						designs, we use top-notch consumer 3D Printers to ensure
+						an outstanding result of your models.
+					</p>
+					<span>Looking for something? Check out </span>
+					<a
+						className="underline"
+						href="https://www.printables.com/"
+						target="_blank">
+						Printables
+					</a>
+					{" & "}
+					<a
+						className="underline"
+						href="https://makerworld.com/"
+						target="_blank">
+						Makerworld
+					</a>
+					!
 				</div>
-			</div>
-			<HorizontalWrap className="hidden lg:block">
-				<h1 className="text-3xl tracking-wide font-light my-4">
-					Fill out a Request
-				</h1>
-				<p className="mb-4">
-					Utilizing our resources for rapid prototyping to final
-					designs, we use top-notch consumer 3D Printers to ensure an
-					outstanding result of your models.
-				</p>
-
-				<ul>
-					<li key="placestogetmodels">
-						<span>Looking for something? Check out </span>
-						<a
-							className="underline"
-							href="https://www.printables.com/"
-							target="_blank">
-							Printables
-						</a>
-						{" & "}
-						<a
-							className="underline"
-							href="https://makerworld.com/"
-							target="_blank">
-							Makerworld
-						</a>
-						!
-					</li>
-				</ul>
 				<br />
 				<RequestPartForm
 					filaments={filaments}

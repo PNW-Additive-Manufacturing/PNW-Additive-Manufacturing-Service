@@ -16,9 +16,7 @@ const environmentSchema = z.literal("development").or(z.literal("production"));
 
 export default function getConfig() {
 	const hostURL = process.env["COOLIFY_FQDN"] ?? "http://localhost:3000";
-	const uploadModelDir =
-		process.env["MODEL_UPLOAD_DIR"] ??
-		path.join(process.cwd(), "uploads", "stl");
+	const uploadModelDir = getProcessEnvironmentVariable("MODEL_UPLOAD_DIR");
 	const dbConnectionString = getProcessEnvironmentVariable("DB_CONNECTION");
 	const jwtSecret = getProcessEnvironmentVariable("JWT_SECRET");
 	const stripeAPIKey = getProcessEnvironmentVariable("STRIPE_API_KEY");
@@ -41,6 +39,9 @@ export default function getConfig() {
 		stripeAPIKey,
 		stripeHookSecret,
 		hostURL,
+		joinHostURL(path: string): URL {
+			return new URL(path, this.hostURL);
+		},
 		uploadModelDir,
 		environment: parsedEnvironment.data,
 		email: {

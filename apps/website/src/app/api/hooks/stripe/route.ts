@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
 				}
 				break;
 		}
+		console.log("Update transaction based off Stripe!");
 	} catch (error) {
 		console.error("Signature not verified!", error);
 		return new NextResponse(null, { status: 401 });

@@ -1,3 +1,5 @@
+"use server";
+
 import AccountServe from "@/app/Types/Account/AccountServe";
 import { getJwtPayload } from "@/app/api/util/JwtHelper";
 import db from "@/app/api/Database";
@@ -5,11 +7,14 @@ import { NextRequest, NextResponse } from "next/server";
 import assert from "assert";
 import { IsVerificationCodeExpired } from "@/app/Types/Account/Account";
 import { login } from "@/app/api/util/AccountHelper";
+import getConfig from "@/app/getConfig";
+
+const envConfig = getConfig();
 
 export async function GET(request: NextRequest) {
 	const verificationToken = request.nextUrl.searchParams.get("token");
 	if (verificationToken == undefined)
-		return NextResponse.redirect(new URL("/", request.url));
+		return NextResponse.redirect(envConfig.hostURL);
 
 	// Query user data!
 	// JWT cannot be null due to middleware preventing non-logged users access.
@@ -23,10 +28,10 @@ export async function GET(request: NextRequest) {
 		if (!JWT.isemailverified) {
 			// Email is not verified but doesn't have a verification entry!
 			return NextResponse.redirect(
-				new URL("/user/not-verified", request.url)
+				envConfig.joinHostURL("/user/not-verified")
 			);
 		}
-		return NextResponse.redirect(new URL("/not-found", request.url));
+		return NextResponse.redirect(envConfig.joinHostURL("/not-found"));
 	}
 	if (JWT.email != verificationEntry?.accountEmail) {
 		// Someone is attempting to use someone elses verification token!
@@ -35,12 +40,12 @@ export async function GET(request: NextRequest) {
 			JWT.email,
 			verificationEntry
 		);
-		return NextResponse.redirect(new URL("/not-found", request.url));
+		return NextResponse.redirect(envConfig.joinHostURL("/not-found"));
 	} else if (IsVerificationCodeExpired(verificationEntry)) {
 		// TODO: Send to awaiting verification page!
 		console.error("Code is expired!");
 		return NextResponse.redirect(
-			new URL("/user/not-verified", request.url)
+			envConfig.joinHostURL("/user/not-verified")
 		);
 	}
 
@@ -48,7 +53,7 @@ export async function GET(request: NextRequest) {
 	if (linkedAccount == undefined) return;
 	if (linkedAccount.isEmailVerified) {
 		console.log("Verification has already been done!");
-		return NextResponse.redirect(new URL("/not-found", request.url));
+		return NextResponse.redirect(envConfig.joinHostURL("/not-found"));
 	}
 
 	await db.begin(async (db) => {
@@ -64,5 +69,5 @@ export async function GET(request: NextRequest) {
 		true
 	);
 
-	return NextResponse.redirect(new URL("/user/email-verified", request.url));
+	return NextResponse.redirect(envConfig.joinHostURL("/user/email-verified"));
 }

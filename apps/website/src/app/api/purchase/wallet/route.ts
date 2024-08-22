@@ -95,8 +95,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 			const checkoutSession = await stripe.checkout.sessions.create({
 				payment_method_types: ["card"],
 				mode: "payment",
-				success_url: `${request.nextUrl.protocol}//${request.nextUrl.host}/user/wallet`,
-				cancel_url: `${request.nextUrl.protocol}//${request.nextUrl.host}/not-found`,
+				success_url: `${envConfig.hostURL}/user/wallet`,
+				cancel_url: `${envConfig.hostURL}/not-found`,
 				customer_email: account.email,
 				line_items: [
 					{

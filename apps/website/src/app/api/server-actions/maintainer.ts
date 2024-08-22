@@ -74,7 +74,7 @@ export async function setQuote(
 	const priceInDollars = getTotalCost(request).totalCost;
 	const priceInCents = Math.round(priceInDollars * 100);
 
-	if (priceInDollars > 100) return "Quote is exceeding maximum value of $100";
+	// if (priceInDollars > 100) return "Quote is exceeding maximum value of $100";
 
 	try {
 		await RequestServe.setQuote(requestId, priceInCents);

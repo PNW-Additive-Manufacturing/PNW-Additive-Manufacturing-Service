@@ -225,3 +225,10 @@ img
 	object-fit: cover;
 	object-position: center;
 }
+
+progress {
+	width: 100%;
+}
+progress::-webkit-progress-value {background-color: var(--pnw-gold) !important;}
+progress::-moz-progress-bar {background-color: var(--pnw-gold) !important;}
+progress {color: var(--pnw-gold);}
