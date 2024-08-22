@@ -143,7 +143,7 @@ export default async function Home() {
 												className="w-full h-full bg-black rounded-md"></Image>
 										</div>
 										<p className="text-base px-2 lg:text-center w-full font-light mt-2">
-											Create multi-part art pieces for a
+											Create multi-part art pieces at a
 											large scale.
 										</p>
 									</>,
