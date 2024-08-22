@@ -26,6 +26,7 @@ import PopupFilamentSelector from "./PopupFilamentSelector";
 import ModelViewer from "./ModelViewer";
 import { modifyPart } from "../api/server-actions/maintainer";
 import { NamedSwatch, SwatchConfiguration, templatePNW } from "./Swatch";
+import FormLoadingSpinner from "./FormLoadingSpinner";
 
 function AddPartButton({
 	onChange
@@ -77,8 +78,9 @@ function RequestPartFormSubmit({ parts }: { parts: PartData[] }) {
 		<button
 			type="submit"
 			disabled={pending || parts.length == 0}
-			className="bg-gradient-linear-pnw-mystic w-full mb-0 text-cool-black hover:text-black h-full">
-			{pending ? "Contacting our Server..." : "Submit Request"}
+			className="bg-gradient-linear-pnw-mystic w-full mb-0 text-cool-black hover:text-black h-full flex gap-2 items-center justify-center">
+			{pending ? "Processing your Request" : "Submit Request"}
+			<FormLoadingSpinner className="fill-cool-black " />
 		</button>
 	);
 }
@@ -201,7 +203,7 @@ export function RequestPartForm({
 					}
 					formAction(formData);
 				}}>
-				<div className="bg-white rounded-sm w-full max-lg:flex flex-col lg:grid auto-cols-auto auto-rows-auto p-6 gap-6">
+				<div className="bg-white rounded-sm w-full max-lg:flex flex-col lg:grid columns-2 auto-rows-auto p-6 gap-6">
 					<div className="col-start-3 col-end-3 row-start-1 row-span-2 pt-2">
 						<Input
 							label="Request Name"
@@ -235,49 +237,59 @@ export function RequestPartForm({
 						className="col-start-1 col-span-2 row-start-1 row-span-3"
 						style={{ minWidth: "300px" }}>
 						<div
-							className="overflow-x-auto"
+							className="overflow-x-auto w-full"
 							style={{ minWidth: "25 rem" }}>
 							{parts.length > 0 ? (
-								<Table>
-									<thead>
-										<tr>
-											<th>Model</th>
-											<th className="max-lg:hidden">
-												Filament
-											</th>
-											<th className="max-lg:hidden">
-												Quantity
-											</th>
-										</tr>
-									</thead>
-									<tbody>
-										{parts.map((part) => (
-											<>
-												<tr
-													className="hover:cursor-pointer"
-													onClick={() =>
-														setModifyingPart(part)
-													}>
-													<td
-														key={part.ModelName}
-														className="bg-transparent w-fit outline-none border-0 block p-4 hover:cursor-pointer">
-														<RegularEmptyFile className="inline w-5 h-5 fill-gray-500 mr-2"></RegularEmptyFile>
-														{part.File.name}
-													</td>
-													<td className="max-lg:hidden ">
-														<NamedSwatch
-															swatch={
-																part.Color
-															}></NamedSwatch>
-													</td>
-													<td className="max-lg:hidden ">
-														x{part.Quantity}
-													</td>
-												</tr>
-											</>
-										))}
-									</tbody>
-								</Table>
+								<>
+									<Table>
+										<thead>
+											<tr>
+												<th>
+													<RegularEmptyFile className="inline fill-gray-500 mr-1 mb-1"></RegularEmptyFile>
+													Model
+												</th>
+												<th className="max-lg:hidden">
+													Filament
+												</th>
+												<th className="max-lg:hidden">
+													Quantity
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											{parts.map((part) => (
+												<>
+													<tr
+														className="hover:cursor-pointer"
+														onClick={() =>
+															setModifyingPart(
+																part
+															)
+														}>
+														<td
+															key={part.ModelName}
+															className="bg-transparent w-fit outline-none border-0 block p-4 hover:cursor-pointer">
+															{/* <RegularEmptyFile className="inline w-5 h-5 fill-gray-500 mr-2"></RegularEmptyFile> */}
+															{part.File.name}
+														</td>
+														<td className="max-lg:hidden ">
+															<NamedSwatch
+																swatch={
+																	part.Color
+																}></NamedSwatch>
+														</td>
+														<td className="max-lg:hidden ">
+															x{part.Quantity}
+														</td>
+													</tr>
+												</>
+											))}
+										</tbody>
+									</Table>
+									<p className="text-xs px-4 mt-4">
+										Click to modify parts.
+									</p>
+								</>
 							) : (
 								<>
 									<label>Models</label>
@@ -287,7 +299,7 @@ export function RequestPartForm({
 						</div>
 					</div>
 
-					<div className="lg:hidden col-start-1 col-span-2 row-start-4 row-span-1 h-14">
+					<div className="lg:hidden col-start-1 col-span-2 row-start-4 row-span-1 h-14 bg-purple-500">
 						<AddPartButton
 							onChange={(ev) => {
 								ev.preventDefault();

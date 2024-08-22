@@ -424,12 +424,12 @@ function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 									</span>
 									High Quality (0.12mm)
 								</p>
-								<p className="my-0.5">
+								{/* <p className="my-0.5">
 									<span className="font-light">
 										{"Comment: "}
 									</span>
 									{"No comment provided."}
-								</p>
+								</p> */}
 
 								<div className="mt-2 w-fit">
 									<FilamentBlock

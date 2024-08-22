@@ -15,6 +15,7 @@ import {
 	DetailedHTMLProps,
 	Fragment,
 	HTMLAttributes,
+	MouseEventHandler,
 	useContext,
 	useState
 } from "react";
@@ -26,13 +27,22 @@ import HorizontalWrap from "./HorizontalWrap";
 import { AccountContext } from "../ContextProviders";
 import { CurrencySpan } from "./Spans";
 
-function NavbarLink({ name, path }: { name: string; path: string }) {
+function NavbarLink({
+	name,
+	path,
+	onClick
+}: {
+	name: string;
+	path: string;
+	onClick?: MouseEventHandler<HTMLAnchorElement>;
+}) {
 	return (
-		<a
+		<Link
+			onClick={onClick}
 			href={path}
 			className="rounded-md whitespace-nowrap md:rounded-none w-full p-4 md:p-0 bg-gray-100 sm:bg-transparent md:w-fit border-b-4 border-b-pnw-gold-light border-opacity-10 hover:text-pnw-gold active:text-pnw-gold">
 			{name}
-		</a>
+		</Link>
 	);
 }
 
@@ -189,7 +199,10 @@ export function Navbar({
 											boxShadow:
 												"rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"
 										}}>
-										<div className="h-nav w-full pl-5 pr-5 py-3 bg-cool-black ">
+										<div className="h-fit w-full pl-5 pr-5 py-3 bg-cool-black flex justify-between">
+											<div className="w-fit whitespace-nowrap mr-fit pr-3 text-xl tracking-wide flex-fit text-white">
+												<span>Menu</span>
+											</div>
 											<RegularMenu
 												onClick={() =>
 													setExpanded(
@@ -199,13 +212,16 @@ export function Navbar({
 												className="fill-white float-right text-right h-full w-auto p-2"></RegularMenu>
 										</div>
 										<div
-											className="flex flex-col gap-2 bg-root h-remaining-screen-with-nav p-2"
+											className="flex flex-col gap-2 bg-root h-remaining-screen-with-nav p-2 w-full"
 											style={{
 												backgroundColor:
 													"rgb(248, 248, 248)"
 											}}>
 											{links.map((val) => (
 												<NavbarLink
+													onClick={() =>
+														setExpanded(false)
+													}
 													key={val.name}
 													name={val.name}
 													path={val.path}
