@@ -58,9 +58,9 @@ export async function tryLogin(prevState: string, formData: FormData) {
 	let permission = (await getJwtPayload())?.permission;
 	//no error checking for Jwt payload since used just logged in
 	if (permission == AccountPermission.User) {
-		redirect(`/dashboard/user`);
+		redirect(`/`);
 	} else {
-		redirect(`/dashboard/maintainer`);
+		redirect(`/`);
 	}
 }
 
@@ -112,7 +112,7 @@ export async function tryCreateAccount(prevState: string, formData: FormData) {
 		redirect("/user/login");
 	}
 	//remember not to use redirect in try block unless checking if catch(e) has e.message == "NEXT_REDIRECT"
-	redirect(`/dashboard/${jwtPayload.permission}`);
+	redirect(`/`);
 }
 
 export async function logout() {
