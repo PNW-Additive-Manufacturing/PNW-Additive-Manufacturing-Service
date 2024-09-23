@@ -3,20 +3,27 @@
 import { useForm } from "react-hook-form";
 import { Input } from "./Input";
 import Filament from "../Types/Filament/Filament";
-import { Swatch } from "./Swatch";
+import { getSingleColor, Swatch } from "./Swatch";
 import { useDebounce } from "react-use";
 import { Label } from "./Inputs";
 import FilamentBlock from "../experiments/FilamentBlock";
+import { useState } from "react";
 
 export default function PopupFilamentSelector({
 	filaments,
 	onChange,
-	defaultFilament
+	defaultFilament,
+	showDescription
 }: {
 	filaments: Filament[];
 	defaultFilament?: { material?: string; colorName?: string };
 	onChange?: (chosenFilament: Filament) => void;
+	showDescription?: boolean;
 }) {
+	showDescription = showDescription ?? true;
+
+	const [filament, setFilament] = useState<Filament | undefined>(undefined);
+
 	const materials: string[] = [];
 	for (let filament of filaments) {
 		const isExisting =
@@ -28,9 +35,10 @@ export default function PopupFilamentSelector({
 
 	const isAnyAvailable = materials.length > 0;
 
-	const { register, watch, trigger } = useForm<{
+	const { register, watch, trigger, setValue } = useForm<{
 		material: string;
 		colorName: string;
+		colorHex: string;
 	}>({
 		defaultValues: {
 			colorName: defaultFilament?.colorName,
@@ -49,17 +57,54 @@ export default function PopupFilamentSelector({
 			filament.color.name == selectedColorName
 	);
 
-	if (selectedFilament && onChange) {
-		onChange(selectedFilament);
+	function changeFilament(material?: string, colorName?: string) {
+		const m__selectedFilament = filaments.find(
+			(filament) =>
+				filament.material == (material ?? selectedMaterial) &&
+				filament.color.name == (colorName ?? selectedColorName)
+		);
+
+		if (material != null) {
+			setValue("material", material);
+		}
+		if (colorName != null) {
+			setValue("colorName", colorName);
+		}
+
+		// if (selectedFilament && onChange) {
+		// 	onChange(selectedFilament);
+		// }
+
+		if (m__selectedFilament) {
+			setFilament(m__selectedFilament);
+		}
+
+		if (m__selectedFilament != null && onChange) {
+			onChange(m__selectedFilament);
+		}
+	}
+
+	// if (selectedFilament && onChange) {
+	// 	onChange(selectedFilament);
+	// }
+
+	if (selectedFilament) {
+		setValue("colorHex", getSingleColor(selectedFilament.color));
 	}
 
 	return isAnyAvailable ? (
 		<>
 			<div className="full">
+				<input hidden {...register("colorHex")}></input>
 				<div className="lg:flex gap-6 w-full">
 					<div className="w-full">
 						<label>Material</label>
-						<select {...register("material")}>
+						<select
+							{...register("material")}
+							required
+							onChange={(m) =>
+								changeFilament(m.target.value, undefined)
+							}>
 							<option>No Selection</option>
 							{materials.map((material) => (
 								<option key={material} id={material}>
@@ -72,7 +117,11 @@ export default function PopupFilamentSelector({
 						<label>Colors</label>
 						<select
 							{...register("colorName")}
-							defaultValue={"No Selection"}>
+							defaultValue={"No Selection"}
+							required
+							onChange={(s) =>
+								changeFilament(undefined, s.target.value)
+							}>
 							<option>No Selection</option>
 							{filamentsMatchingMaterial.map((filament) => (
 								<option
@@ -84,9 +133,11 @@ export default function PopupFilamentSelector({
 						</select>
 					</div>
 				</div>
-				{selectedFilament != undefined && (
+				{selectedFilament != undefined && showDescription && (
 					// <Swatch swatch={selectedFilament.color}></Swatch>
-					<FilamentBlock filament={selectedFilament} />
+					<div className="mb-4">
+						<FilamentBlock filament={selectedFilament} />
+					</div>
 				)}
 			</div>
 		</>

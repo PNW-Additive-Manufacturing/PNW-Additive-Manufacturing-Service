@@ -3,4 +3,9 @@ export default interface Model {
 	name: string;
 	ownerEmail: string;
 	fileSizeInBytes: number;
+	analysisFailedReason?: string;
+	analysisResults?: {
+		estimatedFilamentUsedInGrams: number;
+		estimatedDuration: string;
+	};
 }

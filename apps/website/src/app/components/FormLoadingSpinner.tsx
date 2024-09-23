@@ -12,7 +12,7 @@ export default function FormLoadingSpinner({
 
 	return pending ? (
 		<RegularSpinnerSolid
-			className={`inline-block h-auto w-auto animate-spin ${className}`}
+			className={`inline-block h-auto w-auto animate-spin fill-white ${className}`}
 		/>
 	) : (
 		<></>

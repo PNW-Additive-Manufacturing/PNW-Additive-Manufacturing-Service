@@ -371,7 +371,6 @@ function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 							<a
 								className="flex py-1 px-1.5 text-xs text-nowrap justify-between items-center opacity-50 hover:opacity-100"
 								href={`/api/download/model?modelId=${part.modelId}`}
-								download={`${part.model.name}.stl`}
 								target="_blank">
 								Download (
 								{`${Math.round(
@@ -380,6 +379,14 @@ function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 								)
 								<RegularCloudDownload className="fill-cool-black w-6 h-6 p-0.5"></RegularCloudDownload>
 							</a>
+
+							{/* <a
+								className="text-xs text-blue-600 px-1.5"
+								href={`orcaslicer://open/?file=${encodeURIComponent(
+									`http://localhost:3000/api/download/model/?modelId=${part.modelId}`
+								)}&name=test.stl`}>
+								Open in Orca Slicer
+							</a> */}
 						</div>
 
 						<div className="w-full">
@@ -418,19 +425,6 @@ function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 									</span>
 									Fused Deposition Modeling
 								</p>
-								<p className="my-0.5">
-									<span className="font-light">
-										{"Profile: "}
-									</span>
-									High Quality (0.12mm)
-								</p>
-								{/* <p className="my-0.5">
-									<span className="font-light">
-										{"Comment: "}
-									</span>
-									{"No comment provided."}
-								</p> */}
-
 								<div className="mt-2 w-fit">
 									<FilamentBlock
 										filament={

@@ -209,7 +209,7 @@ export default function PartEditor({
 						</div>
 						<div className="w-full">
 							<div className="lg:flex">
-								<div className="mr-4 mb-2 lg:max-w-44 w-full">
+								<div className="mr-4 mb-2 w-full lg:w-48">
 									<div className="w-full h-40 lg:h-48 outline-gray-300 bg-gray-50 outline-1 outline rounded-sm relative shadow-sm">
 										<ModelViewer
 											swatch={
@@ -219,18 +219,41 @@ export default function PartEditor({
 											}
 											modelURL={`/api/download/model?modelId=${part.modelId}`}></ModelViewer>
 									</div>
-									<a
-										className="flex py-1 px-1.5 text-xs text-nowrap justify-between items-center opacity-50 hover:opacity-100"
-										href={`/api/download/model?modelId=${part.modelId}`}
-										download={`${part.model.name}.stl`}
-										target="_blank">
-										Download (
-										{`${Math.round(
-											part.model.fileSizeInBytes / 1000
-										)} kB`}
-										)
-										<RegularCloudDownload className="fill-cool-black w-6 h-6 p-0.5"></RegularCloudDownload>
-									</a>
+									<div className="py-1 px-1 mt-1">
+										{part.model.analysisResults && (
+											<div className="bg-pnw-gold w-full rounded-md text-xs px-2 py-1">
+												<p>Analysis Completed</p>
+												<p>
+													{
+														part.model
+															.analysisResults
+															.estimatedDuration
+													}
+												</p>
+												<p>
+													{
+														part.model
+															.analysisResults
+															.estimatedFilamentUsedInGrams
+													}{" "}
+													(g)
+												</p>
+											</div>
+										)}
+										<a
+											className="flex text-xs text-nowrap justify-between items-center opacity-50 hover:opacity-100"
+											href={`/api/download/model?modelId=${part.modelId}`}
+											download={`${part.model.name}.stl`}
+											target="_blank">
+											Download (
+											{`${Math.round(
+												part.model.fileSizeInBytes /
+													1000
+											)} kB`}
+											)
+											<RegularCloudDownload className="fill-cool-black w-6 h-6 p-0.5"></RegularCloudDownload>
+										</a>
+									</div>
 								</div>
 
 								<div className="w-full">
@@ -322,10 +345,46 @@ export default function PartEditor({
 										</p>
 										<p className="my-0.5">
 											<span className="font-light">
+												{"Automatic Analysis: "}
+											</span>
+											{part.model.analysisResults ? (
+												<>
+													<>
+														{
+															part.model
+																.analysisResults!
+																.estimatedFilamentUsedInGrams
+														}{" "}
+														(g)
+													</>
+													<>
+														{
+															part.model
+																.analysisResults!
+																.estimatedDuration
+														}
+													</>
+												</>
+											) : part.model
+													.analysisFailedReason ? (
+												<>
+													Failed due to{" "}
+													{
+														part.model
+															.analysisFailedReason
+													}
+													!
+												</>
+											) : (
+												<>None performed.</>
+											)}
+										</p>
+										{/* <p className="my-0.5">
+											<span className="font-light">
 												{"Profile: "}
 											</span>
-											High Quality (0.12mm)
-										</p>
+											Standard
+										</p> */}
 										{/* <p className="my-0.5">
 											<span className="font-light">
 												{"Comment: "}
@@ -529,6 +588,8 @@ export default function PartEditor({
 							Request Revoked {part.deniedReason}
 						</Alert>
 					)}
+
+					<div></div>
 				</div>
 
 				{error && <p className="text-red-500 px-2">{error}</p>}

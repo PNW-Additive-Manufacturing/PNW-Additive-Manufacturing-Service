@@ -8,7 +8,6 @@ import getConfig from "../getConfig";
 
 //TODO: very basic database connection (consider using pools later)
 const envConfig = getConfig();
-
 const sql = postgres(envConfig.dbConnectionString, {
 	idle_timeout: 20,
 	max: 50

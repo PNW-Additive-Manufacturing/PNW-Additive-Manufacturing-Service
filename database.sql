@@ -3,7 +3,7 @@ CREATE TYPE PermissionType AS ENUM ('user', 'maintainer', 'admin');
 
 DROP TABLE IF EXISTS Account CASCADE;
 CREATE TABLE Account (
-  Email varchar(120) PRIMARY KEY,
+  Email varchar(254) PRIMARY KEY,
   FirstName varchar(50) NOT NULL,
   LastName varchar(50) NOT NULL, 
   Password char(64) NOT NULL,
@@ -27,7 +27,7 @@ CREATE TYPE PaymentStatus AS ENUM ('pending', 'paid', 'cancelled');
 DROP TABLE IF EXISTS WalletTransaction CASCADE;
 CREATE TABLE WalletTransaction (
   Id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  AccountEmail VARCHAR(120) REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE,
+  AccountEmail VARCHAR(254) REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE,
   AmountInCents BIGINT NOT NULL,
   TaxInCents BIGINT NOT NULL,
   FeesInCents BIGINT NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE WalletTransaction (
 
 DROP TABLE IF EXISTS AccountVerificationCode CASCADE;
 CREATE TABLE AccountVerificationCode (
-  AccountEmail varchar(120) REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE,
+  AccountEmail varchar(254) REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE,
   CreatedAt timestamp with time zone NOT NULL DEFAULT NOW(),
   Code CHAR(32) NOT NULL
 );
@@ -54,9 +54,9 @@ CREATE TABLE AccountVerificationCode (
 DROP TABLE IF EXISTS Filament CASCADE;
 CREATE TABLE Filament (
   Id SMALLSERIAL PRIMARY KEY,
-  Material varchar(10) NOT NULL,
+  Material varchar(20) NOT NULL,
   Details VARCHAR(100) NOT NULL,
-  ColorName varchar(20) NOT NULL,
+  ColorName varchar(50) NOT NULL,
   MonoColor varchar(20),
   DiColorA varchar(20),
   DiColorB varchar(20),
@@ -84,8 +84,9 @@ CREATE TABLE Printer (
 DROP TABLE IF EXISTS Request CASCADE;
 CREATE TABLE Request (
   Id SERIAL PRIMARY KEY,
-  Name varchar(120) NOT NULL,
-  OwnerEmail varchar(120) REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE,
+	-- 256 
+  Name varchar(300) NOT NULL,
+  OwnerEmail varchar(254) REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE,
   SubmitTime timestamp with time zone NOT NULL DEFAULT NOW(),
   PaidAt timestamp with time zone,
   FulfilledAt timestamp with time zone,
@@ -96,6 +97,7 @@ CREATE TABLE Request (
   )
 );
 
+DROP TABLE IF EXISTS RequestRefund CASCADE;
 CREATE TABLE RequestRefund (
   Id SERIAL PRIMARY KEY,
   RequestId SERIAL REFERENCES Request(Id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -107,9 +109,23 @@ CREATE TABLE RequestRefund (
 DROP TABLE IF EXISTS Model CASCADE;
 CREATE TABLE Model (
   Id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  Name varchar(50) NOT NULL,
+  Name varchar(256) NOT NULL,
   FileSizeInBytes BIGINT NOT NULL,
-  OwnerEmail varchar(120) REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE
+  OwnerEmail varchar(254) REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+DROP TABLE IF EXISTS ModelAnalysis CASCADE;
+CREATE TABLE ModelAnalysis
+(
+  ModelId UUID PRIMARY KEY REFERENCES Model(Id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FailedReason VARCHAR(2000),
+  EstimatedFilamentUsedInGrams DECIMAL(2),
+  EstimatedDuration INTERVAL, 
+  CreatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  CONSTRAINT FAILED_CHK CHECK (
+  	(FailedReason IS NOT NULL AND EstimatedFilamentUsedInGrams IS NULL AND EstimatedDuration IS NULL) OR
+    (FailedReason IS NULL)
+  )
 );
 
 DROP TYPE IF EXISTS PartStatus CASCADE;

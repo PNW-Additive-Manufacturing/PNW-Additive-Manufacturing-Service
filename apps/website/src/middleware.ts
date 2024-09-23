@@ -10,6 +10,7 @@ import { AccountPermission } from "./app/Types/Account/Account";
 import { revalidatePath } from "next/cache";
 import modelDownloadMiddleware from "./app/api/download/model/middleware";
 import getConfig from "./app/getConfig";
+import farmMiddleware from "./app/api/farm/middleware";
 
 //all root level files allowed to be accessed without logging in
 const ROOT_FOLDER_FILE_WHITELIST = ["/favicon.ico", "/robots.txt"];
@@ -132,6 +133,8 @@ export async function middleware(request: NextRequest) {
 
 	if (nextUrl.startsWith("/download/model"))
 		return modelDownloadMiddleware(request);
+
+	if (nextUrl.startsWith("/api/farm")) return farmMiddleware(request);
 
 	return NextResponse.next();
 }

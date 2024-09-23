@@ -192,10 +192,6 @@ export default async function Home() {
 
 				<div>
 					<HorizontalWrap>
-						{/* <h2 className="w-full text-center text-2xl font-normal my-4">
-							Our Manufacturing Services
-						</h2> */}
-
 						<div
 							className="xl:flex gap-6 justify-between"
 							id="services">
@@ -203,7 +199,7 @@ export default async function Home() {
 								<div className="w-fit text-2xl py-2">
 									Our Manufacturing Services
 								</div>
-								<div className="w-fit lg:pr-24 pt-2 border-t-2 border-t-gray-200">
+								<div className="w-fit lg:pr-24 pt-2 border-t-4 border-t-gray-200">
 									Each production method offers different
 									benefits and drawbacks. We recommend taking
 									a look at an excellent guide by{" "}
@@ -218,7 +214,7 @@ export default async function Home() {
 							</div>
 							<div className="max-lg:mt-4 lg:flex justify-center">
 								<div className="lg:text-center">
-									<div className="w-full lg:px-4 xl:w-64 py-3 border-b-2 border-b-pnw-gold">
+									<div className="w-full lg:px-3 xl:w-64 py-3 border-b-4 border-b-pnw-gold">
 										3D Printing (FDM)
 									</div>
 									<div className="w-full lg:px-4 mt-2">
@@ -226,46 +222,30 @@ export default async function Home() {
 									</div>
 								</div>
 								<div className="lg:text-center">
-									<div className="w-full lg:px-4 xl:w-64 py-3 border-b-2 border-b-gray-300">
+									<div className="w-full lg:px-3 xl:w-64 py-3 border-b-4 border-b-gray-300">
+										<a
+											href="https://markforged.com/3d-printers/metal-x"
+											target="_blank">
+											Markforged Metal X
+										</a>
+									</div>
+									<div className="w-full lg:px-4 mt-2">
+										Coming Soon
+									</div>
+								</div>
+								<div className="lg:text-center">
+									<div className="w-full lg:px-3 xl:w-64 py-3 border-b-4 border-b-gray-300">
 										Resin Printing (SLA)
 									</div>
 									<div className="w-full lg:px-4 mt-2">
-										Coming 2024 (S2)
+										Coming Soon
 									</div>
 								</div>
-								{/* <div className="lg:text-center">
-									<div className="w-full lg:px-4 xl:w-64 py-3 border-b-2 border-b-gray-300">
-										Waterjet
-									</div>
-									<div className="w-full lg:px-4 mt-2">
-										In Design Studio
-									</div>
-								</div> */}
 							</div>
 						</div>
 					</HorizontalWrap>
 				</div>
 			</div>
 		</>
-	);
-}
-
-function GalleryImageWithDescription({
-	title,
-	description,
-	slides
-}: {
-	title: string;
-	description: string;
-	slides: JSX.Element[];
-}) {
-	return (
-		<div className="lg:w-1/3">
-			<Gallery buttonStyle={"compact"} slides={slides} />
-			<div className="px-5 pb-5">
-				<h2 className="text-2xl font-normal mt-2">{title}</h2>
-				<p className="text-sm mt-2">{description}</p>
-			</div>
-		</div>
 	);
 }

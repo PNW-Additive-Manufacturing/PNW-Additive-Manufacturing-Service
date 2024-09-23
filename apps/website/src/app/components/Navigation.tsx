@@ -48,10 +48,12 @@ function NavbarLink({
 
 export function AccountDetails({
 	permission,
-	email
+	email,
+	onLinkClick
 }: {
 	permission: AccountPermission | null;
 	email: String | null;
+	onLinkClick?: () => void;
 }) {
 	const [expanded, setExpanded] = useState<boolean>(false);
 	const accountDetails = useContext(AccountContext);
@@ -79,11 +81,13 @@ export function AccountDetails({
 	) : (
 		<>
 			<Link
+				onClick={onLinkClick}
 				href="/user/login"
 				className="text-center text-base whitespace-nowrap rounded-md bottom-0 h-fit bg-gray-100 flex flex-col gap-4 px-4 py-2">
 				Sign In
 			</Link>
 			<Link
+				onClick={onLinkClick}
 				href="/user/create-account"
 				className="text-center text-base whitespace-nowrap rounded-md bottom-0 h-fit bg-pnw-gold-light flex flex-col gap-4 px-4 py-2">
 				Create Account
@@ -194,7 +198,7 @@ export function Navbar({
 								<>
 									<ScreenDimmer />
 									<div
-										className={`absolute right-0 top-0 h-screen w-4/5 sm:w-1/3 md:hidden`}
+										className={`absolute right-0 top-0 h-screen w-2/3 md:hidden`}
 										style={{
 											boxShadow:
 												"rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"
@@ -209,7 +213,7 @@ export function Navbar({
 														() => !itemsExpanded
 													)
 												}
-												className="fill-white float-right text-right h-full w-auto p-2"></RegularMenu>
+												className="fill-pnw-gold float-right text-right h-full w-auto p-2"></RegularMenu>
 										</div>
 										<div
 											className="flex flex-col gap-2 bg-root h-remaining-screen-with-nav p-2 w-full"

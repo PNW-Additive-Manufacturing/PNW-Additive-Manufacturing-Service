@@ -16,6 +16,7 @@ const environmentSchema = z.literal("development").or(z.literal("production"));
 
 export default function getConfig() {
 	const hostURL = process.env["COOLIFY_FQDN"] ?? "http://localhost:3000";
+	const farmAPIUrl = getProcessEnvironmentVariable("FARM_API_URL");
 	const uploadModelDir = getProcessEnvironmentVariable("MODEL_UPLOAD_DIR");
 	const dbConnectionString = getProcessEnvironmentVariable("DB_CONNECTION");
 	const jwtSecret = getProcessEnvironmentVariable("JWT_SECRET");
@@ -43,6 +44,7 @@ export default function getConfig() {
 			return new URL(path, this.hostURL);
 		},
 		uploadModelDir,
+		farmAPIUrl,
 		environment: parsedEnvironment.data,
 		email: {
 			user: emailUser,

@@ -6,13 +6,25 @@ export default class ModelServe {
 		const query = await db`SELECT * FROM Model WHERE Id=${modelId}`;
 		const modelRow = query.at(0);
 		if (modelRow == undefined) return;
-		console.log(modelRow.filesizeinbytes);
+
+		const analysisQuery = (
+			await db`SELECT * FROM ModelAnalysis WHERE ModelId=${modelId}`
+		).at(0);
 
 		return {
 			id: modelRow.id,
 			name: modelRow.name,
 			ownerEmail: modelRow.owneremail,
-			fileSizeInBytes: Number.parseInt(modelRow.filesizeinbytes)
+			fileSizeInBytes: Number.parseInt(modelRow.filesizeinbytes),
+			analysisFailedReason: analysisQuery?.failedReason,
+			analysisResults:
+				analysisQuery == undefined
+					? undefined
+					: {
+							estimatedDuration: analysisQuery!.estimatedduration,
+							estimatedFilamentUsedInGrams:
+								analysisQuery.estimatedfilamentusedingrams
+					  }
 		};
 	}
 
@@ -20,13 +32,29 @@ export default class ModelServe {
 		const query =
 			await db`SELECT * FROM Model WHERE OwnerEmail=${accountEmail}`;
 
-		return query.map((modelRow) => {
-			return {
-				id: modelRow.id,
-				name: modelRow.name,
-				ownerEmail: modelRow.owneremail,
-				fileSizeInBytes: Number.parseInt(modelRow.filesizeinbytes)
-			};
-		});
+		return Promise.all(
+			query.map(async (modelRow) => {
+				const analysisQuery = (
+					await db`SELECT * FROM ModelAnalysis WHERE ModelId=${modelRow.id}`
+				).at(0);
+
+				return {
+					id: modelRow.id,
+					name: modelRow.name,
+					ownerEmail: modelRow.owneremail,
+					fileSizeInBytes: Number.parseInt(modelRow.filesizeinbytes),
+					analysisFailedReason: analysisQuery?.failedReason,
+					analysisResults:
+						analysisQuery == undefined
+							? undefined
+							: {
+									estimatedDuration:
+										analysisQuery!.estimatedduration,
+									estimatedFilamentUsedInGrams:
+										analysisQuery.estimatedfilamentusedingrams
+							  }
+				};
+			})
+		);
 	}
 }

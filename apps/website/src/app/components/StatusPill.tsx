@@ -15,7 +15,7 @@ export default function StatusPill({
 	return (
 		<div className={`inline-block ${className} text-nowrap`}>
 			<div
-				className={`bg-gray-50 w-fit rounded-lg p-1.5 flex font-normal select-none uppercase`}>
+				className={`bg-gray-50 w-fit rounded-lg p-1.5 flex items-center font-normal select-none uppercase`}>
 				<div
 					className={`hidden lg:block rounded-full h-5 mr-2 aspect-square bg-${statusColor}`}></div>
 				<span className="my-auto mr-1 text-sm">{context}</span>

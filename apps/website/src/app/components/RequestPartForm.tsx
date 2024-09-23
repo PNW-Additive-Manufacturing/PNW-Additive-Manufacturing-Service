@@ -27,6 +27,7 @@ import ModelViewer from "./ModelViewer";
 import { modifyPart } from "../api/server-actions/maintainer";
 import { NamedSwatch, SwatchConfiguration, templatePNW } from "./Swatch";
 import FormLoadingSpinner from "./FormLoadingSpinner";
+import { Euler } from "three";
 
 function AddPartButton({
 	onChange
@@ -69,6 +70,7 @@ interface PartData {
 	Quantity: number;
 	Material: string;
 	Color: SwatchConfiguration;
+	IsUserOriented: boolean;
 }
 
 function RequestPartFormSubmit({ parts }: { parts: PartData[] }) {
@@ -100,6 +102,16 @@ export function RequestPartForm({
 	let [parts, setParts] = useState<PartData[]>([]);
 	let [modifyingPart, setModifyingPart] = useState<PartData>();
 
+	// Loop through each part and enable the modifyingPart popup if not given a print orientation by the user!
+	if (modifyPart == null) {
+		for (let part of parts) {
+			if (!part.IsUserOriented) {
+				setModifyingPart(part);
+				break;
+			}
+		}
+	}
+
 	return (
 		<>
 			<Dialog
@@ -129,24 +141,73 @@ export function RequestPartForm({
 									Remove
 									<RegularCrossCircle></RegularCrossCircle>
 								</div>
-								<div
-									className="flex items-center gap-2 fill-pnw-gold text-pnw-gold hover:cursor-pointer"
-									onClick={() => setModifyingPart(undefined)}>
+								<button
+									className="flex m-0 bg-transparent items-center gap-2 fill-pnw-gold text-pnw-gold hover:cursor-pointer"
+									onClick={() => setModifyingPart(undefined)}
+									disabled={!modifyingPart?.IsUserOriented}>
 									Continue
 									<RegularArrowRight></RegularArrowRight>
-								</div>
+								</button>
 							</div>
 						</Dialog.Title>
 						<div className="lg:flex gap-4">
-							<div className="max-lg:hidden">
+							<div className="max-lg:hidden flex flex-col max-w-96">
 								<label>View Model</label>
 								{modifyingPart?.File && (
-									<div className="w-88 aspect-square outline-gray-300 bg-gray-50 outline-1 outline rounded-sm relative shadow-sm">
-										<ModelViewer
-											modelFile={
-												modifyingPart.File
-											}></ModelViewer>
-									</div>
+									<>
+										<div className="w-full aspect-square outline-gray-300 bg-gray-50 outline-1 outline rounded-sm relative shadow-sm">
+											<ModelViewer
+												showOrientation={
+													!modifyingPart!
+														.IsUserOriented
+												}
+												onClickOrientation={(
+													rotation
+												) => {
+													modifyingPart.IsUserOriented =
+														true;
+													// setModifyingPart(
+													// 	modifyingPart
+													// );
+													setModifyingPart({
+														...modifyingPart,
+														IsUserOriented: true
+													});
+												}}
+												modelFile={
+													modifyingPart.File
+												}></ModelViewer>
+										</div>
+										{!modifyingPart.IsUserOriented && (
+											<p className="text-sm px-1 mt-2">
+												Choose the bottom of the model
+												which should be printed on the
+												plate.
+											</p>
+										)}
+										{/* <div className="grid grid-cols-3 p-2 gap-2">
+											{[
+												new Euler(Math.PI),
+												new Euler(0, Math.PI),
+												new Euler(0, 0, Math.PI),
+												new Euler(Math.PI, Math.PI),
+												new Euler(
+													Math.PI,
+													Math.PI,
+													Math.PI
+												)
+											].map((rot) => (
+												<div className=" bg-gray-300">
+													<ModelViewer
+														modelFile={
+															modifyingPart.File
+														}
+														modelRotation={rot}
+													/>
+												</div>
+											))}
+										</div> */}
+									</>
 								)}
 							</div>
 
@@ -327,7 +388,8 @@ export function RequestPartForm({
 											),
 											Material: "PLA",
 											Color: filaments.at(0)!.color,
-											Quantity: 1
+											Quantity: 1,
+											IsUserOriented: false
 										};
 									});
 
@@ -394,12 +456,13 @@ export function RequestPartForm({
 											),
 											Material: "PLA",
 											Color: filaments.at(0)!.color,
-											Quantity: 1
+											Quantity: 1,
+											IsUserOriented: false
 										};
 									});
 
 								setParts([...parts, ...newParts]);
-							}}></AddPartButton>
+							}} />
 					</div>
 				</div>
 				{error && (

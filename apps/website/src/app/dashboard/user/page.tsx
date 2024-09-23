@@ -1,4 +1,7 @@
-import { getJwtPayload } from "@/app/api/util/JwtHelper";
+import {
+	getJwtPayload,
+	retrieveSafeJWTPayload
+} from "@/app/api/util/JwtHelper";
 import { redirect } from "next/navigation";
 import { RegularEnter } from "lineicons-react";
 import Link from "next/link";
@@ -14,19 +17,16 @@ import UserRequestStatusAlert from "@/app/components/Request/UserStatusAlert";
 import { formateDate } from "@/app/api/util/Constants";
 
 export default async function Page() {
-	let email: string;
-	try {
-		let payload = (await getJwtPayload())!;
-		email = payload.email;
-	} catch (e) {
-		return redirect("/user/login");
-	}
+	let JWT = await retrieveSafeJWTPayload();
+	if (JWT == undefined) return redirect("/user/login");
 
-	const requests = await RequestServe.fetchAllByAccount(email);
+	const requests = await RequestServe.fetchAllByAccount(JWT.email);
 
 	return (
 		<>
-			<h1 className="text-3xl tracking-wide font-light">Your Orders</h1>
+			<h1 className="text-3xl tracking-wide font-light">
+				Welcome, {JWT.firstname} {JWT.lastname}!
+			</h1>
 			<br />
 
 			{/* <div className="py-2 pr-2 w-full">Ongoing</div> */}

@@ -47,6 +47,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
 	return new NextResponse(bufferedData, {
 		headers: {
+			"Content-Disposition": `attachment; filename="${model.name}.stl"`,
 			"content-type": "application/octet-stream"
 		}
 	});

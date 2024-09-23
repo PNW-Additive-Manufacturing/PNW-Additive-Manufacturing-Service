@@ -42,10 +42,12 @@ export default async function Maintainer() {
 					<span>View {orderCount.count} Requests</span>
 				</button>
 			</a>
-			{/* <a href="/dashboard/maintainer/view-printers" className="w-96 block"><button className="flex items-center text-lg font-normal">
-            <GenericPrinterIcon className="inline-block w-12 h-12 mr-auto fill-gray-100"></GenericPrinterIcon>
-            <span>Control Printers</span>   
-        </button></a> */}
+			<a href="/dashboard/maintainer/printers" className="w-96 block">
+				<button className="flex items-center text-lg font-normal">
+					<GenericPrinterIcon className="inline-block w-12 h-12 mr-auto fill-gray-100"></GenericPrinterIcon>
+					<span>View Printers</span>
+				</button>
+			</a>
 			<a
 				href="/dashboard/maintainer/filaments"
 				className="sm:max-w-sm block">

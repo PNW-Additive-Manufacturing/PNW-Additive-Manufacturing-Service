@@ -69,12 +69,10 @@ export default class PartServe {
 		const parts: Array<postgres.Row> =
 			await db`select * from part where RequestId=${request.id} ORDER BY Id DESC`;
 
-		console.log(parts);
-
-		const models: Array<postgres.Row> =
-			await db`select * from model where id in ${db(
-				parts.map((p) => p.modelid)
-			)} order by id`;
+		// const models: Array<postgres.Row> =
+		// 	await db`select * from model where id in ${db(
+		// 		parts.map((p) => p.modelid)
+		// 	)} order by id`;
 		const filaments: Array<postgres.Row> =
 			await db`select * from filament where id in ${db(
 				parts.map((p) => p.assignedfilamentid)
@@ -84,7 +82,8 @@ export default class PartServe {
 		for (let partIndex in parts) {
 			const partRow = parts[partIndex];
 
-			let model = models[partIndex];
+			const model = (await ModelServe.queryById(partRow.modelid))!;
+
 			let filamentRow = filaments.find(
 				(f) => f.id === partRow.assignedfilamentid
 			)!;
@@ -99,12 +98,13 @@ export default class PartServe {
 				requestId: partRow.requestid,
 				request,
 				modelId: partRow.modelid,
-				model: {
-					id: model.id,
-					name: model.name,
-					ownerEmail: model.owneremail,
-					fileSizeInBytes: model.filesizeinbytes
-				},
+				model: model,
+				// model: {
+				// 	id: model.id,
+				// 	name: model.name,
+				// 	ownerEmail: model.owneremail,
+				// 	fileSizeInBytes: model.filesizeinbytes
+				// },
 				deniedReason: partRow.revokedreason,
 				refund:
 					partRow.refundreason == undefined
