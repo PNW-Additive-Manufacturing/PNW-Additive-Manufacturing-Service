@@ -178,13 +178,6 @@ export function RequestPartForm({
 													modifyingPart.File
 												}></ModelViewer>
 										</div>
-										{!modifyingPart.IsUserOriented && (
-											<p className="text-sm px-1 mt-2">
-												Choose the bottom of the model
-												which should be printed on the
-												plate.
-											</p>
-										)}
 										{/* <div className="grid grid-cols-3 p-2 gap-2">
 											{[
 												new Euler(Math.PI),
@@ -462,7 +455,8 @@ export function RequestPartForm({
 									});
 
 								setParts([...parts, ...newParts]);
-							}} />
+							}}
+						/>
 					</div>
 				</div>
 				{error && (
