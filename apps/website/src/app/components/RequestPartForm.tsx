@@ -143,8 +143,7 @@ export function RequestPartForm({
 								</div>
 								<button
 									className="flex m-0 bg-transparent items-center gap-2 fill-pnw-gold text-pnw-gold hover:cursor-pointer"
-									onClick={() => setModifyingPart(undefined)}
-									disabled={!modifyingPart?.IsUserOriented}>
+									onClick={() => setModifyingPart(undefined)}>
 									Continue
 									<RegularArrowRight></RegularArrowRight>
 								</button>
