@@ -228,16 +228,18 @@ export default async function Home() {
 									height={720}></Image>
 								<div>
 									<span className="text-pnw-gold">
-										3D printing using Fused Deposition
-										Modeling (FDM)
+										FDM 3D Printing
 									</span>{" "}
 									involves melting thermoplastic filament and
 									layering it to create objects. It can be
 									used for prototyping, allowing designers to
-									quickly test and iterate on designs. FDM is
-									also ideal for producing custom parts, such
-									as brackets or tools, tailored to specific
-									needs.
+									quickly test and iterate on designs.
+									<ul className="mt-2">
+										<li>
+											Materials: PLA, PLA Aero, PETG, ABS,
+											TPU, CF, PC, and more!
+										</li>
+									</ul>
 								</div>
 							</div>
 							<div className="flex flex-col lg:flex-row gap-4 opacity-70">
@@ -259,7 +261,13 @@ export default async function Home() {
 									printing, the part undergoes a debinding
 									process to remove the polymer, followed by
 									sintering in a furnace to achieve full
-									density.
+									density and strength.
+									<ul className="mt-2">
+										<li>
+											Materials: 17-4PH Stainless Steel,
+											H13 Tool Steel, and more!
+										</li>
+									</ul>
 								</div>
 							</div>
 							<div className="flex flex-col lg:flex-row gap-4 opacity-70">
@@ -280,9 +288,7 @@ export default async function Home() {
 									the creation of highly detailed and
 									intricate designs. This method is especially
 									suited for applications like jewelry, dental
-									models, and miniatures, thanks to its
-									ability to produce fine details and smooth
-									finishes.
+									models, and miniatures.
 								</div>
 							</div>
 						</div>
