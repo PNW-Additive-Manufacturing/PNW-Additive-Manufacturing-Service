@@ -130,9 +130,8 @@ export default async function Home() {
 										</div>
 										<p className="text-base px-2 lg:text-center w-full font-light mt-2">
 											Handouts in the form of a keychain
-											or bagchain for an event can be a
-											fun and effective way to promote
-											your event.
+											for an event can be a fun and
+											effective way to promote your event.
 										</p>
 									</>,
 									<>
@@ -254,12 +253,13 @@ export default async function Home() {
 									</span>{" "}
 									utilizes a unique process to produce metal
 									parts. It starts with a composite of metal
-									powder and a polymer binder, which is 3D
-									printed into the desired shape. After
-									printing, the part undergoes a debinding
-									process to remove the polymer, followed by
-									sintering in a furnace to achieve full
-									density and strength.
+									powder and a FDM-like polymer binder
+									filament, which is 3D printed into the
+									desired shape. After printing, the part
+									undergoes a debinding process to remove the
+									binding polymer, followed by sintering in a
+									furnace to achieve full density and
+									strength.
 									<ul className="mt-2">
 										<li>
 											Materials: 17-4PH Stainless Steel,
@@ -280,12 +280,12 @@ export default async function Home() {
 										SLA Resin Printing (Coming December
 										2024)
 									</span>{" "}
-									photopolymer resin is cured layer by layer.
-									The printer uses an LCD screen to project UV
-									that selectively harden the resin, enabling
-									the creation of highly detailed and
-									intricate designs. This method is especially
-									suited for applications like jewelry, dental
+									resin is cured layer by layer. The printer
+									uses an LCD screen to project UV that
+									selectively hardens the resin, enabling the
+									creation of highly detailed and intricate
+									designs. This method is especially suited
+									for applications like jewelry, dental
 									models, and miniatures.
 								</div>
 							</div>
