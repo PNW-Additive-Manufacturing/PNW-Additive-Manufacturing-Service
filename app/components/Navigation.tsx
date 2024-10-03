@@ -272,7 +272,7 @@ export function Footer(): JSX.Element {
 	return (
 		<div className="bg-cool-black w-full h-fit shadow-2xl">
 			<HorizontalWrap className="py-6">
-				<div className="inline-block mx-6">
+				<div className="inline-block">
 					<p className="font-bold text-gray-100 text-sm">About Us</p>
 					<a href="/team" className="text-gray-300 my-2 text-xs">
 						Our Team

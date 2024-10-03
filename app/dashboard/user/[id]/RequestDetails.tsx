@@ -338,7 +338,7 @@ function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 				value={2}
 				max={5}
 				className="rounded-none w-full accent-pnw-gold h-1.5 block"></progress> */}
-			<div className="lg:flex gap-4 shadow-sm rounded-sm px-4 py-4 pt-5 lg:pr-6 lg:py-6 lg:pt-7 bg-white outline outline-2 outline-gray-200">
+			<div className="lg:flex gap-4 shadow-sm rounded-sm pl-4 pr-4 py-4 pt-5 lg:py-6 lg:pr-6 lg:pl-6 bg-white outline outline-2 outline-gray-200">
 				{/* <div className="max-lg:hidden w-fit text-lg text-center">
 					{index + 1}
 					<input
@@ -350,7 +350,7 @@ function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 						<div className="mr-4 mb-2 lg:max-w-56 w-full ">
 							<div className="shadow-sm">
 								<div
-									className={`w-full h-40 lg:h-48 relative outline-1 outline outline-gray-300 bg-gray-100 rounded-md max-lg:rounded-l-none`}>
+									className={`w-full h-40 lg:h-48 relative outline-1 outline outline-gray-300 bg-gray-100 rounded-md`}>
 									{revisedFile == undefined ? (
 										<ModelViewer
 											swatch={
@@ -366,10 +366,12 @@ function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 											modelFile={revisedFile}
 										/>
 									)}
-									<div className="absolute -top-4 left-2">
-										<StatusPill
+									<div className="absolute -top-2.5 -right-5">
+										<div
+											className={`rounded-full h-6 mr-2 aspect-square bg-${statusColor}`}></div>
+										{/* <StatusPill
 											statusColor={statusColor}
-											context={part.status}></StatusPill>
+											context={part.status}></StatusPill> */}
 									</div>
 								</div>
 							</div>
@@ -403,9 +405,7 @@ function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 									statusColor={statusColor}
 									context={part.status}></StatusPill>
 							</div> */}
-							<span className="text-2xl block lg:inline mb">
-								{part.model.name} x{part.quantity}
-							</span>
+							<p className="text-2xl mb-1">{part.model.name}</p>
 							<div>
 								{part.status == PartStatus.Denied && (
 									<div className="text-red-500 w-fit">
@@ -431,6 +431,18 @@ function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 										{"Technology: "}
 									</span>
 									Fused Deposition Modeling
+								</p>
+								<p className="my-0.5">
+									<span className="font-light">
+										{"Notes: "}
+									</span>
+									{part.notes ?? "No information provided"}
+								</p>
+								<p className="my-0.5">
+									<span className="font-light">
+										{"Quantity: "}
+									</span>
+									x{part.quantity}
 								</p>
 								<div className="mt-2 w-fit">
 									<FilamentBlock

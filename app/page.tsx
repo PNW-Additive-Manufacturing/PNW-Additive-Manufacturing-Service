@@ -44,8 +44,8 @@ export default async function Home() {
 			<div>
 				<HorizontalWrap>
 					<div className="lg:flex justify-between gap-6 lg:m-0">
-						<div className="w-full lg:mb-10">
-							<h1 className="w-fit mb-6 text-3xl font-normal">
+						<div className="w-full lg:mb-6">
+							<h1 className="w-fit mb-4 text-3xl font-normal">
 								Welcome to the
 								<span className="font-bold">
 									<span className="text-pnw-gold"> PNW </span>
@@ -93,9 +93,7 @@ export default async function Home() {
 								</div> */}
 							</div>
 						</div>
-						<div
-							className="w-full lg:w-2/3 max-lg:mb-6 pl-12"
-							style={{ minHeight: "432px" }}>
+						<div className="w-full lg:w-2/3 max-lg:mb-6 lg:pl-12">
 							<Gallery
 								buttonStyle="sphere"
 								autoplay={true}

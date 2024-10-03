@@ -49,6 +49,9 @@ export function getStatusColor(partStatus: PartStatus) {
 		case PartStatus.Denied:
 			selectedStatusColor = "orange-400";
 			break;
+		case PartStatus.Pending:
+			selectedStatusColor = "orange-400";
+			break;
 		default:
 			selectedStatusColor = "gray-200";
 			break;
