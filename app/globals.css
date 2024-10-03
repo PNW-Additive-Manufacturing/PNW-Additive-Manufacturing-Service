@@ -1,0 +1,245 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background-rgb: 248, 248, 248;
+  --foreground-rgb: 0, 0, 0;
+  --background2-rgb: 245, 245, 250;
+  --ascent-rgb: #e4af0b;
+
+  /* PNW Branding Stuff */
+  --pnw-gold-logo: #e6b10e;
+  --pnw-gold: #b1810b;
+  --pnw-blue: #7ca6c0;
+  --pnw-gold-light: #f7f2e6;
+  --pnw-black: #000000;
+
+  --nav-height: 4rem;
+}
+
+* {
+  font-family: inherit;
+}
+
+
+/* main
+{
+	background-image: linear-gradient(180deg,#ffffff 95%,#a4a4a4 100%);
+} */
+ 
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --background-rgb: 0, 0, 0;
+    --foreground-rgb: 255, 255, 255;
+  }
+} */
+
+.wrapper {
+  width: 50%;
+  margin-left: 25%;
+}
+
+progress {
+	height: 10px;
+	margin: auto;
+	border-radius: 5px;
+}
+
+hr {
+	border-color: #c5c5c5;
+}
+
+body {
+  color: rgb(64, 64, 64);
+  background: rgb(var(--background-rgb));
+  
+  font-family: Helvetica Neue,Helvetica,Arial,sans-serif; 
+}
+
+button {
+	text-decoration: none;
+	outline: none;
+	border: none;
+}
+p {
+  color: rgb(64, 64, 64)
+}
+h1, h2, h3, h4 {
+  font-family: "Helvetica";
+  font-weight: bolder;
+}
+input:focus, textarea:focus{
+  outline:solid 2px black;
+}
+input, button, textarea, select {
+  border-radius: 5px;
+  padding: 0.8rem 1.2rem 0.8rem 1.2rem;
+  background-color: purple;
+}
+button 
+{
+	font-size: 1rem !important;
+    line-height: 1.5rem !important;
+	font-weight: 500 !important;
+}
+input, textarea, select {
+  border: 0px;
+  font-weight: normal;
+  background-color: rgb(var(--background-rgb));
+}
+input, textarea, select 
+{
+	outline: solid 1px #d1d5db;
+}
+select {
+	padding-right: 10px;
+}
+
+button, input[type="submit"]
+{
+  background-color: var(--pnw-gold);
+}
+button:hover, input[type="submit"]:hover, button:active {
+  color: rgb(64, 64, 64);
+  background-color: var(--pnw-gold);
+  fill: white;
+  transition: 0.05s;
+  color: white;
+}
+button:hover, input[type="submit"]:hover, select:hover{
+  cursor: pointer;
+}
+.inputs {
+  margin: auto;
+  font-family: 'Azeret Mono', monospace;
+}
+input, textarea, button, select {
+  display: block;
+  width: auto;
+  width: -moz-available;
+  color: rgb(64, 64, 64);
+  margin-bottom: 1rem;
+}
+input[type="submit"], button {
+  background-color: #303030;
+  color: white;
+  font-weight: bold;
+}
+label
+{
+	display: block;
+	margin-bottom: 8px;
+	font-weight: 500;
+	font-size: 0.875rem /* 14px */;
+    line-height: 1.25rem /* 20px */;
+	color: rgb(75, 85, 99)
+}
+input[type="submit"][disabled], button[disabled], textarea[disabled]
+{
+	opacity: 0.65;
+	cursor: not-allowed;
+}
+input, select[multiple]
+{
+	accent-color: var(--pnw-gold);
+}
+input:hover
+{
+	background-color: white;
+}
+select[multiple]
+{
+	width: 100%;
+	padding: 4px;
+	border-left: 4px solid var(--pnw-gold);
+	border-radius: 0px;
+}
+
+button {
+  background-color: #2b2b2b;
+  color: white;
+  text-wrap: nowrap;
+}
+tr:nth-child(even) {
+  background-color: rgba(231, 231, 231, 0.3);
+}
+
+.horizontal-wrap {
+  width: 65%;
+  margin-left: calc(35%/2);
+}
+
+.container {
+  background-color: white;
+  border-radius: 0.125rem;
+  padding: 2rem;
+  /* width: fit-content; */
+  height: fit-content;
+}
+
+
+/* Table Styling */
+table thead {
+  /* background-color: #9e9e9e; */
+  border-radius: 50%;
+  /* border-bottom: 2px solid gray; */
+  text-transform: uppercase;
+  margin: 2rem 1rem 0rem 2rem;
+}
+table thead tr th {
+  font-size: 0.8rem;
+  border-radius: 50%;
+  color: rgb(100, 100, 100);
+  font-weight: normal;
+  text-align: left;
+}
+table thead tr td, table thead tr th
+{
+  padding: 1rem 2rem 0.5rem 2rem;
+}
+table tbody tr td
+{
+	padding: 1rem 2rem 1rem 2rem;
+}
+table thead tr td:first-child, table thead tr th:first-child
+{
+  padding-left: 1rem;
+}
+table tbody tr:first-child {
+	border-top: none;
+}
+table tbody tr {
+  border-top: 2px solid rgb(238, 238, 238);
+  border-bottom: 2px solid rgb(238, 238, 238);
+  text-align: left;
+}
+table tbody tr td {
+  font-size: 1rem;
+  /* padding: 1rem 0rem 1rem 0rem; */
+}
+table thead tr td:last-child, table thead tr th:last-child
+{
+  padding-right: 0rem;
+}
+table tbody tr td:first-child
+{
+  padding-left: 1rem;
+}
+li {
+  list-style: disc outside none;
+  display: list-item;
+  margin-left: 1em;
+}
+img
+{
+	object-fit: cover;
+	object-position: center;
+}
+
+progress {
+	width: 100%;
+}
+progress::-webkit-progress-value {background-color: var(--pnw-gold) !important;}
+progress::-moz-progress-bar {background-color: var(--pnw-gold) !important;}
+progress {color: var(--pnw-gold);}
