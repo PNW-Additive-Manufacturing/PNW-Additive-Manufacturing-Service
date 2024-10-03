@@ -80,6 +80,16 @@ export default async function RootLayout({
 							: await AccountServe.queryByEmail(email)
 					}>
 					<ThemeProvider>
+						<div className="bg-gray-200">
+							<HorizontalWrap className="text-cool-black opacity-50 w-full py-0 pt-1 pb-1 text-right text-sm">
+								Site is in{" "}
+								<span className="font-semibold">
+									testing mode
+								</span>
+								, no payments are fulfilled, nor should orders
+								be considered actual!
+							</HorizontalWrap>
+						</div>
 						<Navbar
 							links={(() => {
 								if (permission == null) {

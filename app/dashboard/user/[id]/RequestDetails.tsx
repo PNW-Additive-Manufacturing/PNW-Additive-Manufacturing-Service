@@ -366,7 +366,7 @@ function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 											modelFile={revisedFile}
 										/>
 									)}
-									<div className="absolute -top-2.5 -right-5">
+									<div className="absolute -top-3 -right-5">
 										<div
 											className={`rounded-full h-6 mr-2 aspect-square bg-${statusColor}`}></div>
 										{/* <StatusPill
