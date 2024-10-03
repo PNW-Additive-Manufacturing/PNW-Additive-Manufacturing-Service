@@ -81,7 +81,7 @@ export default async function RootLayout({
 					}>
 					<ThemeProvider>
 						<div className="bg-gray-200">
-							<HorizontalWrap className="text-cool-black opacity-50 w-full py-0 pt-1 pb-1 text-right text-sm">
+							<HorizontalWrap className="text-cool-black opacity-50 w-full py-0 pt-1 pb-1 lg:text-right text-sm">
 								Site is in{" "}
 								<span className="font-semibold">
 									testing mode

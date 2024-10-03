@@ -3,6 +3,7 @@
 import Image from "next/image";
 import HorizontalWrap from "./components/HorizontalWrap";
 import Gallery from "./components/Gallery";
+import { RegularLink } from "lineicons-react";
 
 function DiscordServer() {
 	return (
@@ -76,11 +77,20 @@ export default async function Home() {
 							</ul>
 
 							<div className="pt-10">
-								<a
-									href={"/request-part"}
-									className="block w-fit px-5 py-3 text-lg bg-gradient-linear-pnw-mystic tracking-wider font-semibold uppercase rounded-md shadow-sm">
-									Get Started
-								</a>
+								<div className="flex max-lg:justify-between gap-2">
+									<a
+										href={"/request-part"}
+										className="block w-fit px-5 py-3 text-lg bg-gradient-linear-pnw-mystic tracking-wider font-semibold uppercase rounded-md shadow-sm">
+										Get Started
+									</a>
+									<a
+										href={
+											"https://mypnwlife.pnw.edu/feeds?type=club&type_id=35554"
+										}
+										className="block w-fit px-5 py-3 text-base tracking-wider font-light">
+										Join MyPNWLife
+									</a>
+								</div>
 								<a
 									href={"/schedule"}
 									className="block w-fit px-3 py-3 text-xs tracking-wider underline">
@@ -149,24 +159,12 @@ export default async function Home() {
 										</p>
 									</>,
 									<>
-										<div className="flex justify-center w-full gap-4">
-											<div className="bg-gray-100 rounded-md shadow-sm mt-4 w-auto h-72">
-												<Image
-													src="/assets/flower_print.jpg"
-													width={760}
-													height={760}
-													alt=""
-													className="pt-0 w-full h-full bg-black rounded-md"></Image>
-											</div>
-											<div className="max-lg:hidden bg-gray-100 rounded-md shadow-sm mt-4 w-auto h-72">
-												<Image
-													src="/assets/ben_figure.jpg"
-													width={760}
-													height={760}
-													alt=""
-													className="pt-0 w-full h-full bg-black rounded-md"></Image>
-											</div>
-										</div>
+										<Image
+											src="/assets/flower_print.jpg"
+											width={760}
+											height={760}
+											alt=""
+											className="pt-0 w-full bg-black rounded-md h-72"></Image>
 										<p className="text-base px-2 lg:text-center w-full font-light mt-2">
 											Express your creativity by designing
 											and requesting artistic models.
@@ -182,7 +180,7 @@ export default async function Home() {
 												className="pt-0 w-full h-full bg-black rounded-md"></Image>
 										</div>
 										<p className="text-base px-2 lg:text-center w-full font-light mt-2">
-											Luke moreno utilizes ABS filament to
+											Luke Moreno utilizes ABS filament to
 											securely encase the electronics for
 											three-pound Battle Bots.
 										</p>
@@ -277,7 +275,7 @@ export default async function Home() {
 									height={720}></Image>
 								<div>
 									<span className="text-pnw-gold">
-										SLA Resin Printing (Coming December
+										SLA/LCD Resin Printing (Coming December
 										2024)
 									</span>{" "}
 									resin is cured layer by layer. The printer
