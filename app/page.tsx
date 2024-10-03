@@ -55,7 +55,7 @@ export default async function Home() {
 
 							<p
 								style={{ maxWidth: "600px" }}
-								className="overflow-hidden w-full pb-4">
+								className="overflow-hidden full pb-4">
 								Created by the PNW Additive Manufacturing Club,
 								this service enables PNW students, and faculty
 								members to explore the world of 3D Printing.
@@ -202,7 +202,7 @@ export default async function Home() {
 							id="services">
 							<div>
 								<div className="w-fit font-normal text-2xl pb-2">
-									| Our Manufacturing Services
+									Our Manufacturing Services
 								</div>
 								<div className="w-fit lg:pr-24 pt-2">
 									Each production method offers different
