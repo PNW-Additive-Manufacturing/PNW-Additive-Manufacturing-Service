@@ -163,9 +163,7 @@ button {
   color: white;
   text-wrap: nowrap;
 }
-tr:nth-child(even) {
-  background-color: rgba(231, 231, 231, 0.3);
-}
+
 
 .horizontal-wrap {
   width: 65%;
@@ -179,7 +177,6 @@ tr:nth-child(even) {
   /* width: fit-content; */
   height: fit-content;
 }
-
 
 /* Table Styling */
 table thead {
@@ -200,14 +197,22 @@ table thead tr td, table thead tr th
 {
   padding: 1rem 2rem 0.5rem 2rem;
 }
+table tbody tr
+{
+	background-color: white;
+}
+table tbody tr:nth-child(even) {
+	background-color: rgba(231, 231, 231, 0.3);
+  }
 table tbody tr td
 {
 	padding: 1rem 2rem 1rem 2rem;
 }
 table thead tr td:first-child, table thead tr th:first-child
 {
-  padding-left: 1rem;
+  padding-left: 0px;
 }
+
 table tbody tr:first-child {
 	border-top: none;
 }

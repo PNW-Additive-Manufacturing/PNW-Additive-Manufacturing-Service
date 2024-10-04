@@ -52,6 +52,43 @@ export function Input({
 	);
 }
 
+export function InputCheckbox({
+	label,
+	id,
+	name,
+	defaultChecked,
+	onChange,
+	required,
+	children
+}: {
+	label: string;
+	id: string;
+	name?: string;
+	required?: boolean;
+	defaultChecked?: boolean;
+	onChange?: ChangeEventHandler<HTMLInputElement>;
+	children?: any;
+}): JSX.Element {
+	required = required ?? false;
+
+	return (
+		<div className="flex items-center w-fit gap-2">
+			<label className="mb-0 text-wrap">{label}</label>
+			<input
+				required={required}
+				className="outline-none border-none w-5 h-5 mb-0"
+				id={id}
+				name={name}
+				type="checkbox"
+				size={50}
+				defaultChecked={defaultChecked}
+				onChange={onChange}>
+				{children}
+			</input>
+		</div>
+	);
+}
+
 export function InputBig({
 	label,
 	id,

@@ -66,19 +66,19 @@ export function getRequestStatus(request: RequestWithParts): string {
 export function getRequestStatusColor(request: RequestWithParts) {
 	switch (getRequestStatus(request)) {
 		case "Fulfilled":
-			return "green-500";
+			return "rgb(34 197 94)";
 		case "Ready for Pick up":
-			return "green-500";
+			return "rgb(34 197 94)";
 		case "Queued for Processing":
-			return "gray-200";
+			return "rgb(229 231 235)";
 		case "Processing":
-			return "blue-500";
+			return "rgb(59 130 246)";
 		case "Waiting for Payment":
-			return "gray-200";
+			return "rgb(229 231 235)";
 		case "Action Required":
-			return "orange-400";
+			return "rgb(251 146 60)";
 		default:
-			return "gray-200";
+			return "rgb(229 231 235)";
 	}
 }
 

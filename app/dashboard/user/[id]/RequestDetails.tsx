@@ -107,30 +107,12 @@ export default function RequestDetails({
 								onClick={() => setShowActions(!showActions)}>
 								Actions
 								<RegularCog
-									className={`${
-										showActions ? "rotate-180" : "rotate-0"
-									} ml-2 w-6 h-auto fill-inherit inline transition-transform ease-in-out duration-500`}></RegularCog>
+									className={`${showActions ? "rotate-180" : "rotate-0"
+										} ml-2 w-6 h-auto fill-inherit inline transition-transform ease-in-out duration-500`}></RegularCog>
 							</button>
 							<div
-								className={`${
-									showActions ? "" : "hidden"
-								} mt-2 absolute w-fit h-fit bg-white right-0 py-2 px-2 rounded-md flex flex-col items-end z-10 gap-1 outline outline-1 outline-gray-300`}>
-								{/* <button
-									className="px-3 py-2 text-sm mb-0 w-full bg-transparent text-black hover:text-black rounded-none hover:bg-transparent hover:underline"
-									onClick={() => print()}>
-									Download PDF
-									<RegularFiles className="ml-2 w-6 h-6 inline-block fill-black"></RegularFiles>
-								</button> */}
-								{/* <button
-									type="submit"
-									className="bg-transparent px-3 py-2 text-sm mb-0 w-full text-black hover:text-black hover:fill-black rounded-none hover:bg-transparent"
-									disabled={
-										!isAllPending(request.parts) ||
-										isQuotePaid
-									}>
-									Return or Replace
-									<RegularBriefcase className="ml-2 w-6 h-6 inline-block"></RegularBriefcase>
-								</button> */}
+								className={`${showActions ? "" : "hidden"
+									} mt-2 absolute w-fit h-fit bg-white right-0 py-2 px-2 rounded-md flex flex-col items-end z-10 gap-1 outline outline-1 outline-gray-300`}>
 								<form action={cancelFormAction}>
 									<input
 										type="number"
@@ -224,7 +206,9 @@ export default function RequestDetails({
 								},
 								{
 									title: "Processing",
-									description: <>Parts are being printed.</>,
+									description: (
+										<>Your parts are being printed!</>
+									),
 									disabled: isAllPending(request.parts)
 								},
 								{
@@ -402,7 +386,7 @@ function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 						<div className="mb-2 lg:w-80 w-full ">
 							<div className="shadow-sm">
 								<div
-									className={`w-full h-40 lg:h-48 relative outline-1 outline outline-gray-300 bg-gray-100 rounded-md`}>
+									className={`w-full h-40 lg:h-44 relative outline-1 outline outline-gray-300 bg-gray-100 rounded-md`}>
 									{revisedFile == undefined ? (
 										<ModelViewer
 											swatch={

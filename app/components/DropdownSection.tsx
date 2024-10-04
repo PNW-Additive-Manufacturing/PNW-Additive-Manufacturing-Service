@@ -10,10 +10,7 @@ export default function DropdownSection({
 	hidden,
 	collapsible,
 	children,
-	className,
-	headerBackground,
-	headerText,
-	toolbar
+	className
 }: {
 	name: string;
 	icon?: JSX.Element;
@@ -32,54 +29,19 @@ export default function DropdownSection({
 	return (
 		<>
 			<div
-				className="flex justify-between gap-2 w-full p-2 hover:cursor-pointer fill-gray-400 hover:fill-cool-black"
+				className={`flex justify-between gap-2 w-full p-2 hover:cursor-pointer fill-gray-400 hover:fill-cool-black ${className}`}
 				onClick={() => setHidden(!isHidden)}>
+				<div>
+					{name}
+					{icon}
+				</div>
 				<RegularChevronDown
 					className={`w-6 h-6 fill-inherit ${
 						isHidden ? "rotate-180" : ""
 					} hover:cursor-pointer transition-all`}
 				/>
-				<div>
-					{name}
-					{icon}
-				</div>
 			</div>
-			{/* {isHidden ? <></> : <FocusOnMount>{children}</FocusOnMount>} */}
-			{isHidden ? <></> : children}
+			<div className={isHidden ? "hidden" : ""}>{children}</div>
 		</>
 	);
-
-	// return (
-	// 	<div
-	// 		className={
-	// 			"w-full outline-dashed outline-gray-200 outline-1 " +
-	// 				className ?? ""
-	// 		}>
-	// 		<div
-	// 			className={`p-3 ${headerBackground ?? "bg-cool-black"} ${headerText ?? "text-white"}`}
-	// 			onClick={() => {
-	// 				if (collapsible!) setHidden(!isHidden);
-	// 			}}>
-	// 			<span className={`align-middle w-fit`}>
-	// 				{icon == null ? <></> : icon}
-	// 				<span className="font-semibold tracking-wide uppercase">
-	// 					{name}
-	// 				</span>
-	// 				<span className="ml-4">
-	// 					{(toolbar == null ? <></> : toolbar) as ReactNode}
-	// 				</span>
-	// 			</span>
-	// 			<div className="float-right">
-	// 				{collapsible ? (
-	// 					<RegularChevronDown
-	// 						className={`w-6 h-6 fill-gray-400 ${isHidden ? "rotate-180 hover:rotate-0" : "hover:rotate-180"} hover:cursor-pointer transition-transform`}></RegularChevronDown>
-	// 				) : (
-	// 					<></>
-	// 				)}
-	// 			</div>
-	// 		</div>
-
-	// 		<div className={isHidden ? "hidden" : "block"}>{children}</div>
-	// 	</div>
-	// );
 }
