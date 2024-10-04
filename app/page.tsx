@@ -109,7 +109,7 @@ export default async function Home() {
 								autoplay={true}
 								slides={[
 									<>
-										<div className="bg-gray-100 rounded-md shadow-sm mt-4 w-full h-72">
+										<div className="bg-gray-100 rounded-md shadow-sm w-full h-80">
 											<Image
 												src={"/assets/lab_setup_1.jpg"}
 												width={760}
@@ -130,7 +130,7 @@ export default async function Home() {
 										</p>
 									</>,
 									<>
-										<div className="bg-gray-100 rounded-md shadow-sm mt-4 w-full h-72">
+										<div className="bg-gray-100 rounded-md shadow-sm w-full h-80">
 											<Image
 												src="/assets/am_simple_logos.jpg"
 												width={760}
@@ -145,7 +145,7 @@ export default async function Home() {
 										</p>
 									</>,
 									<>
-										<div className="bg-gray-100 rounded-md shadow-sm mt-4 w-full h-72">
+										<div className="bg-gray-100 rounded-md shadow-sm w-full h-80">
 											<Image
 												src="/assets/lion.jpg"
 												width={760}
@@ -164,14 +164,14 @@ export default async function Home() {
 											width={760}
 											height={760}
 											alt=""
-											className="pt-0 w-full bg-black rounded-md h-72"></Image>
+											className="pt-0 w-full bg-black rounded-md h-80"></Image>
 										<p className="text-base px-2 lg:text-center w-full font-light mt-2">
 											Express your creativity by designing
 											and requesting artistic models.
 										</p>
 									</>,
 									<>
-										<div className="bg-gray-100 rounded-md shadow-sm mt-4 w-full h-72">
+										<div className="bg-gray-100 rounded-md shadow-sm w-full h-80">
 											<Image
 												src="/assets/luke_moreno_battle_bot_2.jpg"
 												width={760}
@@ -199,21 +199,25 @@ export default async function Home() {
 								<div className="w-fit font-normal text-2xl pb-2">
 									Our Manufacturing Services
 								</div>
-								<div className="w-fit lg:pr-24 pt-2">
+								<div className="w-fit lg:pr-24">
 									Each production method offers different
 									benefits and drawbacks. We recommend taking
 									a look at an excellent guide by{" "}
 									<a
-										className="underline text-pnw-gold"
+										className="underline"
 										target="_blank"
 										href="https://xometry.pro/en-eu/articles/3d-printing-sla-vs-fdm/">
 										Xometry (3D Technologies Comparison)
 									</a>
-									.
+									. We continue to actively expand our
+									manufacturing capabilities, if you'd like to
+									operate these machines come to our weekly
+									meetings on MyPNWLife!
 								</div>
 							</div>
 						</div>
-						<div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-12">
+						<hr />
+						<div className="grid grid-cols-1 gap-12">
 							<div className="flex flex-col lg:flex-row gap-4">
 								<Image
 									className="w-full max-lg:h-44 lg:w-48 shadow-md rounded-md"
@@ -221,8 +225,8 @@ export default async function Home() {
 									src="/assets/Bambu+Lab+A1+3D+Printer+multi+color.png"
 									width={720}
 									height={720}></Image>
-								<div>
-									<span className="text-pnw-gold">
+								<div className="py-1 2xl:w-1/2">
+									<span className="text-pnw-gold text-lg font-semibold">
 										FDM 3D Printing
 									</span>{" "}
 									involves melting thermoplastic filament and
@@ -231,23 +235,51 @@ export default async function Home() {
 									quickly test and iterate on designs.
 									<ul className="mt-2">
 										<li>
+											Rapid and cost-effective
+											prototyping.
+										</li>
+										<li>
 											Materials: PLA, PLA Aero, PETG, ABS,
 											TPU, CF, PC, and more!
 										</li>
 									</ul>
 								</div>
 							</div>
-							<div className="flex flex-col lg:flex-row gap-4 opacity-70">
+							<div className="flex flex-col lg:flex-row gap-4">
+								<Image
+									className="w-full max-lg:h-44 lg:w-48 shadow-md rounded-md"
+									alt=""
+									src="/assets/miniatures-category.png"
+									width={720}
+									height={720}></Image>
+								<div className="py-1 2xl:w-1/2">
+									<span className="text-pnw-gold text-lg font-semibold">
+										SLA/LCD Resin Printing
+									</span>{" "}
+									enables creation of highly detailed and
+									intricate designs. This method is especially
+									suited for applications like jewelry, dental
+									models, and miniature figures.
+									<ul className="mt-2">
+										<li>
+											Unmatched precision and smoothness.
+										</li>
+										<li>Arriving October 2024.</li>
+									</ul>
+								</div>
+							</div>
+							<a
+								id="metalX"
+								className="flex flex-col lg:flex-row gap-4 font-normal">
 								<Image
 									className="w-full max-lg:h-44 lg:w-48 shadow-md rounded-md"
 									alt=""
 									src="/assets/metal_f.jpg"
 									width={720}
 									height={720}></Image>
-								<div>
-									The{" "}
-									<span className="text-pnw-gold">
-										Markforged Metal X (Coming October 2024)
+								<div className="py-1 2xl:w-1/2">
+									<span className="text-pnw-gold text-lg font-semibold">
+										Markforged Metal X
 									</span>{" "}
 									utilizes a unique process to produce metal
 									parts. It starts with a composite of metal
@@ -260,33 +292,17 @@ export default async function Home() {
 									strength.
 									<ul className="mt-2">
 										<li>
+											Custom in-university machined metal
+											parts.
+										</li>
+										<li>
 											Materials: 17-4PH Stainless Steel,
 											H13 Tool Steel, and more!
 										</li>
+										<li>Arriving November 2024.</li>
 									</ul>
 								</div>
-							</div>
-							<div className="flex flex-col lg:flex-row gap-4 opacity-70">
-								<Image
-									className="w-full max-lg:h-44 lg:w-48 shadow-md rounded-md"
-									alt=""
-									src="/assets/miniatures-category.png"
-									width={720}
-									height={720}></Image>
-								<div>
-									<span className="text-pnw-gold">
-										SLA/LCD Resin Printing (Coming December
-										2024)
-									</span>{" "}
-									resin is cured layer by layer. The printer
-									uses an LCD screen to project UV that
-									selectively hardens the resin, enabling the
-									creation of highly detailed and intricate
-									designs. This method is especially suited
-									for applications like jewelry, dental
-									models, and miniatures.
-								</div>
-							</div>
+							</a>
 						</div>
 					</HorizontalWrap>
 				</div>

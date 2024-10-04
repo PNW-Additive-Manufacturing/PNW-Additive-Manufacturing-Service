@@ -48,6 +48,8 @@ progress {
 
 hr {
 	border-color: #c5c5c5;
+	margin-top: 1rem;
+	margin-bottom: 2rem;
 }
 
 body {
