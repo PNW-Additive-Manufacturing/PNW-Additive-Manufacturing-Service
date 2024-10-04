@@ -195,22 +195,25 @@ table thead tr th {
 }
 table thead tr td, table thead tr th
 {
-  padding: 1rem 2rem 0.5rem 2rem;
+  padding: 1rem 2rem 1rem 2rem;
+}
+table tbody tr:first-child
+{
 }
 table tbody tr
 {
 	background-color: white;
 }
 table tbody tr:nth-child(even) {
-	background-color: rgba(231, 231, 231, 0.3);
-  }
+	background-color: rgba(231, 231, 231, 0.151);
+}
 table tbody tr td
 {
 	padding: 1rem 2rem 1rem 2rem;
 }
 table thead tr td:first-child, table thead tr th:first-child
 {
-  padding-left: 0px;
+  padding-left: 1rem;
 }
 
 table tbody tr:first-child {
@@ -227,7 +230,7 @@ table tbody tr td {
 }
 table thead tr td:last-child, table thead tr th:last-child
 {
-  padding-right: 0rem;
+  /* padding-right: 1rem; */
 }
 table tbody tr td:first-child
 {

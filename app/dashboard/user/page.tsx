@@ -77,9 +77,6 @@ export default function Page() {
 				Welcome, {account.account!.firstName}{" "}
 				{account.account!.lastName}!
 			</h1>
-			<p className="pt-1 ">
-				All of your requests are available for you to view right here.
-			</p>
 
 			<br />
 
@@ -92,16 +89,12 @@ export default function Page() {
 					You do not have any ongoing orders!
 				</div>
 			) : (
-				<>
-					<Table className="pr-1">
-						<thead className="shadow-sm">
-							<tr>
-								<th className="w-56">Request Placed</th>
-								<th>Parts</th>
-								<th>Status</th>
-								<th></th>
-							</tr>
-						</thead>
+				<div
+					className={`shadow-sm rounded-sm p-4 lg:p-6 bg-white outline outline-2 outline-gray-200`}>
+					<p className="pb-4">
+						All of your requests are available for you to view right here.
+					</p>
+					<Table>
 						<tbody>
 							{requests.map((r) => (
 								<>
@@ -113,7 +106,7 @@ export default function Page() {
 											borderLeftColor:
 												getRequestStatusColor(r)
 										}}>
-										<td>
+										<td className="max-lg:hidden">
 											{r.submitTime.toLocaleDateString(
 												"en-us",
 												{
@@ -125,12 +118,24 @@ export default function Page() {
 											)}
 										</td>
 										<td>{r.name}</td>
-										<td>{getRequestStatus(r)}</td>
+										<td
+											style={{
+												color: getRequestStatusColor(r)
+											}}>
+											{getRequestStatus(r)}
+										</td>
+										<td>
+											{hasQuote(r) &&
+												`$${(
+													r.quote!.totalPriceInCents /
+													100
+												).toFixed(2)}`}
+										</td>
 										<td>
 											<div className="ml-auto w-fit">
 												<Link
 													href={`/dashboard/user/${r.id}`}>
-													<button className="w-fit mb-0 outline outline-1 outline-gray-300 bg-white text-black fill-black flex flex-row gap-2 justify-end items-center px-3 py-2">
+													<button className="shadow-sm w-fit mb-0 outline outline-1 outline-gray-300 bg-white text-black fill-black flex flex-row gap-2 justify-end items-center px-3 py-2">
 														<span className="text-sm">
 															View Request
 														</span>
@@ -210,17 +215,17 @@ export default function Page() {
 						</tbody>
 					</Table>
 					{/* Controls */}
-					<div className="lg:flex justify-between items-center px-4 pr-10 py-4">
+					<div className="flex max-lg:gap-4 max-lg:flex-col justify-between lg:px-4 lg:pr-8 py-4">
 						<div className="flex gap-6 items-center">
-							<div className="flex gap-2 fill-white">
+							<div className="flex justify-between gap-2 fill-white">
 								<button
-									className="mb-0"
+									className="mb-0 shadow-sm"
 									disabled={isFetchingRequests || pageNum < 2}
 									onClick={() => setPageNum(pageNum - 1)}>
 									<RegularArrowLeft></RegularArrowLeft>
 								</button>
 								<button
-									className="mb-0"
+									className="mb-0 shadow-sm"
 									disabled={
 										isFetchingRequests ||
 										requests.length < requestsPerPage
@@ -231,7 +236,7 @@ export default function Page() {
 							</div>
 							<p>
 								Viewing {requests.length} results on Page{" "}
-								{pageNum}.
+								{pageNum}
 							</p>
 						</div>
 						<div className="flex gap-4">
@@ -250,8 +255,13 @@ export default function Page() {
 							{/* <Input label={"Purchased"} type={"date"} id={"placedAfter"}></Input> */}
 						</div>
 					</div>
-				</>
+				</div>
 			)}
+
+			<div
+				className={`shadow-sm rounded-sm p-4 lg:p-6 bg-white outline outline-2 outline-gray-200 mt-8`}>
+				You do not have any saved or favorites models.
+			</div>
 		</>
 	);
 }

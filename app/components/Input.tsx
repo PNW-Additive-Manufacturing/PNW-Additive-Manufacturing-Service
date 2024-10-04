@@ -73,7 +73,7 @@ export function InputCheckbox({
 
 	return (
 		<div className="flex items-center w-fit gap-2">
-			<label className="mb-0 text-wrap">{label}</label>
+			<label className="mb-0 text-nowrap">{label}</label>
 			<input
 				required={required}
 				className="outline-none border-none w-5 h-5 mb-0"

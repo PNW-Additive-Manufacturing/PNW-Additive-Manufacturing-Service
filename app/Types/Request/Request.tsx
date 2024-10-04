@@ -70,15 +70,15 @@ export function getRequestStatusColor(request: RequestWithParts) {
 		case "Ready for Pick up":
 			return "rgb(34 197 94)";
 		case "Queued for Processing":
-			return "rgb(229 231 235)";
+			return "rgb(162, 165, 171)";
 		case "Processing":
 			return "rgb(59 130 246)";
 		case "Waiting for Payment":
-			return "rgb(229 231 235)";
+			return "rgb(162, 165, 171)";
 		case "Action Required":
 			return "rgb(251 146 60)";
 		default:
-			return "rgb(229 231 235)";
+			return "rgb(162, 165, 171)";
 	}
 }
 
