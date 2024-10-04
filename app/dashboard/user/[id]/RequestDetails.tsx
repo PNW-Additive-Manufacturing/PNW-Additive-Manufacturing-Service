@@ -339,73 +339,15 @@ function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 				max={5}
 				className="rounded-none w-full accent-pnw-gold h-1.5 block"></progress> */}
 			<div className="lg:flex gap-4 shadow-sm rounded-sm pl-4 pr-4 py-4 pt-5 lg:py-6 lg:pr-6 lg:pl-6 bg-white outline outline-2 outline-gray-200">
-				{/* <div className="max-lg:hidden w-fit text-lg text-center">
-					{index + 1}
-					<input
-						type="checkbox"
-						className="w-6 h-6 mx-auto mt-1"></input>
-				</div> */}
 				<div className="w-full">
 					<div className="lg:flex">
-						<div className="mr-4 mb-2 lg:max-w-56 w-full ">
-							<div className="shadow-sm">
-								<div
-									className={`w-full h-40 lg:h-48 relative outline-1 outline outline-gray-300 bg-gray-100 rounded-md`}>
-									{revisedFile == undefined ? (
-										<ModelViewer
-											swatch={
-												part.supplementedFilament
-													?.color ??
-												part.filament?.color
-											}
-											modelURL={`/api/download/model?modelId=${part.modelId}`}
-										/>
-									) : (
-										<ModelViewer
-											swatch={templatePNW()}
-											modelFile={revisedFile}
-										/>
-									)}
-									<div className="absolute -top-3 -right-5">
-										<div
-											className={`rounded-full h-6 mr-2 aspect-square bg-${statusColor}`}></div>
-										{/* <StatusPill
-											statusColor={statusColor}
-											context={part.status}></StatusPill> */}
-									</div>
-								</div>
-							</div>
-							<div className="mr-auto text-xs opacity-50 hover:opacity-100">
-								<a
-									className="flex py-1 px-1.5 text-xs text-nowrap justify-between items-center gap-2"
-									href={`/api/download/model?modelId=${part.modelId}`}
-									target="_blank">
-									<RegularCloudDownload className="fill-cool-black w-6 h-6 p-1"></RegularCloudDownload>
-									Download (
-									{`${Math.round(
-										part.model.fileSizeInBytes / 1000
-									)} kB`}
-									)
-								</a>
-							</div>
-
-							{/* <a
-								className="text-xs text-blue-600 px-1.5"
-								href={`orcaslicer://open/?file=${encodeURIComponent(
-									`http://localhost:3000/api/download/model/?modelId=${part.modelId}`
-								)}&name=test.stl`}>
-								Open in Orca Slicer
-							</a> */}
-						</div>
-
-						<div className="w-full">
-							{/* <div className="inline-block">
+						<div className="w-full h-fit">
+							<div className="flex items-center gap-2 text-2xl mb-1">
+								{part.model.name}
 								<StatusPill
-									className="mr-2"
 									statusColor={statusColor}
 									context={part.status}></StatusPill>
-							</div> */}
-							<p className="text-2xl mb-1">{part.model.name}</p>
+							</div>
 							<div>
 								{part.status == PartStatus.Denied && (
 									<div className="text-red-500 w-fit">
@@ -454,6 +396,42 @@ function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 								</div>
 
 								<RefundMessage part={part} />
+							</div>
+						</div>
+
+						<div className="mb-2 lg:w-80 w-full ">
+							<div className="shadow-sm">
+								<div
+									className={`w-full h-40 lg:h-48 relative outline-1 outline outline-gray-300 bg-gray-100 rounded-md`}>
+									{revisedFile == undefined ? (
+										<ModelViewer
+											swatch={
+												part.supplementedFilament
+													?.color ??
+												part.filament?.color
+											}
+											modelURL={`/api/download/model?modelId=${part.modelId}`}
+										/>
+									) : (
+										<ModelViewer
+											swatch={templatePNW()}
+											modelFile={revisedFile}
+										/>
+									)}
+								</div>
+							</div>
+							<div className="mr-auto text-xs opacity-50 hover:opacity-100">
+								<a
+									className="flex py-1 px-1.5 text-xs text-nowrap justify-between items-center gap-2"
+									href={`/api/download/model?modelId=${part.modelId}`}
+									target="_blank">
+									<RegularCloudDownload className="fill-cool-black w-6 h-6 p-1"></RegularCloudDownload>
+									Download (
+									{`${Math.round(
+										part.model.fileSizeInBytes / 1000
+									)} kB`}
+									)
+								</a>
 							</div>
 						</div>
 					</div>

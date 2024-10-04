@@ -25,7 +25,7 @@ export default function RequestPricing({
 		<>
 			<>
 				{request.parts.map((part) => (
-					<p className="text-base">
+					<p className="text-base text-nowrap overflow-ellipsis overflow-hidden">
 						{`\$${(part.priceInDollars! * part.quantity).toFixed(
 							2
 						)}`}{" "}
