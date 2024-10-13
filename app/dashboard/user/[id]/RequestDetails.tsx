@@ -47,7 +47,7 @@ import { formateDate, formatTime } from "@/app/api/util/Constants";
 import Timeline from "@/app/components/Timeline";
 import HiddenInput from "@/app/components/HiddenInput";
 import { RequestOverview } from "../../../components/RequestOverview";
-import { closingTime, isOpen } from "@/app/components/Schedule";
+import { closingTime, isOpen } from "@/app/components/LocalSchedule";
 
 export default function RequestDetails({
 	request

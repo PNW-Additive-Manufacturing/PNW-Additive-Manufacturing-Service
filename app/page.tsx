@@ -1,11 +1,10 @@
-"use server";
-
 import Image from "next/image";
 import HorizontalWrap from "./components/HorizontalWrap";
 import Gallery from "./components/Gallery";
 import { RegularLink } from "lineicons-react";
 import Link from "next/link";
-import { isOpen } from "./components/Schedule";
+import { AvailabilityText } from "./components/LocalSchedule";
+import { formatTime } from "./api/util/Constants";
 
 function DiscordServer() {
 	return (
@@ -100,14 +99,7 @@ export default async function Home() {
 									</div>
 								</div>
 
-								<div className="w-fit max-md:pl-2 py-3 text-xs tracking-wider mb-5">
-									{isOpen ? "We are available for pickup: " : "We are currently closed: "}
-									<a
-										href={"/schedule"}
-										className="underline">
-										View our Schedule
-									</a>
-								</div>
+								<AvailabilityText />
 							</div>
 						</div>
 						<div className="w-full xl:w-2/3 max-xl:mb-6 xl:pl-12">
