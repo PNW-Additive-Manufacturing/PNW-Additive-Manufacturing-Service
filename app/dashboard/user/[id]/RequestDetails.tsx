@@ -156,13 +156,12 @@ export default function RequestDetails({
 					</div>
 
 					<div className="flex flex-col gap-6">
-						{isAllComplete(request.parts) &&
-							!request.isFulfilled && (
-								<RequestOverview
-									title={isOpen ? "Pickup at the PNW Design Studio" : "Waiting for a Team Member"}
-									description={isOpen ? <>You may pickup your parts until {formatTime(closingTime!)} or on another business day.</> : <>See our <Link className="underline" href={"/schedule"}>operating hours</Link> to pickup your parts.</>}
-								/>
-							)}
+						{!request.isFulfilled && isAllComplete(request.parts) && !request.isFulfilled && (
+							<RequestOverview
+								title={isOpen ? "Pickup at the PNW Design Studio" : "Waiting for a Team Member"}
+								description={isOpen ? <>You may pickup your parts until {formatTime(closingTime!)} or on another business day.</> : <>None of our team members can assist you at this time. See our <Link className="underline" href={"/schedule"}>operating hours</Link> to pickup your parts.</>}
+							/>
+						)}
 						{request.isFulfilled && (
 							<RequestOverview
 								title="Request Fulfilled"

@@ -75,7 +75,7 @@ export async function verifyEmailTemplate(verifyUrl: string) {
 export async function passwordResetTemplate(passwordResetUrl: string) {
 	return emailTemplate(`
 		<p style="font-family: inherit; color: rgb(64, 64, 64); font-size: medium;">
-			It seems you’ve forgotten your password. Just click the button below, and you'll be taken to a secure page where you can create a new password.
+			It seems you've forgotten your password. Just click the button below, and you'll be taken to a secure page where you can create a new password.
 		</p>
 		<a href=${passwordResetUrl} target="_blank" style="font-family: inherit; text-decoration:none;">
 			<button style="font-family: inherit; text-decoration: none; border-radius: 5px; padding: 1rem 1.2rem 1rem 1.2rem; padding-top: 12px; padding-bottom: 12px; display: block; margin-bottom: 0px; outline: none; border: none; background-color: #2b2b2b; color: white; font-size: large; font-weight: 500; text-wrap: nowrap; width: auto; font-size: small;">Reset Password</button>
@@ -89,12 +89,11 @@ export async function requestReceivedHTML(request: RequestWithParts) {
 		request.lastName,
 		`
 		<p style="font-family: inherit; color: rgb(64, 64, 64); font-size: medium;">
-			Thank you for reaching out to us with your request for
+			Your request for
 			<span style="text-decoration: underline;">${DOMPurify.sanitize(
 			request.name
-		)}</span>. We are currently processing your request,
-			and a quote will be provided within 1-2 business days. If
-			you have any further questions please visit the status page.
+		)}</span> has been received. We are currently processing your request,
+			and a quote will be provided within 1-2 business days.
 		</p>
 		<a href=${`${envConfig.hostURL}/dashboard/user/${request.id}`} target="_blank" style="font-family: inherit; text-decoration:none; height: fit-content; width: fit-content; display: block;">
 			<button style="font-family: inherit; text-decoration: none; border-radius: 5px; padding: 1rem 1.2rem 1rem 1.2rem; padding-top: 12px; padding-bottom: 12px; display: block; margin-bottom: 0px; outline: none; border: none; background-color: #2b2b2b; color: white; font-size: large; font-weight: 500; text-wrap: nowrap; width: auto; font-size: small;">View Request</button>
@@ -108,7 +107,7 @@ export async function requestQuotedHTML(request: RequestWithParts) {
 		request.lastName,
 		`
 		<p style="font-family: inherit; color: rgb(64, 64, 64); font-size: medium;">
-			We are pleased to inform you that your request for <span style="text-decoration: underline;">${DOMPurify.sanitize(
+			Your request for <span style="text-decoration: underline;">${DOMPurify.sanitize(
 			request.name
 		)}</span> has been approved and quoted.
 			To continue, please review and approve the quote on our website.
@@ -120,15 +119,15 @@ export async function requestQuotedHTML(request: RequestWithParts) {
 }
 
 export async function requestCompletedHTML(request: RequestWithParts) {
-	return emailTemplateDearUser(
-		request.firstName,
-		request.lastName,
+	return emailTemplateDearUser(request.firstName, request.lastName,
 		`
 		<p style="font-family: inherit; color: rgb(64, 64, 64); font-size: medium;">
-			We are pleased to inform you that your request for <span style="text-decoration: underline;">${DOMPurify.sanitize(
-			request.name
-		)}</span> has been completed. You may pick up your parts during our <a href=${`${envConfig.hostURL}/schedule`}>pickup hours</a> whenever you are available.
-		</p>`
+			Your request for <span style="text-decoration: underline;">${DOMPurify.sanitize(request.name)}</span> has been completed. 
+			You may pick up your parts during our <a href=${`${envConfig.hostURL}/schedule`}>pickup hours</a> whenever you are available.
+		</p>
+		<a href=${`${envConfig.hostURL}/dashboard/user/${request.id}`} target="_blank" style="font-family: inherit; text-decoration:none; height: fit-content; width: fit-content; display: block;">
+			<button style="font-family: inherit; text-decoration: none; border-radius: 5px; padding: 1rem 1.2rem 1rem 1.2rem; padding-top: 12px; padding-bottom: 12px; display: block; margin-bottom: 0px; outline: none; border: none; background-color: #2b2b2b; color: white; font-size: large; font-weight: 500; text-wrap: nowrap; width: auto; font-size: small;">View Request</button>
+		</a>`
 	);
 }
 

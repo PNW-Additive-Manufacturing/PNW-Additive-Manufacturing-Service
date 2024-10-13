@@ -274,6 +274,9 @@ export default function RequestEditor({
 						<p className="text-2xl">
 							{requester.firstName} {requester.lastName}
 						</p>
+
+						<p>{requester.yearOfStudy}</p>
+
 						<a
 							className="block mt-2 text-pnw-gold"
 							href={`mailto:${requester.email}`}>
