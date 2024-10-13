@@ -56,13 +56,9 @@ export default function RequestsTable({ accountEmail }: { accountEmail?: string 
     return (
         <>
             {requests == null ? (
-                // <div className="flex gap-2 items-center">
-                //     Fetching Requests 
-                //     <RegularSpinnerSolid className={`inline-block h-auto w-auto animate-spin fill-black`}/>
-                // </div>
-                <div className="w-full bg-gray-100 duration-100 min-h-56 rounded-md mb-4"></div>
+                <div className="w-full bg-gray-100 animate-pulse duration-100 min-h-56 rounded-md mb-4"></div>
             ) : requests.length == 0 ? (
-                <div className="w-full bg-gray-100 duration-100 min-h-28 rounded-md"></div>
+                <div className="w-full bg-gray-100 min-h-28 rounded-md mb-4"></div>
             ) : (
                 <>
                     <Table className="spaced">
@@ -158,7 +154,7 @@ export default function RequestsTable({ accountEmail }: { accountEmail?: string 
                             {requests!.length} {requests!.length == 1 ? "Request" : "Requests"} on Page{" "}
                             {pageNum}
                         </p>
-                    </div> : accountEmail == null ? "No requests are available." : "You do not have any ongoing orders!"}
+                    </div> : accountEmail == null ? "No requests are available." : "You do not have any ongoing requests!"}
                 </div>
                 <div className="flex gap-4 pr-1">
                     <InputCheckbox
