@@ -11,7 +11,7 @@ export default function Profile({ account }: { account: Account }) {
 
 	return (
 		<HorizontalWrap>
-			<h1 className="text-lg tracking-wide font-light">Your Account</h1>
+			<h1 className="text-3xl tracking-wide font-light">Your Account</h1>
 			<br />
 			<div className="p-6 rounded-md text-base bg-cool-black shadow-md">
 				<div className="lg:flex justify-between items-center">
@@ -25,7 +25,7 @@ export default function Profile({ account }: { account: Account }) {
 								weekday: "long",
 								month: "short",
 								day: "numeric"
-							})}
+							})} as a {account.yearOfStudy}
 						</p>
 					</div>
 					<div className="hidden lg:block">
@@ -55,23 +55,24 @@ export default function Profile({ account }: { account: Account }) {
 							{account.balanceInDollars.toFixed(2)}
 						</p>
 					</div>
-					<hr />
 				</div>
 
-				<hr />
 				<br />
 				<div className="flex gap-10 py-2">
 					Contact Information
-					<p>{account.email}</p>
+					<div>
+					<p>{account.firstName} {account.lastName}</p>
+					<p>{account.email} ({account.isEmailVerified ? <>Verified</> : <span className="font-semibold">Unverified</span>})</p>
+					</div>
 				</div>
 
 				<div className="py-2">
-					<div className="flex gap-10 items-center justify-between">
+					<div className="flex gap-10 items-center">
 						<p>Manage Password</p>
 						<button
-							className="w-fit text-sm mb-0"
+							className="w-fit text-sm mb-0 px-3 py-1.5"
 							onClick={() => setShowPasswordReset(true)}>
-							Change
+							Modify
 						</button>
 					</div>
 					{showPasswordReset && (
@@ -79,9 +80,9 @@ export default function Profile({ account }: { account: Account }) {
 					)}
 				</div>
 
-				<div className="py-2">
+				<div className="py-2 mt-4">
 					<a
-						className="text-red-500 font-semibold w-fit"
+						className="text-red-500 font-bold w-fit"
 						href="/user/logout">
 						Sign out of Account
 					</a>

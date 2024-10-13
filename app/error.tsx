@@ -19,7 +19,7 @@ export default function Error({
 		<div>
 			<ErrorPrompt
 				code={error.name}
-				details={`An exception occurred on your end! Check your console for details or refresh.`}></ErrorPrompt>
+				details={`An exception occurred on your end! Check your console for details or refresh.`} />
 		</div>
 	);
 }

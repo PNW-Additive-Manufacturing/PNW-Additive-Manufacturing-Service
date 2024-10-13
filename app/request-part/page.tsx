@@ -30,29 +30,16 @@ export default async function Request() {
 		<>
 			<HorizontalWrap>
 				<div className="max-lg:px-4">
-					<h1 className="text-3xl tracking-wide font-light my-4">
+					<h1 className="w-fit text-3xl font-normal mb-2">
 						Fill out a Request
 					</h1>
-					<p className="mb-4">
+					<p>
 						Utilizing our resources for rapid prototyping to final
 						designs, we use top-notch consumer 3D Printers to ensure
 						an outstanding result of your models.
 					</p>
-					<span>Looking for something? Check out </span>
-					<a
-						className="underline"
-						href="https://www.printables.com/"
-						target="_blank">
-						Printables
-					</a>
-					{" & "}
-					<a
-						className="underline"
-						href="https://makerworld.com/"
-						target="_blank">
-						Makerworld
-					</a>
-					!
+					<br/>
+					
 				</div>
 				<br />
 				<RequestPartForm

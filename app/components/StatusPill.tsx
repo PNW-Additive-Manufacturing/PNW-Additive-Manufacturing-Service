@@ -1,4 +1,3 @@
-import { HTMLAttributes } from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
 
 export default function StatusPill({
@@ -17,7 +16,8 @@ export default function StatusPill({
 			<div
 				className={`bg-gray-50 w-fit rounded-lg p-1.5 flex items-center font-normal select-none uppercase`}>
 				<div
-					className={`rounded-full h-5 mr-2 aspect-square bg-${statusColor}`}></div>
+					className={`rounded-full h-5 mr-2 aspect-square`}
+					style={{ backgroundColor: statusColor }} />
 				<span className="my-auto mr-1 text-sm">{context}</span>
 			</div>
 		</div>
@@ -43,7 +43,8 @@ export function SelectorStatusPill({
 		<div
 			className={`${className} bg-gray-50 w-fit rounded-lg p-1.5 flex font-normal select-none uppercase text-nowrap`}>
 			<div
-				className={`rounded-full h-5 mr-2 aspect-square bg-${statusColor}`}></div>
+				className={`rounded-full h-5 mr-2 aspect-square`}
+				style={{ backgroundColor: statusColor }} />
 			<select
 				id="status"
 				name="status"

@@ -81,24 +81,27 @@ export default function CreateAccount() {
 							/>
 						</div>
 						<label>Year of Study</label>
-						<select required={false} className="w-full block">
-							<option value="freshman" id="freshman">
+						<select required id="year-of-study" name="year-of-study" className="w-full block">
+							<option value="Freshman" id="freshman">
 								Freshman
 							</option>
-							<option value="sophomore" id="sophomore">
+							<option value="Sophomore" id="sophomore">
 								Sophomore
 							</option>
-							<option value="junior" id="junior">
+							<option value="Junior" id="junior">
 								Junior
 							</option>
-							<option value="senior" id="senior">
+							<option value="Senior" id="senior">
 								Senior
 							</option>
-							<option value="senior" id="senior">
+							<option value="Graduate" id="graduate">
 								Graduate
 							</option>
-							<option value="senior" id="senior">
+							<option value="Faculty" id="faculty">
 								Faculty
+							</option>
+							<option value="Professor" id="professor">
+								Professor
 							</option>
 						</select>
 						<Input
@@ -110,7 +113,7 @@ export default function CreateAccount() {
 							placeholder="Choose your Password"
 						/>
 						<p className="text-sm mb-2">
-							Password must be at least seven characters long. We
+							Password must be at least eight characters long. We
 							recommend using a different password than MyPNW.
 						</p>
 						<Input

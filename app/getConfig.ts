@@ -34,6 +34,9 @@ export default function getConfig() {
 	const emailPassword = getProcessEnvironmentVariable("EMAIL_USER_PASSWORD");
 	const emailHost = getProcessEnvironmentVariable("EMAIL_HOST");
 
+	// The amount of time in minutes until a password reset requests should expire!
+	const accountPasswordResetExpiration = process.env["ACCOUNT_PASSWORD_RESET_EXPIRATION"] == null ? 30 : Number.parseInt(process.env["ACCOUNT_PASSWORD_RESET_EXPIRATION"]);
+
 	return {
 		dbConnectionString,
 		jwtSecret,
@@ -50,6 +53,7 @@ export default function getConfig() {
 			user: emailUser,
 			password: emailPassword,
 			host: emailHost
-		}
+		},
+		accountPasswordResetExpiration
 	};
 }

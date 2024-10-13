@@ -27,6 +27,10 @@ export async function middleware(request: NextRequest) {
 	if (
 		nextUrl.startsWith("/user/login") ||
 		nextUrl.startsWith("/user/create-account") ||
+		nextUrl.startsWith("/user/forgot-password") ||
+		nextUrl.startsWith("/user/reset-password") ||
+		nextUrl.startsWith("/schedule") ||
+		nextUrl.startsWith("/team") ||
 		nextUrl === "/"
 	) {
 		return NextResponse.next();

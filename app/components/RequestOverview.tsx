@@ -6,7 +6,7 @@ export function RequestOverview({
 	icon
 }: {
 	title: string;
-	description: string;
+	description: React.ReactNode;
 	actions?: React.ReactNode;
 	icon?: React.ReactNode;
 }) {

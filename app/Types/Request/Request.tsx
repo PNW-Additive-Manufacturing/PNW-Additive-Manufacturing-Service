@@ -14,6 +14,7 @@ export default interface Request {
 	firstName: string;
 	lastName: string;
 	requesterEmail: string;
+	comments?: string;
 	quote?: {
 		isPaid: boolean;
 		paidAt: Date;

@@ -13,7 +13,7 @@ import Request, {
 } from "@/app/Types/Request/Request";
 import { SwatchConfiguration, validateColors } from "@/app/components/Swatch";
 import FilamentServe from "@/app/Types/Filament/FilamentServe";
-import { isRefunded, isPriced, PartStatus } from "@/app/Types/Part/Part";
+import { isRefunded, isPriced, PartStatus, isAllComplete } from "@/app/Types/Part/Part";
 import PartServe from "@/app/Types/Part/PartServe";
 import { PostgresError } from "postgres";
 import AccountServe from "@/app/Types/Account/AccountServe";
@@ -24,6 +24,7 @@ import {
 import {
 	emailTemplate,
 	emailTemplateDearUser,
+	requestCompletedHTML,
 	requestQuotedHTML,
 	sendEmail
 } from "../util/Mail";
@@ -43,9 +44,8 @@ export async function setPartPrice(
 	if (!parsedData.success) return `Schema Failed: ${parsedData.error}`;
 
 	try {
-		await db`UPDATE part SET pricecents=${
-			parsedData.data.priceInDollars * 100
-		} WHERE id=${parsedData.data.requestId}`;
+		await db`UPDATE part SET pricecents=${parsedData.data.priceInDollars * 100
+			} WHERE id=${parsedData.data.requestId}`;
 	} catch (err) {
 		return "An issue occurred updating the database!";
 	}
@@ -83,14 +83,20 @@ export async function setQuote(
 		return "An exception occurred updating database.";
 	}
 
-	try {
-		await sendEmail(
-			request.requesterEmail,
-			`Request quoted for ${request.name}`,
-			await requestQuotedHTML(request)
-		);
-	} catch (error) {
-		console.error("Failed to send Email!", error);
+	// If the total-cost is zero, we are going to automatically assume it was "paid for"!
+	if (priceInCents == 0) {
+		await RequestServe.setAsPaid(request.id);
+	}
+	else {
+		try {
+			await sendEmail(
+				request.requesterEmail,
+				`Request quoted for ${request.name}`,
+				await requestQuotedHTML(request)
+			);
+		} catch (error) {
+			console.error("Failed to send Email!", error);
+		}
 	}
 
 	revalidatePath("/dashboard/maintainer/orders/");
@@ -108,9 +114,8 @@ export async function setPartPrinter(
 	var partId = data.get("part_id") as string;
 	var printerName = data.get("printer_name") as string;
 
-	let result = await db`update part set AssignedPrinterName=${
-		printerName == "unassigned" ? null : printerName
-	} where id=${partId} returning id`;
+	let result = await db`update part set AssignedPrinterName=${printerName == "unassigned" ? null : printerName
+		} where id=${partId} returning id`;
 
 	if (result.count == 0) return "No part found";
 
@@ -141,11 +146,9 @@ export async function revokePart(
 	// }`;
 
 	try {
-		await db`UPDATE Part SET Status=${
-			PartStatus.Denied
-		}, PriceCents=null, RevokedReason=${message} WHERE Id=${
-			parsedData.data!.partId
-		}`;
+		await db`UPDATE Part SET Status=${PartStatus.Denied
+			}, PriceCents=null, RevokedReason=${message} WHERE Id=${parsedData.data!.partId
+			}`;
 	} catch (error) {
 		console.log(error);
 		return "An error occurred revoking part!";
@@ -208,7 +211,12 @@ export async function modifyPart(
 	const includesStatus =
 		parsedData.data!.status != undefined &&
 		previousPart.status != parsedData.data!.status;
-	if (includesStatus) newValues["status"] = parsedData.data!.status!;
+
+	if (includesStatus) 
+	{
+		newValues["status"] = parsedData.data!.status!;
+		partRequest.parts.find(p => parsedData.data.partId)!.status = parsedData.data!.status!;
+	}
 
 	const includesCost = parsedData.data!.costInDollars != undefined;
 	if (includesCost)
@@ -276,6 +284,12 @@ export async function modifyPart(
 			console.error(`Failed to modify Part!`, error as Error);
 			return "An internal error occurred modifying the part!";
 		}
+
+		if (isAllComplete(partRequest.parts))
+		{			
+			sendEmail(partRequest.requesterEmail, `Request ${partRequest.name} Completed`, await requestCompletedHTML(partRequest));
+		}
+
 		revalidatePath("/dashboard/maintainer/orders");
 	});
 }

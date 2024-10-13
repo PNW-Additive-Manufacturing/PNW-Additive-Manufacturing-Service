@@ -38,22 +38,22 @@ export function getStatusColor(partStatus: PartStatus) {
 	let selectedStatusColor;
 	switch (partStatus) {
 		case PartStatus.Printed:
-			selectedStatusColor = "green-500";
+			selectedStatusColor = "rgb(34, 197, 94)";
 			break;
 		case PartStatus.Printing:
-			selectedStatusColor = "blue-500";
+			selectedStatusColor = "rgb(59, 130, 246)";
 			break;
 		case PartStatus.Failed:
-			selectedStatusColor = "red-500";
+			selectedStatusColor = "rgb(239, 68, 68)";
 			break;
 		case PartStatus.Denied:
-			selectedStatusColor = "orange-400";
+			selectedStatusColor = "rgb(251, 146, 60)";
 			break;
 		case PartStatus.Pending:
-			selectedStatusColor = "orange-400";
+			selectedStatusColor = "rgb(251, 146, 60)";
 			break;
 		default:
-			selectedStatusColor = "gray-200";
+			selectedStatusColor = "rgb(229, 231, 235)";
 			break;
 	}
 	return selectedStatusColor;

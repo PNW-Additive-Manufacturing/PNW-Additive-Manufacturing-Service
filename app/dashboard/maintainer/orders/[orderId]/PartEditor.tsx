@@ -102,13 +102,15 @@ export default function PartEditor({
 	part,
 	index,
 	isQuoted,
-	filaments
+	filaments,
+	count
 }: {
 	request: RequestWithParts;
 	part: PartWithModel;
 	index: number;
 	isQuoted: boolean;
 	filaments: Filament[];
+	count: number;
 }) {
 	const { register, watch, setValue } = useForm<{
 		costInDollars: number;
@@ -198,7 +200,7 @@ export default function PartEditor({
 				<div
 					className={`shadow-sm rounded-sm p-4 lg:p-6 bg-white outline outline-2 outline-gray-200`}>
 					<div className={`lg:flex gap-4`}>
-						<div className="max-lg:hidden w-fit text-lg text-center">
+						{/* <div className="max-lg:hidden w-fit text-lg text-center">
 							{index + 1}
 							<button
 								className={`flex flex-col p-0 mt-1 text-sm text-cool-black hover:text-cool-black mb-0 bg-transparent hover:bg-transparent hover:fill-black enabled:fill-pnw-gold enabled:text-pnw-gold`}
@@ -206,58 +208,74 @@ export default function PartEditor({
 								<RegularUpload className="w-6 h-6 inline"></RegularUpload>
 								<FormLoadingSpinner className="w-6 h-auto mt-2" />
 							</button>
-						</div>
+						</div> */}
 						<div className="w-full">
-							<div className="lg:flex">
-								<div className="mr-4 mb-2 w-full lg:w-48">
-									<div className="w-full h-40 lg:h-48 outline-gray-300 bg-gray-50 outline-1 outline rounded-sm relative shadow-sm">
-										<ModelViewer
-											swatch={
-												part.supplementedFilament
-													?.color ??
-												part.filament?.color
-											}
-											modelURL={`/api/download/model?modelId=${part.modelId}`}></ModelViewer>
-									</div>
-									<div className="py-1 px-1 mt-1">
-										{part.model.analysisResults && (
-											<div className="bg-pnw-gold w-full rounded-md text-xs px-2 py-1">
-												<p>Analysis Completed</p>
-												<p>
-													{
-														part.model
-															.analysisResults
-															.estimatedDuration
-													}
-												</p>
-												<p>
-													{
-														part.model
-															.analysisResults
-															.estimatedFilamentUsedInGrams
-													}{" "}
-													(g)
-												</p>
-											</div>
-										)}
-										<a
-											className="flex text-xs text-nowrap justify-between items-center opacity-50 hover:opacity-100"
-											href={`/api/download/model?modelId=${part.modelId}`}
-											download={`${part.model.name}.stl`}
-											target="_blank">
-											Download (
-											{`${Math.round(
-												part.model.fileSizeInBytes /
-													1000
-											)} kB`}
-											)
-											<RegularCloudDownload className="fill-cool-black w-6 h-6 p-0.5"></RegularCloudDownload>
-										</a>
-									</div>
-								</div>
+							{isRefunded(part) ? (
+								<></>
+							) : (
+								isPaid(request) &&
+								part.status != PartStatus.Failed &&
+								watch("status") == PartStatus.Failed && (
+									<div className="mt-4 px-0">
+										<textarea
+											{...register("reasonForRefund")}
+											className="outline outline-1 outline-gray-300 mb-0 w-full"
+											required
+											placeholder="Reason for failure"></textarea>
 
+										<div className="w-full">
+											<div className="flex items-center gap-2 w-full">
+												<input
+													{...register(
+														"refundQuantity",
+														{
+															value: part.quantity,
+															min: 1,
+															max: part.quantity,
+															required: true
+														}
+													)}
+													className="mb-0 w-full"
+													type="range"
+													required
+													min={1}
+													max={part.quantity}></input>
+
+												<input
+													className="min-w-12 p-0 min w-fit text-center mb-0 bg-transparent"
+													type="number"
+													required={false}
+													value={watch(
+														"refundQuantity"
+													)}
+													min={1}
+													max={part.quantity}
+													onChange={(ev) =>
+														setValue(
+															"refundQuantity",
+															ev.currentTarget
+																.valueAsNumber
+														)
+													}></input>
+											</div>
+
+											{isPriced(part) && (
+												<p>
+													Account will be refunded $
+													{(
+														part.priceInDollars! *
+														watch("refundQuantity")
+													).toFixed(2)}
+												</p>
+											)}
+										</div>
+									</div>
+								)
+							)}
+
+							<div className={count < 3 ? "lg:flex" : ""}>
 								<div className="w-full">
-									<div className="w-full flex">
+									<div className="w-full flex items-center mb-1">
 										<SelectorStatusPill
 											register={register("status", {
 												onChange: (
@@ -320,21 +338,18 @@ export default function PartEditor({
 												</>
 											)}
 										</SelectorStatusPill>
+										<div className="text-2xl text-wrap">
+											{part.model.name} x{part.quantity}
+										</div>
 										<button
-											className={`lg:hidden p-1 text-sm mr-2 text-cool-black hover:text-cool-black mb-0 bg-transparent hover:bg-transparent hover:fill-black enabled:fill-pnw-gold enabled:text-pnw-gold enabled:animate-pulse`}
+											className={`w-fit text-sm ml-4 px-0 py-0 text-cool-black hover:text-cool-black mb-0 bg-transparent hover:bg-transparent hover:fill-black enabled:fill-pnw-gold enabled:text-pnw-gold enabled:animate-pulse`}
 											disabled={!isChanged}>
-											<RegularUpload className="w-5 h-5 inline"></RegularUpload>
+											<RegularUpload className="p-0.5 w-5 h-5 inline"></RegularUpload>
 											<span className="ml-2 text-inherit">
 												Save
 											</span>
-											<FormLoadingSpinner className="inline h-5 w-auto ml-2" />
+											{/* <FormLoadingSpinner className="ml-2" /> */}
 										</button>
-										<span className="text-2xl w-full text-wrap max-lg:hidden">
-											{part.model.name} x{part.quantity}
-										</span>
-									</div>
-									<div className="text-2xl lg:hidden text-wrap mb-2">
-										{part.model.name} [STL] x{part.quantity}
 									</div>
 									<div>
 										<p className="my-0.5">
@@ -459,22 +474,12 @@ export default function PartEditor({
 													undefined ? (
 														<>No longer Available</>
 													) : (
-														<Suspense
-															fallback={
-																<div>
-																	Loading...
-																</div>
-															}>
+														<>
 															{`${part.filament.material.toUpperCase()} `}
-															<NamedSwatch
-																swatch={
-																	part
-																		.filament
-																		.color
-																}></NamedSwatch>
-														</Suspense>
+															<NamedSwatch swatch={part.filament.color} />
+														</>
 													)}
-													{watch(
+													{/* {watch(
 														"status",
 														part.status
 													) == PartStatus.Pending && (
@@ -489,7 +494,7 @@ export default function PartEditor({
 																"Supplement Filament"
 															}
 														</span>
-													)}
+													)} */}
 												</>
 											)}
 										</div>
@@ -514,70 +519,53 @@ export default function PartEditor({
 										</div>
 									</div>
 								</div>
-							</div>
-
-							{isRefunded(part) ? (
-								<></>
-							) : (
-								isPaid(request) &&
-								part.status != PartStatus.Failed &&
-								watch("status") == PartStatus.Failed && (
-									<div className="mt-4 px-0">
-										<textarea
-											{...register("reasonForRefund")}
-											className="outline outline-1 outline-gray-300 mb-0 w-full"
-											required
-											placeholder="Reason for failure"></textarea>
-
-										<div className="w-full">
-											<div className="flex items-center gap-2 w-full">
-												<input
-													{...register(
-														"refundQuantity",
-														{
-															value: part.quantity,
-															min: 1,
-															max: part.quantity,
-															required: true
-														}
-													)}
-													className="mb-0 w-full"
-													type="range"
-													required
-													min={1}
-													max={part.quantity}></input>
-
-												<input
-													className="min-w-12 p-0 min w-fit text-center mb-0 bg-transparent"
-													type="number"
-													required={false}
-													value={watch(
-														"refundQuantity"
-													)}
-													min={1}
-													max={part.quantity}
-													onChange={(ev) =>
-														setValue(
-															"refundQuantity",
-															ev.currentTarget
-																.valueAsNumber
-														)
-													}></input>
-											</div>
-
-											{isPriced(part) && (
-												<p>
-													Account will be refunded $
-													{(
-														part.priceInDollars! *
-														watch("refundQuantity")
-													).toFixed(2)}
-												</p>
-											)}
-										</div>
+								<div className={count > 2 ? "mt-6 w-auto" : "w-96"}>
+									<div className="w-full h-40 lg:h-48 outline-gray-300 bg-gray-50 outline-1 outline rounded-sm relative shadow-sm">
+										<ModelViewer
+											swatch={
+												part.supplementedFilament
+													?.color ??
+												part.filament?.color
+											}
+											modelURL={`/api/download/model?modelId=${part.modelId}`}></ModelViewer>
 									</div>
-								)
-							)}
+									<div className="py-1 px-1 mt-1">
+										{part.model.analysisResults && (
+											<div className="bg-pnw-gold w-full rounded-md text-xs px-2 py-1">
+												<p>Analysis Completed</p>
+												<p>
+													{
+														part.model
+															.analysisResults
+															.estimatedDuration
+													}
+												</p>
+												<p>
+													{
+														part.model
+															.analysisResults
+															.estimatedFilamentUsedInGrams
+													}{" "}
+													(g)
+												</p>
+											</div>
+										)}
+										<a
+											className="flex text-xs text-nowrap justify-between items-center opacity-50 hover:opacity-100"
+											href={`/api/download/model?modelId=${part.modelId}`}
+											download={`${part.model.name}.stl`}
+											target="_blank">
+											Download (
+											{`${Math.round(
+												part.model.fileSizeInBytes /
+													1000
+											)} kB`}
+											)
+											<RegularCloudDownload className="fill-cool-black w-6 h-6 p-0.5"></RegularCloudDownload>
+										</a>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 					<div className="mt-2">

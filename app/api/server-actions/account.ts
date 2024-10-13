@@ -1,45 +1,24 @@
 "use server";
-/*
-  MUST USE "use server" FOR SERVER ACTIONS.
-  Not doing so will result in compilation errors caused from attempting to bundle server
-  NPM packages for the client
-*/
 
-import {
-	attemptLogin,
-	checkIfPasswordCorrect,
-	createAccount,
-	login,
-	validatePassword
-} from "@/app/api/util/AccountHelper";
+import { attemptLogin, checkIfPasswordCorrect, createAccount, login, validatePassword } from "@/app/api/util/AccountHelper";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import {
-	getJwtPayload,
-	makeJwt,
-	retrieveSafeJWTPayload,
-	UserJWT
-} from "@/app/api/util/JwtHelper";
+import { getJwtPayload, retrieveSafeJWTPayload } from "@/app/api/util/JwtHelper";
 import { SESSION_COOKIE } from "@/app/api/util/Constants";
 import { cookies } from "next/headers";
-import * as crypto from "crypto";
-
 import db from "@/app/api/Database";
 import { hashAndSaltPassword } from "../util/PasswordHelper";
-import {
-	AccountPermission,
-	emailVerificationExpirationDurationInDays
-} from "@/app/Types/Account/Account";
+import { AccountPermission, emailVerificationExpirationDurationInDays } from "@/app/Types/Account/Account";
 import ActionResponse, { ActionResponsePayload } from "./ActionResponse";
-import { number, z } from "zod";
+import { z } from "zod";
 import AccountServe from "@/app/Types/Account/AccountServe";
 import { sendEmail, verifyEmailTemplate } from "../util/Mail";
-import { WalletTransactionPaymentMethod } from "@/app/Types/Account/Wallet";
 import getConfig from "@/app/getConfig";
+import { APIData, resOkData, resError, resOk } from "../APIResponse";
+import { addMinutes } from "@/app/utils/TimeUtils";
+import { NextResponse } from "next/server";
 
-/*
-  Server Actions for Account-related server stuff
-*/
+const envConfig = getConfig();
 
 export async function tryLogin(prevState: string, formData: FormData) {
 	try {
@@ -68,14 +47,16 @@ const createAccountSchema = z.object({
 	email: z.string().email(),
 	firstName: z.string(),
 	lastName: z.string(),
-	password: z.string()
+	password: z.string(),
+	yearOfStudy: z.string()
 });
 export async function tryCreateAccount(prevState: string, formData: FormData) {
 	const parsedData = createAccountSchema.safeParse({
 		email: formData.get("email"),
 		firstName: formData.get("firstname"),
 		lastName: formData.get("lastname"),
-		password: formData.get("password")
+		password: formData.get("password"),
+		yearOfStudy: formData.get("year-of-study")
 	});
 	if (!parsedData.success) return `Schema Failed: ${parsedData.error}`;
 
@@ -93,7 +74,8 @@ export async function tryCreateAccount(prevState: string, formData: FormData) {
 			parsedData.data.firstName,
 			parsedData.data.lastName,
 			parsedData.data.password,
-			AccountPermission.User
+			AccountPermission.User,
+			parsedData.data.yearOfStudy
 		);
 		revalidatePath("/");
 	} catch (e: any) {
@@ -190,8 +172,6 @@ export async function editName(
 	return "";
 }
 
-const envConfig = getConfig();
-
 export async function resendVerificationLink(
 	prevState: ActionResponse,
 	formData: FormData
@@ -228,6 +208,57 @@ export async function resendVerificationLink(
 		sentAt: new Date(),
 		validUntil
 	});
+}
+
+export async function sendPasswordResetEmail(
+	prevState: ActionResponse,
+	formData: FormData
+): Promise<APIData<{ validUntil: Date }>> {
+	const parsedEmail = z.string().email().safeParse(formData.get("email"));
+	if (!parsedEmail.success) return resError(parsedEmail.error.toString());
+
+	try {
+		return resOkData(await AccountServe.sendPasswordReset(parsedEmail.data));
+	} catch (error) {
+		console.error(error);
+		// return resError("An issue occurred sending a password reset request!");
+		return resError(`${error}`);
+	}
+}
+
+const resetPasswordSchema = z.object({
+	newPassword: z.string(),
+	code: z.string()
+});
+export async function resetPassword(prevState: ActionResponse, formData: FormData): Promise<APIData<{}>> {
+	const parsedForm = resetPasswordSchema.safeParse({
+		newPassword: formData.get("new-password"),
+		code: formData.get("code")
+	});
+	if (!parsedForm.success) return resError(parsedForm.error.toString())
+
+	// Query a password reset request with the given code.
+	const passwordReset = (await db`SELECT * FROM AccountPasswordResetCode WHERE Code=${parsedForm.data.code}`).at(0);
+	if (passwordReset == null || new Date() > addMinutes(passwordReset.createdat as Date, envConfig.accountPasswordResetExpiration)) {
+		redirect(`${envConfig.hostURL}/not-found`);
+	}
+
+	const passwordResetAccountEmail = passwordReset.accountemail as string;
+
+	const passwordIssues = validatePassword(parsedForm.data.newPassword);
+	if (passwordIssues != null) return resError(passwordIssues);
+
+	try {
+		await db.begin(async (dbTransaction) => {
+			await dbTransaction`UPDATE Account SET Password=${hashAndSaltPassword(parsedForm.data.newPassword)} WHERE Email=${passwordResetAccountEmail}`;
+			await dbTransaction`DELETE FROM AccountPasswordResetCode WHERE Code=${parsedForm.data.code}`;
+		});
+
+		return resOk();
+	}
+	catch (error) {
+		return resError(`${error}`);
+	}
 }
 
 export async function editPassword(

@@ -1,22 +1,28 @@
-export function error(errorMessage: string): APIData<{}> {
+export function resError<T>(errorMessage: string): APIData<T> {
 	return {
 		success: false,
 		errorMessage: errorMessage
 	};
 }
 
-export function unauthorized(): APIData<{}> {
+export function resUnauthorized(): APIData<{}> {
 	return {
 		success: false,
 		errorMessage: "You are not authorized to access this resource!"
 	};
 }
 
-export function okData<D extends object>(data: D): APIData<D> {
+export function resOkData<D extends object>(data: D): APIData<D> {
 	return {
 		success: true,
 		...data
 	};
 }
 
-export type APIData<T> = { success: boolean; errorMessage?: string } & T;
+export function resOk(): APIData<{}> {
+	return {
+		success: true
+	};
+}
+
+export type APIData<T> = ({ success: true } & T) | ({ success: false; errorMessage?: string });

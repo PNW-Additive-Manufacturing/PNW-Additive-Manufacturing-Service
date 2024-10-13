@@ -29,9 +29,10 @@ export default async function Maintainer() {
 
 	return (
 		<>
-			<div className="text-3xl mb-10">
+
+			<h1 className="text-3xl tracking-wide font-light mb-8">
 				Welcome, {jwtPayload?.firstname} {jwtPayload?.lastname}!
-			</div>
+			</h1>
 
 			{/* Maintainer Screens */}
 			<a

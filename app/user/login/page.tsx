@@ -2,24 +2,13 @@
 
 import { Input } from "@/app/components/Input";
 import { tryLogin } from "@/app/api/server-actions/account";
-import { useFormState, useFormStatus } from "react-dom";
-import Image from "next/image";
+import { useFormState } from "react-dom";
 import HorizontalWrap from "@/app/components/HorizontalWrap";
 import AMSIcon from "@/app/components/AMSIcon";
-
-function SubmitButton() {
-	const { pending } = useFormStatus();
-	return (
-		<input
-			className="mb-0"
-			type="submit"
-			value={pending ? "Singing in" : "Sign in"}
-		/>
-	);
-}
+import { Label } from "@/app/components/Inputs";
+import FormSubmitButton from "@/app/components/FormSubmitButton";
 
 export default function Login() {
-	//note that Server component cannot return null or Class objects, only plain JSONs and primitive types
 	let [error, formAction] = useFormState<string, FormData>(tryLogin, "");
 
 	return (
@@ -50,7 +39,19 @@ export default function Login() {
 							required={true}
 							placeholder="Enter your Password"
 						/>
-						<SubmitButton />
+						<a href="/user/forgot-password">
+							<p className="w-full pb-4 text-sm text-left underline">
+								Have you forgot your password? Reset it here!
+							</p>
+						</a>
+						<Label content={"Session Duration"} />
+						<select id="session-duration" defaultValue={"1w"}>
+							<option value="1d">Day</option>
+							<option value="1w">Week</option>
+							<option value="1m">Month</option>
+							<option value="1y">Year</option>
+						</select>
+						<FormSubmitButton label="Sign In" />
 						<p className="text-sm text-red-500 uppercase">
 							{error}
 						</p>

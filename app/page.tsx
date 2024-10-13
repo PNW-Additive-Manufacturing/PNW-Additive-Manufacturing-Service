@@ -4,6 +4,8 @@ import Image from "next/image";
 import HorizontalWrap from "./components/HorizontalWrap";
 import Gallery from "./components/Gallery";
 import { RegularLink } from "lineicons-react";
+import Link from "next/link";
+import { isOpen } from "./components/Schedule";
 
 function DiscordServer() {
 	return (
@@ -44,8 +46,8 @@ export default async function Home() {
 		<>
 			<div>
 				<HorizontalWrap>
-					<div className="lg:flex justify-between gap-6 lg:m-0">
-						<div className="w-full lg:mb-6">
+					<div className="xl:flex justify-between gap-6 lg:m-0">
+						<div className="w-full">
 							<h1 className="w-fit mb-4 text-3xl font-normal">
 								Welcome to the
 								<span className="font-bold">
@@ -77,33 +79,38 @@ export default async function Home() {
 							</ul>
 
 							<div className="pt-10">
-								<div className="flex max-lg:justify-between gap-2">
+								<div className="sm:flex gap-2">
 									<a
 										href={"/request-part"}
 										className="block w-fit px-5 py-3 text-lg bg-gradient-linear-pnw-mystic tracking-wider font-semibold uppercase rounded-md shadow-sm">
 										Get Started
 									</a>
+									<div className="flex gap-2">
+										<Link
+											href="/team"
+											className="block w-fit px-2 lg:px-5 py-3 text-base tracking-wider font-light">
+											Meet our Team
+										</Link>
+										<a
+											href="https://mypnwlife.pnw.edu/AMC/club_signup"
+											target="_blank"
+											className="block w-fit px-2 lg:px-5 py-3 text-base tracking-wider font-light">
+											Join MyPNW Life
+										</a>
+									</div>
+								</div>
+
+								<div className="w-fit max-md:pl-2 py-3 text-xs tracking-wider mb-5">
+									{isOpen ? "We are available for pickup: " : "We are currently closed: "}
 									<a
-										href={
-											"https://mypnwlife.pnw.edu/feeds?type=club&type_id=35554"
-										}
-										className="block w-fit px-5 py-3 text-base tracking-wider font-light">
-										Join MyPNWLife
+										href={"/schedule"}
+										className="underline">
+										View our Schedule
 									</a>
 								</div>
-								<a
-									href={"/schedule"}
-									className="block w-fit px-3 py-3 text-xs tracking-wider underline">
-									Or, Meet a Technician!
-								</a>
-
-								{/* <div className="flex flex-col md:flex-row w-fit mt-6 gap-2 justify-center">
-									<DiscordServer />
-									<GithubProject />
-								</div> */}
 							</div>
 						</div>
-						<div className="w-full lg:w-2/3 max-lg:mb-6 lg:pl-12">
+						<div className="w-full xl:w-2/3 max-xl:mb-6 xl:pl-12">
 							<Gallery
 								buttonStyle="sphere"
 								autoplay={true}
@@ -188,17 +195,16 @@ export default async function Home() {
 								]}></Gallery>
 						</div>
 					</div>
-				</HorizontalWrap>
+				</HorizontalWrap >
 
 				<div className="bg-white py-8 pb-10">
 					<HorizontalWrap>
 						<div
-							className="xl:flex gap-6 justify-between"
 							id="services">
 							<div>
-								<div className="w-fit font-normal text-2xl pb-2">
+								<h2 className="w-fit font-normal text-2xl pb-2">
 									Our Manufacturing Services
-								</div>
+								</h2>
 								<div className="w-fit lg:pr-24">
 									Each production method offers different
 									benefits and drawbacks. We recommend taking
@@ -264,7 +270,7 @@ export default async function Home() {
 										<li>
 											Unmatched precision and smoothness.
 										</li>
-										<li>Arriving October 2024.</li>
+										<li>Arriving November 2024.</li>
 									</ul>
 								</div>
 							</div>
@@ -299,7 +305,7 @@ export default async function Home() {
 											Materials: 17-4PH Stainless Steel,
 											H13 Tool Steel, and more!
 										</li>
-										<li>Arriving November 2024.</li>
+										<li>Arriving Spring 2025.</li>
 									</ul>
 								</div>
 							</a>
@@ -313,7 +319,7 @@ export default async function Home() {
 						<GithubProject />
 					</div>
 				</HorizontalWrap>
-			</div>
+			</div >
 		</>
 	);
 }

@@ -22,16 +22,15 @@ function EmailSubmitButton() {
 
 	return (
 		<button
-			className={`w-fit flex gap-2 m-0 ${
-				showCompleted && "bg-green-600"
-			}`}
+			className={`w-fit flex gap-2 m-0 ${showCompleted && "bg-green-600"
+				}`}
 			disabled={status.pending || showCompleted}>
 			<div className="flex gap-1">
 				{showCompleted
 					? "Sent to Inbox"
 					: status.pending
-					? "Sending Email"
-					: "Send Email"}
+						? "Sending Email"
+						: "Send Email"}
 			</div>
 			{status.pending && <FormLoadingSpinner className="fill-white" />}
 		</button>
@@ -83,7 +82,7 @@ export default function Page() {
 					)}
 					{data.isComplete && data.errorMessage == undefined && (
 						<p className="mt-2">
-							Please wait, it may take 1-3 minutes for PNW to
+							Please wait, it may take up to 4 minutes for PNW to
 							process the email.
 						</p>
 					)}

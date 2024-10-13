@@ -80,7 +80,7 @@ export default async function RootLayout({
 							: await AccountServe.queryByEmail(email)
 					}>
 					<ThemeProvider>
-						<div className="bg-gray-200">
+						{/* <div className="bg-gray-200">
 							<HorizontalWrap className="text-cool-black opacity-50 w-full py-0 pt-1 pb-1 lg:text-right text-sm">
 								Site is in{" "}
 								<span className="font-semibold">
@@ -89,27 +89,35 @@ export default async function RootLayout({
 								, no payments are fulfilled, nor should orders
 								be considered actual!
 							</HorizontalWrap>
-						</div>
+						</div> */}
 						<Navbar
 							links={(() => {
-								if (permission == null) {
-									return [];
-								}
-								let elements: { name: string; path: string }[] =
-									[];
-								elements.push({
-									name: "Your Orders",
-									path: "/dashboard/user"
-								});
-								if (
-									permission ==
-										AccountPermission.Maintainer ||
-									permission == AccountPermission.Admin
-								) {
+								let elements: { name: string; path: string }[] = [
+									{
+										name: "Contact Us",
+										path: "/team"
+									},
+									{
+										name: "Pickup Schedule",
+										path: "/schedule"
+									}
+								];
+
+								if (permission != null) {
 									elements.push({
-										name: "Management Panel",
-										path: "/dashboard/maintainer"
+										name: "Your Requests",
+										path: "/dashboard/user"
 									});
+									if (
+										permission ==
+										AccountPermission.Maintainer ||
+										permission == AccountPermission.Admin
+									) {
+										elements.push({
+											name: "Management Panel",
+											path: "/dashboard/maintainer"
+										});
+									}
 								}
 								return elements;
 							})()}

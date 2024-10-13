@@ -157,7 +157,8 @@ export default function RequestEditor({
 						</div>
 					</div>
 
-					<div className="flex flex-col gap-6 mb-3">
+
+					<div className="flex flex-col gap-6 mb-3">						
 						{request.isFulfilled && (
 							<RequestOverview
 								title="Request Fulfilled"
@@ -166,14 +167,18 @@ export default function RequestEditor({
 								)}.`}
 							/>
 						)}
-						{request.parts.map((part, index) => (
-							<PartEditor
-								request={request}
-								part={part}
-								index={index}
-								isQuoted={_hasQuote}
-								filaments={availableFilaments}></PartEditor>
-						))}
+						{request.comments != null && <RequestOverview title={`Comments from ${request.firstName} ${request.lastName}`} description={request.comments} />}
+						<div className={`grid ${request.parts.length > 2 && "2xl:grid-cols-2"} gap-4`}>
+							{request.parts.map((part, index) => (
+								<PartEditor
+									request={request}
+									part={part}
+									index={index}
+									isQuoted={_hasQuote}
+									filaments={availableFilaments}
+									count={request.parts.length}></PartEditor>
+							))}
+						</div>
 					</div>
 
 					<DropdownSection

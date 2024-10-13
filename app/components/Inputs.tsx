@@ -4,9 +4,7 @@ import { UseFormRegisterReturn } from "react-hook-form";
 
 export function Label({ content }: { content: string }): JSX.Element {
 	return (
-		<label className="block text-sm font-medium leading-6 text-gray-900">
-			{content}
-		</label>
+		<label className="text-gray-600">{content}</label>
 	);
 }
 

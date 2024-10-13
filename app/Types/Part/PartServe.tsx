@@ -1,8 +1,6 @@
 import postgres from "postgres";
-import Lazy from "../Lazy";
 import Model from "../Model/Model";
 import Request from "../Request/Request";
-import Servable from "../Servable";
 import Part, { PartWithModel, PartWithRequest } from "./Part";
 import db from "@/app/api/Database";
 import { validateColors } from "@/app/components/Swatch";

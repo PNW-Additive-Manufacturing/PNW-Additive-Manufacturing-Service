@@ -195,7 +195,7 @@ table thead tr th {
 }
 table thead tr td, table thead tr th
 {
-  padding: 1rem 2rem 1rem 2rem;
+  padding: 0.75rem 2rem 0.75rem 2rem;
 }
 table tbody tr:first-child
 {
@@ -209,9 +209,9 @@ table tbody tr:nth-child(even) {
 }
 table tbody tr td
 {
-	padding: 1rem 2rem 1rem 2rem;
+	padding: 0.75rem 2rem 0.75rem 2rem;
 }
-table thead tr td:first-child, table thead tr th:first-child
+table thead tr th:first-child, table thead tr th:first-child
 {
   padding-left: 1rem;
 }
@@ -224,13 +224,13 @@ table tbody tr {
   border-bottom: 2px solid rgb(238, 238, 238);
   text-align: left;
 }
-table tbody tr td {
+table tbody tr td, table tbody tr th {
   font-size: 1rem;
   /* padding: 1rem 0rem 1rem 0rem; */
 }
 table thead tr td:last-child, table thead tr th:last-child
 {
-  /* padding-right: 1rem; */
+  padding-right: 1rem;
 }
 table tbody tr td:first-child
 {
@@ -253,3 +253,9 @@ progress {
 progress::-webkit-progress-value {background-color: var(--pnw-gold) !important;}
 progress::-moz-progress-bar {background-color: var(--pnw-gold) !important;}
 progress {color: var(--pnw-gold);}
+
+.out
+{
+  outline: solid 2px #e5e7eb;
+  border-radius: 0.125rem;
+}

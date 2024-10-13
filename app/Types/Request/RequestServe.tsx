@@ -20,6 +20,7 @@ export class RequestServe {
 	): Promise<RequestWithParts[]> {
 		const dbQuery = await db`SELECT r.Id, 
 		r.Name, 
+		r.Comments,
 		r.OwnerEmail,
 		a.FirstName, 
 		a.LastName, 
@@ -43,7 +44,7 @@ export class RequestServe {
 				? db`AND r.SubmitTime >= ${query.requestedAfter}`
 				: db``
 		}
-		GROUP BY r.Id, r.Name, r.OwnerEmail, a.FirstName, a.LastName, r.SubmitTime, r.FulfilledAt, r.TotalPriceInCents, r.PaidAt
+		GROUP BY r.Id, r.Name, r.Comments, r.OwnerEmail, a.FirstName, a.LastName, r.SubmitTime, r.FulfilledAt, r.TotalPriceInCents, r.PaidAt
 		ORDER BY r.SubmitTime DESC
 		LIMIT ${query.requestsPerPage} OFFSET ${
 			(query.page - 1) * query.requestsPerPage
@@ -59,6 +60,7 @@ export class RequestServe {
 			let request: Request = {
 				id: requestRow.id,
 				name: requestRow.name,
+				comments: requestRow.comments,
 				firstName: requestRow.firstname,
 				lastName: requestRow.lastname,
 				isFulfilled: requestRow.fulfilledat != undefined,
@@ -100,6 +102,7 @@ export class RequestServe {
 	): Promise<RequestWithParts | undefined> {
 		const query = await db`SELECT r.Id,
 	r.Name,
+	r.Comments,
 	r.OwnerEmail,
 	a.FirstName,
 	a.LastName,
@@ -112,7 +115,7 @@ export class RequestServe {
 		LEFT JOIN Part p ON r.Id = p.RequestId
 		JOIN Account a ON r.OwnerEmail = a.Email
 		WHERE r.Id = ${id}
-		GROUP BY r.Id, r.Name, r.OwnerEmail, a.FirstName, a.LastName, r.SubmitTime, r.FulfilledAt, r.TotalPriceInCents, r.PaidAt
+		GROUP BY r.Id, r.Name, r.Comments, r.OwnerEmail, a.FirstName, a.LastName, r.SubmitTime, r.FulfilledAt, r.TotalPriceInCents, r.PaidAt
 		ORDER BY r.SubmitTime DESC; `;
 
 		if (query.length == 0) return undefined;
@@ -124,6 +127,7 @@ export class RequestServe {
 
 		let request: Request = {
 			id: requestRow.id,
+			comments: requestRow.comments,
 			name: requestRow.name,
 			firstName: requestRow.firstname,
 			lastName: requestRow.lastname,
@@ -161,6 +165,7 @@ export class RequestServe {
 	public static async fetchAll(): Promise<RequestWithParts[]> {
 		const query = await db`SELECT r.Id,
 	r.Name,
+	r.Comments,
 	r.OwnerEmail,
 	a.FirstName,
 	a.LastName,
@@ -172,7 +177,7 @@ export class RequestServe {
 		FROM Request r
 		LEFT JOIN Part p ON r.Id = p.RequestId
 		JOIN Account a ON r.OwnerEmail = a.Email
-		GROUP BY r.Id, r.Name, r.OwnerEmail, a.FirstName, a.LastName, r.SubmitTime, r.FulfilledAt, r.TotalPriceInCents, r.PaidAt
+		GROUP BY r.Id, r.Name, r.Comments, r.OwnerEmail, a.FirstName, a.LastName, r.SubmitTime, r.FulfilledAt, r.TotalPriceInCents, r.PaidAt
 		ORDER BY r.SubmitTime DESC; `;
 
 		if (query.length == 0) return [];
@@ -187,6 +192,7 @@ export class RequestServe {
 				name: requestRow.name,
 				firstName: requestRow.firstname,
 				lastName: requestRow.lastname,
+				comments: requestRow.comments,
 				submitTime: requestRow.submittime,
 				requesterEmail: requestRow.owneremail,
 				isFulfilled: requestRow.fulfilledat != undefined,
@@ -224,6 +230,7 @@ export class RequestServe {
 	): Promise<RequestWithParts[]> {
 		const query = await db`SELECT r.Id,
 	r.Name,
+	r.Comments,
 	r.OwnerEmail,
 	a.FirstName,
 	a.LastName,
@@ -236,7 +243,7 @@ export class RequestServe {
 		LEFT JOIN Part p ON r.Id = p.RequestId
 		JOIN Account a ON r.OwnerEmail = a.Email
 		WHERE a.Email = ${accountEmail}
-		GROUP BY r.Id, r.Name, r.OwnerEmail, a.FirstName, a.LastName, r.SubmitTime, r.FulfilledAt, r.TotalPriceInCents, r.PaidAt
+		GROUP BY r.Id, r.Name, r.Comments, r.OwnerEmail, a.FirstName, a.LastName, r.SubmitTime, r.FulfilledAt, r.TotalPriceInCents, r.PaidAt
 		ORDER BY r.SubmitTime DESC; `;
 
 		if (query.length == 0) return [];
@@ -251,6 +258,7 @@ export class RequestServe {
 				name: requestRow.name,
 				firstName: requestRow.firstname,
 				lastName: requestRow.lastname,
+				comments: requestRow.comments,
 				isFulfilled: requestRow.fulfilledat != undefined,
 				fulfilledAt: requestRow.fulfilledat,
 				submitTime: requestRow.submittime,

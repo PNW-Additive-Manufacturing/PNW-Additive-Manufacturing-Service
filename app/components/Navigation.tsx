@@ -153,25 +153,8 @@ export function Navbar({
 							</div>
 						</Link>
 
-						{/* <div className="hidden xl:block whitespace-nowrap px-5 py-3 place-self-center text-sm font-light">
-							<a className="capitalize" href="/">
-								Home
-							</a>
-							{currentPathSegments.map((segment, index, arr) => {
-								const segments = arr.slice(0, index + 1);
-								const fullPath = `/${segments.join("/")}`;
-								const pathname = segment;
-								return (
-									<a
-										key={pathname}
-										className="capitalize"
-										href={fullPath}>{` / ${pathname}`}</a>
-								);
-							})}
-						</div> */}
-
 						{/* Long List of links and dropdown */}
-						<div className="hidden md:flex ml-auto items-center justify-end tracking-wider gap-5">
+						<div className="hidden xl:flex ml-auto items-center justify-end tracking-wider gap-5 overflow-x-auto">
 							{links.map((val) => (
 								<NavbarLink
 									key={val.name}
@@ -190,7 +173,7 @@ export function Navbar({
 
 						{/* Small dropdown for mobile screens */}
 						<RegularMenu
-							className="md:hidden text-right ml-auto h-full w-auto p-2"
+							className="xl:hidden text-right ml-auto h-full w-auto p-2"
 							onClick={() => setExpanded(() => !itemsExpanded)}
 						/>
 						<div>

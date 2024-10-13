@@ -6,7 +6,7 @@ import { cancelRequest } from "@/app/api/server-actions/request";
 import { AccountContext } from "@/app/ContextProviders";
 import ModelViewer from "@/app/components/ModelViewer";
 import StatusPill from "@/app/components/StatusPill";
-import { templatePNW } from "@/app/components/Swatch";
+import { NamedSwatch, templatePNW } from "@/app/components/Swatch";
 import {
 	getStatusColor,
 	isAllComplete,
@@ -26,6 +26,7 @@ import Request, {
 import { Color } from "three";
 import {
 	RegularBriefcase,
+	RegularCheckmarkCircle,
 	RegularCloudDownload,
 	RegularCloudUpload,
 	RegularCog,
@@ -42,10 +43,11 @@ import { AlertTitle } from "@mui/material";
 import RequestPricing from "@/app/components/Request/Pricing";
 import RefundMessage from "@/app/components/Part/RefundMessage";
 import FilamentBlock from "@/app/experiments/FilamentBlock";
-import { formateDate } from "@/app/api/util/Constants";
+import { formateDate, formatTime } from "@/app/api/util/Constants";
 import Timeline from "@/app/components/Timeline";
 import HiddenInput from "@/app/components/HiddenInput";
 import { RequestOverview } from "../../../components/RequestOverview";
+import { closingTime, isOpen } from "@/app/components/Schedule";
 
 export default function RequestDetails({
 	request
@@ -145,7 +147,6 @@ export default function RequestDetails({
 
 			<div className="lg:flex gap-8">
 				<div className="lg:grow">
-					{/* <div className="lg:w-3/4"> */}
 					<div className="w-full py-2 pr-1">
 						<div className="text-right text-nowrap">
 							{"Viewing "}
@@ -153,12 +154,13 @@ export default function RequestDetails({
 							{request.parts.length > 1 ? "Parts" : "Part"}
 						</div>
 					</div>
+
 					<div className="flex flex-col gap-6">
 						{isAllComplete(request.parts) &&
 							!request.isFulfilled && (
 								<RequestOverview
-									title="Pickup at the PNW Design Studio"
-									description="See the operating hours of the AMS."
+									title={isOpen ? "Pickup at the PNW Design Studio" : "Waiting for a Team Member"}
+									description={isOpen ? <>You may pickup your parts until {formatTime(closingTime!)} or on another business day.</> : <>See our <Link className="underline" href={"/schedule"}>operating hours</Link> to pickup your parts.</>}
 								/>
 							)}
 						{request.isFulfilled && (
@@ -169,11 +171,15 @@ export default function RequestDetails({
 								)}.`}
 							/>
 						)}
-						{request.parts.map((part, index) => (
-							<PartDetails
-								part={part}
-								index={index}></PartDetails>
-						))}
+						{request.comments != null && <RequestOverview title={`Request Comments`} description={request.comments} />}
+						<div className={`grid ${request.parts.length > 2 && "2xl:grid-cols-2"} gap-4`}>
+							{request.parts.map((part, index) => (
+								<PartDetails
+									part={part}
+									index={index}
+									count={request.parts.length}></PartDetails>
+							))}
+						</div>
 					</div>
 				</div>
 				<div className="lg:w-92">
@@ -207,7 +213,7 @@ export default function RequestDetails({
 								{
 									title: "Processing",
 									description: (
-										<>Your parts are being printed!</>
+										<>Parts are being printed!</>
 									),
 									disabled: isAllPending(request.parts)
 								},
@@ -312,7 +318,7 @@ export default function RequestDetails({
 	);
 }
 
-function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
+function PartDetails({ part, index, count }: { part: PartWithModel; index: number, count: number }) {
 	let statusColor = getStatusColor(part.status);
 	const [revisedFile, setRevisedFile] = useState<File | undefined>(undefined);
 
@@ -324,13 +330,13 @@ function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 				className="rounded-none w-full accent-pnw-gold h-1.5 block"></progress> */}
 			<div className="lg:flex gap-4 shadow-sm rounded-sm pl-4 pr-4 py-4 pt-5 lg:py-6 lg:pr-6 lg:pl-6 bg-white outline outline-2 outline-gray-200">
 				<div className="w-full">
-					<div className="lg:flex">
+					<div className={count < 3 ? "lg:flex" : ""}>
 						<div className="w-full h-fit">
-							<div className="flex items-center gap-2 text-2xl mb-1">
-								{part.model.name}
+							<div className="flex items-center gap-2 text-2xl mb-1 flex-wrap">
 								<StatusPill
 									statusColor={statusColor}
 									context={part.status}></StatusPill>
+								{part.model.name} x{part.quantity}
 							</div>
 							<div>
 								{part.status == PartStatus.Denied && (
@@ -358,32 +364,40 @@ function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 									</span>
 									Fused Deposition Modeling
 								</p>
-								<p className="my-0.5">
+								<>
 									<span className="font-light">
-										{"Notes: "}
+										{"Filament: "}
 									</span>
-									{part.notes ?? "No information provided"}
-								</p>
-								<p className="my-0.5">
+									{part.filament ==
+									undefined ? (
+										<>No longer Available</>
+									) : (
+										<>
+											{`${part.filament.material.toUpperCase()} `}
+											<NamedSwatch swatch={part.filament.color} />
+										</>
+									)}
+								</>
+								{/* <p className="my-0.5">
 									<span className="font-light">
 										{"Quantity: "}
 									</span>
 									x{part.quantity}
-								</p>
-								<div className="mt-2 w-fit">
+								</p> */}
+								{/* <div className="mt-2 w-fit">
 									<FilamentBlock
 										filament={
 											part.supplementedFilament ??
 											part.filament!
 										}
 									/>
-								</div>
+								</div> */}
 
 								<RefundMessage part={part} />
 							</div>
 						</div>
 
-						<div className="mb-2 lg:w-80 w-full ">
+						<div className={count > 2 ? "mt-6 w-auto" : "w-96"}>
 							<div className="shadow-sm">
 								<div
 									className={`w-full h-40 lg:h-44 relative outline-1 outline outline-gray-300 bg-gray-100 rounded-md`}>
@@ -404,19 +418,16 @@ function PartDetails({ part, index }: { part: PartWithModel; index: number }) {
 									)}
 								</div>
 							</div>
-							<div className="mr-auto text-xs opacity-50 hover:opacity-100">
-								<a
-									className="flex py-1 px-1.5 text-xs text-nowrap justify-between items-center gap-2"
-									href={`/api/download/model?modelId=${part.modelId}`}
-									target="_blank">
-									<RegularCloudDownload className="fill-cool-black w-6 h-6 p-1"></RegularCloudDownload>
-									Download (
-									{`${Math.round(
-										part.model.fileSizeInBytes / 1000
-									)} kB`}
-									)
-								</a>
-							</div>
+							<a
+								className="flex text-xs w-fit opacity-50 hover:opacity-100 py-2 px-1.5 text-nowrap justify-between items-center gap-2"
+								href={`/api/download/model?modelId=${part.modelId}`}
+								target="_blank">
+								Download Model (
+								{`${Math.round(
+									part.model.fileSizeInBytes / 1000
+								)} kB`}
+								)
+							</a>
 						</div>
 					</div>
 				</div>

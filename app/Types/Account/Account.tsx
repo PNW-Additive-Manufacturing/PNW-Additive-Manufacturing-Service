@@ -26,6 +26,7 @@ export default interface Account {
 	isEmailVerified: boolean;
 	balanceInDollars: number;
 	isTwoStepAuthVerified: boolean;
+	yearOfStudy: string;
 }
 
 export function shortenedName(account: Account) {
@@ -42,7 +43,7 @@ export function IsVerificationCodeExpired(
 ): boolean {
 	const expirationDate = new Date(
 		verification.createdAt.getTime() +
-			emailVerificationExpirationDurationInDays * 86400000
+		emailVerificationExpirationDurationInDays * 86400000
 	);
 
 	return Date.now() > expirationDate.getTime();

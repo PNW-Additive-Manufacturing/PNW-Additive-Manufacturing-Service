@@ -27,7 +27,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 	if (!queryData.success)
 		return new NextResponse(
 			JSON.stringify(
-				APIResponse.error(
+				APIResponse.resError(
 					`Query does not match the required Schema: ${queryData.error}`
 				)
 			),
@@ -39,14 +39,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 		JWT.permission == AccountPermission.User
 	) {
 		// A regular user cannot access requests other than theirs!
-		return new NextResponse(JSON.stringify(APIResponse.unauthorized()), {
+		return new NextResponse(JSON.stringify(APIResponse.resUnauthorized()), {
 			status: 401
 		});
 	}
 
 	const requests = await RequestServe.query(queryData.data);
 	return new NextResponse(
-		JSON.stringify(APIResponse.okData({ requests: requests })),
+		JSON.stringify(APIResponse.resOkData({ requests: requests })),
 		{
 			status: 200
 		}

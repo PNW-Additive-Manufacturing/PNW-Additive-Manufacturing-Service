@@ -43,7 +43,8 @@ export async function requestPart(prevState: string, formData: FormData) {
 	}
 
 	let files = formData.getAll("file") as File[] | null;
-	let notes = formData.get("notes") as string;
+	let notes = formData.get("notes") as string | null;
+	notes = notes == "" ? null : notes;
 	let requestName = formData.get("requestname") as string;
 	let color = formData.getAll("color") as string[];
 	let material = formData.getAll("material") as string[];
@@ -110,7 +111,7 @@ export async function requestPart(prevState: string, formData: FormData) {
 	try {
 		let success = await db.begin(async (sql) => {
 			const request =
-				await sql`insert into request (name, owneremail) values (${requestName}, ${account.email}) returning id`;
+				await sql`insert into request (name, owneremail, comments) values (${requestName}, ${account.email}, ${notes}) returning id`;
 
 			requestId = Number.parseInt(request[0].id);
 

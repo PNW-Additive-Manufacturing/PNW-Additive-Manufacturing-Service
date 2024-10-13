@@ -5,7 +5,8 @@ DROP TABLE IF EXISTS Account CASCADE;
 CREATE TABLE Account (
   Email varchar(254) PRIMARY KEY,
   FirstName varchar(50) NOT NULL,
-  LastName varchar(50) NOT NULL, 
+  LastName varchar(50) NOT NULL,
+  YearOfStudy VARCHAR(256), 
   Password char(64) NOT NULL,
   JoinedAt timestamp with time zone NOT NULL DEFAULT NOW(),
   Permission PermissionType NOT NULL DEFAULT 'user',
@@ -46,7 +47,14 @@ CREATE TABLE WalletTransaction (
 
 DROP TABLE IF EXISTS AccountVerificationCode CASCADE;
 CREATE TABLE AccountVerificationCode (
-  AccountEmail varchar(254) REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE,
+  AccountEmail varchar(254) UNIQUE REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE,
+  CreatedAt timestamp with time zone NOT NULL DEFAULT NOW(),
+  Code CHAR(32) NOT NULL
+);
+
+DROP TABLE IF EXISTS AccountPasswordResetCode CASCADE;
+CREATE TABLE AccountPasswordResetCode (
+  AccountEmail varchar(254) UNIQUE REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE,
   CreatedAt timestamp with time zone NOT NULL DEFAULT NOW(),
   Code CHAR(32) NOT NULL
 );
@@ -88,6 +96,7 @@ CREATE TABLE Request (
   Name varchar(300) NOT NULL,
   OwnerEmail varchar(254) REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE,
   SubmitTime timestamp with time zone NOT NULL DEFAULT NOW(),
+  Comments VARCHAR(1000),
   PaidAt timestamp with time zone,
   FulfilledAt timestamp with time zone,
   TotalPriceInCents BIGINT,
@@ -111,6 +120,7 @@ CREATE TABLE Model (
   Id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   Name varchar(256) NOT NULL,
   FileSizeInBytes BIGINT NOT NULL,
+  Favorite BOOLEAN NOT NULL DEFAULT FALSE,  
   OwnerEmail varchar(254) REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE
 );
 

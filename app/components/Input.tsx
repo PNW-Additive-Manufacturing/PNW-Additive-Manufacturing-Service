@@ -6,6 +6,7 @@ import {
 	useEffect,
 	useState
 } from "react";
+import { Label } from "./Inputs";
 
 export function Input({
 	label,
@@ -34,7 +35,7 @@ export function Input({
 
 	return (
 		<div className="w-full">
-			<label className="text-gray-600">{label}</label>
+			<Label content={label}></Label>
 			<input
 				required={required}
 				className="w-full"

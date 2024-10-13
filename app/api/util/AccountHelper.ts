@@ -16,7 +16,8 @@ export async function createAccount(
 	firstName: string,
 	lastName: string,
 	password: string,
-	permission: AccountPermission
+	permission: AccountPermission,
+	yearOfStudy: string
 ) {
 	firstName = DOMPurify.sanitize(firstName.trim());
 	lastName = DOMPurify.sanitize(lastName.trim());
@@ -38,8 +39,8 @@ export async function createAccount(
 	try {
 		res = await db.begin(async (db) => {
 			const accountRow =
-				await db`insert into account (email, firstname, lastname, password, permission)
-      			values (${email}, ${firstName}, ${lastName}, ${hash}, ${permission})`;
+				await db`insert into account (email, firstname, lastname, password, yearOfStudy, permission)
+      			values (${email}, ${firstName}, ${lastName}, ${hash}, ${yearOfStudy}, ${permission})`;
 
 			const verificationCode = crypto.randomBytes(16).toString("hex");
 			await db`insert into accountverificationcode (accountemail, code) VALUES (${email}, ${verificationCode})`;

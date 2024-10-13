@@ -4,20 +4,13 @@ import { changePermission } from "@/app/api/server-actions/account";
 import { ChangeEvent, useState, useTransition } from "react";
 import DropdownSection from "./DropdownSection";
 import Table from "./Table";
-import { AccountPermission } from "../Types/Account/Account";
-
-export interface User {
-	email: string;
-	name1: string;
-	name2: string;
-	permission: string;
-}
+import Account, { AccountPermission } from "../Types/Account/Account";
 
 function UserRow({
 	user,
 	onChange
 }: {
-	user: User;
+	user: Account;
 	onChange: (
 		email: string,
 		oldPermission: string,
@@ -31,8 +24,9 @@ function UserRow({
 	return (
 		<tr className="">
 			<td className="">{user.email}</td>
-			<td className="">{user.name1}</td>
-			<td className="">{user.name2}</td>
+			<td className="">{user.firstName}</td>
+			<td className="">{user.lastName}</td>
+			<td>{user.yearOfStudy}</td>
 			<td className="">
 				<div className="bg-transparent rounded-sm w-full">
 					<input type="hidden" name="user-email" value={user.email} />
@@ -55,7 +49,7 @@ export function UserList({
 	users,
 	onChange
 }: {
-	users: User[];
+	users: Account[];
 	onChange: (
 		email: string,
 		oldPermission: string,
@@ -69,6 +63,7 @@ export function UserList({
 					<th className="text-left">Email</th>
 					<th className="text-left">First Name</th>
 					<th className="text-left">Last Name</th>
+					<th className="text-left">Year of Study</th>
 					<th className="text-left">Manage User</th>
 				</tr>
 			</thead>
@@ -89,9 +84,9 @@ export function ListOfUserList({
 	maintainers,
 	admins
 }: {
-	normUsers: User[];
-	maintainers: User[];
-	admins: User[];
+	normUsers: Account[];
+	maintainers: Account[];
+	admins: Account[];
 }) {
 	//use these states to keep track of when uses are moved into different arrays when their permission changes
 	let [userArray, setUserArray] = useState(normUsers);
@@ -124,7 +119,7 @@ export function ListOfUserList({
 				return;
 			}
 
-			let user: User;
+			let user: Account;
 
 			//filter out user from correct array and update the state
 			switch (oldPermission as AccountPermission) {
@@ -146,7 +141,7 @@ export function ListOfUserList({
 					return;
 			}
 
-			user.permission = newPermission; //update permission on client
+			// user.permission = newPermission; //update permission on client
 
 			//add user to list matching their new permission
 			//note that React will only update state if creating a new array and not when mutating an array

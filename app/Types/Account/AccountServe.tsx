@@ -4,8 +4,13 @@ import Account, {
 	AccountPermission
 } from "./Account";
 import postgres from "postgres";
-import * as crypto from "crypto";
 import { WalletTransaction, WalletTransactionStatus } from "./Wallet";
+import * as Crypto from "@/app/api/util/Crypto";
+import getConfig from "@/app/getConfig";
+import * as Mail from "@/app/api/util/Mail";
+import { addMinutes } from "@/app/utils/TimeUtils";
+
+const appConfig = getConfig();
 
 export default class AccountServe {
 	public static async getBalance(accountEmail: string): Promise<number> {
@@ -23,6 +28,25 @@ export default class AccountServe {
 		return accountBalanceInCents;
 	}
 
+	public static async queryAll(
+	): Promise<Account[]> {
+		const query = await db`SELECT * FROM Account`;
+
+		return query.map((accountRow) => {
+			return {
+				email: accountRow.email,
+				firstName: accountRow.firstname,
+				lastName: accountRow.lastname,
+				isEmailVerified: accountRow.isemailverified,
+				permission: accountRow.permission as AccountPermission,
+				balanceInDollars: 0,
+				joinedAt: accountRow.joinedat,
+				isTwoStepAuthVerified: accountRow.istwostepauthverified,
+				yearOfStudy: accountRow.yearofstudy
+			}
+		});
+	}
+
 	public static async queryByEmail(
 		email: string
 	): Promise<Account | undefined> {
@@ -31,14 +55,15 @@ export default class AccountServe {
 
 		const accountRow = query.at(0)!;
 		return {
-			email,
+			email: accountRow.email,
 			firstName: accountRow.firstname,
 			lastName: accountRow.lastname,
 			isEmailVerified: accountRow.isemailverified,
 			permission: accountRow.permission as AccountPermission,
 			balanceInDollars: (await AccountServe.getBalance(email)) / 100,
 			joinedAt: accountRow.joinedat,
-			isTwoStepAuthVerified: accountRow.istwostepauthverified
+			isTwoStepAuthVerified: accountRow.istwostepauthverified,
+			yearOfStudy: accountRow.yearofstudy
 		};
 	}
 
@@ -66,17 +91,45 @@ export default class AccountServe {
 		return await dbContext.begin(async (dbTransaction) => {
 			await dbTransaction`DELETE FROM accountverificationcode WHERE accountemail=${accountEmail}`;
 
-			const verificationCode = crypto.randomBytes(16).toString("hex");
+			const verificationCode = Crypto.GetRandomString(16);
 			const insertedRow =
 				await dbTransaction`INSERT INTO accountverificationcode (accountemail, code) VALUES (${accountEmail}, ${verificationCode}) returning createdat`;
-
-			console.log(insertedRow.at(0));
 
 			return {
 				accountEmail,
 				code: verificationCode,
 				createdAt: insertedRow.at(0)!.createdat
 			} as AccountEmailVerification;
+		});
+	}
+
+	public static async sendPasswordReset(accountEmail: string, dbContext?: postgres.Sql<{}>) {
+		dbContext = dbContext ?? db;
+
+		// TODO: Differentiate the response if account does not exist in the first place because AccountEmail MUST reference a row.
+		return await dbContext.begin(async (dbTransaction) => {
+
+			const existingPasswordReset = await dbTransaction`SELECT MAX(CreatedAt) FROM AccountPasswordResetCode WHERE AccountEmail=${accountEmail}`;
+			if (existingPasswordReset.at(0)?.max != null) {
+				const lastAttempt = existingPasswordReset.at(0)!.max as Date;
+				if (new Date() < addMinutes(lastAttempt, 5)) {
+					throw new Error("Please wait five minutes to make another password reset request.");
+				}
+
+				// Previous password-reset attempt exists. Delete it!
+				await dbTransaction`DELETE FROM AccountPasswordResetCode WHERE AccountEmail=${accountEmail}`;
+			}
+
+			const createdAt = Date.now();
+			const resetCode = Crypto.GetRandomString(16);
+			const insertedRow =
+				await dbTransaction`INSERT INTO AccountPasswordResetCode (AccountEmail, CreatedAt, Code) VALUES (${accountEmail}, ${createdAt}, ${resetCode})`;
+
+			await Mail.sendEmail(accountEmail, "Reset your AMS Password", await Mail.passwordResetTemplate(`${appConfig.hostURL}/user/reset-password/?code=${resetCode}`));
+
+			return {
+				validUntil: new Date(createdAt + appConfig.accountPasswordResetExpiration * 60000)
+			}
 		});
 	}
 
@@ -93,16 +146,16 @@ export default class AccountServe {
 		return transactionRow == undefined
 			? undefined
 			: {
-					id: transactionRow!.id,
-					accountEmail: accountEmail,
-					amountInCents: transactionRow!.amountincents,
-					feesInCents: transactionRow!.feesincents,
-					taxInCents: transactionRow!.taxincents,
-					paidAt: transactionRow!.paidat,
-					paymentStatus: transactionRow!.status,
-					paymentMethod: transactionRow!.paymentmethod,
-					stripeCheckoutId: transactionRow!.stripecheckoutid
-			  };
+				id: transactionRow!.id,
+				accountEmail: accountEmail,
+				amountInCents: transactionRow!.amountincents,
+				feesInCents: transactionRow!.feesincents,
+				taxInCents: transactionRow!.taxincents,
+				paidAt: transactionRow!.paidat,
+				paymentStatus: transactionRow!.status,
+				paymentMethod: transactionRow!.paymentmethod,
+				stripeCheckoutId: transactionRow!.stripecheckoutid
+			};
 	}
 
 	public static async queryTransaction(
@@ -118,16 +171,16 @@ export default class AccountServe {
 		return transactionRow == undefined
 			? undefined
 			: {
-					id: transactionRow!.id,
-					accountEmail: transactionRow!.accountemail,
-					amountInCents: transactionRow!.amountincents,
-					feesInCents: transactionRow!.feesincents,
-					taxInCents: transactionRow!.taxincents,
-					paidAt: transactionRow!.paidat,
-					paymentStatus: transactionRow!.status,
-					paymentMethod: transactionRow!.paymentmethod,
-					stripeCheckoutId: transactionRow!.stripecheckoutid
-			  };
+				id: transactionRow!.id,
+				accountEmail: transactionRow!.accountemail,
+				amountInCents: transactionRow!.amountincents,
+				feesInCents: transactionRow!.feesincents,
+				taxInCents: transactionRow!.taxincents,
+				paidAt: transactionRow!.paidat,
+				paymentStatus: transactionRow!.status,
+				paymentMethod: transactionRow!.paymentmethod,
+				stripeCheckoutId: transactionRow!.stripecheckoutid
+			};
 	}
 
 	public static async queryTransactionsFor(
