@@ -98,16 +98,16 @@ export default function RequestDetails({
 				<div className="items-end flex w-full">
 					<div className="flex w-full gap-2 lg:justify-end max-lg:justify-between">
 						<Link href="/dashboard/user">
-							<button className="mb-0 outline outline-1 outline-gray-300 bg-white text-black fill-black flex flex-row gap-2 justify-end items-center px-3 py-2 text-sm">
+							<button className="mb-0 outline outline-1 outline-gray-300 bg-white text-black fill-black flex flex-row gap-2 justify-end items-center px-3 py-2">
 								<RegularExit className="w-auto h-6 fill-inherit"></RegularExit>
-								Go Back
+								<span className="text-sm">Go Back</span>
 							</button>
 						</Link>
 						<div className="relative">
 							<button
 								className={`mb-0 px-3 py-2 text-sm outline outline-1 outline-gray-300 bg-white text-black fill-black hover:fill-white`}
 								onClick={() => setShowActions(!showActions)}>
-								Actions
+								<span className="text-sm">Actions</span>
 								<RegularCog
 									className={`${showActions ? "rotate-180" : "rotate-0"
 										} ml-2 w-6 h-auto fill-inherit inline transition-transform ease-in-out duration-500`}></RegularCog>
@@ -158,7 +158,7 @@ export default function RequestDetails({
 					<div className="flex flex-col gap-6">
 						{!request.isFulfilled && isAllComplete(request.parts) && !request.isFulfilled && (
 							<RequestOverview
-								title={isOpen ? "Pickup at the PNW Design Studio" : "Waiting for a Team Member"}
+								title={isOpen ? "Pickup at the PNW Design Studio" : "Pickup not available"}
 								description={isOpen ? <>You may pickup your parts until {formatTime(closingTime!)} or on another business day.</> : <>None of our team members can assist you at this time. See our <Link className="underline" href={"/schedule"}>operating hours</Link> to pickup your parts.</>}
 							/>
 						)}
@@ -396,7 +396,7 @@ function PartDetails({ part, index, count }: { part: PartWithModel; index: numbe
 							</div>
 						</div>
 
-						<div className={count > 2 ? "mt-6 w-auto" : "w-96"}>
+						<div className={`${count > 2 ? "mt-6 w-full" : "lg:w-96"} max-lg:mt-4`}>
 							<div className="shadow-sm">
 								<div
 									className={`w-full h-40 lg:h-44 relative outline-1 outline outline-gray-300 bg-gray-100 rounded-md`}>

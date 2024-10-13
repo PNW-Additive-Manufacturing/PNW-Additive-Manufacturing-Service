@@ -84,7 +84,7 @@ function RequestPartFormSubmit({ parts }: { parts: PartData[] }) {
 		<button
 			type="submit"
 			disabled={pending || parts.length == 0}
-			className="bg-gradient-linear-pnw-mystic w-full mb-0 text-cool-black hover:text-black h-full flex gap-2 items-center justify-center">
+			className="bg-gradient-linear-pnw-mystic w-full h-fit mb-0 text-cool-black hover:text-black flex gap-2 items-center justify-center">
 			{pending ? "Processing Request" : "Submit Request"}
 			{pending && <RegularSpinnerSolid
 				className={`inline-block h-auto w-auto animate-spin fill-cool-black`}
@@ -262,14 +262,13 @@ export function RequestPartForm({
 					}
 					formAction(formData);
 				}}>
-				<div className="bg-white rounded-sm w-full flex p-6 gap-6 out">
+				<div className="bg-white rounded-sm w-full lg:flex p-6 gap-6 out">
 					<div
-						className="w-full"
+						className="w-full max-lg:mb-4"
 						style={{ minWidth: "300px" }}>
 						<Label content={"3D Models (.STL) Click to Modify"} />
 						<div
-							className="overflow-x-auto w-full"
-							style={{ minWidth: "25 rem" }}>
+							className="w-full lg:min-w-96">
 							{parts.length > 0 && (
 								<>
 									<Table className="mb-4">
@@ -356,7 +355,7 @@ export function RequestPartForm({
 						</div>
 					</div>
 
-					<div className="col-start-3 col-end-3 row-start-1 row-span-2" style={{minWidth: "34rem"}}>
+					<div className="lg:w-132">
 						<Input
 							label="Request Name"
 							type="text"
@@ -377,6 +376,7 @@ export function RequestPartForm({
 						<InputBig
 							id="notes"
 							name="notes"
+							max={1000}
 							placeholder="Anything else we should know? Just prototyping, need high-quality?"
 						/>
 
@@ -392,10 +392,7 @@ export function RequestPartForm({
 							</p>
 						</div>
 
-						<div className="rounded-sm p-0 w-full col-start-3 col-end-3 row-start-4 row-span-1 h-14">
-							<RequestPartFormSubmit
-								parts={parts}></RequestPartFormSubmit>
-						</div>
+						<RequestPartFormSubmit parts={parts} />
 					</div>
 
 

@@ -96,7 +96,8 @@ export function InputBig({
 	name,
 	placeholder,
 	className,
-	style
+	style,
+	max
 }: {
 	label?: string;
 	id: string;
@@ -104,6 +105,7 @@ export function InputBig({
 	placeholder: string;
 	className?: string;
 	style?: CSSProperties;
+	max?: number;
 }): JSX.Element {
 	return (
 		<div
@@ -115,6 +117,7 @@ export function InputBig({
 				id={id}
 				name={name}
 				rows={4}
+				maxLength={max}
 				placeholder={placeholder}></textarea>
 		</div>
 	);

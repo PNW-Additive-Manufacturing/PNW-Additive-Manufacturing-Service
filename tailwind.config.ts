@@ -31,7 +31,8 @@ const config: Config = {
 				"9/10": "90%",
 				"84": "21rem",
 				"88": "22rem",
-				"92": "23rem"
+				"92": "23rem",
+				"132": "34rem"
 			},
 			minWidth: {
 				"84": "21rem",
