@@ -61,7 +61,7 @@ function AddPartButton({
 				className=" rounded-md border-dashed border-2 border-pnw-gold w-full h-full bg-pnw-gold-light min-h-28 text-center flex gap-4 justify-center items-center">
 				<div>
 					<h2>Select to upload Models</h2>
-					<p className="text-sm mt-2">File limit {"<"} 500 MB</p>
+					<p className="text-sm mt-2">File limit {"<"} 5 MB</p>
 				</div>
 			</div>
 		</div>
