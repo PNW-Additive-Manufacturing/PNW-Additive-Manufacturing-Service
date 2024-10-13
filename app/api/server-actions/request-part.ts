@@ -152,7 +152,7 @@ export async function requestPart(prevState: string, formData: FormData) {
 					recursive: true
 				});
 
-				fs.writeFileSync(modelPath, buffer);
+				fs.writeFileSync(modelPath, buffer as any);
 
 				const partId = await sql`
 				insert into part (requestid, modelid, quantity, assignedfilamentid) 

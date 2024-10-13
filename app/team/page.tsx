@@ -41,13 +41,13 @@ export default function Team() {
 				<h1 className="w-fit text-3xl font-normal">
 					Our Team
 				</h1>
-				<p className="mb-4 mt-2">
+				<p className="mt-2">
 					We have a passion for 3D Printing. Feel free to reach out to
 					us for any questions regarding printing or modeling.
 				</p>
 				<br />
 
-				<div className="grid grid-cols-2 lg:grid-cols-3 max-lg:justify-between max-lg:gap-y-4 gap-4 lg:gap-8 w-full">
+				<div className="grid grid-cols-2 lg:grid-cols-3 max-lg:justify-between max-lg:gap-y-4 gap-4 w-full">
 					<Card
 						name="Aaron Jung"
 						role="President"
@@ -67,7 +67,7 @@ export default function Team() {
 						name="Luke Moreno"
 						role="Secretary"
 						email="moren124@pnw.edu"
-						avatar="https://cdn.discordapp.com/attachments/1230730151055327273/1294410225935192145/me.JPG?ex=670ae8f6&is=67099776&hm=fbcae3500e52a5f3ed7a30a04f94d4fabb5f32a1a8faab7157733c8d71036e44&" />
+						avatar="/assets/luke.webp" />
 					<Card
 						name="Dikshant Sharma"
 						role="Previous President"

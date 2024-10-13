@@ -34,7 +34,7 @@ export default function Schedule() {
 
 					<div className="mt-4 grid lg:grid-cols-7 max-lg:flex-col w-full gap-6">
 						{weeklySchedule.map((item: any, i: number) => <div className={`lg:min-h-48 flex-grow out bg-white text-black`}>
-							<p className={`px-4 py-2 w-full bg-gray-200 ${currentDay == i ? "bg-pnw-gold text-white" : "text-opacity-50"}`}>{weekdays[i]}</p>
+							<p className={`px-4 py-2 w-full bg-gray-100 ${currentDay == i ? "bg-pnw-gold text-white" : "text-opacity-50"}`}>{weekdays[i]}</p>
 							<div className="px-4 py-2">
 								{item == null ? <>Closed</> : <>
 									{(item.open as Date).toLocaleTimeString("en-us", { hour: '2-digit', minute: '2-digit'})}

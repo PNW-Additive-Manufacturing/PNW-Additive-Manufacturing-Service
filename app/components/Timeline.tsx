@@ -27,9 +27,8 @@ export default function Timeline({
 					<div className={`flex gap-4`}>
 						<div className="flex flex-col">
 							<div
-								className={`border-4 border-pnw-gold ${
-									!option.disabled && "bg-pnw-gold"
-								} w-7 h-7 rounded-full flex justify-center items-center`}>
+								className={`border-4 border-pnw-gold ${!option.disabled && "bg-pnw-gold"
+									} w-7 h-7 rounded-full flex justify-center items-center`}>
 								<RegularCheckmark className="w-full h-full p-1 fill-white"></RegularCheckmark>
 							</div>
 							{!isLast && (

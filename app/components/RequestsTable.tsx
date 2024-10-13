@@ -1,33 +1,15 @@
 "use client";
 
-import {
-    getRequestStatus,
-    getRequestStatusColor,
-    hasQuote,
-    isAnyPartDenied,
-    RequestWithParts
-} from "@/app/Types/Request/Request";
+import { getRequestStatus, getRequestStatusColor, hasQuote, RequestWithParts } from "@/app/Types/Request/Request";
 import Table from "@/app/components/Table";
-import { useContext, useEffect, useState } from "react";
-import { AccountContext } from "@/app/ContextProviders";
+import { useEffect, useState } from "react";
 import { APIData } from "@/app/api/APIResponse";
-import { Input, InputCheckbox } from "@/app/components/Input";
-import DropdownSection from "@/app/components/DropdownSection";
-import {
-    RegularArrowLeft,
-    RegularArrowRight,
-    RegularExit,
-    RegularMagnifier,
-    RegularSpinnerSolid
-} from "lineicons-react";
-import { isAllComplete, isAllPending } from "@/app/Types/Part/Part";
-import { formateDate } from "@/app/api/util/Constants";
-import Timeline from "@/app/components/Timeline";
-import ModelViewer from "@/app/components/ModelViewer";
+import { InputCheckbox } from "@/app/components/Input";
 import Link from "next/link";
-import RequestPricing from "@/app/components/Request/Pricing";
-import FormLoadingSpinner from "@/app/components/FormLoadingSpinner";
-import { redirect } from "next/navigation";
+import ControlButton from "./ControlButton";
+import { AiOutlineReload } from "react-icons/ai";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import StatusPill from "./StatusPill";
 
 const requestsPerPage = 10;
 
@@ -69,65 +51,70 @@ export default function RequestsTable({ accountEmail }: { accountEmail?: string 
 
     useEffect(() => fetchRequests(), [pageNum, includeFulfilled]);
 
+
+
     return (
         <>
             {requests == null ? (
-                <div className="flex gap-2 items-center">
-                    Fetching Requests 
-                    <RegularSpinnerSolid className={`inline-block h-auto w-auto animate-spin fill-black`}/>
-                </div>
+                // <div className="flex gap-2 items-center">
+                //     Fetching Requests 
+                //     <RegularSpinnerSolid className={`inline-block h-auto w-auto animate-spin fill-black`}/>
+                // </div>
+                <div className="w-full bg-gray-100 duration-100 min-h-56 rounded-md mb-4"></div>
             ) : requests.length == 0 ? (
-                <>You do not have any ongoing orders!</>
+                <div className="w-full bg-gray-100 duration-100 min-h-28 rounded-md"></div>
             ) : (
                 <>
-                    <Table>
+                    <Table className="spaced">
                         <thead>
                             <tr>
-                                <th>Requested At</th>
-                                {accountEmail == null && <th>Requester</th>}
-                                <th>Request</th>
+                                <th className="w-fit max-lg:hidden" style={{ paddingRight: "0px" }}>#</th>
+                                <th className="max-lg:hidden">Requested On</th>
+                                {accountEmail == null && <th className="max-lg:hidden">Requester</th>}
+                                <th>Request Name</th>
                                 <th>Status</th>
                                 <th>Cost</th>
-
                             </tr>
                         </thead>
                         <tbody>
-                            {requests.map((r) => (
-                                <>
+                            {requests.map((r, i) => {
+                                const rowLink = accountEmail == null ? `/dashboard/maintainer/orders/${r.id}` : `/dashboard/user/${r.id}`;
+
+                                return <>
                                     <tr
                                         onClick={() => setSelectedRequest(r.id)}
-                                        className={`w-full border-l-4`}
+                                        className={`w-full border-l-4 out bg-white`}
                                         style={{
                                             borderLeftColor:
                                                 getRequestStatusColor(r)
                                         }}>
+                                        <td className="w-fit max-lg:hidden" style={{ paddingRight: "0px" }}><Link href={rowLink}>{i + 1}</Link></td>
                                         <td className="max-lg:hidden">
-                                            {r.submitTime.toLocaleDateString(
-                                                "en-us",
-                                                {
-                                                    weekday: "long",
-                                                    month: "short",
-                                                    day: "numeric",
-                                                    year: "numeric"
-                                                }
-                                            )}
+                                            <Link href={rowLink}>
+                                                {r.submitTime.toLocaleDateString(
+                                                    "en-us",
+                                                    {
+                                                        weekday: "long",
+                                                        month: "short",
+                                                        day: "numeric",
+                                                        year: "numeric"
+                                                    }
+                                                )}
+                                            </Link>
                                         </td>
-                                        {accountEmail == null && <td>{r.firstName} {r.lastName}</td>}
-                                        <td>{r.name}</td>
-                                        <td
-                                            style={{
-                                                color: getRequestStatusColor(r)
-                                            }}>
-                                            {getRequestStatus(r)}
+                                        {accountEmail == null && <td className="max-lg:hidden"><Link href={rowLink}>{r.firstName} {r.lastName}</Link></td>}
+                                        <td><Link href={rowLink}>{r.name}</Link></td>
+                                        <td>
+                                            <Link href={rowLink}><StatusPill context={getRequestStatus(r)} statusColor={getRequestStatusColor(r)}></StatusPill></Link>
                                         </td>
                                         <td>
-                                            {hasQuote(r) &&
+                                            <Link href={rowLink}> {hasQuote(r) ?
                                                 `$${(
                                                     r.quote!.totalPriceInCents /
                                                     100
-                                                ).toFixed(2)}`}
+                                                ).toFixed(2)}` : "Unquoted"}</Link>
                                         </td>
-                                        <td>
+                                        {/* <td>
                                             <div className="ml-auto w-fit">
                                                 <Link
                                                     href={accountEmail == null ? `/dashboard/maintainer/orders/${r.id}` : `/dashboard/user/${r.id}`}>
@@ -139,54 +126,50 @@ export default function RequestsTable({ accountEmail }: { accountEmail?: string 
                                                     </button>
                                                 </Link>
                                             </div>
-                                        </td>
+                                        </td> */}
                                     </tr>
                                 </>
-                            ))}
+                            })}
                         </tbody>
                     </Table>
-                    {/* Controls */}
-                    <div className="flex max-lg:gap-4 max-lg:flex-col justify-between lg:px-4 lg:pr-8 py-4">
-                        <div className="flex gap-6 items-center">
-                            <div className="flex justify-between gap-2 fill-white">
-                                <button
-                                    className="mb-0 shadow-sm"
-                                    disabled={isFetchingRequests || pageNum < 2}
-                                    onClick={() => setPageNum(pageNum - 1)}>
-                                    <RegularArrowLeft></RegularArrowLeft>
-                                </button>
-                                <button
-                                    className="mb-0 shadow-sm"
-                                    disabled={
-                                        isFetchingRequests ||
-                                        requests.length < requestsPerPage
-                                    }
-                                    onClick={() => setPageNum(pageNum + 1)}>
-                                    <RegularArrowRight></RegularArrowRight>
-                                </button>
-                            </div>
-                            <p>
-                                Viewing {requests.length} results on Page{" "}
-                                {pageNum}
-                            </p>
-                        </div>
-                        <div className="flex gap-4">
-                            {isFetchingRequests && (
-                                <RegularSpinnerSolid
-                                    className={`inline-block h-auto w-auto animate-spin fill-black`}
-                                />
-                            )}
-                            <InputCheckbox
-                                label={"Include Fulfilled"}
-                                id={"includeFulfilled"}
-                                defaultChecked={false}
-                                onChange={(v) =>
-                                    setIncludeFulfilled(v.currentTarget.checked)
-                                }></InputCheckbox>
-                        </div>
-                    </div>
                 </>
             )}
+
+            {/* Controls */}
+            <div className="flex flex-wrap max-lg:gap-4 max-lg:flex-col justify-between">
+                <div className="flex flex-wrap items-center gap-4">
+                    <ControlButton className={`max-lg:hidden flex gap-2 items-center mb-0`} disabled={isFetchingRequests} onClick={() => fetchRequests()}>
+                        <span>Refresh</span>
+                        <AiOutlineReload className={`${isFetchingRequests && "animate-spin"} font-bold inline-block fill-white`}></AiOutlineReload>
+                    </ControlButton>
+
+                    {(requests != null && requests.length != 0) ? <div className="flex max-lg:mt-4 max-lg:flex-col gap-4 lg:items-center">
+                        <div className="flex items-center justify-between gap-2 fill-white">
+                            <ControlButton disabled={isFetchingRequests || pageNum < 2} onClick={() => setPageNum(pageNum - 1)} className="m-0 p-0 flex gap-2 items-center">
+                                <FaArrowLeft />
+                                Previous
+                            </ControlButton>
+                            <ControlButton disabled={isFetchingRequests || requests!.length < requestsPerPage} onClick={() => setPageNum(pageNum + 1)} className="flex gap-2 items-center">
+                                Next
+                                <FaArrowRight />
+                            </ControlButton>
+                        </div>
+                        <p>
+                            {requests!.length} {requests!.length == 1 ? "Request" : "Requests"} on Page{" "}
+                            {pageNum}
+                        </p>
+                    </div> : accountEmail == null ? "No requests are available." : "You do not have any ongoing orders!"}
+                </div>
+                <div className="flex gap-4 pr-1">
+                    <InputCheckbox
+                        label={"Include Fulfilled"}
+                        id={"includeFulfilled"}
+                        defaultChecked={false}
+                        onChange={(v) =>
+                            setIncludeFulfilled(v.currentTarget.checked)
+                        }></InputCheckbox>
+                </div>
+            </div>
         </>
     );
 }

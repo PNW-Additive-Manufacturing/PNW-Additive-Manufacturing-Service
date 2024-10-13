@@ -40,8 +40,7 @@ export default function Page() {
 	return (
 		<>
 			<h1 className="text-3xl tracking-wide font-light">
-				Welcome, {account.account!.firstName}{" "}
-				{account.account!.lastName}!
+				Your Requests
 			</h1>
 
 			<br />
@@ -49,21 +48,15 @@ export default function Page() {
 			<div
 				className={`shadow-sm rounded-sm p-4 lg:p-6 bg-white out`}>
 				<p className="pb-4">
-					All of your requests are available for you to view right here.
+					All of your requests are available for you to view right here:
 				</p>
 				<RequestsTable accountEmail={account.account!.email}></RequestsTable>
 			</div>
 
-			<div
+			{/* <div
 				className={`shadow-sm rounded-sm p-4 lg:p-6 bg-white out mt-8`}>
 				You do not have any saved or favorites models.
-				{/* <div className="flex gap-4 mt-4">
-					<div className="bg-gray-200 w-24 h-24 rounded-md animate-pulse"></div>
-					<div className="bg-gray-200 w-24 h-24 rounded-md animate-pulse"></div>
-					<div className="bg-gray-200 w-24 h-24 rounded-md animate-pulse"></div>
-					<div className="bg-gray-200 w-24 h-24 rounded-md animate-pulse"></div>
-				</div> */}
-			</div>
+			</div> */}
 		</>
 	);
 }

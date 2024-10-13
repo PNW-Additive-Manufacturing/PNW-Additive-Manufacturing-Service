@@ -9,8 +9,8 @@ export default function Table(
 	return (
 		<div
 			{...props}
-			className={`w-full overflow-x-auto overflow-y-auto ${props.className}`}>
-			<table className="w-full">{props.children}</table>
+			className={`w-full overflow-x-scroll ${props.className}`}>
+			<table className={`w-full ${props.className}`}>{props.children}</table>
 		</div>
 	);
 }

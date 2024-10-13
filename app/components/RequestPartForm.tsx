@@ -58,7 +58,7 @@ function AddPartButton({
 					ev.preventDefault();
 					(inputRef.current?.valueOf() as HTMLInputElement).click();
 				}}
-				className=" rounded-md border-dashed border-2 border-pnw-gold w-full h-full bg-pnw-gold-light min-h-28 text-center flex gap-4 justify-center items-center">
+				className=" rounded-md border-dashed border-2 border-pnw-gold w-full h-full bg-pnw-gold-light min-h-24 text-center flex gap-4 justify-center items-center">
 				<div>
 					<h2>Select to upload Models</h2>
 					<p className="text-sm mt-2">File limit {"<"} 5 MB</p>
@@ -271,7 +271,7 @@ export function RequestPartForm({
 							className="w-full lg:min-w-96">
 							{parts.length > 0 && (
 								<>
-									<Table className="mb-4">
+									<Table className="mb-2 overflow-hidden">
 										{/* <thead>
 											<tr>
 												<th>
@@ -298,8 +298,7 @@ export function RequestPartForm({
 														}>
 														<td
 															key={part.ModelName}
-															className="bg-transparent w-fit outline-none border-0 block hover:cursor-pointer"
-															style={{paddingLeft: "1px"}}>
+															className="bg-transparent w-fit outline-none border-0 block hover:cursor-pointer">
 															{/* <RegularEmptyFile className="inline w-5 h-5 fill-gray-500 mr-2"></RegularEmptyFile> */}
 															{part.File.name}
 														</td>
@@ -350,12 +349,12 @@ export function RequestPartForm({
 											});
 
 										setParts([...parts, ...newParts]);
-								}}/>
+									}} />
 							</div>
 						</div>
 					</div>
 
-					<div className="lg:w-132">
+					<div className="lg:w-188">
 						<Input
 							label="Request Name"
 							type="text"
@@ -363,12 +362,11 @@ export function RequestPartForm({
 							name="requestname"
 							placeholder={
 								parts.length > 1
-									? `${parts[0].ModelName} & ${
-											parts.length - 1
-									  } More`
+									? `${parts[0].ModelName} & ${parts.length - 1
+									} More`
 									: parts.length > 0
-									? parts[0].ModelName
-									: "Enter the name of the request"
+										? parts[0].ModelName
+										: "Enter the name of the request"
 							}
 						/>
 
@@ -387,7 +385,7 @@ export function RequestPartForm({
 							<p
 								className="text-sm"
 								style={{ maxWidth: "600px" }}>
-								Once you submit this request, it will be added to your account, and you'll receive email updates regarding the status of your parts. 
+								Once you submit this request, it will be added to your account, and you'll receive email updates regarding the status of your parts.
 								If you're looking for a more detailed view of your requests and orders, please head over to your orders page.
 							</p>
 						</div>

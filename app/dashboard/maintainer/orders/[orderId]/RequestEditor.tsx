@@ -97,16 +97,14 @@ export default function RequestEditor({
 									}>
 									Actions
 									<RegularCog
-										className={`${
-											showActions
-												? "rotate-180"
-												: "rotate-0"
-										} ml-2 w-6 h-auto fill-inherit inline transition-transform ease-in-out duration-500`}></RegularCog>
+										className={`${showActions
+											? "rotate-180"
+											: "rotate-0"
+											} ml-2 w-6 h-auto fill-inherit inline transition-transform ease-in-out duration-500`}></RegularCog>
 								</button>
 								<div
-									className={`${
-										showActions ? "" : "hidden"
-									} mt-2 absolute w-fit h-fit bg-white right-0 py-2 px-2 rounded-md flex flex-col gap-1 z-10 outline outline-1 outline-gray-300`}>
+									className={`${showActions ? "" : "hidden"
+										} mt-2 absolute w-fit h-fit bg-white right-0 py-2 px-2 rounded-md flex flex-col gap-1 z-10 outline outline-1 outline-gray-300`}>
 									{/* <button
 										className="px-3 py-2 text-sm mb-0 w-full bg-transparent text-black hover:text-black rounded-none hover:bg-transparent hover:underline"
 										disabled>
@@ -150,15 +148,7 @@ export default function RequestEditor({
 
 			<div className="lg:flex gap-8">
 				<div className="lg:grow">
-					<div className="flex justify-between gap-2 w-full">
-						<div className="py-2 pr-1 text-right w-full">
-							Manage {request.parts.length}{" "}
-							{request.parts.length > 1 ? "Parts" : "Part"}
-						</div>
-					</div>
-
-
-					<div className="flex flex-col gap-6 mb-3">						
+					<div className="flex flex-col gap-6 mb-3">
 						{request.isFulfilled && (
 							<RequestOverview
 								title="Request Fulfilled"
@@ -167,17 +157,30 @@ export default function RequestEditor({
 								)}.`}
 							/>
 						)}
-						{request.comments != null && <RequestOverview title={`Comments from ${request.firstName} ${request.lastName}`} description={request.comments} />}
-						<div className={`grid ${request.parts.length > 2 && "2xl:grid-cols-2"} gap-4`}>
-							{request.parts.map((part, index) => (
-								<PartEditor
-									request={request}
-									part={part}
-									index={index}
-									isQuoted={_hasQuote}
-									filaments={availableFilaments}
-									count={request.parts.length}></PartEditor>
-							))}
+
+						{request.comments != null && <div>
+							<div className="w-full py-2 pl-1 text-nowrap">Request Specifications</div>
+							<div className="shadow-sm p-4 lg:p-6 rounded-sm bg-white out">
+								<p>Comments from {request.firstName} {request.lastName}: {request.comments}</p>
+							</div>
+						</div>}
+
+						<div>
+							<div className="py-2 pl-1 w-full">
+								Manage {request.parts.length}{" "}
+								{request.parts.length > 1 ? "Parts" : "Part"}
+							</div>
+							<div className={`grid ${request.parts.length > 2 && "2xl:grid-cols-2"} gap-4`}>
+								{request.parts.map((part, index) => (
+									<PartEditor
+										request={request}
+										part={part}
+										index={index}
+										isQuoted={_hasQuote}
+										filaments={availableFilaments}
+										count={request.parts.length}></PartEditor>
+								))}
+							</div>
 						</div>
 					</div>
 

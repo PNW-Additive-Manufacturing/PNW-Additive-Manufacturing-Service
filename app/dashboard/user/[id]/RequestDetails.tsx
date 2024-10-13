@@ -147,21 +147,9 @@ export default function RequestDetails({
 
 			<div className="lg:flex gap-8">
 				<div className="lg:grow">
-					<div className="w-full py-2 pr-1">
-						<div className="text-right text-nowrap">
-							{"Viewing "}
-							{request.parts.length}{" "}
-							{request.parts.length > 1 ? "Parts" : "Part"}
-						</div>
-					</div>
+
 
 					<div className="flex flex-col gap-6">
-						{!request.isFulfilled && isAllComplete(request.parts) && !request.isFulfilled && (
-							<RequestOverview
-								title={isOpen ? "Pickup at the PNW Design Studio" : "Pickup not available"}
-								description={isOpen ? <>You may pickup your parts until {formatTime(closingTime!)} or on another business day.</> : <>None of our team members can assist you at this time. See our <Link className="underline" href={"/schedule"}>operating hours</Link> to pickup your parts.</>}
-							/>
-						)}
 						{request.isFulfilled && (
 							<RequestOverview
 								title="Request Fulfilled"
@@ -170,21 +158,38 @@ export default function RequestDetails({
 								)}.`}
 							/>
 						)}
-						{request.comments != null && <RequestOverview title={`Request Comments`} description={request.comments} />}
-						<div className={`grid ${request.parts.length > 2 && "2xl:grid-cols-2"} gap-4`}>
-							{request.parts.map((part, index) => (
-								<PartDetails
-									part={part}
-									index={index}
-									count={request.parts.length}></PartDetails>
-							))}
+						{request.comments != null && <div>
+
+							<div className="w-full py-2 pl-1 text-nowrap">Request Specifications</div>
+							<div className="shadow-sm p-4 lg:p-6 rounded-sm bg-white out">
+								<p>Comment from you: {request.comments}</p>
+							</div>
+
+						</div>}
+
+						<div>
+							<div className="w-full py-2 pl-1">
+								<div className="text-nowrap">
+									{"Viewing "}
+									{request.parts.length}{" "}
+									{request.parts.length > 1 ? "Parts" : "Part"}
+								</div>
+							</div>
+							<div className={`grid ${request.parts.length > 2 && "2xl:grid-cols-2"} gap-4`}>
+								{request.parts.map((part, index) => (
+									<PartDetails
+										part={part}
+										index={index}
+										count={request.parts.length}></PartDetails>
+								))}
+							</div>
 						</div>
 					</div>
 				</div>
 				<div className="lg:w-92">
 					<div className="py-2 pl-1 w-full">Request Overview</div>
 
-					<div className="shadow-sm p-4 lg:p-6 rounded-sm bg-white outline outline-2 outline-gray-200">
+					<div className="shadow-sm p-4 lg:p-6 rounded-sm bg-white out">
 						<Timeline
 							options={[
 								{
@@ -212,23 +217,13 @@ export default function RequestDetails({
 								{
 									title: "Processing",
 									description: (
-										<>Parts are being printed!</>
+										<>Parts are being processed.</>
 									),
 									disabled: isAllPending(request.parts)
 								},
 								{
 									title: "Ready for Pick up",
-									description: (
-										<>
-											Pick up at the{" "}
-											<a
-												href="https://maps.app.goo.gl/bLNnJAGoQFB3UPWZ7"
-												className="underline">
-												Design Studio
-											</a>
-											.
-										</>
-									),
+									description: <>{isOpen ? "Pickup at the PNW Design Studio" : "Pickup currently not available."}</>,
 									disabled: !isAllComplete(request.parts)
 								},
 								{
@@ -240,6 +235,13 @@ export default function RequestDetails({
 								}
 							]}
 						/>
+
+						{!request.isFulfilled && isAllComplete(request.parts) && !request.isFulfilled && (
+							<p className="mt-2">
+								{isOpen ? <>You may pickup your parts until {formatTime(closingTime!)} or on another business day.</> : <>None of our team members can assist you at this time. See our <Link className="underline" href={"/schedule"}>operating hours</Link> to pickup your parts.</>}
+							</p>
+						)}
+
 					</div>
 					<div className="py-2 pt-4 pl-1 w-full" id="payment_details">
 						Payment Details
@@ -368,7 +370,7 @@ function PartDetails({ part, index, count }: { part: PartWithModel; index: numbe
 										{"Filament: "}
 									</span>
 									{part.filament ==
-									undefined ? (
+										undefined ? (
 										<>No longer Available</>
 									) : (
 										<>
