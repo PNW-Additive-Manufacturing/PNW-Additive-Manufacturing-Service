@@ -14,7 +14,7 @@ export const weeklyScheduleUTC: WeeklySchedule = [
     },
     // Tuesday
     {
-        open: Date.UTC(0, 0, 0, 16, 30, 0, 0), // 11:30 CDT + 5 hours = 16:30 UTC
+        open: Date.UTC(0, 0, 0, 17, 30, 0, 0), // 11:30 CDT + 5 hours = 16:30 UTC
         close: Date.UTC(0, 0, 0, 21, 30, 0, 0) // 16:30 CDT + 5 hours = 21:30 UTC
     },
     // Wednesday

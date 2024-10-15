@@ -4,7 +4,6 @@ import { attemptLogin, checkIfPasswordCorrect, createAccount, login, validatePas
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getJwtPayload, retrieveSafeJWTPayload } from "@/app/api/util/JwtHelper";
-import { SESSION_COOKIE } from "@/app/api/util/Constants";
 import { cookies } from "next/headers";
 import db from "@/app/api/Database";
 import { hashAndSaltPassword } from "../util/PasswordHelper";
@@ -99,7 +98,7 @@ export async function tryCreateAccount(prevState: string, formData: FormData) {
 
 export async function logout() {
 	console.log("Logout");
-	cookies().delete(SESSION_COOKIE);
+	cookies().delete(envConfig.sessionCookie);
 }
 
 export async function changePermission(

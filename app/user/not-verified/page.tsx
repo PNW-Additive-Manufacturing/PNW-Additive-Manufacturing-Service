@@ -63,7 +63,7 @@ export default function Page() {
 				</p>
 
 				<form action={formAction} className="mt-6">
-					{data.isComplete ? (
+					{data?.isComplete ? (
 						<button
 							disabled={true}
 							className="w-fit mb-0 bg-pnw-gold">
@@ -72,7 +72,7 @@ export default function Page() {
 					) : (
 						<EmailSubmitButton />
 					)}
-					{data.isComplete && data.errorMessage && (
+					{data?.isComplete && data.errorMessage && (
 						<>
 							<p className="text-red-500 mt-2">
 								An issue occurred. If this continues, email
@@ -80,7 +80,7 @@ export default function Page() {
 							</p>
 						</>
 					)}
-					{data.isComplete && data.errorMessage == undefined && (
+					{data?.isComplete && data.errorMessage == undefined && (
 						<p className="mt-2">
 							Please wait, it may take up to 4 minutes for PNW to
 							process the email.

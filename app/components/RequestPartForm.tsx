@@ -61,7 +61,7 @@ function AddPartButton({
 				className=" rounded-md border-dashed border-2 border-pnw-gold w-full h-full bg-pnw-gold-light min-h-24 text-center flex gap-4 justify-center items-center">
 				<div>
 					<h2>Select to upload Models</h2>
-					<p className="text-sm mt-2">File limit {"<"} 5 MB</p>
+					<p className="text-sm mt-2">File limit {"<"} 5 MB or {"<"} 5000 KB</p>
 				</div>
 			</div>
 		</div>
@@ -262,6 +262,18 @@ export function RequestPartForm({
 					}
 					formAction(formData);
 				}}>
+				{/* <div className="grid grid-cols-3 gap-6 mb-6">
+					<div className="out bg-white outline-pnw-gold p-6">
+						<h2>FDM / Plastic Printing</h2>
+						<p className="text-sm mt-2">PLA, PETG, ABS, CP</p>
+					</div>
+					<div className="out bg-white outline-pnw-gold p-6">
+						<h2>Resin Printing</h2>
+					</div>
+					<div className="out bg-white outline-pnw-gold p-6">
+						<h2>Metal X</h2>
+					</div>
+				</div> */}
 				<div className="bg-white rounded-sm w-full lg:flex p-6 gap-6 out">
 					<div
 						className="w-full max-lg:mb-4"
@@ -386,7 +398,7 @@ export function RequestPartForm({
 								className="text-sm"
 								style={{ maxWidth: "600px" }}>
 								Once you submit this request, it will be added to your account, and you'll receive email updates regarding the status of your parts.
-								If you're looking for a more detailed view of your requests and orders, please head over to your orders page.
+								If you're looking for a more detailed view of your requests and orders, please head over to your orders page once submitted.
 							</p>
 						</div>
 

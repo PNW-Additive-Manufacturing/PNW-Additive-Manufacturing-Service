@@ -1,7 +1,7 @@
 import "./globals.css";
 import type { Metadata, ResolvingMetadata } from "next";
 import { Inter } from "next/font/google";
-import { getJwtPayload } from "./api/util/JwtHelper";
+import { getJwtPayload, makeJwt, UserJWT } from "./api/util/JwtHelper";
 import {
 	AccountDetails,
 	ColorfulRequestPrintButton,
@@ -12,8 +12,9 @@ import { AccountPermission } from "./Types/Account/Account";
 import { AccountProvider, ThemeProvider } from "./ContextProviders";
 import AccountServe from "./Types/Account/AccountServe";
 import HorizontalWrap from "./components/HorizontalWrap";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import getConfig from "./getConfig";
+import { login } from "./api/util/AccountHelper";
 
 const inter = Inter({ subsets: ["latin"] });
 const envConfig = getConfig();
@@ -48,8 +49,9 @@ export default async function RootLayout({
 }) {
 	let permission: AccountPermission | null;
 	let email: string | null;
+	let jwtPayload: UserJWT | null = null;
 	try {
-		let jwtPayload = await getJwtPayload();
+		jwtPayload = await getJwtPayload();
 		permission = jwtPayload?.permission as AccountPermission;
 		email = jwtPayload?.email as string;
 	} catch {

@@ -1,5 +1,4 @@
 import { cookies } from "next/headers";
-import { SESSION_COOKIE } from "@/app/api/util/Constants";
 import {
 	correctPassword,
 	hashAndSaltPassword
@@ -10,6 +9,9 @@ import { makeJwt } from "@/app/api/util/JwtHelper";
 import * as crypto from "crypto";
 import { AccountPermission } from "@/app/Types/Account/Account";
 import DOMPurify from "isomorphic-dompurify";
+import getConfig from "@/app/getConfig";
+
+const appConfig = getConfig();
 
 export async function createAccount(
 	email: string,
@@ -168,9 +170,10 @@ export async function login(
 
 	//session cookie cannot be accessed via client-side javascript, making this safer than
 	//just returning the token via JSON response.
-	cookies().set(SESSION_COOKIE, token, {
+	cookies().set(appConfig.sessionCookie, token, {
 		httpOnly: true, //cannot be accessed via client-side Javascript
 		sameSite: "lax", //can only be sent to same website
 		secure: false //TODO: set to true once we have HTTPS connection
 	});
+	return token;
 }

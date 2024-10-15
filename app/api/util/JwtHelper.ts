@@ -8,10 +8,12 @@ import * as jose from "jose";
 
 import { cookies } from "next/headers";
 
-import { SESSION_COOKIE } from "@/app/api/util/Constants";
 import { z } from "zod";
 import { permission } from "process";
 import { AccountPermission } from "@/app/Types/Account/Account";
+import getConfig from "@/app/getConfig";
+
+const appConfig = getConfig();
 
 export interface UserJWT {
 	email: string;
@@ -54,7 +56,7 @@ export async function makeJwt(
 }
 
 export async function getJwtPayload(): Promise<UserJWT> {
-	let cookie = cookies().get(SESSION_COOKIE);
+	let cookie = cookies().get(appConfig.sessionCookie);
 	if (cookie == undefined) throw new Error("Session cookie is undefined");
 
 	try {
@@ -84,7 +86,7 @@ export async function getJwtPayload(): Promise<UserJWT> {
 }
 
 export async function retrieveSafeJWTPayload(): Promise<UserJWT | null> {
-	let cookie = cookies().get(SESSION_COOKIE);
+	let cookie = cookies().get(appConfig.sessionCookie);
 	if (!cookie) return null;
 
 	try {

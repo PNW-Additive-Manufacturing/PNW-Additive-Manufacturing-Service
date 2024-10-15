@@ -295,20 +295,20 @@ export default function PartEditor({
 											defaultValue={part.status}>
 											{part.status !=
 												PartStatus.Denied && (
-												<option
-													value={PartStatus.Pending}
-													key={PartStatus.Pending}>
-													Pending
-												</option>
-											)}
-											{!isPriced(part) && (
+													<option
+														value={PartStatus.Pending}
+														key={PartStatus.Pending}>
+														Pending
+													</option>
+												)}
+											{!request.isFulfilled && !isPriced(part) && (
 												<option
 													value={PartStatus.Denied}
 													key={PartStatus.Denied}>
 													Denied
 												</option>
 											)}
-											{isPaid(request) && (
+											{!request.isFulfilled && isPaid(request) && (
 												<>
 													<option
 														value={
@@ -343,7 +343,7 @@ export default function PartEditor({
 										</div>
 										<button
 											className={`w-fit text-sm ml-4 px-0 py-0 text-cool-black hover:text-cool-black mb-0 bg-transparent hover:bg-transparent hover:fill-black enabled:fill-pnw-gold enabled:text-pnw-gold enabled:animate-pulse`}
-											disabled={!isChanged}>
+											disabled={!isChanged || request.isFulfilled}>
 											<RegularUpload className="p-0.5 w-5 h-5 inline"></RegularUpload>
 											<span className="ml-2 text-inherit">
 												Save
@@ -381,7 +381,7 @@ export default function PartEditor({
 													</>
 												</>
 											) : part.model
-													.analysisFailedReason ? (
+												.analysisFailedReason ? (
 												<>
 													Failed due to{" "}
 													{
@@ -409,7 +409,7 @@ export default function PartEditor({
 
 										<div className="my-0.5">
 											{part.supplementedFilament !=
-											undefined ? (
+												undefined ? (
 												<>
 													<span className="font-light mr-1">
 														{
@@ -471,7 +471,7 @@ export default function PartEditor({
 														{"Filament: "}
 													</span>
 													{part.filament ==
-													undefined ? (
+														undefined ? (
 														<>No longer Available</>
 													) : (
 														<>
@@ -501,21 +501,21 @@ export default function PartEditor({
 										<div className="w-full md:max-w-60 mt-2">
 											{watch("status", part.status) ==
 												"pending" && (
-												<CurrencyInput
-													defaultValue={
-														part.priceInDollars ?? 0
-													}
-													register={register(
-														"costInDollars",
-														{
-															min: 0,
-															disabled: isQuoted
+													<CurrencyInput
+														defaultValue={
+															part.priceInDollars ?? 0
 														}
-													)}
-													id={
-														"costInDollars"
-													}></CurrencyInput>
-											)}
+														register={register(
+															"costInDollars",
+															{
+																min: 0,
+																disabled: isQuoted
+															}
+														)}
+														id={
+															"costInDollars"
+														}></CurrencyInput>
+												)}
 										</div>
 									</div>
 								</div>
@@ -558,7 +558,7 @@ export default function PartEditor({
 											Download (
 											{`${Math.round(
 												part.model.fileSizeInBytes /
-													1000
+												1000
 											)} kB`}
 											)
 											<RegularCloudDownload className="fill-cool-black w-6 h-6 p-0.5"></RegularCloudDownload>
