@@ -81,10 +81,15 @@ export default function Page() {
 						</>
 					)}
 					{data?.isComplete && data.errorMessage == undefined && (
-						<p className="mt-2">
-							Please wait, it may take up to 4 minutes for PNW to
-							process the email.
-						</p>
+						<>
+							<p className="mt-2">
+								Please wait, it may take up to 4 minutes for PNW to
+								process the email.
+							</p>
+							<p>
+								We recommend using the same device to verify that you are currently using.
+							</p>
+						</>
 					)}
 				</form>
 			</div>

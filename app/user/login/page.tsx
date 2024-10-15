@@ -7,9 +7,13 @@ import HorizontalWrap from "@/app/components/HorizontalWrap";
 import AMSIcon from "@/app/components/AMSIcon";
 import { Label } from "@/app/components/Inputs";
 import FormSubmitButton from "@/app/components/FormSubmitButton";
+import { useSearchParams } from "next/navigation";
 
 export default function Login() {
-	let [error, formAction] = useFormState<string, FormData>(tryLogin, "");
+	let [error, formAction] = useFormState<string, FormData>(tryLogin as any, "");
+	const searchParams = useSearchParams();
+	const reason = searchParams.get("reason");
+	const redirect = searchParams.get("redirect");
 
 	return (
 		<HorizontalWrap>
@@ -20,9 +24,11 @@ export default function Login() {
 				<h1 className="text-xl mx-auto font-normal w-fit">
 					Sign into Additive Manufacturing Service
 				</h1>
+				{reason && <p className="text-base mt-4 lg:text-center font-bold">{reason}</p>}
 				<br />
 				<div className="py-2 w-full">
 					<form action={formAction}>
+						{redirect && <input id="redirect" name="redirect" hidden readOnly value={redirect}></input>}
 						<Input
 							label="Purdue Northwest Email"
 							type="text"

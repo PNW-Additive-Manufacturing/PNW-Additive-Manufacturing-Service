@@ -20,17 +20,16 @@ const envConfig = getConfig();
 export async function middleware(request: NextRequest) {
 	const nextUrl = request.nextUrl.pathname;
 
-	if (nextUrl.startsWith("/api/hooks/stripe")) {
-		return NextResponse.next();
-	}
-
 	//allow non-logged in users to access login and create account screens
 	if (
+		nextUrl.startsWith("/api/hooks/stripe") ||
 		nextUrl.startsWith("/user/login") ||
+		nextUrl.startsWith("/not-found") ||
 		nextUrl.startsWith("/user/create-account") ||
 		nextUrl.startsWith("/user/forgot-password") ||
 		nextUrl.startsWith("/user/verify-email") ||
 		nextUrl.startsWith("/user/reset-password") ||
+		nextUrl.startsWith("/user/email-verified") ||
 		nextUrl.startsWith("/schedule") ||
 		nextUrl.startsWith("/team") ||
 		nextUrl.startsWith("/user/current") ||
@@ -43,14 +42,10 @@ export async function middleware(request: NextRequest) {
 	//a GET request to /logout is completed, the logout feature is here.
 	//I could use an API endpoint, but I would prefer to not have both /logout and /api/logout routes
 	if (nextUrl.startsWith("/user/logout")) {
-		// cookies().delete(SESSION_COOKIE);
-		const newPath = request.nextUrl.clone();
-		newPath.pathname = "/user/login";
-
-		let res = NextResponse.redirect(newPath);
-		//delete session cookie from response.
+		let res = NextResponse.redirect(envConfig.hostURL);
+		// Delete session cookie from response.
 		res.cookies.delete(envConfig.sessionCookie);
-
+		
 		return res;
 	}
 

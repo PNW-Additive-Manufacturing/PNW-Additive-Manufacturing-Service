@@ -35,10 +35,17 @@ export async function tryLogin(prevState: string, formData: FormData) {
 	//WARNING: if in a try/catch, it will not work
 	let permission = (await getJwtPayload())?.permission;
 	//no error checking for Jwt payload since used just logged in
-	if (permission == AccountPermission.User) {
-		redirect(`/`);
-	} else {
-		redirect(`/`);
+	
+	const wantedRedirect = formData.get("redirect") as string;
+	if (wantedRedirect && wantedRedirect.startsWith(envConfig.hostURL))
+	{
+		console.log(`Redirecting to ${wantedRedirect}`);
+
+		redirect(wantedRedirect);
+	}
+	else
+	{
+		redirect("/");
 	}
 }
 

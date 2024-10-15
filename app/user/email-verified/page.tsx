@@ -9,7 +9,7 @@ export default function Page() {
 			</h1>
 			<p className="text-base font-normal text-gray-700 mt-4">
 				Thank you for verifying your email address with the PNW Additive
-				Manufacturing Service.
+				Manufacturing Service. Refresh your page on other devices.
 			</p>
 
 			<div className="mt-8 mx-auto w-fit">
