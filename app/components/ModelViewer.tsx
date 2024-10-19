@@ -71,8 +71,7 @@ export function EngineeringCamera({
 	// TODO: Unsure how to use a frame once besides this?
 	const [zoomed, setZoomed] = useState(false);
 	useFrame(() => {
-		if (!zoomed)
-		{
+		if (!zoomed) {
 			cameraRef.current!.rotatePolarTo(-Math.PI, false);
 			cameraRef.current!.fitToSphere(focusedGeometry.boundingSphere!, false);
 			cameraRef.current!.rotateAzimuthTo(0);

@@ -58,10 +58,10 @@ function AddPartButton({
 					ev.preventDefault();
 					(inputRef.current?.valueOf() as HTMLInputElement).click();
 				}}
-				className=" rounded-md border-dashed border-2 border-pnw-gold w-full h-full bg-pnw-gold-light min-h-24 text-center flex gap-4 justify-center items-center">
+				className="rounded-md border-dashed border-2 px-2 border-pnw-gold w-full h-full bg-pnw-gold-light min-h-24 text-center flex gap-4 justify-center items-center">
 				<div>
 					<h2>Select to upload Models</h2>
-					<p className="text-sm mt-2">File limit {"<"} 5 MB or {"<"} 5000 KB</p>
+					<p className="text-sm mt-2">Models must be in Millimeters and {"<"} 20 MB</p>
 				</div>
 			</div>
 		</div>
@@ -343,7 +343,7 @@ export function RequestPartForm({
 												// Boolean if a file with the same path has been added,
 												const isAlreadyAdded = parts.some(p => p.File.name == ev.currentTarget.files![index]?.name);
 
-												return !isAlreadyAdded && ev.currentTarget.files![index].name.endsWith(".stl") && ev.currentTarget.files![index].size < 5000000;
+												return !isAlreadyAdded && ev.currentTarget.files![index].name.endsWith(".stl") && ev.currentTarget.files![index].size < 20000000;
 											})
 											.map((i) => {
 												const f = ev.currentTarget.files![i];
