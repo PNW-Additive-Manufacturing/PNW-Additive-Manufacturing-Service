@@ -98,7 +98,7 @@ export async function attemptLogin(email: string, password: string) {
 	}
 
 	if (res.count === 0) {
-		throw new Error(`No user exists with email ${email}!`);
+		throw new Error("We couldn't log you in. Please check your email and password and try again.");
 	}
 
 	let hash = res[0].password as string;
@@ -117,7 +117,7 @@ export async function attemptLogin(email: string, password: string) {
 	let passwordCorrect = correctPassword(password, hash);
 
 	if (!passwordCorrect) {
-		throw new Error("Incorrect Password!");
+		throw new Error("We couldn't log you in. Please check your email and password and try again.");
 	}
 
 	await login(email, permission, firstname, lastname, isemailverified);

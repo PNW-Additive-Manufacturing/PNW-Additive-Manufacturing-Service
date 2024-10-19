@@ -58,9 +58,7 @@ export default function Login() {
 							<option value="1y">Year</option>
 						</select>
 						<FormSubmitButton label="Sign In" />
-						<p className="text-sm text-red-500 uppercase">
-							{error}
-						</p>
+						<p className="text-sm text-red-500">{error}</p>
 					</form>
 				</div>
 

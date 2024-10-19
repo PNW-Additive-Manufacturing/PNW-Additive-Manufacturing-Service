@@ -10,19 +10,16 @@ import farmMiddleware from "./app/api/farm/middleware";
 import modelDownloadMiddleware from "./app/api/download/model/middleware";
 import { cookies, headers } from "next/headers";
 
-//all root level files allowed to be accessed without logging in
-const ROOT_FOLDER_FILE_WHITELIST = ["/favicon.ico", "/robots.txt"];
-
-const USER_BLACKLIST = ["/api"];
-
 const envConfig = getConfig();
 
 export async function middleware(request: NextRequest) {
 	const nextUrl = request.nextUrl.pathname;
-
+	
 	//allow non-logged in users to access login and create account screens
 	if (
 		nextUrl.startsWith("/api/hooks/stripe") ||
+		nextUrl.startsWith("/favicon.ico") ||
+		nextUrl.startsWith("/robots.txt") ||
 		nextUrl.startsWith("/user/login") ||
 		nextUrl.startsWith("/not-found") ||
 		nextUrl.startsWith("/user/create-account") ||
@@ -33,11 +30,13 @@ export async function middleware(request: NextRequest) {
 		nextUrl.startsWith("/schedule") ||
 		nextUrl.startsWith("/team") ||
 		nextUrl.startsWith("/user/current") ||
+		nextUrl.startsWith("/assets") ||
+		nextUrl.startsWith("/_next") ||
 		nextUrl === "/"
 	) {
 		return NextResponse.next();
 	}	
-
+	
 	//because this is the only way NextJS will allow me to delete cookies before
 	//a GET request to /logout is completed, the logout feature is here.
 	//I could use an API endpoint, but I would prefer to not have both /logout and /api/logout routes
@@ -50,26 +49,23 @@ export async function middleware(request: NextRequest) {
 	}
 
 	if (nextUrl.indexOf(".") == -1 && request.method == "GET")
+	try
 	{
-		const sessionUpdate = (await fetch(envConfig.joinHostURL("/user/current"), { headers: headers() }))?.headers?.getSetCookie()?.at(0);
+		const sessionUpdate = (await fetch(envConfig.joinHostURL("/user/current"), { headers: headers(), method: "GET" }))?.headers?.getSetCookie()?.at(0);
 	
 		if (sessionUpdate)
 		{	
+			console.log(`Updating session...`);
+			
 			// Redirect to the current page with new cookies to respect middleware.
 			const res = NextResponse.redirect(envConfig.joinHostURL(nextUrl));
 			res.headers.set("Set-Cookie", sessionUpdate);
 			return res;
 		}
 	}
-
-	//all assets, nextjs stuff, are allowed
-	if (nextUrl.startsWith("/assets") || nextUrl.startsWith("/_next")) {
-		return NextResponse.next();
-	}
-
-	//all whitelisted files in root folder are allowed
-	if (ROOT_FOLDER_FILE_WHITELIST.find((item) => item == nextUrl)) {
-		return NextResponse.next();
+	catch (sessionUpdateError)
+	{
+		console.error("Failed to fetch new session information!", sessionUpdateError);
 	}
 
 	//check if JWT exists and is valid
@@ -84,19 +80,6 @@ export async function middleware(request: NextRequest) {
 		//if JWT does not exist or is invalid
 		return NextResponse.redirect(envConfig.joinHostURL("/user/login"));
 	}
-
-	// 	// Update the JWT if required. 
-	// // I actually have zero clue why I couldn't just do this in middleware.
-	// // It's an issue with the Edge Runtime and unsupported NodeJS libraries required by postgres.js.
-	// // This should only be a HOT FIX until we can figure something out. 
-	// if (jwtPayload != null) {
-	// 	const JWTChanges = (await db`SELECT * FROM Account WHERE Permission != ${jwtPayload.permission} OR IsEmailVerified != ${jwtPayload.isemailverified}`).at(0);
-	// 	if (JWTChanges != null) {
-	// 		console.log("Changes detected!", JWTChanges);
-
-	// 		await login(JWTChanges.email, JWTChanges.permission, JWTChanges.firstname, JWTChanges.lastname, JWTChanges.isemailverified);
-	// 	}
-	// }
 
 	if (
 		nextUrl.startsWith("/experiments") &&

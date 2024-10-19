@@ -40,7 +40,7 @@ function NavbarLink({
 		<Link
 			onClick={onClick}
 			href={path}
-			className="rounded-md whitespace-nowrap md:rounded-none w-full p-4 md:p-0 bg-gray-100 sm:bg-transparent md:w-fit border-b-4 border-b-pnw-gold-light border-opacity-10 hover:text-pnw-gold active:text-pnw-gold">
+			className="rounded-md whitespace-nowrap xl:rounded-none w-full p-4 xl:p-0 bg-gray-100 sm:bg-transparent xl:w-fit border-b-4 border-b-pnw-gold-light border-opacity-10 hover:text-pnw-gold active:text-pnw-gold">
 			{name}
 		</Link>
 	);
@@ -111,7 +111,7 @@ function ScreenDimmer(
 ) {
 	return (
 		<div
-			className="absolute top-0 left-0 w-full h-screen bg-black bg-opacity-20 md:hidden"
+			className="absolute top-0 left-0 w-full h-screen bg-black bg-opacity-20 xl:hidden"
 			{...props}
 		/>
 	);
@@ -181,7 +181,7 @@ export function Navbar({
 								<>
 									<ScreenDimmer />
 									<div
-										className={`absolute right-0 top-0 h-screen w-2/3 md:hidden`}
+										className={`absolute right-0 top-0 h-screen w-2/3 xl:hidden`}
 										style={{
 											boxShadow:
 												"rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"

@@ -1,10 +1,10 @@
+"use server";
+
 import Image from "next/image";
 import HorizontalWrap from "./components/HorizontalWrap";
 import Gallery from "./components/Gallery";
-import { RegularLink } from "lineicons-react";
 import Link from "next/link";
 import { AvailabilityText } from "./components/LocalSchedule";
-import { formatTime } from "./api/util/Constants";
 
 function DiscordServer() {
 	return (
