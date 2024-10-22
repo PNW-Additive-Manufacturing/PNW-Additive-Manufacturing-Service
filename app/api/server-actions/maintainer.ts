@@ -25,6 +25,7 @@ import {
 	emailTemplate,
 	emailTemplateDearUser,
 	requestCompletedHTML,
+	requestQuotedFreeHTML,
 	requestQuotedHTML,
 	sendEmail
 } from "../util/Mail";
@@ -61,8 +62,15 @@ export async function setQuote(
 		? Number.parseInt(data.get("requestId") as string)
 		: null;
 	if (requestId == null) return "Request ID not provided!";
-	const request = await RequestServe.fetchByIDWithAll(requestId!);
+	let request = await RequestServe.fetchByIDWithAll(requestId!);
 	if (request == null) return "Request does not exist";
+
+	const estimatedCompletionDate = data.get("estimated-completion-date")?.valueOf() as Date | undefined;
+	if (estimatedCompletionDate == undefined)
+	{
+		return "Completion estimate required!";
+	}
+	
 
 	const requester = await AccountServe.queryByEmail(request.requesterEmail);
 	if (requester == undefined) return "Account no-longer exists!";
@@ -77,26 +85,30 @@ export async function setQuote(
 	// if (priceInDollars > 100) return "Quote is exceeding maximum value of $100";
 
 	try {
-		await RequestServe.setQuote(requestId, priceInCents);
+		await RequestServe.setQuote(requestId, priceInCents, estimatedCompletionDate);
 		console.log("Updated quote! for ", requestId, priceInCents);
 	} catch (error) {
 		return "An exception occurred updating database.";
 	}
 
 	// If the total-cost is zero, we are going to automatically assume it was "paid for"!
-	if (priceInCents == 0) {
-		await RequestServe.setAsPaid(request.id);
-	}
-	else {
-		try {
-			await sendEmail(
-				request.requesterEmail,
-				`Request quoted for ${request.name}`,
-				await requestQuotedHTML(request)
-			);
-		} catch (error) {
-			console.error("Failed to send Email!", error);
+	if (priceInCents == 0) await RequestServe.setAsPaid(request.id);
+
+	// Lazy method of updating fields of quote property on Request.
+	request = (await RequestServe.fetchByIDWithAll(requestId))!;
+
+	try {
+		if (priceInCents == 0)
+		{
+			await sendEmail(request.requesterEmail, `Request approved for ${request.name}`, await requestQuotedFreeHTML(request));
 		}
+		else
+		{
+			await sendEmail(request.requesterEmail, `Request quoted for ${request.name}`, await requestQuotedHTML(request));
+		}
+	} catch (error) 
+	{
+		console.error("Failed to send Email!", error);
 	}
 
 	revalidatePath("/dashboard/maintainer/orders/");

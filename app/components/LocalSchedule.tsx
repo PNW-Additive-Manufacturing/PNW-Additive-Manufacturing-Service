@@ -6,19 +6,24 @@ import { Suspense } from "react";
 import { formatTime } from "../api/util/Constants";
 import { useHydration } from "../hooks/useHydration";
 import * as UTCSchedule from "./Schedule";
+import { withDate } from "../utils/TimeUtils";
 
 // Re-export for convenience .
 export const weekdays = UTCSchedule.weekdays;
 
+export const currentDate = new Date();
+export const currentDay = currentDate.getDay();
+
 export const weeklySchedule = UTCSchedule.weeklyScheduleUTC.map(d => d == null ? null : {
     open: new Date(d.open),
     close: new Date(d.close)
-})
+});
 
-export const currentTime = new Date();
-export const currentDay = currentTime.getDay();
+export const currentDaySchedule = weeklySchedule[currentDay];
 
-export const isOpen = weeklySchedule[currentDay] != null && currentTime > weeklySchedule[currentDay]!.open && currentTime < weeklySchedule[currentDay]!.close;
+// console.log(currentDate, withDate(currentDaySchedule!.open, currentDate), currentDaySchedule!.close);
+
+export const isOpen = currentDaySchedule != null && currentDate > withDate(weeklySchedule[currentDay]!.open, currentDate) && currentDate < withDate(weeklySchedule[currentDay]!.close, currentDate);
 export const closingTime = weeklySchedule[currentDay] == null ? null : weeklySchedule[currentDay]?.close!;
 
 export function AvailabilityText() {

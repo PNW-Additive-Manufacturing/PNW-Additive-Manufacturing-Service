@@ -41,6 +41,7 @@ import RequestPricing from "@/app/components/Request/Pricing";
 import StatusPill from "@/app/components/StatusPill";
 import { RequestOverview } from "@/app/components/RequestOverview";
 import { formateDate } from "@/app/api/util/Constants";
+import FormLoadingSpinner from "@/app/components/FormLoadingSpinner";
 
 export default function RequestEditor({
 	request,
@@ -85,7 +86,7 @@ export default function RequestEditor({
 						<Link href="/dashboard/maintainer/orders">
 							<button className="outline outline-1 outline-gray-300 bg-white text-black fill-black flex flex-row gap-2 justify-end items-center px-3 py-2 text-sm w-fit mb-0">
 								<RegularExit className="w-auto h-6 fill-inherit"></RegularExit>
-								Go Back
+								<span className="text-sm font-medium">Go Back</span>
 							</button>
 						</Link>
 						<div className="flex gap-2">
@@ -95,7 +96,7 @@ export default function RequestEditor({
 									onClick={() =>
 										setShowActions(!showActions)
 									}>
-									Actions
+									<span className="text-sm font-medium">Actions</span>
 									<RegularCog
 										className={`${showActions
 											? "rotate-180"
@@ -148,7 +149,7 @@ export default function RequestEditor({
 
 			<div className="lg:flex gap-8">
 				<div className="lg:grow">
-					<div className="flex flex-col gap-6 mb-3">
+					<div className="flex flex-col gap-2 mb-3">
 						{request.isFulfilled && (
 							<RequestOverview
 								title="Request Fulfilled"
@@ -221,55 +222,70 @@ export default function RequestEditor({
 					<div className="py-2 pt-2 pl-1 w-full">Payment Details</div>
 					<div className="p-4 lg:p-6 rounded-t-sm shadow-sm bg-white font-light outline outline-2 outline-gray-200">
 						{isAllPriced(request) ? (
-							<RequestPricing request={request} />
+							<>
+								<RequestPricing request={request} />
+								<br />
+
+								{hasQuote(request) && <>
+
+									<label>Estimated Completion</label>
+									<input type="date" name="estimated-completion-date" id="estimated-completion-date" readOnly value={request.quote!.estimatedCompletionDate.toISOString().split("T")[0]} required></input>
+
+								</>}
+
+								{isQuotePaid ? (
+									<>
+										<AlreadyQuoteButton
+											request={request}></AlreadyQuoteButton>
+									</>
+								) : hasQuote(request) ? (
+									<button
+										className="mb-0 py-4 shadow-md text-left w-full"
+										type="button">
+										<div>Waiting for Payment</div>
+										<p className="text-white font-light text-sm mt-1">
+											{`${requester.firstName} ${requester.lastName} has been notified.`}
+										</p>
+									</button>
+								) : (
+									isAllPriced(request) && (
+										<>
+											<form action={setQuoteFormAction}>
+												<input
+													hidden
+													type="number"
+													name="requestId"
+													readOnly
+													value={request.id}></input>
+												<label>Estimated Completion</label>
+												<input type="date" name="estimated-completion-date" id="estimated-completion-date" min={new Date().toLocaleDateString('en-us')} required></input>
+												<button
+													className="py-4 shadow-md text-left flex justify-between w-full mb-0"
+													disabled={!partsAllPriced}>
+													<div>
+														Submit Quote for $
+														{getTotalCost(
+															request
+														).totalCost.toFixed(2)}
+														<p className="text-white font-light text-sm pt-1">
+															{`${requester.firstName} ${requester.lastName} will receive the quote.`}
+															<FormLoadingSpinner className="fill-white" />
+														</p>
+													</div>
+												</button>
+											</form>
+											<p className="text-red-500 text-base mt-2">
+												{quoteState}
+											</p>
+										</>
+									)
+								)}
+							</>
 						) : (
 							<p>Request has not been Quoted.</p>
 						)}
 					</div>
-					{isQuotePaid ? (
-						<>
-							<AlreadyQuoteButton
-								request={request}></AlreadyQuoteButton>
-						</>
-					) : hasQuote(request) ? (
-						<button
-							className="mb-0 rounded-t-none py-4 shadow-md text-left w-full"
-							type="button">
-							<div>Waiting for Payment</div>
-							<p className="text-white font-light text-sm mt-1">
-								{`${requester.firstName} ${requester.lastName} has been notified.`}
-							</p>
-						</button>
-					) : (
-						isAllPriced(request) && (
-							<>
-								<form action={setQuoteFormAction}>
-									<input
-										hidden
-										type="number"
-										name="requestId"
-										readOnly
-										value={request.id}></input>
-									<button
-										className="rounded-t-none py-4 shadow-md text-left flex justify-between w-full mb-0"
-										disabled={!partsAllPriced}>
-										<div>
-											Submit Quote for $
-											{getTotalCost(
-												request
-											).totalCost.toFixed(2)}
-											<p className="text-white font-light text-sm pt-1">
-												{`${requester.firstName} ${requester.lastName} will receive the quote.`}
-											</p>
-										</div>
-									</button>
-								</form>
-								<p className="text-red-500 text-base mt-2">
-									{quoteState}
-								</p>
-							</>
-						)
-					)}{" "}
+
 					<div className="py-2 pt-4 pl-1 w-full">
 						Requester Information
 					</div>
@@ -305,7 +321,7 @@ export default function RequestEditor({
 function AlreadyQuoteButton({ request }: { request: Request }) {
 	return (
 		<button
-			className="rounded-t-none rounded-b-sm mb-0 py-4 shadow-md text-left bg-green-600 w-full"
+			className="mb-0 py-4 shadow-md text-left bg-green-600 w-full"
 			disabled>
 			Quote Processed
 			<p className="text-white font-light text-sm">

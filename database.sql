@@ -100,8 +100,9 @@ CREATE TABLE Request (
   PaidAt timestamp with time zone,
   FulfilledAt timestamp with time zone,
   TotalPriceInCents BIGINT,
+  EstimatedCompletionDate timestamp with time zone,
   CONSTRAINT PAID_CHK CHECK (
-  	(PaidAt IS NOT NULL AND TotalPriceInCents IS NOT NULL) OR
+  	(PaidAt IS NOT NULL AND TotalPriceInCents IS NOT NULL AND EstimatedCompletionDate IS NOT NULL) OR
     (PaidAt IS NULL)
   )
 );

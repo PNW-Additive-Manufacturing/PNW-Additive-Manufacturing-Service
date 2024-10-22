@@ -28,27 +28,25 @@ export class RequestServe {
 		r.FulfilledAt, 
 		r.TotalPriceInCents,
 		r.PaidAt,
+		r.EstimatedCompletionDate,
 		COUNT(p.Quantity) AS NumberOfParts
 		FROM Request r
 		LEFT JOIN Part p ON r.Id = p.RequestId
 		JOIN Account a ON r.OwnerEmail = a.Email
 		WHERE 
         ${!query.includeFulfilled ? db`r.FulfilledAt IS NULL` : db`TRUE`}
-        ${
-			query.accountEmail
+        ${query.accountEmail
 				? db`AND r.OwnerEmail = ${query.accountEmail}`
 				: db``
-		}
-        ${
-			query.requestedAfter
+			}
+        ${query.requestedAfter
 				? db`AND r.SubmitTime >= ${query.requestedAfter}`
 				: db``
-		}
-		GROUP BY r.Id, r.Name, r.Comments, r.OwnerEmail, a.FirstName, a.LastName, r.SubmitTime, r.FulfilledAt, r.TotalPriceInCents, r.PaidAt
+			}
+		GROUP BY r.Id, r.Name, r.Comments, r.OwnerEmail, a.FirstName, a.LastName, r.SubmitTime, r.FulfilledAt, r.TotalPriceInCents, r.PaidAt, r.EstimatedCompletionDate
 		ORDER BY r.SubmitTime DESC
-		LIMIT ${query.requestsPerPage} OFFSET ${
-			(query.page - 1) * query.requestsPerPage
-		}; `;
+		LIMIT ${query.requestsPerPage} OFFSET ${(query.page - 1) * query.requestsPerPage
+			}; `;
 
 		if (dbQuery.length == 0) return [];
 
@@ -70,20 +68,21 @@ export class RequestServe {
 				quote:
 					requestRow.totalpriceincents != undefined
 						? {
-								isPaid: requestRow.paidat != undefined,
-								paidAt: requestRow.paidat,
-								totalPriceInCents: Number.parseInt(
-									requestRow.totalpriceincents
-								)
-						  }
+							isPaid: requestRow.paidat != undefined,
+							paidAt: requestRow.paidat,
+							totalPriceInCents: Number.parseInt(
+								requestRow.totalpriceincents
+							),
+							estimatedCompletionDate: requestRow.estimatedcompletiondate
+						}
 						: undefined,
 				refundRequest:
 					refundQuery.length > 0
 						? {
-								requestedAt: refundQuery.at(0)!.requestedat,
-								completedAt: refundQuery.at(0)!.completedat,
-								reason: refundQuery.at(0)!.reason
-						  }
+							requestedAt: refundQuery.at(0)!.requestedat,
+							completedAt: refundQuery.at(0)!.completedat,
+							reason: refundQuery.at(0)!.reason
+						}
 						: undefined
 			};
 
@@ -110,12 +109,13 @@ export class RequestServe {
 	r.FulfilledAt,
 	r.TotalPriceInCents,
 	r.PaidAt,
+	r.EstimatedCompletionDate,
 	COUNT(p.Quantity) AS NumberOfParts
 		FROM Request r
 		LEFT JOIN Part p ON r.Id = p.RequestId
 		JOIN Account a ON r.OwnerEmail = a.Email
 		WHERE r.Id = ${id}
-		GROUP BY r.Id, r.Name, r.Comments, r.OwnerEmail, a.FirstName, a.LastName, r.SubmitTime, r.FulfilledAt, r.TotalPriceInCents, r.PaidAt
+		GROUP BY r.Id, r.Name, r.Comments, r.OwnerEmail, a.FirstName, a.LastName, r.SubmitTime, r.FulfilledAt, r.TotalPriceInCents, r.PaidAt, r.EstimatedCompletionDate
 		ORDER BY r.SubmitTime DESC; `;
 
 		if (query.length == 0) return undefined;
@@ -138,20 +138,21 @@ export class RequestServe {
 			quote:
 				requestRow.totalpriceincents != undefined
 					? {
-							isPaid: requestRow.paidat != undefined,
-							paidAt: requestRow.paidat,
-							totalPriceInCents: Number.parseInt(
-								requestRow.totalpriceincents
-							)
-					  }
+						isPaid: requestRow.paidat != undefined,
+						paidAt: requestRow.paidat,
+						totalPriceInCents: Number.parseInt(
+							requestRow.totalpriceincents
+						),
+						estimatedCompletionDate: requestRow.estimatedcompletiondate
+					}
 					: undefined,
 			refundRequest:
 				refundQuery.length > 0
 					? {
-							requestedAt: refundQuery.at(0)!.requestedat,
-							completedAt: refundQuery.at(0)!.completedat,
-							reason: refundQuery.at(0)!.reason
-					  }
+						requestedAt: refundQuery.at(0)!.requestedat,
+						completedAt: refundQuery.at(0)!.completedat,
+						reason: refundQuery.at(0)!.reason
+					}
 					: undefined
 		};
 
@@ -173,11 +174,12 @@ export class RequestServe {
 	r.FulfilledAt,
 	r.TotalPriceInCents,
 	r.PaidAt,
+	r.EstimatedCompletionDate,
 	COUNT(p.Quantity) AS NumberOfParts
 		FROM Request r
 		LEFT JOIN Part p ON r.Id = p.RequestId
 		JOIN Account a ON r.OwnerEmail = a.Email
-		GROUP BY r.Id, r.Name, r.Comments, r.OwnerEmail, a.FirstName, a.LastName, r.SubmitTime, r.FulfilledAt, r.TotalPriceInCents, r.PaidAt
+		GROUP BY r.Id, r.Name, r.Comments, r.OwnerEmail, a.FirstName, a.LastName, r.SubmitTime, r.FulfilledAt, r.TotalPriceInCents, r.PaidAt, r.EstimatedCompletionDate
 		ORDER BY r.SubmitTime DESC; `;
 
 		if (query.length == 0) return [];
@@ -200,20 +202,21 @@ export class RequestServe {
 				quote:
 					requestRow.totalpriceincents != undefined
 						? {
-								isPaid: requestRow.paidat != undefined,
-								paidAt: requestRow.paidat,
-								totalPriceInCents: Number.parseInt(
-									requestRow.totalpriceincents
-								)
-						  }
+							isPaid: requestRow.paidat != undefined,
+							paidAt: requestRow.paidat,
+							totalPriceInCents: Number.parseInt(
+								requestRow.totalpriceincents
+							),
+							estimatedCompletionDate: requestRow.estimatedcompletiondate
+						}
 						: undefined,
 				refundRequest:
 					refundQuery.length > 0
 						? {
-								requestedAt: refundQuery.at(0)!.requestedat,
-								completedAt: refundQuery.at(0)!.completedat,
-								reason: refundQuery.at(0)!.reason
-						  }
+							requestedAt: refundQuery.at(0)!.requestedat,
+							completedAt: refundQuery.at(0)!.completedat,
+							reason: refundQuery.at(0)!.reason
+						}
 						: undefined
 			};
 
@@ -238,12 +241,13 @@ export class RequestServe {
 	r.FulfilledAt,
 	r.TotalPriceInCents,
 	r.PaidAt,
+	r.EstimatedCompletionDate,
 	COUNT(p.Quantity) AS NumberOfParts
 		FROM Request r
 		LEFT JOIN Part p ON r.Id = p.RequestId
 		JOIN Account a ON r.OwnerEmail = a.Email
 		WHERE a.Email = ${accountEmail}
-		GROUP BY r.Id, r.Name, r.Comments, r.OwnerEmail, a.FirstName, a.LastName, r.SubmitTime, r.FulfilledAt, r.TotalPriceInCents, r.PaidAt
+		GROUP BY r.Id, r.Name, r.Comments, r.OwnerEmail, a.FirstName, a.LastName, r.SubmitTime, r.FulfilledAt, r.TotalPriceInCents, r.PaidAt, r.EstimatedCompletionDate
 		ORDER BY r.SubmitTime DESC; `;
 
 		if (query.length == 0) return [];
@@ -266,20 +270,21 @@ export class RequestServe {
 				quote:
 					requestRow.totalpriceincents != undefined
 						? {
-								isPaid: requestRow.paidat != undefined,
-								paidAt: requestRow.paidat,
-								totalPriceInCents: Number.parseInt(
-									requestRow.totalpriceincents
-								)
-						  }
+							isPaid: requestRow.paidat != undefined,
+							paidAt: requestRow.paidat,
+							totalPriceInCents: Number.parseInt(
+								requestRow.totalpriceincents
+							),
+							estimatedCompletionDate: requestRow.estimatedcompletiondate
+						}
 						: undefined,
 				refundRequest:
 					refundQuery.length > 0
 						? {
-								requestedAt: refundQuery.at(0)!.requestedat,
-								completedAt: refundQuery.at(0)!.completedat,
-								reason: refundQuery.at(0)!.reason
-						  }
+							requestedAt: refundQuery.at(0)!.requestedat,
+							completedAt: refundQuery.at(0)!.completedat,
+							reason: refundQuery.at(0)!.reason
+						}
 						: undefined
 			};
 
@@ -293,13 +298,13 @@ export class RequestServe {
 		return requests;
 	}
 
-	public static async setQuote(requestId: number, amountInCents: number) {
+	public static async setQuote(requestId: number, amountInCents: number, estimatedCompletion: Date) {
 		const request = await RequestServe.fetchByIDWithAll(requestId);
 		if (request == undefined) throw new Error("Request does not exist!");
 		if (hasQuote(request) && request.quote!.isPaid) {
 			throw new Error("Quote cannot be modified after payment!");
 		}
-		await db`UPDATE Request SET TotalPriceInCents = ${amountInCents} WHERE Id = ${requestId} `;
+		await db`UPDATE Request SET TotalPriceInCents = ${amountInCents}, EstimatedCompletionDate = ${estimatedCompletion} WHERE Id = ${requestId} `;
 	}
 
 	public static async setAsPaid(

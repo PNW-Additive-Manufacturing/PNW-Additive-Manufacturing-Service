@@ -6,6 +6,7 @@ import nodemailer from "nodemailer";
 import DOMPurify from "isomorphic-dompurify";
 import getConfig from "@/app/getConfig";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
+import { formateDate } from "./Constants";
 
 DOMPurify.setConfig({ USE_PROFILES: { html: false } });
 
@@ -89,10 +90,7 @@ export async function requestReceivedHTML(request: RequestWithParts) {
 		request.lastName,
 		`
 		<p style="font-family: inherit; color: rgb(64, 64, 64); font-size: medium;">
-			Your request for
-			<span style="text-decoration: underline;">${DOMPurify.sanitize(
-			request.name
-		)}</span> has been received. We are currently processing your request,
+			Your request for ${DOMPurify.sanitize(request.name)} has been received. We are currently processing your request,
 			and a quote will be provided within 1-2 business days.
 		</p>
 		<a href=${`${envConfig.hostURL}/dashboard/user/${request.id}`} target="_blank" style="font-family: inherit; text-decoration:none; height: fit-content; width: fit-content; display: block;">
@@ -107,13 +105,24 @@ export async function requestQuotedHTML(request: RequestWithParts) {
 		request.lastName,
 		`
 		<p style="font-family: inherit; color: rgb(64, 64, 64); font-size: medium;">
-			Your request for <span style="text-decoration: underline;">${DOMPurify.sanitize(
-			request.name
-		)}</span> has been approved and quoted.
-			To continue, please review and approve the quote on our website.
+			Your request for ${DOMPurify.sanitize(request.name)} has been approved and quoted and is projected to be completed by ${formateDate(request.quote!.estimatedCompletionDate)}. To continue, please review and approve the quote on our website.
 		</p>
 		<a href=${`${envConfig.hostURL}/dashboard/user/${request.id}#payment_details`} target="_blank" style="font-family: inherit; text-decoration:none; height: fit-content; width: fit-content; display: block;">
 			<button style="font-family: inherit; text-decoration: none; border-radius: 5px; padding: 1rem 1.2rem 1rem 1.2rem; padding-top: 12px; padding-bottom: 12px; display: block; margin-bottom: 0px; outline: none; border: none; background-color: #2b2b2b; color: white; font-size: large; font-weight: 500; text-wrap: nowrap; width: auto; font-size: small;">View Quote</button>
+		</a>`
+	);
+}
+
+export async function requestQuotedFreeHTML(request: RequestWithParts) {
+	return emailTemplateDearUser(
+		request.firstName,
+		request.lastName,
+		`
+		<p style="font-family: inherit; color: rgb(64, 64, 64); font-size: medium;">
+			Your request for ${DOMPurify.sanitize(request.name)} has been approved and is projected to be completed by ${formateDate(request.quote!.estimatedCompletionDate)}. 
+		</p>
+		<a href=${`${envConfig.hostURL}/dashboard/user/${request.id}#payment_details`} target="_blank" style="font-family: inherit; text-decoration:none; height: fit-content; width: fit-content; display: block;">
+			<button style="font-family: inherit; text-decoration: none; border-radius: 5px; padding: 1rem 1.2rem 1rem 1.2rem; padding-top: 12px; padding-bottom: 12px; display: block; margin-bottom: 0px; outline: none; border: none; background-color: #2b2b2b; color: white; font-size: large; font-weight: 500; text-wrap: nowrap; width: auto; font-size: small;">View Request</button>
 		</a>`
 	);
 }
@@ -122,8 +131,7 @@ export async function requestCompletedHTML(request: RequestWithParts) {
 	return emailTemplateDearUser(request.firstName, request.lastName,
 		`
 		<p style="font-family: inherit; color: rgb(64, 64, 64); font-size: medium;">
-			Your request for <span style="text-decoration: underline;">${DOMPurify.sanitize(request.name)}</span> has been completed. 
-			You may pick up your parts during our <a href=${`${envConfig.hostURL}/schedule`}>pickup hours</a> whenever you are available.
+			Your request for ${DOMPurify.sanitize(request.name)} has been completed. You may pick up your parts during our <a href=${`${envConfig.hostURL}/schedule`}>pickup hours</a> whenever you are available. Thank you for choosing the Additive Manufacturing Service of PNW!
 		</p>
 		<a href=${`${envConfig.hostURL}/dashboard/user/${request.id}`} target="_blank" style="font-family: inherit; text-decoration:none; height: fit-content; width: fit-content; display: block;">
 			<button style="font-family: inherit; text-decoration: none; border-radius: 5px; padding: 1rem 1.2rem 1rem 1.2rem; padding-top: 12px; padding-bottom: 12px; display: block; margin-bottom: 0px; outline: none; border: none; background-color: #2b2b2b; color: white; font-size: large; font-weight: 500; text-wrap: nowrap; width: auto; font-size: small;">View Request</button>

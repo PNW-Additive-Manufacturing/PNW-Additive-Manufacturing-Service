@@ -4,10 +4,12 @@ import HorizontalWrap from "@/app/components/HorizontalWrap";
 import Account from "@/app/Types/Account/Account";
 import Link from "next/link";
 import { ChangePasswordForm } from "./ChangePasswordForm";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
 export default function Profile({ account }: { account: Account }) {
 	const [showPasswordReset, setShowPasswordReset] = useState(false);
+
+
 
 	return (
 		<HorizontalWrap>
@@ -61,8 +63,8 @@ export default function Profile({ account }: { account: Account }) {
 				<div className="flex gap-10 py-2">
 					Contact Information
 					<div>
-					<p>{account.firstName} {account.lastName}</p>
-					<p>{account.email} ({account.isEmailVerified ? <>Verified</> : <span className="font-semibold">Unverified</span>})</p>
+						<p>{account.firstName} {account.lastName}</p>
+						<p>{account.email} ({account.isEmailVerified ? <>Verified</> : <span className="font-semibold">Unverified</span>})</p>
 					</div>
 				</div>
 
@@ -78,6 +80,21 @@ export default function Profile({ account }: { account: Account }) {
 					{showPasswordReset && (
 						<ChangePasswordForm className="px-0 bg-transparent" />
 					)}
+				</div>
+
+				<div className="flex gap-10 py-2">
+					Notifications
+					<Suspense>
+						{Notification.permission == "granted" ? <>
+
+							<p className="underline hover:cursor-pointer" onClick={() => {
+
+								const notification = new Notification("Mars 4 Ultra has Completed!", { body: "I am testing!", icon: "/assets/am_logo.png" });
+
+							}}>Test Notification</p>
+
+						</> : <p className="underline hover:cursor-pointer" onClick={() => Notification.requestPermission()}>Enable</p>}
+					</Suspense>
 				</div>
 
 				<div className="py-2 mt-4">

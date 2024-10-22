@@ -19,6 +19,7 @@ export default interface Request {
 		isPaid: boolean;
 		paidAt: Date;
 		totalPriceInCents: number;
+		estimatedCompletionDate: Date,
 	};
 	refundRequest?: {
 		requestedAt: Date;

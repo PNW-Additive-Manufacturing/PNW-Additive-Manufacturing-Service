@@ -25,14 +25,17 @@ import Request, {
 } from "@/app/Types/Request/Request";
 import { Color } from "three";
 import {
+	RegularAlarmClock,
 	RegularBriefcase,
+	RegularCheckmark,
 	RegularCheckmarkCircle,
 	RegularCloudDownload,
 	RegularCloudUpload,
 	RegularCog,
 	RegularCrossCircle,
 	RegularExit,
-	RegularFiles
+	RegularFiles,
+	RegularWarning
 } from "lineicons-react";
 import Link from "next/link";
 import { useContext, useState } from "react";
@@ -48,6 +51,7 @@ import Timeline from "@/app/components/Timeline";
 import HiddenInput from "@/app/components/HiddenInput";
 import { RequestOverview } from "../../../components/RequestOverview";
 import { closingTime, isOpen } from "@/app/components/LocalSchedule";
+import { addMinutes } from "@/app/utils/TimeUtils";
 
 export default function RequestDetails({
 	request
@@ -82,10 +86,10 @@ export default function RequestDetails({
 	return (
 		<>
 			<div className="lg:flex justify-between items-start">
-				<div className="w-full">
+				<div className="w-full max-lg:mb-6">
 					<h1 className="text-4xl font-thin">{request.name}</h1>
 
-					<p className="max-lg:block mt-2 max-lg:mb-6">
+					<p className="max-lg:block mt-2">
 						You placed this request on{" "}
 						{request.submitTime.toLocaleDateString("en-us", {
 							weekday: "long",
@@ -94,20 +98,28 @@ export default function RequestDetails({
 						})}
 						.
 					</p>
+					{!isAllComplete(request.parts) && isQuotePaid && <p className="text-pnw-gold mt-2"><RegularAlarmClock className="fill-pnw-gold inline mb-0.5"></RegularAlarmClock> {request.name} is projected to be completed on {formateDate(request.quote!.estimatedCompletionDate)}.</p>}
+					{!request.isFulfilled && isAllComplete(request.parts) && !request.isFulfilled && (
+						<p className="mt-2 text-pnw-gold">
+							{isOpen
+								? <><RegularCheckmarkCircle className="fill-pnw-gold inline mb-0.5"></RegularCheckmarkCircle> One of our team members are at the Design Studio. You may pickup your parts until <span className="font-semibold">{formatTime(closingTime!)}</span>.</>
+								: <><RegularWarning className="fill-pnw-gold inline"></RegularWarning> None of our team members can assist you at this time. See our <Link className="underline" href={"/schedule"}>operating hours</Link> to pickup your parts.</>}
+						</p>
+					)}
 				</div>
-				<div className="items-end flex w-full">
+				<div className="items-end flex">
 					<div className="flex w-full gap-2 lg:justify-end max-lg:justify-between">
 						<Link href="/dashboard/user">
 							<button className="mb-0 outline outline-1 outline-gray-300 bg-white text-black fill-black flex flex-row gap-2 justify-end items-center px-3 py-2">
 								<RegularExit className="w-auto h-6 fill-inherit"></RegularExit>
-								<span className="text-sm">Go Back</span>
+								<span className="text-sm font-medium">Go Back</span>
 							</button>
 						</Link>
 						<div className="relative">
 							<button
 								className={`mb-0 px-3 py-2 text-sm outline outline-1 outline-gray-300 bg-white text-black fill-black hover:fill-white`}
 								onClick={() => setShowActions(!showActions)}>
-								<span className="text-sm">Actions</span>
+								<span className="text-sm font-medium">Actions</span>
 								<RegularCog
 									className={`${showActions ? "rotate-180" : "rotate-0"
 										} ml-2 w-6 h-auto fill-inherit inline transition-transform ease-in-out duration-500`}></RegularCog>
@@ -147,9 +159,7 @@ export default function RequestDetails({
 
 			<div className="lg:flex gap-8">
 				<div className="lg:grow">
-
-
-					<div className="flex flex-col gap-6">
+					<div className="flex flex-col gap-2">
 						{request.isFulfilled && (
 							<RequestOverview
 								title="Request Fulfilled"
@@ -162,7 +172,7 @@ export default function RequestDetails({
 
 							<div className="w-full py-2 pl-1 text-nowrap">Request Specifications</div>
 							<div className="shadow-sm p-4 lg:p-6 rounded-sm bg-white out">
-								<p>Comment from you: {request.comments}</p>
+								<p>Comments from {request.firstName} {request.lastName}: {request.comments}</p>
 							</div>
 
 						</div>}
@@ -223,7 +233,7 @@ export default function RequestDetails({
 								},
 								{
 									title: "Ready for Pick up",
-									description: <>{isOpen ? "Pickup at the PNW Design Studio" : "Pickup currently not available."}</>,
+									description: <>{isOpen ? "Pickup at the PNW Design Studio." : "Pickup currently not Available."}</>,
 									disabled: !isAllComplete(request.parts)
 								},
 								{
@@ -235,12 +245,6 @@ export default function RequestDetails({
 								}
 							]}
 						/>
-
-						{!request.isFulfilled && isAllComplete(request.parts) && !request.isFulfilled && (
-							<p className="mt-2">
-								{isOpen ? <>You may pickup your parts until {formatTime(closingTime!)} or on another business day.</> : <>None of our team members can assist you at this time. See our <Link className="underline" href={"/schedule"}>operating hours</Link> to pickup your parts.</>}
-							</p>
-						)}
 
 					</div>
 					<div className="py-2 pt-4 pl-1 w-full" id="payment_details">
