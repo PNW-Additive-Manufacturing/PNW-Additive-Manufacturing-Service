@@ -269,7 +269,7 @@ export default function RequestEditor({
 														).totalCost.toFixed(2)}
 														<p className="text-white font-light text-sm pt-1">
 															{`${requester.firstName} ${requester.lastName} will receive the quote.`}
-															<FormLoadingSpinner className="fill-white" />
+															<FormLoadingSpinner className="fill-white ml-2" />
 														</p>
 													</div>
 												</button>

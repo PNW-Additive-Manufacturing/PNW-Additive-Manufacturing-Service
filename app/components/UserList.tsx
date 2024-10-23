@@ -22,12 +22,12 @@ function UserRow({
 	};
 
 	return (
-		<tr className="">
-			<td className="">{user.email}</td>
-			<td className="">{user.firstName}</td>
-			<td className="">{user.lastName}</td>
+		<tr className="w-full border-l-4 out bg-white">
+			<td>{user.email}</td>
+			<td>{user.firstName}</td>
+			<td>{user.lastName}</td>
 			<td>{user.yearOfStudy}</td>
-			<td className="">
+			<td>
 				<div className="bg-transparent rounded-sm w-full">
 					<input type="hidden" name="user-email" value={user.email} />
 					<select
@@ -57,14 +57,14 @@ export function UserList({
 	) => void;
 }): JSX.Element {
 	return (
-		<Table className="bg-white m-auto">
+		<Table className="spaced">
 			<thead>
-				<tr className="text-gray-400">
-					<th className="text-left">Email</th>
-					<th className="text-left">First Name</th>
-					<th className="text-left">Last Name</th>
-					<th className="text-left">Year of Study</th>
-					<th className="text-left">Manage User</th>
+				<tr>
+					<th>Email</th>
+					<th>First Name</th>
+					<th>Last Name</th>
+					<th>Year of Study</th>
+					<th>Manage User</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -162,23 +162,27 @@ export function ListOfUserList({
 	};
 
 	return (
-		<>
-			<DropdownSection name={`Administrators (${adminArray.length})`}>
-				<UserList users={adminArray} onChange={onChange} />
-			</DropdownSection>
+		<div className="flex flex-col gap-4">
+			<div className="p-4 lg:p-6 rounded-sm shadow-sm bg-white out">
+				<DropdownSection name={`Administrators (${adminArray.length})`}>
+					<UserList users={adminArray} onChange={onChange} />
+				</DropdownSection>
+			</div>
 
-			<DropdownSection
-				name={`Maintainers (${maintainArray.length})`}
-				className="mt-8">
-				<UserList users={maintainArray} onChange={onChange} />
-			</DropdownSection>
+			<div className="p-4 lg:p-6 rounded-sm shadow-sm bg-white out">
+				<DropdownSection
+					name={`Maintainers (${maintainArray.length})`}>
+					<UserList users={maintainArray} onChange={onChange} />
+				</DropdownSection>
+			</div>
 
-			<DropdownSection
-				name={`Users (${normUsers.length})`}
-				hidden={true}
-				className="mt-8">
-				<UserList users={normUsers} onChange={onChange} />
-			</DropdownSection>
-		</>
+			<div className="p-4 lg:p-6 rounded-sm shadow-sm bg-white out">
+				<DropdownSection
+					name={`Users (${normUsers.length})`}
+					hidden={true}>
+					<UserList users={normUsers} onChange={onChange} />
+				</DropdownSection>
+			</div>
+		</div>
 	);
 }

@@ -89,9 +89,10 @@ export function FilamentList({
 
 	return (
 		<>
-			<DropdownSection name="Filaments" collapsible={true}>
+			<label className="ml-2">Filaments</label>
+			<div className="p-4 lg:p-6 rounded-sm shadow-sm bg-white out">
 				<p className="text-red-600">{error}</p>
-				<Table>
+				<Table className="spaced">
 					<thead>
 						<tr>
 							<th className="text-left pl-5">Material</th>
@@ -104,19 +105,13 @@ export function FilamentList({
 					</thead>
 					<tbody>
 						{filaments.map((f: Filament) => (
-							<tr key={f.material + f.color.name}>
-								<td className="text-left pl-5">
-									{f.material.toUpperCase()}
-								</td>
-								<td className="text-left">
-									<NamedSwatch swatch={f.color}></NamedSwatch>
-								</td>
+							<tr className="w-full border-l-4 out bg-white" key={f.material + f.color.name}>
+								<td>{f.material.toUpperCase()}</td>
+								<td><NamedSwatch swatch={f.color}></NamedSwatch></td>
+								<td>${(f.costPerGramInCents / 100).toFixed(2)}</td>
 								<td>
-									${(f.costPerGramInCents / 100).toFixed(2)}
-								</td>
-								<td className="text-left">
 									<select
-										className="bg-transparent"
+										className="bg-transparent mb-0"
 										onChange={(e) => changeHandler(e, f)}
 										defaultValue={
 											f.inStock ? "true" : "false"
@@ -125,10 +120,10 @@ export function FilamentList({
 										<option value="false">false</option>
 									</select>
 								</td>
-								<td className="">{f.details}</td>
-								<td className="text-left pr-5">
+								<td>{f.details}</td>
+								<td>
 									<button
-										className="bg-red-600 px-2 py-1 w-fit rounded-lg border-none"
+										className="bg-red-600 px-2 py-1 w-fit rounded-lg border-none mb-0"
 										onClick={(e) =>
 											clickHandler(f.material, f.color)
 										}>
@@ -139,7 +134,7 @@ export function FilamentList({
 						))}
 					</tbody>
 				</Table>
-			</DropdownSection>
+			</div>
 
 			<DropdownSection name="Add Filament" className="mt-8" hidden={true}>
 				<FilamentForm />

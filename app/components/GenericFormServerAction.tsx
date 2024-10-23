@@ -53,7 +53,7 @@ export default function GenericFormServerAction({
 			className={
 				className
 					? className
-					: "bg-white rounded-sm p-14 pt-10 pb-10 w-full"
+					: "p-4 lg:p-6 rounded-sm shadow-sm bg-white out"
 			}
 			action={formAction}>
 			{children}

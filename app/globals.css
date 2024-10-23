@@ -180,7 +180,9 @@ button {
 /* Table Styling */
 table.spaced
 {
-  border-spacing: 2px 15px;
+  padding-left: 2px;
+  padding-right: 2px;
+  border-spacing: 0px 14px;
   border-collapse: separate;
 }
 table thead {
