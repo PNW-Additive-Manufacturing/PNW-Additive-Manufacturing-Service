@@ -10,6 +10,7 @@ import * as crypto from "crypto";
 import { AccountPermission } from "@/app/Types/Account/Account";
 import DOMPurify from "isomorphic-dompurify";
 import getConfig from "@/app/getConfig";
+import { addMinutes } from "@/app/utils/TimeUtils";
 
 const appConfig = getConfig();
 
@@ -69,6 +70,7 @@ export async function createAccount(
 		permission as AccountPermission,
 		firstName,
 		lastName,
+		false,
 		false
 	);
 }
@@ -91,7 +93,7 @@ export async function attemptLogin(email: string, password: string) {
 	let res: postgres.RowList<postgres.Row[]>;
 	try {
 		res =
-			await db`select password, permission, firstname, lastname, isemailverified from account where email=${email}`;
+			await db`select password, permission, firstname, lastname, isemailverified, isBanned from account where email=${email}`;
 	} catch (e) {
 		console.error(e);
 		throw new Error("Error: Failed to access database!");
@@ -106,6 +108,7 @@ export async function attemptLogin(email: string, password: string) {
 	let firstname = res[0].firstname as string;
 	let lastname = res[0].lastname as string;
 	let isemailverified = res[0].isemailverified as boolean;
+	let isBanned = res[0].isbanned as boolean;
 
 	/* Because bcrypt ALWAYS uses 60 character long hashes and 
 	   our database schema forces all password hashes to be 64 characters (padding with spaces if necessary),
@@ -120,7 +123,7 @@ export async function attemptLogin(email: string, password: string) {
 		throw new Error("We couldn't log you in. Please check your email and password and try again.");
 	}
 
-	await login(email, permission, firstname, lastname, isemailverified);
+	await login(email, permission, firstname, lastname, isemailverified, isBanned);
 }
 
 export async function checkIfPasswordCorrect(
@@ -157,6 +160,7 @@ export async function login(
 	firstname: string,
 	lastname: string,
 	isemailverified: boolean,
+	isBanned: boolean,
 	expireDate?: Date
 ) {
 	let token = await makeJwt(
@@ -165,6 +169,7 @@ export async function login(
 		firstname,
 		lastname,
 		isemailverified,
+		isBanned,
 		expireDate
 	);
 
@@ -173,6 +178,7 @@ export async function login(
 	cookies().set(appConfig.sessionCookie, token, {
 		httpOnly: true, //cannot be accessed via client-side Javascript
 		sameSite: "lax", //can only be sent to same website
+		expires: expireDate || addMinutes(new Date(), 10080),
 		secure: false //TODO: set to true once we have HTTPS connection
 	});
 	return token;

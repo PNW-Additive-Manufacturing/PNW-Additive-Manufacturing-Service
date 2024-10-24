@@ -12,7 +12,7 @@ CREATE TABLE Account (
   Permission PermissionType NOT NULL DEFAULT 'user',
   IsEmailVerified BOOLEAN NOT NULL DEFAULT FALSE,
   TwoStepAuthSecret varchar(16),
-  IsTwoStepAuthSecretVerified BOOLEAN DEFAULT FALSE,
+  IsBanned BOOLEAN DEFAULT FALSE NOT NULL,
   CONSTRAINT TwoStepAuth_CHK CHECK (
     (TwoStepAuthSecret IS NULL AND IsTwoStepAuthSecretVerified = FALSE) OR
     (TwoStepAuthSecret IS NOT NULL)

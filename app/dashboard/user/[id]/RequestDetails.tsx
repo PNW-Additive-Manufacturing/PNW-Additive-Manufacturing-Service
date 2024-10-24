@@ -103,7 +103,7 @@ export default function RequestDetails({
 						<p className="mt-2 text-pnw-gold">
 							{isOpen
 								? <><RegularCheckmarkCircle className="fill-pnw-gold inline mb-0.5"></RegularCheckmarkCircle> One of our team members are at the Design Studio. You may pickup your parts until <span className="font-semibold">{formatTime(closingTime!)}</span>.</>
-								: <><RegularWarning className="fill-pnw-gold inline"></RegularWarning> None of our team members can assist you at this time. See our <Link className="underline" href={"/schedule"}>operating hours</Link> to pickup your parts.</>}
+								: <><RegularWarning className="fill-pnw-gold inline"></RegularWarning> None of our team members can assist you for pick up at this time. See our <Link className="underline" href={"/schedule"}>operating hours</Link> to pickup your parts.</>}
 						</p>
 					)}
 				</div>

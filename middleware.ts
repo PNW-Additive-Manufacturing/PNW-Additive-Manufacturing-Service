@@ -24,6 +24,7 @@ export async function middleware(request: NextRequest) {
 		nextUrl.startsWith("/not-found") ||
 		nextUrl.startsWith("/user/create-account") ||
 		nextUrl.startsWith("/user/forgot-password") ||
+		nextUrl.startsWith("/user/banned") ||
 		nextUrl.startsWith("/user/verify-email") ||
 		nextUrl.startsWith("/user/reset-password") ||
 		nextUrl.startsWith("/user/email-verified") ||
@@ -48,15 +49,14 @@ export async function middleware(request: NextRequest) {
 		return res;
 	}
 
-	if (nextUrl.indexOf(".") == -1 && request.method == "GET")
 	try
 	{
-		const sessionUpdate = (await fetch(envConfig.joinHostURL("/user/current"), { headers: headers(), method: "GET" }))?.headers?.getSetCookie()?.at(0);
+		const sessionUpdate = (await fetch(envConfig.joinHostURL("/user/current"), { headers: headers(), method: "GET", cache: "no-cache" }))?.headers?.getSetCookie()?.at(0);
 	
 		if (sessionUpdate)
 		{	
-			console.log(`Updating session...`);
-			
+			console.log("Updated session token!");			
+
 			// Redirect to the current page with new cookies to respect middleware.
 			const res = NextResponse.redirect(envConfig.joinHostURL(nextUrl));
 			res.headers.set("Set-Cookie", sessionUpdate);
@@ -70,15 +70,22 @@ export async function middleware(request: NextRequest) {
 
 	//check if JWT exists and is valid
 	let jwtPayload: UserJWT;
-	try {
+	try 
+	{
 		jwtPayload = await getJwtPayload();
-		if (jwtPayload == null) {
-			throw new Error("No JWT Exists");
-		}
-	} catch (e) {
-		console.log(e);
-		//if JWT does not exist or is invalid
+
+		if (jwtPayload == null) throw new Error("No JWT Exists");
+	} 
+	catch (e) 
+	{
 		return NextResponse.redirect(envConfig.joinHostURL("/user/login"));
+	}
+
+	// if (jwtPayload.isBanned && !(nextUrl.startsWith("/user/profile") && request.method == "GET"))
+	if (jwtPayload.isBanned)
+	{
+		// User is not longer able to access the Additive Manufacturing Service.
+		return NextResponse.redirect(envConfig.joinHostURL("/user/banned"));
 	}
 
 	if (

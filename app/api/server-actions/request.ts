@@ -76,3 +76,25 @@ export async function fulfillRequest(
 	revalidatePath("/");
 	return "";
 }
+
+const deleteRequestSchema = z.object({
+	requestId: z.coerce.number().int()
+});
+export async function deleteRequest(prevState: string, data: FormData): Promise<string> {
+	const parsedData = deleteRequestSchema.safeParse({requestId: data.get("requestId")});
+	if (!parsedData.success)
+		return `Schema Failed: ${parsedData.error.message}`;
+
+	const request = await RequestServe.fetchByIDWithAll(
+		parsedData.data.requestId
+	);
+	if (request == null) return "Request does not exist";
+
+	const jwtPayload = await getJwtPayload();
+	if (jwtPayload.permission == AccountPermission.User) return "You do not have access to this resource!";
+
+	if (isPaid(request)) return "Request cannot be deleted if Quote has been Paid!";
+
+	await RequestServe.delete(request.id);
+	redirect("/dashboard/maintainer/orders/");
+}

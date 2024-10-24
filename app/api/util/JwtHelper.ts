@@ -8,7 +8,7 @@ import * as jose from "jose";
 
 import { cookies } from "next/headers";
 
-import { z } from "zod";
+import { boolean, z } from "zod";
 import { permission } from "process";
 import { AccountPermission } from "@/app/Types/Account/Account";
 import getConfig from "@/app/getConfig";
@@ -22,13 +22,15 @@ export interface UserJWT {
 	lastname: string;
 	isemailverified: boolean;
 	jwt_expire_date: Date;
+	isBanned: boolean;
 }
 export const UserJWTSchema = z.object({
 	email: z.string().email(),
 	permission: z.nativeEnum(AccountPermission),
 	firstname: z.string(),
 	lastname: z.string(),
-	isemailverified: z.boolean()
+	isemailverified: z.boolean(),
+	isbanned: z.boolean()
 });
 
 export async function makeJwt(
@@ -37,16 +39,15 @@ export async function makeJwt(
 	firstname: string,
 	lastname: string,
 	isemailverified: boolean,
+	isbanned: boolean,
 	expireDate?: Date
 ) {
-	if (isemailverified == undefined)
-		throw new Error("IsEmailVerified is missing!");
-
 	return await new jose.SignJWT({
 		email,
 		permission,
 		firstname,
 		lastname,
+		isbanned,
 		isemailverified: isemailverified
 	})
 		.setProtectedHeader({ alg: "HS512" })
@@ -60,13 +61,11 @@ export async function getJwtPayload(): Promise<UserJWT> {
 	if (cookie == undefined) throw new Error("Session cookie is undefined");
 
 	try {
-		let jwt = await jose.jwtVerify(
-			cookie.value,
-			new TextEncoder().encode(process.env.JWT_SECRET!)
-		);
+		let jwt = await jose.jwtVerify(cookie.value, new TextEncoder().encode(process.env.JWT_SECRET!));
 
 		const parsedPayload = UserJWTSchema.safeParse(jwt.payload);
 		if (!parsedPayload.success) {
+			console.error("SCHEMA ERROR");
 			throw new Error("Session was not validated correctly");
 		}
 
@@ -77,11 +76,12 @@ export async function getJwtPayload(): Promise<UserJWT> {
 			firstname: parsedPayload.data.firstname as string,
 			lastname: parsedPayload.data.lastname as string,
 			isemailverified: parsedPayload.data.isemailverified as boolean,
+			isBanned: parsedPayload.data.isbanned,
 			//JWT stores their expiration dates in SECONDS, not milliseconds like Javascript Date
 			jwt_expire_date: new Date((jwt.payload.exp ?? 0) * 1000)
 		};
 	} catch (e: any) {
-		throw new Error("Invalid Token! Log Back In!");
+		throw new Error("Invalid Token! Log Back In!\n" + e);
 	}
 }
 
@@ -111,6 +111,7 @@ export async function retrieveSafeJWTPayload(): Promise<UserJWT | null> {
 			firstname: parsedPayload.data.firstname as string,
 			lastname: parsedPayload.data.lastname as string,
 			isemailverified: parsedPayload.data.isemailverified as boolean,
+			isBanned: parsedPayload.data.isbanned,
 			//JWT stores their expiration dates in SECONDS, not milliseconds like Javascript Date
 			jwt_expire_date: new Date((jwt.payload.exp ?? 0) * 1000)
 		};

@@ -31,12 +31,13 @@ export async function GET(request: NextRequest)
     // Spot the differences between the JWT and the actual account!
     const isEmailVerificationChanged = currentJWT?.isemailverified != accountDetails?.isEmailVerified;
     const isPermissionChanged = currentJWT.permission != accountDetails?.permission;
+    const isBannedChanged = currentJWT.isBanned != accountDetails.isBanned;
             
     const res = NextResponse.json(accountDetails);
 
-    if (isEmailVerificationChanged || isPermissionChanged)
+    if (isEmailVerificationChanged || isPermissionChanged || isBannedChanged)
     {
-        const token = await login(accountDetails.email, accountDetails.permission, accountDetails.firstName, accountDetails.lastName, accountDetails.isEmailVerified);
+        const token = await login(accountDetails.email, accountDetails.permission, accountDetails.firstName, accountDetails.lastName, accountDetails.isEmailVerified, accountDetails.isBanned);
         res.cookies.set(envConfig.sessionCookie, token);
     }
     return res;

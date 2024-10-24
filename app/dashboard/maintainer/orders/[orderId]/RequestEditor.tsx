@@ -2,6 +2,7 @@
 
 import {
 	cancelRequest,
+	deleteRequest,
 	fulfillRequest
 } from "@/app/api/server-actions/request";
 import Account from "@/app/Types/Account/Account";
@@ -42,6 +43,7 @@ import StatusPill from "@/app/components/StatusPill";
 import { RequestOverview } from "@/app/components/RequestOverview";
 import { formateDate } from "@/app/api/util/Constants";
 import FormLoadingSpinner from "@/app/components/FormLoadingSpinner";
+import { Dialog } from "@headlessui/react";
 
 export default function RequestEditor({
 	request,
@@ -62,6 +64,7 @@ export default function RequestEditor({
 	const [showRevoke, setShowRevoke] = useState(false);
 	const [quoteState, setQuoteFormAction] = useFormState(setQuote, "");
 	const [fulfillState, fulfillAction] = useFormState(fulfillRequest, "");
+	const [deleteRequestError, deleteRequestAction] = useFormState(deleteRequest, "");
 
 	return (
 		<>
@@ -81,6 +84,7 @@ export default function RequestEditor({
 						.
 					</p>
 				</div>
+
 				<div className="items-end flex w-full">
 					<div className="flex w-full gap-2 lg:justify-end max-lg:justify-between">
 						<Link href="/dashboard/maintainer/orders">
@@ -113,11 +117,7 @@ export default function RequestEditor({
 										<RegularFiles className="ml-2 w-6 h-6 inline-block fill-black"></RegularFiles>
 									</button> */}
 									<form action={fulfillAction}>
-										<input
-											name="requestId"
-											value={request.id}
-											readOnly
-											hidden></input>
+										<input name="requestId" value={request.id} readOnly hidden></input>
 										<button
 											className="bg-transparent px-3 py-2 text-sm mb-0 w-full text-black hover:text-black rounded-none hover:bg-transparent hover:underline"
 											type="submit"
@@ -130,14 +130,17 @@ export default function RequestEditor({
 											<RegularCheckBox className="ml-2 w-6 h-6 inline-block fill-black"></RegularCheckBox>
 										</button>
 									</form>
-									<button
-										className="bg-transparent px-3 py-2 text-sm mb-0 w-full text-red-700 hover:text-red-700 rounded-none hover:bg-transparent hover:underline"
-										type="button"
-										onClick={() => setShowRevoke(true)}
-										disabled={hasQuote(request)}>
-										Revoke Request
-										<RegularCrossCircle className="ml-2 w-6 h-6 inline-block fill-red-700"></RegularCrossCircle>
-									</button>
+									<form action={deleteRequestAction}>
+										<input name="requestId" value={request.id} readOnly hidden></input>
+										<button
+											className="bg-transparent px-3 py-2 text-sm mb-0 w-full text-red-700 hover:text-red-700 rounded-none hover:bg-transparent hover:underline"
+											type="submit"
+											disabled={isPaid(request)}>
+											Delete Request
+											<RegularCrossCircle className="ml-2 w-6 h-6 inline-block fill-red-700"></RegularCrossCircle>
+										</button>
+										<p>{deleteRequestError}</p>
+									</form>
 								</div>
 							</div>
 						</div>

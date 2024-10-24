@@ -42,7 +42,8 @@ export default class AccountServe {
 				balanceInDollars: 0,
 				joinedAt: accountRow.joinedat,
 				isTwoStepAuthVerified: accountRow.istwostepauthverified,
-				yearOfStudy: accountRow.yearofstudy
+				yearOfStudy: accountRow.yearofstudy,
+				isBanned: accountRow.isbanned
 			}
 		});
 	}
@@ -63,7 +64,8 @@ export default class AccountServe {
 			balanceInDollars: (await AccountServe.getBalance(email)) / 100,
 			joinedAt: accountRow.joinedat,
 			isTwoStepAuthVerified: accountRow.istwostepauthverified,
-			yearOfStudy: accountRow.yearofstudy
+			yearOfStudy: accountRow.yearofstudy,
+			isBanned: accountRow.isbanned
 		};
 	}
 

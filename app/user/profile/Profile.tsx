@@ -82,7 +82,7 @@ export default function Profile({ account }: { account: Account }) {
 					)}
 				</div>
 
-				<div className="flex gap-10 py-2">
+				{/* <div className="flex gap-10 py-2">
 					Notifications
 					<Suspense>
 						{Notification.permission == "granted" ? <>
@@ -95,7 +95,7 @@ export default function Profile({ account }: { account: Account }) {
 
 						</> : <p className="underline hover:cursor-pointer" onClick={() => Notification.requestPermission()}>Enable</p>}
 					</Suspense>
-				</div>
+				</div> */}
 
 				<div className="py-2 mt-4">
 					<a

@@ -27,6 +27,7 @@ export default interface Account {
 	balanceInDollars: number;
 	isTwoStepAuthVerified: boolean;
 	yearOfStudy: string;
+	isBanned: boolean;
 }
 
 export function shortenedName(account: Account) {

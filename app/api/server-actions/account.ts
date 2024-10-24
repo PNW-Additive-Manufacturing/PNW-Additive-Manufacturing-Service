@@ -172,7 +172,8 @@ export async function editName(
 		jwtPayload.permission as AccountPermission,
 		fname,
 		lname,
-		res.at(0)!.isemailverified as boolean
+		res.at(0)!.isemailverified as boolean,
+		jwtPayload.isBanned
 	);
 
 	return "";

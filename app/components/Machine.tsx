@@ -45,6 +45,8 @@ export function MachineIndicator(machinedData: MachineData) {
 				return "/assets/Bambu Lab A1 mini_cover.png";
 			case "A1":
 				return "/assets/Bambu Lab A1_cover.png";
+			case "Mars 4 Ultra":
+				return "/assets/mars4ultra.jpg"
 			default:
 				// TODO: Replace with an unknown printer cover photo.
 				return "/assets/Bambu Lab X1_cover.png";
@@ -56,13 +58,13 @@ export function MachineIndicator(machinedData: MachineData) {
 			<div
 				style={{ backgroundColor: "#efefef" }}
 				className="rounded-lg flex flex-col justify-between">
-				<div className="h-28 relative aspect-square">
+				<div className="h-32 w-32">
 					<Image
 						src={getImageWithModel(machinedData.model)}
 						alt={`${machinedData.model} cover`}
 						width={720}
 						height={720}
-						className="w-full h-auto rounded-lg"
+						className="h-32 w-32 object-contain rounded-lg"
 					/>
 				</div>
 				<div>
@@ -102,11 +104,11 @@ export default function Machine(
 					<MachineIndicator {...machinedData}></MachineIndicator>
 					<div className="flex gap-1.5 h-fit">
 						{machinedData.filaments != undefined &&
-						machinedData.filaments.length > 0 ? (
+							machinedData.filaments.length > 0 ? (
 							<>
 								<div
 									className={`h-full flex flex-col gap-1.5 px-2 py-1.5 rounded-md pb-3 border-2 border-gray-300 border-opacity-50`}
-									// style={{ backgroundColor: "#efefef" }}
+								// style={{ backgroundColor: "#efefef" }}
 								>
 									<p className="text-xs text-gray-600 text-center">
 										{machinedData.filaments.at(0)

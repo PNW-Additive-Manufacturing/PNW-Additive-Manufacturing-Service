@@ -27,6 +27,7 @@ function UserRow({
 			<td>{user.firstName}</td>
 			<td>{user.lastName}</td>
 			<td>{user.yearOfStudy}</td>
+			<td>{user.isBanned ? <span className="text-red-500">Banned</span> : "Active"}</td>
 			<td>
 				<div className="bg-transparent rounded-sm w-full">
 					<input type="hidden" name="user-email" value={user.email} />
@@ -64,6 +65,7 @@ export function UserList({
 					<th>First Name</th>
 					<th>Last Name</th>
 					<th>Year of Study</th>
+					<th>Registration</th>
 					<th>Manage User</th>
 				</tr>
 			</thead>

@@ -58,26 +58,23 @@ export default function Farm({
 		return () => clearInterval(interval);
 	});
 
-	useEffectOnce(() => {
-		if (machines == null && !isLoading) {
+	useEffect(() => {
+		if (machines?.machines == null && !isLoading) {
 			updateMachines();
 		}
-	});
+	}, []);
 
 	let isOutOfDate = machines.lastUpdated + 15000 < Date.now();
-	console.log(isOutOfDate);
 
 	return (
 		<>
 			<div className="flex justify-between items-center">
 				<div className="flex items-center gap-2">
-					{/* <StatusPill statusColor="pnw-gold" context="Live"></StatusPill> */}
 					<h2 className="text-xl font-light my-4">Farm Management</h2>
 					<div className="flex items-center gap-1 pt-0.5">
 						<div
-							className={`w-3.5 h-3.5 border-2 border-gray-200 rounded-full ${
-								isOutOfDate ? "bg-red-500" : "bg-pnw-gold"
-							}`}
+							className={`w-3.5 h-3.5 border-2 border-gray-200 rounded-full ${isOutOfDate ? "bg-red-500" : "bg-pnw-gold"
+								}`}
 						/>
 						<span
 							className={
@@ -86,7 +83,6 @@ export default function Farm({
 							{isOutOfDate ? "Disconnected" : "Live"}
 						</span>
 					</div>
-					{/* <span className="text-sm uppercase">Live</span> */}
 				</div>
 
 				<div className="flex h-fit gap-4 items-center">
@@ -97,7 +93,7 @@ export default function Farm({
 									(m) => m.status == "Printing"
 								).length /
 									machines.machines.length) *
-									100
+								100
 							)}
 							% Utilization
 						</div>
@@ -107,15 +103,13 @@ export default function Farm({
 						<p>{machines.machines.length ?? 0} Printers</p>
 					)}
 					<div
-						className={`flex items-center hover:text-pnw-gold hover:fill-pnw-gold fill-black hover:cursor-pointer ${
-							isLoading && "fill-pnw-gold text-pnw-gold"
-						}`}
+						className={`flex items-center hover:text-pnw-gold hover:fill-pnw-gold fill-black hover:cursor-pointer ${isLoading && "fill-pnw-gold text-pnw-gold"
+							}`}
 						onClick={async () => await updateMachines()}>
 						Reload
 						<RegularSpinnerSolid
-							className={`fill-inherit w-auto h-auto inline ml-2 ${
-								isLoading && "animate-spin"
-							}`}></RegularSpinnerSolid>
+							className={`fill-inherit w-auto h-auto inline ml-2 ${isLoading && "animate-spin"
+								}`}></RegularSpinnerSolid>
 					</div>
 				</div>
 			</div>

@@ -56,7 +56,8 @@ export async function GET(request: NextRequest) {
 		existingJWT.permission as AccountPermission,
 		existingJWT.firstname,
 		existingJWT.lastname,
-		true
+		true,
+		existingJWT.isBanned
 	);
 
 	return NextResponse.redirect(envConfig.joinHostURL("/user/email-verified"));
