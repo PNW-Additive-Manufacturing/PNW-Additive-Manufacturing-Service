@@ -50,7 +50,7 @@ export default function Team() {
 				<div className="grid grid-cols-2 lg:grid-cols-3 max-lg:justify-between max-lg:gap-y-4 gap-4 w-full">
 					<Card
 						name="Aaron Jung"
-						role="President"
+						role="President and Developer"
 						email="jung416@pnw.edu"
 						avatar="https://cdn.discordapp.com/avatars/1206320920323563551/90761d25f0e7d0c43a147378f5d22e9b.png?size=640" />
 					<Card

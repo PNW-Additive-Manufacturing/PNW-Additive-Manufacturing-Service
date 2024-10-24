@@ -5,7 +5,7 @@ import {
 	deleteRequest,
 	fulfillRequest
 } from "@/app/api/server-actions/request";
-import Account from "@/app/Types/Account/Account";
+import Account, { AccountPermission } from "@/app/Types/Account/Account";
 import { isAllComplete, isAllPending } from "@/app/Types/Part/Part";
 import Request, {
 	getRequestStatus,
@@ -18,8 +18,12 @@ import Request, {
 	RequestWithParts
 } from "@/app/Types/Request/Request";
 import {
+	RegularCarAlt,
+	RegularCart,
+	RegularCartFull,
 	RegularCheckBox,
 	RegularCog,
+	RegularCreditCards,
 	RegularCrossCircle,
 	RegularDatabase,
 	RegularEnvelope,
@@ -28,10 +32,13 @@ import {
 	RegularLink,
 	RegularPagination,
 	RegularShare,
+	RegularTargetCustomer,
+	RegularTrashCan,
+	RegularUser,
 	RegularWallet
 } from "lineicons-react";
 import Link from "next/link";
-import { Suspense, useState } from "react";
+import { Suspense, useContext, useState } from "react";
 import { useFormState } from "react-dom";
 import { revokePart, setQuote } from "@/app/api/server-actions/maintainer";
 import PartEditor from "./PartEditor";
@@ -44,6 +51,7 @@ import { RequestOverview } from "@/app/components/RequestOverview";
 import { formateDate } from "@/app/api/util/Constants";
 import FormLoadingSpinner from "@/app/components/FormLoadingSpinner";
 import { Dialog } from "@headlessui/react";
+import { AccountContext } from "@/app/ContextProviders";
 
 export default function RequestEditor({
 	request,
@@ -108,14 +116,7 @@ export default function RequestEditor({
 											} ml-2 w-6 h-auto fill-inherit inline transition-transform ease-in-out duration-500`}></RegularCog>
 								</button>
 								<div
-									className={`${showActions ? "" : "hidden"
-										} mt-2 absolute w-fit h-fit bg-white right-0 py-2 px-2 rounded-md flex flex-col gap-1 z-10 outline outline-1 outline-gray-300`}>
-									{/* <button
-										className="px-3 py-2 text-sm mb-0 w-full bg-transparent text-black hover:text-black rounded-none hover:bg-transparent hover:underline"
-										disabled>
-										Download PDF
-										<RegularFiles className="ml-2 w-6 h-6 inline-block fill-black"></RegularFiles>
-									</button> */}
+									className={`${showActions ? "" : "hidden"} mt-2 absolute w-fit h-fit bg-white right-0 py-2 px-2 rounded-md flex flex-col gap-1 z-10 outline outline-1 outline-gray-300`}>
 									<form action={fulfillAction}>
 										<input name="requestId" value={request.id} readOnly hidden></input>
 										<button
@@ -137,7 +138,7 @@ export default function RequestEditor({
 											type="submit"
 											disabled={isPaid(request)}>
 											Delete Request
-											<RegularCrossCircle className="ml-2 w-6 h-6 inline-block fill-red-700"></RegularCrossCircle>
+											<RegularTrashCan className="ml-2 w-6 h-6 inline-block fill-red-700"></RegularTrashCan>
 										</button>
 										<p>{deleteRequestError}</p>
 									</form>
@@ -170,7 +171,7 @@ export default function RequestEditor({
 						</div>}
 
 						<div>
-							<div className="py-2 pl-1 w-full">
+							<div className="py-2 px-1 w-full">
 								Manage {request.parts.length}{" "}
 								{request.parts.length > 1 ? "Parts" : "Part"}
 							</div>
@@ -188,7 +189,7 @@ export default function RequestEditor({
 						</div>
 					</div>
 
-					<DropdownSection
+					{useContext(AccountContext).account?.permission == AccountPermission.Admin && <DropdownSection
 						name="Developer Information"
 						icon={
 							<RegularPagination className="inline-block w-auto h-6 pb-0.5 ml-2 fill-pnw-gold" />
@@ -219,10 +220,10 @@ export default function RequestEditor({
 								/>
 							</div>
 						</div>
-					</DropdownSection>
+					</DropdownSection>}
 				</div>
-				<div className="lg:w-132">
-					<div className="py-2 pt-2 pl-1 w-full">Payment Details</div>
+				<div className="lg:w-92 lg:min-w-92">
+					<div className="py-2 pt-2 px-1 w-full">Payment Details</div>
 					<div className="p-4 lg:p-6 rounded-t-sm shadow-sm bg-white font-light outline outline-2 outline-gray-200">
 						{isAllPriced(request) ? (
 							<>
@@ -289,7 +290,7 @@ export default function RequestEditor({
 						)}
 					</div>
 
-					<div className="py-2 pt-4 pl-1 w-full">
+					<div className="py-2 pt-4 px-1 w-full">
 						Requester Information
 					</div>
 					<div className="p-4 lg:p-6 rounded-sm shadow-sm bg-white font-light text-base outline outline-2 outline-gray-200">

@@ -196,7 +196,7 @@ export default function RequestDetails({
 						</div>
 					</div>
 				</div>
-				<div className="lg:w-132">
+				<div className="lg:w-92 lg:min-w-92">
 					<div className="py-2 pl-1 w-full">Request Overview</div>
 
 					<div className="shadow-sm p-4 lg:p-6 rounded-sm bg-white out">
