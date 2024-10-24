@@ -222,7 +222,7 @@ export default function RequestEditor({
 						</div>
 					</DropdownSection>}
 				</div>
-				<div className="lg:w-92 lg:min-w-92">
+				<div className="lg:w-92 lg:min-w-92" style={{ minWidth: "23rem" }}>
 					<div className="py-2 pt-2 px-1 w-full">Payment Details</div>
 					<div className="p-4 lg:p-6 rounded-t-sm shadow-sm bg-white font-light outline outline-2 outline-gray-200">
 						{isAllPriced(request) ? (
@@ -325,7 +325,7 @@ export default function RequestEditor({
 function AlreadyQuoteButton({ request }: { request: Request }) {
 	return (
 		<button
-			className="mb-0 py-4 shadow-md text-left bg-green-600 w-full"
+			className="mb-0 py-4 shadow-md text-left w-full"
 			disabled>
 			Quote Processed
 			<p className="text-white font-light text-sm">

@@ -35,6 +35,9 @@ import {
 	RegularCrossCircle,
 	RegularExit,
 	RegularFiles,
+	RegularHand,
+	RegularHandshake,
+	RegularPackage,
 	RegularWarning
 } from "lineicons-react";
 import Link from "next/link";
@@ -102,8 +105,8 @@ export default function RequestDetails({
 					{!request.isFulfilled && isAllComplete(request.parts) && !request.isFulfilled && (
 						<p className="mt-2 text-pnw-gold">
 							{isOpen
-								? <><RegularCheckmarkCircle className="fill-pnw-gold inline mb-0.5"></RegularCheckmarkCircle> One of our team members are at the Design Studio. You may pickup your parts until <span className="font-semibold">{formatTime(closingTime!)}</span>.</>
-								: <><RegularWarning className="fill-pnw-gold inline"></RegularWarning> None of our team members can assist you for pick up at this time. See our <Link className="underline" href={"/schedule"}>operating hours</Link> to pickup your parts.</>}
+								? <><RegularPackage className="fill-pnw-gold inline mr-0.5"></RegularPackage> One of our team members are at the Design Studio. You may pickup your parts until <span className="font-semibold">{formatTime(closingTime!)}</span>.</>
+								: <><RegularPackage className="fill-pnw-gold inline mr-0.5"></RegularPackage> None of our team members can assist you for pick up at this time. See our <Link className="underline" href={"/schedule"}>operating hours</Link> to pickup your parts.</>}
 						</p>
 					)}
 				</div>
@@ -196,7 +199,7 @@ export default function RequestDetails({
 						</div>
 					</div>
 				</div>
-				<div className="lg:w-92 lg:min-w-92">
+				<div className="lg:w-92 lg:min-w-92" style={{ minWidth: "23rem" }}>
 					<div className="py-2 pl-1 w-full">Request Overview</div>
 
 					<div className="shadow-sm p-4 lg:p-6 rounded-sm bg-white out">
