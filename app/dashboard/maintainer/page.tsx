@@ -20,7 +20,7 @@ export default async function Maintainer() {
 		permission = null;
 	}
 
-	const orderCount = (await db`select COUNT(*) from Request`)[0] as {
+	const orderCount = (await db`SELECT COUNT(*) FROM Request WHERE FulfilledAt IS NULL`)[0] as {
 		count: number;
 	};
 	const userCount = (await db`select COUNT(*) from Account`)[0] as {
