@@ -221,7 +221,7 @@ export default function RequestEditor({
 						</div>
 					</DropdownSection>
 				</div>
-				<div className="lg:w-92">
+				<div className="lg:w-132">
 					<div className="py-2 pt-2 pl-1 w-full">Payment Details</div>
 					<div className="p-4 lg:p-6 rounded-t-sm shadow-sm bg-white font-light outline outline-2 outline-gray-200">
 						{isAllPriced(request) ? (
