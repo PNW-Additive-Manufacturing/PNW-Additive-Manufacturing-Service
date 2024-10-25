@@ -143,7 +143,7 @@ export async function requestQuotedHTML(request: RequestWithParts, trackingId?: 
 		request.lastName,
 		`
 		<p style="font-family: inherit; color: rgb(64, 64, 64); font-size: medium;">
-			Your request for ${DOMPurify.sanitize(request.name)} has been approved and quoted and is projected to be completed by ${formateDate(request.quote!.estimatedCompletionDate)}. To continue, please review and approve the quote on our website.
+			Your request for ${DOMPurify.sanitize(request.name)} has been approved and quoted and is estimated to be completed by ${formateDate(request.quote!.estimatedCompletionDate)}. To continue, please review and approve the quote on our website.
 		</p>
 		<a href=${`${envConfig.hostURL}/dashboard/user/${request.id}${trackingId ? `?trackingId=${trackingId}` : ""}#payment_details`} target="_blank" style="font-family: inherit; text-decoration:none; height: fit-content; width: fit-content; display: block;">
 			<button style="font-family: inherit; text-decoration: none; border-radius: 5px; padding: 1rem 1.2rem 1rem 1.2rem; padding-top: 12px; padding-bottom: 12px; display: block; margin-bottom: 0px; outline: none; border: none; background-color: #2b2b2b; color: white; font-size: large; font-weight: 500; text-wrap: nowrap; width: auto; font-size: small;">View Quote</button>
@@ -157,7 +157,7 @@ export async function requestQuotedFreeHTML(request: RequestWithParts, trackingI
 		request.lastName,
 		`
 		<p style="font-family: inherit; color: rgb(64, 64, 64); font-size: medium;">
-			Your request for ${DOMPurify.sanitize(request.name)} has been approved and is projected to be completed by ${formateDate(request.quote!.estimatedCompletionDate)}. 
+			Your request for ${DOMPurify.sanitize(request.name)} has been approved and is estimated to be completed by ${formateDate(request.quote!.estimatedCompletionDate)}. 
 		</p>
 		<a href=${`${envConfig.hostURL}/dashboard/user/${request.id}${trackingId ? `?trackingId=${trackingId}` : ""}#payment_details`} target="_blank" style="font-family: inherit; text-decoration:none; height: fit-content; width: fit-content; display: block;">
 			<button style="font-family: inherit; text-decoration: none; border-radius: 5px; padding: 1rem 1.2rem 1rem 1.2rem; padding-top: 12px; padding-bottom: 12px; display: block; margin-bottom: 0px; outline: none; border: none; background-color: #2b2b2b; color: white; font-size: large; font-weight: 500; text-wrap: nowrap; width: auto; font-size: small;">View Request</button>

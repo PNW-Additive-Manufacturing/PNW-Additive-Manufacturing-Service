@@ -32,8 +32,12 @@ import {
 import {
 	RegularCloudDownload,
 	RegularCrossCircle,
+	RegularDownload,
+	RegularMoneyProtection,
 	RegularSpinnerSolid,
-	RegularUpload
+	RegularTimer,
+	RegularUpload,
+	RegularWeight
 } from "lineicons-react";
 import { ChangeEvent, ChangeEventHandler, Suspense, useState } from "react";
 import { useFormState } from "react-dom";
@@ -146,7 +150,6 @@ export default function PartEditor({
 
 	let [error, formAction] = useFormState<any, FormData>(
 		async (prevState, data) => {
-			console.log(data, watch("supplementedFilamentColorName"));
 			if (!isStatusChanged) data.delete("status");
 			if (!isCostChanged) data.delete("costInDollars");
 			if (!isEditingFilament) {
@@ -358,54 +361,6 @@ export default function PartEditor({
 											</span>
 											Fused Deposition Modeling
 										</p>
-										<p className="my-0.5">
-											<span className="font-light">
-												{"Automatic Analysis: "}
-											</span>
-											{part.model.analysisResults ? (
-												<>
-													<>
-														{
-															part.model
-																.analysisResults!
-																.estimatedFilamentUsedInGrams
-														}{" "}
-														(g)
-													</>
-													<>
-														{
-															part.model
-																.analysisResults!
-																.estimatedDuration
-														}
-													</>
-												</>
-											) : part.model
-												.analysisFailedReason ? (
-												<>
-													Failed due to{" "}
-													{
-														part.model
-															.analysisFailedReason
-													}
-													!
-												</>
-											) : (
-												<>None performed.</>
-											)}
-										</p>
-										{/* <p className="my-0.5">
-											<span className="font-light">
-												{"Profile: "}
-											</span>
-											Standard
-										</p> */}
-										{/* <p className="my-0.5">
-											<span className="font-light">
-												{"Comment: "}
-											</span>
-											{"No comment provided."}
-										</p> */}
 
 										<div className="my-0.5">
 											{part.supplementedFilament !=
@@ -519,8 +474,8 @@ export default function PartEditor({
 										</div>
 									</div>
 								</div>
-								<div className={count > 2 ? "mt-6 w-auto" : "w-96"}>
-									<div className="w-full h-40 lg:h-48 outline-gray-300 bg-gray-50 outline-1 outline rounded-sm relative shadow-sm">
+								<div className={count > 2 ? "mt-6 w-auto" : "lg:w-96"}>
+									<div className="w-full h-40 lg:h-52 outline-gray-300 bg-gray-50 outline-1 outline rounded-sm relative shadow-sm">
 										<ModelViewer
 											swatch={
 												part.supplementedFilament
@@ -529,40 +484,43 @@ export default function PartEditor({
 											}
 											modelURL={`/api/download/model?modelId=${part.modelId}`}></ModelViewer>
 									</div>
-									<div className="py-1 px-1 mt-1">
-										{part.model.analysisResults && (
-											<div className="bg-pnw-gold w-full rounded-md text-xs px-2 py-1">
-												<p>Analysis Completed</p>
-												<p>
-													{
-														part.model
-															.analysisResults
-															.estimatedDuration
-													}
-												</p>
-												<p>
-													{
-														part.model
-															.analysisResults
-															.estimatedFilamentUsedInGrams
-													}{" "}
-													(g)
-												</p>
+									<div>
+										<div className="bg-background flex w-full p-3 gap-4 items-center text-sm rounded-b-sm min-h-12 justify-between">
+											{part.model.analysisResults ? (
+												<div className="flex items-center gap-4">
+													<div>
+														<RegularTimer className="w-5.5 h-5.5 inline mr-2 mb-0.5"></RegularTimer>
+														{part.model.analysisResults.estimatedDuration}{" "}
+														D/H/m
+													</div>
+													<div>
+														<RegularWeight className="w-5.5 h-5.5 inline mr-2 mb-0.5"></RegularWeight>
+														{
+															part.model
+																.analysisResults
+																.estimatedFilamentUsedInGrams
+														}{" "}
+														g
+													</div>
+												</div>
+											) : part.model.analysisFailedReason ? <p className="opacity-50 text-red-500">Automatic Analysis Failed: {part.model.analysisFailedReason}</p> : <p className="opacity-50">Automatic Analysis not Performed</p>}
+
+											<div className="flex gap-4">
+												{/* {part.model.analysisResults && <a className="opacity-50 hover:opacity-100"
+													href={`/api/download/model?modelId=${part.modelId}`}
+													download={`${part.model.name}.stl`}
+													target="_blank">
+													Send to Farm
+												</a>} */}
+												<a className="opacity-50 hover:opacity-100"
+													href={`/api/download/model?modelId=${part.modelId}`}
+													download={`${part.model.name}.stl`}
+													target="_blank">
+													Download
+													<RegularDownload className="ml-2 inline mb-0.5"></RegularDownload>
+												</a>
 											</div>
-										)}
-										<a
-											className="flex text-xs text-nowrap justify-between items-center opacity-50 hover:opacity-100"
-											href={`/api/download/model?modelId=${part.modelId}`}
-											download={`${part.model.name}.stl`}
-											target="_blank">
-											Download (
-											{`${Math.round(
-												part.model.fileSizeInBytes /
-												1000
-											)} kB`}
-											)
-											<RegularCloudDownload className="fill-cool-black w-6 h-6 p-0.5"></RegularCloudDownload>
-										</a>
+										</div>
 									</div>
 								</div>
 							</div>

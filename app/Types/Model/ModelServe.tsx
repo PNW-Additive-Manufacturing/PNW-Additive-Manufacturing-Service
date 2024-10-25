@@ -16,15 +16,15 @@ export default class ModelServe {
 			name: modelRow.name,
 			ownerEmail: modelRow.owneremail,
 			fileSizeInBytes: Number.parseInt(modelRow.filesizeinbytes),
-			analysisFailedReason: analysisQuery?.failedReason,
+			analysisFailedReason: analysisQuery?.failedreason,
 			analysisResults:
-				analysisQuery == undefined
-					? undefined
-					: {
-							estimatedDuration: analysisQuery!.estimatedduration,
-							estimatedFilamentUsedInGrams:
-								analysisQuery.estimatedfilamentusedingrams
-					  }
+				analysisQuery != undefined && analysisQuery?.failedreason == undefined
+					? {
+						estimatedDuration:
+							analysisQuery!.estimatedduration,
+						estimatedFilamentUsedInGrams: parseFloat(analysisQuery.estimatedfilamentusedingrams)
+					}
+					: undefined
 		};
 	}
 
@@ -43,16 +43,15 @@ export default class ModelServe {
 					name: modelRow.name,
 					ownerEmail: modelRow.owneremail,
 					fileSizeInBytes: Number.parseInt(modelRow.filesizeinbytes),
-					analysisFailedReason: analysisQuery?.failedReason,
+					analysisFailedReason: analysisQuery?.failedreason,
 					analysisResults:
-						analysisQuery == undefined
-							? undefined
-							: {
-									estimatedDuration:
-										analysisQuery!.estimatedduration,
-									estimatedFilamentUsedInGrams:
-										analysisQuery.estimatedfilamentusedingrams
-							  }
+						analysisQuery != undefined && analysisQuery?.failedreason == undefined
+							? {
+								estimatedDuration:
+									analysisQuery!.estimatedduration,
+								estimatedFilamentUsedInGrams: parseFloat(analysisQuery.estimatedfilamentusedingrams)
+							}
+							: undefined
 				};
 			})
 		);

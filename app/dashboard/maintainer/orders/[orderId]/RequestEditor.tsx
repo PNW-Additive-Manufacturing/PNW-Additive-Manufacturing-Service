@@ -77,6 +77,13 @@ export default function RequestEditor({
 	const [fulfillState, fulfillAction] = useFormState(fulfillRequest, "");
 	const [deleteRequestError, deleteRequestAction] = useFormState(deleteRequest, "");
 
+	let totalGrams = 0;
+	for (const part of request.parts) {
+		if (part.model?.analysisResults) {
+			totalGrams += part.model!.analysisResults!.estimatedFilamentUsedInGrams;
+		}
+	}
+
 	return (
 		<>
 			<div className="lg:flex justify-between items-start">
@@ -174,9 +181,9 @@ export default function RequestEditor({
 						</div>}
 
 						<div>
-							<div className="py-2 px-1 w-full">
-								Manage {request.parts.length}{" "}
-								{request.parts.length > 1 ? "Parts" : "Part"}
+							<div className="flex justify-between items-center py-2 px-1 w-full">
+								<span>Manage {request.parts.length} {request.parts.length > 1 ? "Parts" : "Part"}</span>
+								{/* {totalGrams > 0 && <span>Estimated: Total {totalGrams} g</span>} */}
 							</div>
 							<div className={`grid ${request.parts.length > 2 && "2xl:grid-cols-2"} gap-4`}>
 								{request.parts.map((part, index) => (

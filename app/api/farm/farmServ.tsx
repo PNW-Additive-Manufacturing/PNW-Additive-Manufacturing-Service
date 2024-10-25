@@ -26,8 +26,7 @@ export async function findMachinesWithFilament(
 	try {
 		printerData = await (
 			await fetch(
-				`${
-					env.farmAPIUrl
+				`${env.farmAPIUrl
 				}/find-available?material=${material.toUpperCase()}&color=${colorHex}`,
 				{ cache: "no-cache" }
 			)
@@ -39,4 +38,11 @@ export async function findMachinesWithFilament(
 		);
 	}
 	return Object.keys(printerData!);
+}
+
+export async function findMachineWithFile(fileName: string): Promise<MachineData | undefined> {
+	let machines = await fetchMachines();
+	if (machines == null) return undefined;
+
+	return machines.find(m => m.filename && m.filename.trim().toLowerCase() == fileName.trim().toLowerCase());
 }

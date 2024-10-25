@@ -214,13 +214,12 @@ export default function ModelViewer({
 			) : (
 				<>
 					<Canvas
-						className="rounded-lg"
+						className="rounded-lg bg-background"
 						frameloop="demand"
 						shadows
 						style={{
 							width: "100%",
 							height: "100%",
-							backgroundColor: "#efefef"
 						}}>
 						<EngineeringCamera
 							focusedGeometry={STLModel}></EngineeringCamera>
@@ -234,10 +233,10 @@ export default function ModelViewer({
 							}
 							position={new Vector3(0, 0, -0.1)}>
 
-							<planeGeometry args={[256, 256]}></planeGeometry>
+							<planeGeometry args={[STLModel.boundingBox!.max.x * 2 * 4, STLModel.boundingBox!.max.x * 2 * 4]}></planeGeometry>
 							<gridHelper
 								position={new Vector3(0, 0, 0.05)}
-								args={[256, 256 / 23, "#b1810b", "#a6a6a6"]}
+								args={[STLModel.boundingBox!.max.x * 2 * 4, STLModel.boundingBox!.max.x * 2 * 4 / STLModel.boundingBox!.max.x, "#b1810b", "#a6a6a6"]}
 								rotation={new Euler(Math.PI / 2)}></gridHelper>
 						</mesh>
 
