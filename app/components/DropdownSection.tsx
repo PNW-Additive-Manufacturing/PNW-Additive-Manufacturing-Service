@@ -36,7 +36,7 @@ export default function DropdownSection({
 					{icon}
 				</div>
 				<RegularChevronDown
-					className={`w-6 h-6 fill-inherit ${isHidden ? "rotate-180" : ""
+					className={`w-6 h-6 p-0.5 fill-inherit ${isHidden ? "rotate-180" : ""
 						} hover:cursor-pointer transition-all`}
 				/>
 			</div>

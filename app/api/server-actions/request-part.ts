@@ -7,7 +7,7 @@ import { getJwtPayload } from "@/app/api/util/JwtHelper";
 import { redirect } from "next/navigation";
 
 import db from "@/app/api/Database";
-import { requestReceivedHTML, sendEmail } from "../util/Mail";
+import { maintainerRequestReceived, requestReceivedHTML, sendEmail, sendRequestEmail } from "../util/Mail";
 import { RequestServe } from "@/app/Types/Request/RequestServe";
 import AccountServe from "@/app/Types/Account/AccountServe";
 import Account from "@/app/Types/Account/Account";
@@ -187,16 +187,21 @@ export async function requestPart(prevState: string, formData: FormData) {
 
 	// Send a confirmation email to the user!
 	try {
-		await sendEmail(
-			account.email,
-			`Request received for ${requestName}`,
-			await requestReceivedHTML(
-				(await RequestServe.fetchByIDWithAll(requestId!))!
-			)
-		);
+
+		console.log("Sending Emails...");
+		const request = (await RequestServe.fetchByIDWithAll(requestId!))!;
+
+		sendRequestEmail("received", request);
+
+		const maintainerEmails = await AccountServe.queryMaintainerEmails();
+		sendEmail(maintainerEmails.join(", "), 
+			`Request received for ${requestName} by ${account.firstName} ${account.lastName}`, 
+			await maintainerRequestReceived(request));
+
+		console.log("Sent!");
+
 	} catch (error) {
 		console.error("Failed to send Email", error);
 	}
-
 	redirect(`/dashboard/user/${requestId!}`);
 }

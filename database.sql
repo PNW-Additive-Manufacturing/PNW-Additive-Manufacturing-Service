@@ -107,6 +107,19 @@ CREATE TABLE Request (
   )
 );
 
+DROP TYPE IF EXISTS RequestEmailKind CASCADE;
+CREATE TYPE RequestEmailKind AS ENUM ('received', 'quoted', 'approved', 'completed');
+
+DROP TABLE IF EXISTS RequestEmail CASCADE;
+CREATE TABLE RequestEmail (
+  Id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  RequestId SERIAL REFERENCES Request(Id) ON DELETE CASCADE ON UPDATE CASCADE,
+  Kind RequestEmailKind NOT NULL,
+  FailedReason VARCHAR(1000),
+  SentAt TIMESTAMP WITH TIME ZONE,
+  SeenAt TIMESTAMP WITH TIME ZONE
+);
+
 DROP TABLE IF EXISTS RequestRefund CASCADE;
 CREATE TABLE RequestRefund (
   Id SERIAL PRIMARY KEY,

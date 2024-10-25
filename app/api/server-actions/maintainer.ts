@@ -27,7 +27,8 @@ import {
 	requestCompletedHTML,
 	requestQuotedFreeHTML,
 	requestQuotedHTML,
-	sendEmail
+	sendEmail,
+	sendRequestEmail
 } from "../util/Mail";
 
 const setPartPriceSchema = z.object({
@@ -71,7 +72,6 @@ export async function setQuote(
 		return "Completion estimate required!";
 	}
 	
-
 	const requester = await AccountServe.queryByEmail(request.requesterEmail);
 	if (requester == undefined) return "Account no-longer exists!";
 
@@ -100,11 +100,13 @@ export async function setQuote(
 	try {
 		if (priceInCents == 0)
 		{
-			await sendEmail(request.requesterEmail, `Request approved for ${request.name}`, await requestQuotedFreeHTML(request));
+			sendRequestEmail("approved", request);
+			// await sendEmail(request.requesterEmail, `Request approved for ${request.name}`, await requestQuotedFreeHTML(request));
 		}
 		else
 		{
-			await sendEmail(request.requesterEmail, `Request quoted for ${request.name}`, await requestQuotedHTML(request));
+			sendRequestEmail("quoted", request);
+			// await sendEmail(request.requesterEmail, `Request quoted for ${request.name}`, await requestQuotedHTML(request));
 		}
 	} catch (error) 
 	{
@@ -298,8 +300,8 @@ export async function modifyPart(
 		}
 
 		if (isAllComplete(partRequest.parts))
-		{			
-			sendEmail(partRequest.requesterEmail, `Request ${partRequest.name} Completed`, await requestCompletedHTML(partRequest));
+		{
+			sendRequestEmail("completed", partRequest);	
 		}
 
 		revalidatePath("/dashboard/maintainer/orders");

@@ -25,7 +25,7 @@ export const weeklyScheduleUTC: WeeklySchedule = [
     // Thursday
     {
         open: Date.UTC(0, 0, 0, 17, 0, 0, 0),
-        close: Date.UTC(0, 0, 0, 19, 0, 0, 0)
+        close: Date.UTC(0, 0, 0, 21, 30, 0, 0)
     },
     // Friday
     {

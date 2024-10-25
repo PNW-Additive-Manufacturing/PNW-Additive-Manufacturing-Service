@@ -55,6 +55,17 @@ import HiddenInput from "@/app/components/HiddenInput";
 import { RequestOverview } from "../../../components/RequestOverview";
 import { closingTime, isOpen } from "@/app/components/LocalSchedule";
 import { addMinutes } from "@/app/utils/TimeUtils";
+import { jsPDF } from "jspdf";
+
+function generatePDF(request: RequestWithParts) {
+	const receiptPDF = new jsPDF({
+		orientation: "portrait",
+		unit: "in"
+	});
+
+	receiptPDF.text(`Request ${request.name}`, 0, 0);
+	// receiptPDF.
+}
 
 export default function RequestDetails({
 	request
@@ -101,14 +112,9 @@ export default function RequestDetails({
 						})}
 						.
 					</p>
-					{!isAllComplete(request.parts) && isQuotePaid && <p className="text-pnw-gold mt-2"><RegularAlarmClock className="fill-pnw-gold inline mb-0.5"></RegularAlarmClock> {request.name} is projected to be completed on {formateDate(request.quote!.estimatedCompletionDate)}.</p>}
-					{!request.isFulfilled && isAllComplete(request.parts) && !request.isFulfilled && (
-						<p className="mt-2 text-pnw-gold">
-							{isOpen
-								? <><RegularPackage className="fill-pnw-gold inline mr-0.5"></RegularPackage> One of our team members are at the Design Studio. You may pickup your parts until <span className="font-semibold">{formatTime(closingTime!)}</span>.</>
-								: <><RegularPackage className="fill-pnw-gold inline mr-0.5"></RegularPackage> None of our team members can assist you for pick up at this time. See our <Link className="underline" href={"/schedule"}>operating hours</Link> to pickup your parts.</>}
-						</p>
-					)}
+
+					{!request.isFulfilled && hasQuote(request) && !isAllComplete(request.parts) && <p className="text-pnw-gold mt-2">Estimated to be completed on {formateDate(request.quote!.estimatedCompletionDate)}.</p>}
+
 				</div>
 				<div className="items-end flex">
 					<div className="flex w-full gap-2 lg:justify-end max-lg:justify-between">
@@ -188,6 +194,16 @@ export default function RequestDetails({
 									{request.parts.length > 1 ? "Parts" : "Part"}
 								</div>
 							</div>
+
+							{!request.isFulfilled && isAllComplete(request.parts) && !request.isFulfilled && (
+								<div className="mb-4 out p-4 lg:p-6 rounded-sm shadow-sm bg-white w-full">
+									<p className="text-pnw-gold font-semibold"><RegularPackage className="fill-pnw-gold inline mr-2 w-5 h-5"></RegularPackage>Available for Pickup</p>
+									<p>{isOpen
+										? <> One of our team members are at the Design Studio. You may pickup your parts until <span className="font-semibold">{formatTime(closingTime!)}</span>.</>
+										: <> Unfortunately none of our team members can assist you at this time. See our <Link className="underline" href={"/schedule"}>availability</Link>.</>}</p>
+								</div>
+							)}
+
 							<div className={`grid ${request.parts.length > 2 && "2xl:grid-cols-2"} gap-4`}>
 								{request.parts.map((part, index) => (
 									<PartDetails
@@ -201,7 +217,6 @@ export default function RequestDetails({
 				</div>
 				<div className="lg:w-92 lg:min-w-92" style={{ minWidth: "23rem" }}>
 					<div className="py-2 pl-1 w-full">Request Overview</div>
-
 					<div className="shadow-sm p-4 lg:p-6 rounded-sm bg-white out">
 						<Timeline
 							options={[
@@ -235,7 +250,7 @@ export default function RequestDetails({
 									disabled: isAllPending(request.parts)
 								},
 								{
-									title: "Ready for Pick up",
+									title: "Available for Pickup",
 									description: <>{isOpen ? "Pickup at the PNW Design Studio." : "Pickup currently not Available."}</>,
 									disabled: !isAllComplete(request.parts)
 								},
@@ -250,7 +265,8 @@ export default function RequestDetails({
 						/>
 
 					</div>
-					<div className="py-2 pt-4 pl-1 w-full" id="payment_details">
+
+					<div className="py-2 pl-1 w-full mt-2" id="payment_details">
 						Payment Details
 					</div>
 					<div className="p-4 lg:p-6 rounded-sm shadow-sm bg-white font-light outline outline-2 outline-gray-200">
@@ -258,6 +274,7 @@ export default function RequestDetails({
 							<>
 								<RequestPricing request={request} />
 								<br />
+								{/* <button className="text-sm font-light text-left" disabled={true}>Download Receipt</button> */}
 								<form action={payFormAction}>
 									<input
 										hidden
@@ -282,6 +299,7 @@ export default function RequestDetails({
 							</>
 						)}
 					</div>
+
 					{/* {payState.isComplete &&
 					payState.errorMessage == undefined ? (
 						<>
@@ -406,7 +424,7 @@ function PartDetails({ part, index, count }: { part: PartWithModel; index: numbe
 						</div>
 
 						<div className={`${count > 2 ? "mt-6 w-full" : "lg:w-96"} max-lg:mt-4`}>
-							<div className="shadow-sm">
+							<div className="shadow-sm max-lg:hidden">
 								<div
 									className={`w-full h-40 lg:h-44 relative outline-1 outline outline-gray-300 bg-gray-100 rounded-md`}>
 									{revisedFile == undefined ? (

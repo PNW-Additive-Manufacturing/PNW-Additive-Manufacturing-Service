@@ -15,6 +15,7 @@ import Request, {
 	isAllPriced,
 	isAnyPartDenied,
 	isPaid,
+	RequestWithEmails,
 	RequestWithParts
 } from "@/app/Types/Request/Request";
 import {
@@ -28,6 +29,7 @@ import {
 	RegularDatabase,
 	RegularEnvelope,
 	RegularExit,
+	RegularEye,
 	RegularFiles,
 	RegularLink,
 	RegularPagination,
@@ -52,13 +54,14 @@ import { formateDate } from "@/app/api/util/Constants";
 import FormLoadingSpinner from "@/app/components/FormLoadingSpinner";
 import { Dialog } from "@headlessui/react";
 import { AccountContext } from "@/app/ContextProviders";
+import Table from "@/app/components/Table";
 
 export default function RequestEditor({
 	request,
 	requester,
 	availableFilaments
 }: {
-	request: RequestWithParts;
+	request: RequestWithParts & RequestWithEmails;
 	requester: Account;
 	availableFilaments: Filament[];
 }): JSX.Element {
@@ -189,7 +192,7 @@ export default function RequestEditor({
 						</div>
 					</div>
 
-					{useContext(AccountContext).account?.permission == AccountPermission.Admin && <DropdownSection
+					{/* {useContext(AccountContext).account?.permission == AccountPermission.Admin && <DropdownSection
 						name="Developer Information"
 						icon={
 							<RegularPagination className="inline-block w-auto h-6 pb-0.5 ml-2 fill-pnw-gold" />
@@ -220,7 +223,7 @@ export default function RequestEditor({
 								/>
 							</div>
 						</div>
-					</DropdownSection>}
+					</DropdownSection>} */}
 				</div>
 				<div className="lg:w-92 lg:min-w-92" style={{ minWidth: "23rem" }}>
 					<div className="py-2 pt-2 px-1 w-full">Payment Details</div>
@@ -298,7 +301,11 @@ export default function RequestEditor({
 							{requester.firstName} {requester.lastName}
 						</p>
 
-						<p>{requester.yearOfStudy}</p>
+						<p>{requester.yearOfStudy} joined {requester.joinedAt.toLocaleDateString("en-us", {
+							weekday: "long",
+							month: "short",
+							day: "numeric"
+						})}.</p>
 
 						<a
 							className="block mt-2 text-pnw-gold"
@@ -306,15 +313,28 @@ export default function RequestEditor({
 							{requester.email}
 						</a>
 
-						<p className="mt-2">
-							Joined on{" "}
-							{requester.joinedAt.toLocaleDateString("en-us", {
-								weekday: "long",
-								month: "short",
-								day: "numeric"
-							})}
-							.
-						</p>
+						<DropdownSection hidden={true} name={"Email Performance Tracking"} className="px-0 mt-2">
+							<table className="bg-background px-1 py-2 w-full mt-1 out">
+								<thead>
+									<tr>
+										<th className="pt-3">Message</th>
+										<th className="pt-3">Status</th>
+									</tr>
+								</thead>
+								<tbody>
+									{request.emails.map(email => <tr className="bg-transparent">
+										<td className="first-letter:uppercase">{email.kind}</td>
+										<td>{email.seenAt == null ? <span><RegularEye className="inline fill-cool-black mb-0.5" /> Unread</span> : <span><RegularEye className="inline fill-pnw-gold mb-0.5" /> {email.seenAt.toLocaleDateString("en-us", {
+											month: "short",
+											day: "numeric",
+											hour: "2-digit",
+											minute: "2-digit"
+										})}</span>}</td>
+									</tr>
+									)}
+								</tbody>
+							</table>
+						</DropdownSection>
 					</div>
 				</div>
 			</div>

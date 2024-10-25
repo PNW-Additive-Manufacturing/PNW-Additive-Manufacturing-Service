@@ -9,6 +9,8 @@ import Part, {
 
 export type RequestWithParts = Request & { parts: PartWithModel[] };
 
+export type RequestWithEmails = Request & { emails: RequestEmail[] };
+
 export default interface Request {
 	id: number;
 	firstName: string;
@@ -30,6 +32,15 @@ export default interface Request {
 	fulfilledAt?: Date;
 	submitTime: Date;
 	name: string;
+}
+
+export interface RequestEmail {
+	id: number;
+	requestId: number;
+	kind: "received" | "quoted" | "approved" | "completed",
+	failedReason?: string;
+	sentAt?: Date;
+	seenAt?: Date;
 }
 
 /**
@@ -54,7 +65,7 @@ export function getRequestStatus(request: RequestWithParts): string {
 	}
 
 	if (request.isFulfilled) return "Fulfilled";
-	if (isAllComplete(request.parts)) return "Ready for Pick up";
+	if (isAllComplete(request.parts)) return "Available for Pickup";
 	if (isPaid(request)) {
 		if (isAllPending(request.parts)) {
 			return "Queued for Processing";
@@ -69,7 +80,7 @@ export function getRequestStatusColor(request: RequestWithParts) {
 	switch (getRequestStatus(request)) {
 		case "Fulfilled":
 			return "rgb(34 197 94)";
-		case "Ready for Pick up":
+		case "Available for Pickup":
 			return "rgb(34 197 94)";
 		case "Queued for Processing":
 			return "rgb(162, 165, 171)";

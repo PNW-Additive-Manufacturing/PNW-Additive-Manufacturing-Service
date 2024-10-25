@@ -1,5 +1,5 @@
 import db from "@/app/api/Database";
-import Request, { hasQuote, RequestWithParts } from "./Request";
+import Request, { hasQuote, RequestEmail, RequestWithParts } from "./Request";
 import PartServe from "../Part/PartServe";
 import postgres from "postgres";
 import { WalletTransactionStatus } from "../Account/Wallet";
@@ -323,6 +323,31 @@ export class RequestServe {
 		dbContext = dbContext ?? db;
 
 		await dbContext`UPDATE Request SET FulfilledAt = NOW() WHERE Id = ${requestId} `;
+	}
+
+	public static async createSuccessfulEmail(id: string, emailKind: RequestEmail["kind"], requestId: number, dbContext?: postgres.Sql<{}>) {
+		await (dbContext ?? db)`INSERT INTO RequestEmail (Id, Kind, RequestId, SentAt) VALUES (${id}, ${emailKind}, ${requestId}, NOW())`;
+	}
+
+	public static async createFailedEmail(emailKind: RequestEmail["kind"], requestId: number, failedReason: string, dbContext?: postgres.Sql<{}>) {
+		await (dbContext ?? db)`INSERT INTO RequestEmail (Kind, RequestId, FailedReason) VALUES (${emailKind}, ${requestId}, ${failedReason})`;
+	}
+
+	public static async seenEmail(trackingId: string): Promise<boolean> {
+		return (await db`UPDATE RequestEmail SET SeenAt=NOW() WHERE Id=${trackingId}`).length > 0;
+	}
+
+	public static async getEmails(requestId: number) {
+		return (await db`SELECT * FROM RequestEmail WHERE RequestId=${requestId} ORDER BY SentAt DESC`).map(query => {
+			return {
+				id: query.id,
+				kind: query.kind,
+				requestId: query.requestid,
+				failedReason: query.failedreason,
+				sentAt: query.sentat,
+				seenAt: query.seenat
+			}
+		});
 	}
 
 	public static async delete(

@@ -197,9 +197,9 @@ table thead tr th {
   font-weight: normal;
   text-align: left;
 }
-table thead tr td, table thead tr th
+table thead tr td, table thead tr th, table tbody tr td
 {
-  padding: 0rem 2rem 0rem 2rem;
+  padding: 0.75rem 0.8rem 0.75rem 0.8rem;
 }
 table tbody tr
 {
@@ -208,11 +208,7 @@ table tbody tr
 table tbody tr:nth-child(odd) {
 	background-color: rgb(var(--background-rgb));
 }
-table tbody tr td
-{
-	padding: 0.75rem 2rem 0.75rem 2rem;
-}
-table thead tr th:first-child, table thead tr th:first-child
+table thead tr th:first-child, table thead tr th:first-child, table tbody tr td:first-child
 {
   padding-left: 1rem;
 }
@@ -232,18 +228,18 @@ table.outline tbody tr {
 table tbody tr td, table tbody tr th {
   font-size: 1rem;
 }
-table thead tr td:last-child, table thead tr th:last-child
+/* table thead tr td:last-child, table thead tr th:last-child
 {
   padding-right: 1rem;
 }
 table tbody tr td:first-child
 {
   padding-left: 1rem;
-}
-table tbody tr td:last-child
+} */
+/* table tbody tr td:last-child
 {
   margin-left: 20px;
-}
+} */
 
 table tbody tr 
 {

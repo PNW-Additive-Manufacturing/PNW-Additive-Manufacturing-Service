@@ -23,7 +23,7 @@ export default function UserRequestStatusAlert({
 				isAllComplete(request.parts) &&
 				isPaid(request) && (
 					<Alert severity="success">
-						<AlertTitle>Ready for Pick up</AlertTitle>
+						<AlertTitle>Available for Pickup</AlertTitle>
 						Models are ready to be picked up between 12-5 PM through
 						Monday and Friday from the{" "}
 						<a
@@ -39,7 +39,7 @@ export default function UserRequestStatusAlert({
 				<Alert severity="info">
 					<AlertTitle>In Progress</AlertTitle>
 					Please allow 1-3 business days for a status update. You will
-					receive an email when your items are ready for pick up at
+					receive an email when your items are available for pick up at
 					the{" "}
 					<a
 						href="https://maps.app.goo.gl/bLNnJAGoQFB3UPWZ7"

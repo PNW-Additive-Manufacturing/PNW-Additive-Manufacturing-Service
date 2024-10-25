@@ -69,6 +69,10 @@ export default class AccountServe {
 		};
 	}
 
+	public static async queryMaintainerEmails(): Promise<string[]> {
+		return (await db`SELECT Email FROM Account WHERE Permission != 'user'`).map(r => r.email);
+	}
+
 	public static async queryEmailVerification(
 		token: string
 	): Promise<AccountEmailVerification | undefined> {

@@ -253,7 +253,7 @@ export function Navbar({
 
 export function Footer(): JSX.Element {
 	return (
-		<div className="bg-cool-black w-full h-fit shadow-2xl">
+		<div className="bg-cool-black w-full h-fit shadow-2xl mt-8">
 			<HorizontalWrap className="py-6">
 				<div className="inline-block">
 					<p className="font-bold text-gray-100 text-sm">About Us</p>
