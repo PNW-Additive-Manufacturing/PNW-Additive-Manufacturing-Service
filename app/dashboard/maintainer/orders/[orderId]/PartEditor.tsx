@@ -489,8 +489,7 @@ export default function PartEditor({
 												<div className="flex items-center gap-4">
 													<div>
 														<RegularTimer className="w-5.5 h-5.5 inline mr-2 mb-0.5"></RegularTimer>
-														{part.model.analysisResults.estimatedDuration}{" "}
-														D/H/m
+														{part.model.analysisResults.estimatedDuration}
 													</div>
 													<div>
 														<RegularWeight className="w-5.5 h-5.5 inline mr-2 mb-0.5"></RegularWeight>
