@@ -278,7 +278,7 @@ export default function PartEditor({
 
 							<div className={count < 3 ? "lg:flex" : ""}>
 								<div className="w-full">
-									<div className="w-full flex items-center mb-1">
+									<div className="w-full flex flex-wrap gap-x-2 gap-y-2 items-center mb-2">
 										<SelectorStatusPill
 											register={register("status", {
 												onChange: (
@@ -293,7 +293,6 @@ export default function PartEditor({
 													}
 												}
 											})}
-											className="mr-2"
 											statusColor={selectedStatusColor}
 											defaultValue={part.status}>
 											{part.status !=
@@ -345,7 +344,7 @@ export default function PartEditor({
 											{part.model.name} x{part.quantity}
 										</div>
 										<button
-											className={`w-fit text-sm ml-4 px-0 py-0 text-cool-black hover:text-cool-black mb-0 bg-transparent hover:bg-transparent hover:fill-black enabled:fill-pnw-gold enabled:text-pnw-gold enabled:animate-pulse`}
+											className={`w-fit text-sm px-0 py-0 text-cool-black hover:text-cool-black mb-0 bg-transparent hover:bg-transparent hover:fill-black enabled:fill-pnw-gold enabled:text-pnw-gold enabled:animate-pulse`}
 											disabled={!isChanged || request.isFulfilled}>
 											<RegularUpload className="p-0.5 w-5 h-5 inline"></RegularUpload>
 											<span className="ml-2 text-inherit">
@@ -454,7 +453,7 @@ export default function PartEditor({
 											)}
 										</div>
 										<div className="w-full md:max-w-60 mt-2">
-											{watch("status", part.status) ==
+											{!isQuoted && watch("status", part.status) ==
 												"pending" && (
 													<CurrencyInput
 														defaultValue={
@@ -475,7 +474,7 @@ export default function PartEditor({
 									</div>
 								</div>
 								<div className={count > 2 ? "mt-6 w-auto" : "lg:w-96"}>
-									<div className="w-full h-40 lg:h-52 outline-gray-300 bg-gray-50 outline-1 outline rounded-sm relative shadow-sm">
+									<div className="w-full h-40 lg:h-52 outline-gray-300 bg-gray-50 outline-1 outline rounded-sm relative shadow-sm max-lg:mt-8">
 										<ModelViewer
 											swatch={
 												part.supplementedFilament
@@ -485,7 +484,7 @@ export default function PartEditor({
 											modelURL={`/api/download/model?modelId=${part.modelId}`}></ModelViewer>
 									</div>
 									<div>
-										<div className="bg-background flex w-full p-3 gap-4 items-center text-sm rounded-b-sm min-h-12 justify-between">
+										<div className="bg-background flex w-full p-3 gap-4 text-sm rounded-b-sm justify-between items-start">
 											{part.model.analysisResults ? (
 												<div className="flex items-center gap-4">
 													<div>
@@ -503,16 +502,16 @@ export default function PartEditor({
 														g
 													</div>
 												</div>
-											) : part.model.analysisFailedReason ? <p className="opacity-50 text-red-500">Automatic Analysis Failed: {part.model.analysisFailedReason}</p> : <p className="opacity-50">Automatic Analysis not Performed</p>}
+											) : part.model.analysisFailedReason ? <p className="opacity-50 text-red-500">Failed: {part.model.analysisFailedReason}</p> : <p className="opacity-50">Not Performed</p>}
 
-											<div className="flex gap-4">
+											<div className="flex gap-4 flex-nowrap items-start">
 												{/* {part.model.analysisResults && <a className="opacity-50 hover:opacity-100"
 													href={`/api/download/model?modelId=${part.modelId}`}
 													download={`${part.model.name}.stl`}
 													target="_blank">
 													Send to Farm
 												</a>} */}
-												<a className="opacity-50 hover:opacity-100"
+												<a className="opacity-50 hover:opacity-100 text-nowrap"
 													href={`/api/download/model?modelId=${part.modelId}`}
 													download={`${part.model.name}.stl`}
 													target="_blank">

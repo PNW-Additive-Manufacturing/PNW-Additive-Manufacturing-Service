@@ -226,19 +226,24 @@ export default function ModelViewer({
 
 						<ambientLight></ambientLight>
 
-						<mesh
-							receiveShadow
-							material={
-								new MeshStandardMaterial({ color: "#efefef" })
-							}
-							position={new Vector3(0, 0, -0.1)}>
+						<group>
+							<mesh
+								receiveShadow
+								material={
+									new MeshStandardMaterial({ color: "#efefef" })
+								}
+								position={new Vector3(0, 0, STLModel.boundingBox!.max.x > 2 ? -0.01 : -0.0001)}>
 
-							<planeGeometry args={[STLModel.boundingBox!.max.x * 2 * 4, STLModel.boundingBox!.max.x * 2 * 4]}></planeGeometry>
-							<gridHelper
-								position={new Vector3(0, 0, 0.05)}
-								args={[STLModel.boundingBox!.max.x * 2 * 4, STLModel.boundingBox!.max.x * 2 * 4 / STLModel.boundingBox!.max.x, "#b1810b", "#a6a6a6"]}
-								rotation={new Euler(Math.PI / 2)}></gridHelper>
-						</mesh>
+								<planeGeometry args={[STLModel.boundingBox!.max.x * 2 * 4, STLModel.boundingBox!.max.x * 2 * 4]}></planeGeometry>
+
+							</mesh>
+
+							<mesh>
+								<gridHelper
+									args={[STLModel.boundingBox!.max.x * 2 * 4, STLModel.boundingBox!.max.x * 2 * 4 / STLModel.boundingBox!.max.x, "#b1810b", "#a6a6a6"]}
+									rotation={new Euler(Math.PI / 2)}></gridHelper>
+							</mesh>
+						</group>
 
 						<mesh
 							castShadow={true}
@@ -246,10 +251,12 @@ export default function ModelViewer({
 							geometry={STLModel}
 							scale={1}
 							position={new Vector3(0, 0, 0)}>
+							{/* <UtilitySphere radius={0.001}></UtilitySphere> */}
 							<meshStandardMaterial
 								metalness={0.5}
 								color={
-									new Color(getSingleColor(swatch))
+									new Color("#b1810b")
+									// new Color(getSingleColor(swatch))
 								}></meshStandardMaterial>
 							{/* <meshLambertMaterial
 								reflectivity={1}
@@ -263,15 +270,7 @@ export default function ModelViewer({
 								decay={0.05}
 								castShadow
 								intensity={Math.PI * 2}>
-								{/* <UtilitySphere radius={5}></UtilitySphere> */}
 							</spotLight>
-							{/* <spotLight
-								onUpdate={(what) => what.lookAt(new Vector3())}
-								position={[128, 128, 128]}
-								decay={0.05}
-								intensity={Math.PI * 2}>
-								<UtilitySphere radius={5}></UtilitySphere>
-							</spotLight> */}
 						</mesh>
 					</Canvas>
 				</>
