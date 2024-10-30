@@ -51,12 +51,10 @@ export default function RequestsTable({ accountEmail }: { accountEmail?: string 
 
     useEffect(() => fetchRequests(), [pageNum, includeFulfilled]);
 
-
-
     return (
         <>
             {requests == null ? (
-                <div className="w-full bg-gray-100 animate-pulse duration-100 min-h-56 rounded-md mb-4"></div>
+                <div className="w-full bg-gray-100 min-h-28 rounded-md mb-4"></div>
             ) : requests.length == 0 ? (
                 <div className="w-full bg-gray-100 min-h-28 rounded-md mb-4"></div>
             ) : (

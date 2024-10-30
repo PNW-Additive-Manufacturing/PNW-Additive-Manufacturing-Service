@@ -373,7 +373,7 @@ function PartDetails({ part, index, count }: { part: PartWithModel; index: numbe
 											type="file"
 											id="revision-model"
 											name="revision-model"
-											onChange={(f) => console.log(f)}>
+											onChange={(f) => { }}>
 											<span className="underline">
 												Upload a revision
 											</span>
@@ -420,18 +420,21 @@ function PartDetails({ part, index, count }: { part: PartWithModel; index: numbe
 						<div className={`${count > 2 ? "mt-6 w-full" : "lg:w-96"} max-lg:mt-4`}>
 							<div className="shadow-sm max-lg:hidden">
 								<div
-									className={`w-full h-40 lg:h-52 relative outline-1 outline outline-gray-300 bg-gray-100 rounded-md`}>
+									className={`w-full h-40 lg:h-52 relative outline-1 outline outline-gray-300 bg-gray rounded-sm`}>
 									{revisedFile == undefined ? (
 										<ModelViewer
+											isAvailable={!part.model.isPurged}
 											swatch={
 												part.supplementedFilament
 													?.color ??
 												part.filament?.color
 											}
+											modelSize={part.model?.fileSizeInBytes}
 											modelURL={`/api/download/model?modelId=${part.modelId}`}
 										/>
 									) : (
 										<ModelViewer
+											modelSize={part.model?.fileSizeInBytes}
 											swatch={templatePNW()}
 											modelFile={revisedFile}
 										/>

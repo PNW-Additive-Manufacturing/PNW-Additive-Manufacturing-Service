@@ -29,6 +29,7 @@ import {
 	templatePNW
 } from "./Swatch";
 import { detach } from "@react-three/fiber/dist/declarations/src/core/utils";
+import { RegularReload } from "lineicons-react";
 
 function UtilitySphere({
 	radius,
@@ -49,6 +50,8 @@ function UtilitySphere({
 		</mesh>
 	);
 }
+
+// let loadedCount = 0;
 
 export function EngineeringCamera({
 	focusedGeometry
@@ -100,15 +103,19 @@ export default function ModelViewer({
 	swatch,
 	modelURL,
 	modelFile,
+	modelSize,
 	modelRotation,
 	moveable,
+	isAvailable,
 	showOrientation
 }: {
 	swatch?: SwatchConfiguration;
 	modelURL?: string;
 	modelFile?: File;
+	modelSize?: number;
 	modelRotation?: Euler;
 	moveable?: boolean;
+	isAvailable?: boolean;
 	showOrientation?: boolean;
 
 	onClickOrientation?: (rotation: Euler) => void;
@@ -117,7 +124,7 @@ export default function ModelViewer({
 	moveable = moveable ?? true;
 	swatch = swatch ?? templatePNW();
 
-	console.log(swatch.name);
+	isAvailable ??= true;
 
 	// None supplied? Use the default PNW Gold.
 	// const color = ?? new Color("#b1810b");
@@ -128,6 +135,7 @@ export default function ModelViewer({
 	// 	color = new Color("rgb(180, 180, 180)");
 	// }
 
+	const [loadingError, setLoadingError] = useState<string | null>(null);
 	const [STLModel, setSTLModel] = useState<BufferGeometry | undefined>(
 		undefined
 	);
@@ -180,14 +188,26 @@ export default function ModelViewer({
 				error,
 				modelURL
 			);
+			setLoadingError(`${error}`);
 		} finally {
 			setSTLLoading(false);
 		}
 	}
 
+	const divRef = useRef<HTMLDivElement>(null);
+
 	// Uncomment to load instantly.
 	useEffectOnce(() => {
-		if (STLModel == undefined && !isSTLLoading) {
+		const divBounds = divRef.current!.getBoundingClientRect();
+		const isVisible = (divRef.current?.checkVisibility() ?? true)
+			&& divBounds.top >= 0
+			&& divBounds.left >= 0
+			&& divBounds.bottom <= (window.innerHeight || document.documentElement.clientHeight)
+			&& divBounds.right <= (window.innerWidth || document.documentElement.clientWidth);
+
+		// if (STLModel == undefined && !isSTLLoading && isVisible && loadedCount <= 1) {
+		if (STLModel == undefined && !isSTLLoading && isVisible && isAvailable) {
+			// loadedCount += 1;
 			loadModelSTL();
 		}
 	});
@@ -195,22 +215,36 @@ export default function ModelViewer({
 	Object3D.DEFAULT_UP = new Vector3(0, 0, 1);
 
 	return (
-		<>
+		<div className="w-full h-full" ref={divRef}>
 			{STLModel == undefined ? (
 				isSTLLoading ? (
 					<div className="flex justify-center align-middle items-center h-full w-full">
 						<div className="animate-ping w-8 h-8 bg-pnw-gold "></div>
 					</div>
-				) : (
+				) : loadingError ? <div className="flex justify-center align-middle items-center h-full w-full">
+					<button
+						className="px-4 py-2 text-sm font-normal rounded-sm w-fit m-0 bg-red-400"
+						type="button"
+						onClick={loadModelSTL}>
+						Encountered an Issue<RegularReload className="ml-2 inline fill-white" />
+					</button>
+				</div> : isAvailable ? (
 					<div className="flex justify-center align-middle items-center h-full w-full">
 						<button
 							className="px-4 py-2 text-sm font-normal rounded-sm w-fit m-0"
 							type="button"
 							onClick={loadModelSTL}>
-							View Model
+							View Model {modelSize && <span className="max-lg:hidden">({Math.round(modelSize / 1000)} kB)</span>}
 						</button>
 					</div>
-				)
+				) : <div className="flex justify-center align-middle items-center h-full w-full">
+					<button
+						className="px-4 py-2 text-sm font-normal rounded-sm w-fit m-0"
+						disabled={true}
+						type="button">
+						Not Available
+					</button>
+				</div>
 			) : (
 				<>
 					<Canvas
@@ -234,13 +268,12 @@ export default function ModelViewer({
 								}
 								position={new Vector3(0, 0, STLModel.boundingBox!.max.x > 2 ? -0.01 : -0.0001)}>
 
-								<planeGeometry args={[STLModel.boundingBox!.max.x * 2 * 4, STLModel.boundingBox!.max.x * 2 * 4]}></planeGeometry>
-
+								<planeGeometry args={[256, 256]}></planeGeometry>
 							</mesh>
 
 							<mesh>
 								<gridHelper
-									args={[STLModel.boundingBox!.max.x * 2 * 4, STLModel.boundingBox!.max.x * 2 * 4 / STLModel.boundingBox!.max.x, "#b1810b", "#a6a6a6"]}
+									args={[256, 10, "#b1810b", "#a6a6a6"]}
 									rotation={new Euler(Math.PI / 2)}></gridHelper>
 							</mesh>
 						</group>
@@ -275,6 +308,6 @@ export default function ModelViewer({
 					</Canvas>
 				</>
 			)}
-		</>
+		</div>
 	);
 }

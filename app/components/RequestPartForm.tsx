@@ -28,8 +28,10 @@ import ModelViewer from "./ModelViewer";
 import { modifyPart } from "../api/server-actions/maintainer";
 import { NamedSwatch, Swatch, SwatchConfiguration, templatePNW } from "./Swatch";
 import FormLoadingSpinner from "./FormLoadingSpinner";
-import { Euler } from "three";
+import { BufferGeometry, Euler } from "three";
 import { Label } from "./Inputs";
+import { ToastContainer, cssTransition, toast } from 'react-toastify';
+import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 
 function AddPartButton({
 	onChange
@@ -61,7 +63,7 @@ function AddPartButton({
 				className="rounded-md border-dashed border-2 px-2 border-pnw-gold w-full h-full bg-pnw-gold-light min-h-24 text-center flex gap-4 justify-center items-center">
 				<div>
 					<h2>Select to upload Models</h2>
-					<p className="text-sm mt-2">Models must be in <span className="underline">Millimeters</span> and {"<"} 20 MB</p>
+					<p className="text-sm mt-2">Models must be in <span className="underline font-semibold">Millimeters</span> and {"<"} 20 MB</p>
 				</div>
 			</div>
 		</div>
@@ -74,6 +76,7 @@ interface PartData {
 	Quantity: number;
 	Material: string;
 	Color: SwatchConfiguration;
+	Geometry: BufferGeometry;
 	IsUserOriented: boolean;
 }
 
@@ -109,14 +112,14 @@ export function RequestPartForm({
 	let [modifyingPart, setModifyingPart] = useState<PartData>();
 
 	// Loop through each part and enable the modifyingPart popup if not given a print orientation by the user!
-	if (modifyPart == null) {
-		for (let part of parts) {
-			if (!part.IsUserOriented) {
-				setModifyingPart(part);
-				break;
-			}
-		}
-	}
+	// if (modifyPart == null) {
+	// 	for (let part of parts) {
+	// 		if (!part.IsUserOriented) {
+	// 			setModifyingPart(part);
+	// 			break;
+	// 		}
+	// 	}
+	// }
 
 	return (
 		<>
@@ -171,9 +174,6 @@ export function RequestPartForm({
 												) => {
 													modifyingPart.IsUserOriented =
 														true;
-													// setModifyingPart(
-													// 	modifyingPart
-													// );
 													setModifyingPart({
 														...modifyingPart,
 														IsUserOriented: true
@@ -183,28 +183,6 @@ export function RequestPartForm({
 													modifyingPart.File
 												}></ModelViewer>
 										</div>
-										{/* <div className="grid grid-cols-3 p-2 gap-2">
-											{[
-												new Euler(Math.PI),
-												new Euler(0, Math.PI),
-												new Euler(0, 0, Math.PI),
-												new Euler(Math.PI, Math.PI),
-												new Euler(
-													Math.PI,
-													Math.PI,
-													Math.PI
-												)
-											].map((rot) => (
-												<div className=" bg-gray-300">
-													<ModelViewer
-														modelFile={
-															modifyingPart.File
-														}
-														modelRotation={rot}
-													/>
-												</div>
-											))}
-										</div> */}
 									</>
 								)}
 							</div>
@@ -311,7 +289,6 @@ export function RequestPartForm({
 														<td
 															key={part.ModelName}
 															className="bg-transparent w-fit outline-none border-0 block hover:cursor-pointer">
-															{/* <RegularEmptyFile className="inline w-5 h-5 fill-gray-500 mr-2"></RegularEmptyFile> */}
 															{part.File.name}
 														</td>
 														<td className="max-lg:hidden">3D Printing (FDM)</td>
@@ -330,37 +307,77 @@ export function RequestPartForm({
 								</>)}
 							<div>
 								<AddPartButton
-									onChange={(ev) => {
+									onChange={async (ev) => {
 										ev.preventDefault();
 
 										if (ev.currentTarget.files == null) return;
 
-										var newParts: PartData[] = Array.from(
-											Array(ev.currentTarget.files.length).keys()
-										)
-											.filter((index) => {
+										const partsToBeAdded: PartData[] = (await Promise.all(Array.from(ev.currentTarget.files).map(async file => {
+											let parsedSTLGeometry: BufferGeometry | null = null;
+											try {
+												parsedSTLGeometry = new STLLoader().parse(await file.arrayBuffer());
+												parsedSTLGeometry.computeBoundingBox();
+											}
+											catch (err) {
+												console.log(`Failed to parse geometry ${file.name} while validating constraints`, err);
+											}
+
+											return {
+												File: file,
+												Quantity: 1,
+												Geometry: parsedSTLGeometry,
+												ModelName: file.name.substring(0, file.name.lastIndexOf(".")),
+												Material: "PLA",
+												Color: filaments.at(0)!.color,
+												IsUserOriented: false
+											} as PartData;
+										})))
+											.filter(p => {
 
 												// Boolean if a file with the same path has been added,
-												const isAlreadyAdded = parts.some(p => p.File.name == ev.currentTarget.files![index]?.name);
+												const isAlreadyAdded = parts.some(refP => refP.File.name == p.File.name);
+												const isSTL = p.File.name.endsWith(".stl");
+												const isWithinSize = p.File.size < 20000000;
 
-												return !isAlreadyAdded && ev.currentTarget.files![index].name.endsWith(".stl") && ev.currentTarget.files![index].size < 20000000;
-											})
-											.map((i) => {
-												const f = ev.currentTarget.files![i];
-												return {
-													File: f,
-													ModelName: f.name.substring(
-														0,
-														f.name.lastIndexOf(".")
-													),
-													Material: "PLA",
-													Color: filaments.at(0)!.color,
-													Quantity: 1,
-													IsUserOriented: false
-												};
+												if (!isSTL) {
+													toast.error(`Model ${p.ModelName} is not in STL Format!`);
+													return false;
+												}
+
+												if (!isWithinSize) {
+													toast.error(`Model ${p.ModelName} file size is too large!`);
+													return false;
+												}
+
+												if (p.Geometry == null) {
+													toast.error(`The model ${p.ModelName} was unable to be parsed. Ensure it is a valid STL!`);
+													return false;
+												}
+												else {
+													const maxValue = Math.max(
+														p.Geometry.boundingBox!.max.x,
+														p.Geometry.boundingBox!.max.y,
+														p.Geometry.boundingBox!.max.x,
+														Math.abs(p.Geometry.boundingBox!.min.x),
+														Math.abs(p.Geometry.boundingBox!.min.y),
+														Math.abs(p.Geometry.boundingBox!.min.z),
+													) * 2;
+
+													if (maxValue < 2) {
+														toast.error(`The model ${p.ModelName} is too small. Ensure you have exported the model using Millimeters!`);
+														return false;
+													}
+
+													// An axis of the model is greater than 
+													if (maxValue > 256) {
+														toast.error(`The model ${p.ModelName} is too large. Ensure you have exported the model using Millimeters or split your model up into multiple parts!`);
+														return false;
+													}
+												}
+												return true;
 											});
 
-										setParts([...parts, ...newParts]);
+										setParts([...parts, ...partsToBeAdded]);
 									}} />
 							</div>
 						</div>

@@ -1,60 +1,37 @@
 "use client";
 
 import {
-	cancelRequest,
 	deleteRequest,
 	fulfillRequest
 } from "@/app/api/server-actions/request";
-import Account, { AccountPermission } from "@/app/Types/Account/Account";
-import { isAllComplete, isAllPending } from "@/app/Types/Part/Part";
+import Account from "@/app/Types/Account/Account";
+import { isAllComplete } from "@/app/Types/Part/Part";
 import Request, {
-	getRequestStatus,
-	getRequestStatusColor,
 	getTotalCost,
 	hasQuote,
 	isAllPriced,
-	isAnyPartDenied,
 	isPaid,
 	RequestWithEmails,
 	RequestWithParts
 } from "@/app/Types/Request/Request";
 import {
-	RegularCarAlt,
-	RegularCart,
-	RegularCartFull,
 	RegularCheckBox,
 	RegularCog,
-	RegularCreditCards,
-	RegularCrossCircle,
-	RegularDatabase,
-	RegularEnvelope,
 	RegularExit,
 	RegularEye,
-	RegularFiles,
-	RegularLink,
-	RegularPagination,
-	RegularShare,
-	RegularTargetCustomer,
 	RegularTrashCan,
-	RegularUser,
-	RegularWallet
 } from "lineicons-react";
 import Link from "next/link";
-import { Suspense, useContext, useState } from "react";
+import { useState } from "react";
 import { useFormState } from "react-dom";
-import { revokePart, setQuote } from "@/app/api/server-actions/maintainer";
+import { setQuote } from "@/app/api/server-actions/maintainer";
 import PartEditor from "./PartEditor";
 import Filament from "@/app/Types/Filament/Filament";
 import DropdownSection from "@/app/components/DropdownSection";
-import { CodeBlock, CopyBlock } from "react-code-blocks";
 import RequestPricing from "@/app/components/Request/Pricing";
-import StatusPill from "@/app/components/StatusPill";
 import { RequestOverview } from "@/app/components/RequestOverview";
 import { formateDate } from "@/app/api/util/Constants";
 import FormLoadingSpinner from "@/app/components/FormLoadingSpinner";
-import { Dialog } from "@headlessui/react";
-import { AccountContext } from "@/app/ContextProviders";
-import Table from "@/app/components/Table";
 
 export default function RequestEditor({
 	request,
@@ -65,9 +42,7 @@ export default function RequestEditor({
 	requester: Account;
 	availableFilaments: Filament[];
 }): JSX.Element {
-	const partsAllComplete = isAllComplete(request.parts);
 	const partsAllPriced = isAllPriced(request);
-	const waitingForPickup = partsAllComplete && !request.isFulfilled;
 	const _hasQuote = hasQuote(request);
 	const isQuotePaid = isPaid(request);
 
@@ -78,9 +53,19 @@ export default function RequestEditor({
 	const [deleteRequestError, deleteRequestAction] = useFormState(deleteRequest, "");
 
 	let totalGrams = 0;
+	let totalPriceInCents = 0;
+	let allAnalysisMachines: string[] = [];
 	for (const part of request.parts) {
-		if (part.model?.analysisResults) {
+		if (part.model && part.model.analysisResults) {
 			totalGrams += part.model!.analysisResults!.estimatedFilamentUsedInGrams;
+
+			if (part.filament) {
+				totalPriceInCents += part.model!.analysisResults.estimatedFilamentUsedInGrams * part.filament.costPerGramInCents;
+			}
+
+			if (allAnalysisMachines.indexOf(part.model.analysisResults.machineModel) == -1) {
+				allAnalysisMachines.push(part.model.analysisResults.machineModel);
+			}
 		}
 	}
 
@@ -181,9 +166,12 @@ export default function RequestEditor({
 						</div>}
 
 						<div>
-							<div className="flex justify-between items-center py-2 px-1 w-full">
+							<div className="flex flex-wrap justify-between py-2 px-1 w-full">
 								<span>Manage {request.parts.length} {request.parts.length > 1 ? "Parts" : "Part"}</span>
-								{/* {totalGrams > 0 && <span>Estimated: Total {totalGrams} g</span>} */}
+								{(totalGrams > 0 || totalPriceInCents > 0) && <div>
+									<span className="mr-2 font-light max-lg:hidden">Automatic Analysis using {allAnalysisMachines.join(", ")}</span>
+									<span>${(totalPriceInCents / 100).toFixed(2)} consuming {Math.round(totalGrams)} Grams</span>
+								</div>}
 							</div>
 							<div className={`grid ${request.parts.length > 2 && "2xl:grid-cols-2"} gap-4`}>
 								{request.parts.map((part, index) => (
@@ -308,19 +296,20 @@ export default function RequestEditor({
 							{requester.firstName} {requester.lastName}
 						</p>
 
+						<a
+							className="block my-2 text-pnw-gold"
+							href={`mailto:${requester.email}`}>
+							Contact at {requester.email}
+						</a>
+
 						<p>{requester.yearOfStudy} joined {requester.joinedAt.toLocaleDateString("en-us", {
 							weekday: "long",
 							month: "short",
 							day: "numeric"
 						})}.</p>
 
-						<a
-							className="block mt-2 text-pnw-gold"
-							href={`mailto:${requester.email}`}>
-							{requester.email}
-						</a>
 
-						<DropdownSection hidden={true} name={"Email Performance Tracking"} className="px-0 mt-2">
+						<DropdownSection name={"Email Performance"} className="px-0 mt-2">
 							<table className="bg-background px-1 py-2 w-full mt-1 out">
 								<thead>
 									<tr>
@@ -329,17 +318,19 @@ export default function RequestEditor({
 									</tr>
 								</thead>
 								<tbody>
-									{request.emails.map(email => <tr className="bg-transparent">
-										<td className="first-letter:uppercase">{email.kind}</td>
-										<td>{email.seenAt == null ? <span><RegularEye className="inline fill-cool-black mb-0.5" /> Unread</span> : <span><RegularEye className="inline fill-pnw-gold mb-0.5" /> {email.seenAt.toLocaleDateString("en-us", {
-											month: "short",
-											day: "numeric",
-											hour: "2-digit",
-											minute: "2-digit"
-										})}</span>}</td>
-									</tr>
+									{request.emails.map(email => <>
+										<tr className="bg-transparent">
+											<td className="first-letter:uppercase">{email.kind}</td>
+											<td>{email.seenAt == null ? <span><RegularEye className="inline fill-cool-black mb-0.5" /> Unread</span> : <span><RegularEye className="inline fill-pnw-gold mb-0.5" /> {email.seenAt.toLocaleDateString("en-us", {
+												month: "short",
+												day: "numeric",
+												hour: "2-digit",
+												minute: "2-digit"
+											})}</span>}</td>
+										</tr>
+									</>
 									)}
-								</tbody>
+								</tbody >
 							</table>
 						</DropdownSection>
 					</div>

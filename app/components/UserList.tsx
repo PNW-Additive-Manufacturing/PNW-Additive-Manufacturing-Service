@@ -27,7 +27,7 @@ function UserRow({
 			<td>{user.firstName}</td>
 			<td>{user.lastName}</td>
 			<td>{user.yearOfStudy}</td>
-			<td>{user.isBanned ? <span className="text-red-500">Banned</span> : "Active"}</td>
+			<td>{user.isEmailVerified ? "Verified" : "Unverified"} {user.isBanned ? <span className="text-red-500">Banned</span> : "Active"}</td>
 			<td>
 				<div className="bg-transparent rounded-sm w-full">
 					<input type="hidden" name="user-email" value={user.email} />

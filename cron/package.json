@@ -1,0 +1,22 @@
+{
+  "name": "ams-cron",
+  "version": "1.0.0",
+  "description": "Additive Manufacturing Service CRON Jobs",
+  "main": "index.js",
+  "scripts": {
+    "run": "npx tsc & node ./out/cron.js",
+    "build:docker": "docker image build -t ams-cron ."
+  },
+  "author": "Aaron Jung",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "node-cron": "^3.0.3",
+    "postgres": "^3.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.8.1",
+    "@types/node-cron": "^3.0.11",
+    "typescript": "^5.6.3"
+  }
+}

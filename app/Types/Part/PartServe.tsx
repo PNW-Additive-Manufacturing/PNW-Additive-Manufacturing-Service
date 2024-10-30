@@ -37,8 +37,8 @@ export default class PartServe {
 				partRow.supplementedfilamentid == undefined
 					? undefined
 					: await FilamentServe.queryById(
-							partRow.supplementedfilamentid
-					  ),
+						partRow.supplementedfilamentid
+					),
 			status: partRow.status,
 			deniedReason: partRow.revokedreason,
 			notes: partRow.notes,
@@ -46,15 +46,15 @@ export default class PartServe {
 				partRow.refundreason == undefined
 					? undefined
 					: {
-							reason: partRow.refundreason,
-							quantity: Number.parseInt(partRow.refundquantity),
-							walletTransactionId:
-								partRow.refundwallettransactionid,
-							walletTransaction:
-								(await AccountServe.queryTransaction(
-									partRow.refundwallettransactionid
-								))!
-					  },
+						reason: partRow.refundreason,
+						quantity: Number.parseInt(partRow.refundquantity),
+						walletTransactionId:
+							partRow.refundwallettransactionid,
+						walletTransaction:
+							(await AccountServe.queryTransaction(
+								partRow.refundwallettransactionid
+							))!
+					},
 			filament
 		};
 
@@ -108,17 +108,17 @@ export default class PartServe {
 					partRow.refundreason == undefined
 						? undefined
 						: {
-								reason: partRow.refundreason,
-								quantity: Number.parseInt(
-									partRow.refundquantity
-								),
-								walletTransactionId:
-									partRow.refundwallettransactionid,
-								walletTransaction:
-									(await AccountServe.queryTransaction(
-										partRow.refundwallettransactionid
-									))!
-						  },
+							reason: partRow.refundreason,
+							quantity: Number.parseInt(
+								partRow.refundquantity
+							),
+							walletTransactionId:
+								partRow.refundwallettransactionid,
+							walletTransaction:
+								(await AccountServe.queryTransaction(
+									partRow.refundwallettransactionid
+								))!
+						},
 				quantity: partRow.quantity,
 				priceInDollars: priceInDollars as number | undefined,
 				status: partRow.status,
@@ -127,8 +127,8 @@ export default class PartServe {
 					partRow.supplementedfilamentid == undefined
 						? undefined
 						: await FilamentServe.queryById(
-								partRow.supplementedfilamentid
-						  ),
+							partRow.supplementedfilamentid
+						),
 				filament:
 					filamentRow == undefined
 						? undefined

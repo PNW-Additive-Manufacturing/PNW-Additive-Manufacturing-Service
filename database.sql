@@ -132,9 +132,11 @@ CREATE TABLE RequestRefund (
 DROP TABLE IF EXISTS Model CASCADE;
 CREATE TABLE Model (
   Id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  UploadedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   Name varchar(256) NOT NULL,
   FileSizeInBytes BIGINT NOT NULL,
-  Favorite BOOLEAN NOT NULL DEFAULT FALSE,  
+  Favorite BOOLEAN NOT NULL DEFAULT FALSE,
+  IsPurged BOOLEAN NOT NULL DEFAULT FALSE,
   OwnerEmail varchar(254) REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -143,9 +145,11 @@ CREATE TABLE ModelAnalysis
 (
   ModelId UUID PRIMARY KEY REFERENCES Model(Id) ON DELETE CASCADE ON UPDATE CASCADE,
   FailedReason VARCHAR(2000),
-  EstimatedFilamentUsedInGrams DECIMAL(2),
+  EstimatedFilamentUsedInGrams FLOAT(2),
   EstimatedDuration INTERVAL, 
   CreatedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  MachineModel VARCHAR(100) NOT NULL,
+  MachineManufacturer VARCHAR(100) NOT NULL,
   CONSTRAINT FAILED_CHK CHECK (
   	(FailedReason IS NOT NULL AND EstimatedFilamentUsedInGrams IS NULL AND EstimatedDuration IS NULL) OR
     (FailedReason IS NULL)

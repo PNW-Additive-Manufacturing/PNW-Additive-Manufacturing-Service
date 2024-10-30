@@ -34,6 +34,8 @@ import {
 	RegularCrossCircle,
 	RegularDownload,
 	RegularMoneyProtection,
+	RegularPlus,
+	RegularReload,
 	RegularSpinnerSolid,
 	RegularTimer,
 	RegularUpload,
@@ -116,7 +118,7 @@ export default function PartEditor({
 	filaments: Filament[];
 	count: number;
 }) {
-	const { register, watch, setValue } = useForm<{
+	const { register, watch, setValue, getValues } = useForm<{
 		costInDollars: number;
 		status: string;
 		weightOfModel: number;
@@ -124,7 +126,12 @@ export default function PartEditor({
 		refundQuantity: number;
 		supplementedFilamentMaterial: string;
 		supplementedFilamentColorName: string;
-	}>();
+	}>({
+		defaultValues:
+		{
+			costInDollars: part.priceInDollars
+		}
+	});
 
 	const isEditingFilament =
 		watch(
@@ -296,7 +303,7 @@ export default function PartEditor({
 											statusColor={selectedStatusColor}
 											defaultValue={part.status}>
 											{part.status !=
-												PartStatus.Denied && (
+												PartStatus.Denied && !request.isFulfilled && (
 													<option
 														value={PartStatus.Pending}
 														key={PartStatus.Pending}>
@@ -310,6 +317,15 @@ export default function PartEditor({
 													Denied
 												</option>
 											)}
+											{request.isFulfilled && <option
+												value={
+													PartStatus.Printed
+												}
+												key={
+													PartStatus.Printed
+												}>
+												Printed
+											</option>}
 											{!request.isFulfilled && isPaid(request) && (
 												<>
 													<option
@@ -452,30 +468,27 @@ export default function PartEditor({
 												</>
 											)}
 										</div>
-										<div className="w-full md:max-w-60 mt-2">
-											{!isQuoted && watch("status", part.status) ==
-												"pending" && (
-													<CurrencyInput
-														defaultValue={
-															part.priceInDollars ?? 0
-														}
-														register={register(
-															"costInDollars",
-															{
-																min: 0,
-																disabled: isQuoted
-															}
-														)}
-														id={
-															"costInDollars"
-														}></CurrencyInput>
-												)}
+
+										<div className="my-0.5">
+											<span className="font-light">
+												{"Cost per-unit: "}
+											</span>
+											<span className={(getValues("costInDollars") == undefined || getValues("costInDollars").toString() == "") ? "opacity-50" : ""}>$</span>
+											<input required className="inline w-fit p-0 mb-0 bg-transparent outline-none min-w-fit focus:outline-none"
+												disabled={isQuoted}
+												{...register("costInDollars", {
+													min: 0
+												})}
+												placeholder={(part.model.analysisResults ? `${((part.model.analysisResults!.estimatedFilamentUsedInGrams * part.filament!.costPerGramInCents) / 100).toFixed(2)} (Recommended)` : (0).toFixed(2))}
+												defaultValue={part.priceInDollars} />
 										</div>
 									</div>
 								</div>
-								<div className={count > 2 ? "mt-6 w-auto" : "lg:w-96"}>
-									<div className="w-full h-40 lg:h-52 outline-gray-300 bg-gray-50 outline-1 outline rounded-sm relative shadow-sm max-lg:mt-8">
+								<div className={count > 2 ? "mt-6 w-auto" : "lg:w-96 2xl:w-132"}>
+									<div className="w-full h-48 outline-gray-300 bg-gray-50 outline-1 outline rounded-sm relative shadow-sm max-lg:mt-8">
 										<ModelViewer
+											isAvailable={!part.model.isPurged}
+											modelSize={part.model?.fileSizeInBytes}
 											swatch={
 												part.supplementedFilament
 													?.color ??
@@ -486,7 +499,7 @@ export default function PartEditor({
 									<div>
 										<div className="bg-background flex w-full p-3 gap-4 text-sm rounded-b-sm justify-between items-start">
 											{part.model.analysisResults ? (
-												<div className="flex items-center gap-4">
+												<div className="flex text-nowrap items-center gap-4">
 													<div>
 														<RegularTimer className="w-5.5 h-5.5 inline mr-2 mb-0.5"></RegularTimer>
 														{part.model.analysisResults.estimatedDuration}
@@ -501,7 +514,13 @@ export default function PartEditor({
 														g
 													</div>
 												</div>
-											) : part.model.analysisFailedReason ? <p className="opacity-50 text-red-500">Failed: {part.model.analysisFailedReason}</p> : <p className="opacity-50">Not Performed</p>}
+											) : part.model.analysisFailedReason ? <>
+
+												<p className="opacity-50 text-red-500 fill-red-500">{part.model.analysisFailedReason}
+													{/* <RegularReload className="inline ml-2 hover:animate-spin"></RegularReload> */}
+												</p>
+
+											</> : <p className="opacity-50">Queued for Analysis</p>}
 
 											<div className="flex gap-4 flex-nowrap items-start">
 												{/* {part.model.analysisResults && <a className="opacity-50 hover:opacity-100"
@@ -510,13 +529,13 @@ export default function PartEditor({
 													target="_blank">
 													Send to Farm
 												</a>} */}
-												<a className="opacity-50 hover:opacity-100 text-nowrap"
-													href={`/api/download/model?modelId=${part.modelId}`}
+												{!part.model.isPurged && <a className={`opacity-50 ${!part.model.isPurged && "hover:opacity-100"} text-nowrap`}
+													href={part.model.isPurged ? undefined : `/api/download/model?modelId=${part.modelId}`}
 													download={`${part.model.name}.stl`}
 													target="_blank">
 													Download
 													<RegularDownload className="ml-2 inline mb-0.5"></RegularDownload>
-												</a>
+												</a>}
 											</div>
 										</div>
 									</div>

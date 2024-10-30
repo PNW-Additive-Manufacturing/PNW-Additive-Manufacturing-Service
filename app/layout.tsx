@@ -1,4 +1,5 @@
 import "./globals.css";
+import 'react-toastify/dist/ReactToastify.css';
 import type { Metadata, ResolvingMetadata } from "next";
 import { Inter } from "next/font/google";
 import { getJwtPayload, makeJwt, UserJWT } from "./api/util/JwtHelper";
@@ -15,6 +16,7 @@ import HorizontalWrap from "./components/HorizontalWrap";
 import { cookies, headers } from "next/headers";
 import getConfig from "./getConfig";
 import { login } from "./api/util/AccountHelper";
+import { ToastContainer } from "react-toastify";
 
 const inter = Inter({ subsets: ["latin"] });
 const envConfig = getConfig();
@@ -154,7 +156,21 @@ export default async function RootLayout({
 						<main
 							className="w-full lg:mt-4 px-0 h-fit lg:pt-2"
 							style={{ minHeight: "95vh" }}>
-							{children}
+							<>
+								{children}
+								<ToastContainer
+									position="bottom-left"
+									autoClose={7500}
+									// autoClose={false}
+									hideProgressBar
+									newestOnTop={false}
+									closeOnClick
+									rtl={false}
+									pauseOnFocusLoss
+									draggable
+									pauseOnHover
+									theme="light" />
+							</>
 						</main>
 						<Footer />
 					</ThemeProvider>

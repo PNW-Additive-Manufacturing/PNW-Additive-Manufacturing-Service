@@ -16,13 +16,16 @@ export default class ModelServe {
 			name: modelRow.name,
 			ownerEmail: modelRow.owneremail,
 			fileSizeInBytes: Number.parseInt(modelRow.filesizeinbytes),
+			isPurged: modelRow.ispurged,
 			analysisFailedReason: analysisQuery?.failedreason,
 			analysisResults:
 				analysisQuery != undefined && analysisQuery?.failedreason == undefined
 					? {
 						estimatedDuration:
 							analysisQuery!.estimatedduration,
-						estimatedFilamentUsedInGrams: parseFloat(analysisQuery.estimatedfilamentusedingrams)
+						estimatedFilamentUsedInGrams: parseFloat(analysisQuery.estimatedfilamentusedingrams),
+						machineModel: analysisQuery!.machinemodel,
+						machineManufacturer: analysisQuery!.machinemanufacturer
 					}
 					: undefined
 		};
@@ -43,13 +46,16 @@ export default class ModelServe {
 					name: modelRow.name,
 					ownerEmail: modelRow.owneremail,
 					fileSizeInBytes: Number.parseInt(modelRow.filesizeinbytes),
+					isPurged: modelRow.ispurged,
 					analysisFailedReason: analysisQuery?.failedreason,
 					analysisResults:
 						analysisQuery != undefined && analysisQuery?.failedreason == undefined
 							? {
 								estimatedDuration:
 									analysisQuery!.estimatedduration,
-								estimatedFilamentUsedInGrams: parseFloat(analysisQuery.estimatedfilamentusedingrams)
+								estimatedFilamentUsedInGrams: parseFloat(analysisQuery.estimatedfilamentusedingrams),
+								machineModel: analysisQuery!.machinemodel,
+								machineManufacturer: analysisQuery!.machinemanufacturer
 							}
 							: undefined
 				};
