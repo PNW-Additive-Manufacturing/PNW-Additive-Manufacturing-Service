@@ -369,10 +369,10 @@ export function RequestPartForm({
 													}
 
 													// An axis of the model is greater than 
-													if (maxValue > 256) {
-														toast.error(`The model ${p.ModelName} is too large. Ensure you have exported the model using Millimeters or split your model up into multiple parts!`);
-														return false;
-													}
+													// if (maxValue > 256) {
+													// 	toast.error(`The model ${p.ModelName} is too large. Ensure you have exported the model using Millimeters or split your model up into multiple parts!`);
+													// 	return false;
+													// }
 												}
 												return true;
 											});
