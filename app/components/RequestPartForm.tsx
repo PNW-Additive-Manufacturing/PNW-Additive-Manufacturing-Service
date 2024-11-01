@@ -28,7 +28,7 @@ import ModelViewer from "./ModelViewer";
 import { modifyPart } from "../api/server-actions/maintainer";
 import { NamedSwatch, Swatch, SwatchConfiguration, templatePNW } from "./Swatch";
 import FormLoadingSpinner from "./FormLoadingSpinner";
-import { BufferGeometry, Euler } from "three";
+import { BufferGeometry, Euler, Vector3 } from "three";
 import { Label } from "./Inputs";
 import { ToastContainer, cssTransition, toast } from 'react-toastify';
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
@@ -41,7 +41,7 @@ function AddPartButton({
 	var inputRef = useRef<LegacyRef<HTMLInputElement>>();
 
 	return (
-		<div className="hover:cursor-pointer opacity-50 hover:opacity-100">
+		<div className="hover:cursor-pointer opacity-70 hover:opacity-100">
 			<input
 				className="hidden"
 				ref={inputRef as any}
@@ -63,7 +63,7 @@ function AddPartButton({
 				className="rounded-md border-dashed border-2 px-2 border-pnw-gold w-full h-full bg-pnw-gold-light min-h-24 text-center flex gap-4 justify-center items-center">
 				<div>
 					<h2>Select to upload Models</h2>
-					<p className="text-sm mt-2">Models must be in <span className="underline font-semibold">Millimeters</span> and {"<"} 20 MB</p>
+					<p className="text-sm mt-2">Models must be in <span className="underline font-semibold">Millimeters</span> and <span className="underline font-semibold">{"<"} 20 MB</span></p>
 				</div>
 			</div>
 		</div>
@@ -333,19 +333,25 @@ export function RequestPartForm({
 											} as PartData;
 										})))
 											.filter(p => {
+												console.log(p.File.name);
 
 												// Boolean if a file with the same path has been added,
 												const isAlreadyAdded = parts.some(refP => refP.File.name == p.File.name);
-												const isSTL = p.File.name.endsWith(".stl");
+												const isSTL = p.File.name.toLowerCase().endsWith(".stl");
 												const isWithinSize = p.File.size < 20000000;
 
+												if (isAlreadyAdded) {
+													toast.warning(`The model ${p.ModelName} has already been added to this request!`);
+													return false;
+												}
+
 												if (!isSTL) {
-													toast.error(`Model ${p.ModelName} is not in STL Format!`);
+													toast.error(`The model ${p.ModelName} is not in STL Format!`);
 													return false;
 												}
 
 												if (!isWithinSize) {
-													toast.error(`Model ${p.ModelName} file size is too large!`);
+													toast.error(`The model ${p.ModelName} file size is too large!`);
 													return false;
 												}
 
@@ -355,24 +361,23 @@ export function RequestPartForm({
 												}
 												else {
 													const maxValue = Math.max(
-														p.Geometry.boundingBox!.max.x,
-														p.Geometry.boundingBox!.max.y,
-														p.Geometry.boundingBox!.max.x,
-														Math.abs(p.Geometry.boundingBox!.min.x),
-														Math.abs(p.Geometry.boundingBox!.min.y),
-														Math.abs(p.Geometry.boundingBox!.min.z),
-													) * 2;
+														p.Geometry.boundingBox!.max.x - p.Geometry.boundingBox!.min.x,
+														p.Geometry.boundingBox!.max.y - p.Geometry.boundingBox!.min.y,
+														p.Geometry.boundingBox!.max.z - p.Geometry.boundingBox!.min.z,
+													);
 
-													if (maxValue < 2) {
+													console.log(maxValue);
+
+													if (maxValue < 10 || (p.Geometry.boundingBox!.max.z - p.Geometry.boundingBox!.min.z <= 3)) {
 														toast.error(`The model ${p.ModelName} is too small. Ensure you have exported the model using Millimeters!`);
 														return false;
 													}
 
-													// An axis of the model is greater than 
-													// if (maxValue > 256) {
-													// 	toast.error(`The model ${p.ModelName} is too large. Ensure you have exported the model using Millimeters or split your model up into multiple parts!`);
-													// 	return false;
-													// }
+													// An axis of the model is greater than 256!
+													if (maxValue > 256) {
+														toast.error(`The model ${p.ModelName} is too large (Must be 256 x 256 x 256). Ensure you have exported the model using Millimeters or split your model up into multiple parts!`);
+														return false;
+													}
 												}
 												return true;
 											});
