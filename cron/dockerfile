@@ -13,5 +13,11 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
+# Build the application if necessary
+RUN npm run build:ts
+
+# Optional: Debugging step to verify file presence
+RUN ls -R /app
+
 # Start your application
-CMD ["npm", "run", "run"] 
+CMD ["npm", "run", "start"]

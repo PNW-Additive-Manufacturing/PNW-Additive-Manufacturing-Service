@@ -40,7 +40,7 @@ function NavbarLink({
 		<Link
 			onClick={onClick}
 			href={path}
-			className="rounded-md whitespace-nowrap xl:rounded-none w-full p-4 xl:p-0 bg-gray-100 sm:bg-transparent xl:w-fit border-b-4 border-b-pnw-gold-light border-opacity-10 hover:text-pnw-gold active:text-pnw-gold">
+			className="rounded-md whitespace-nowrap xl:rounded-none w-full p-4 xl:p-0 bg-gray-100 sm:bg-transparent xl:w-fit border-b-4 border-b-pnw-gold-light border-opacity-10 text-base hover:text-pnw-gold active:text-pnw-gold">
 			{name}
 		</Link>
 	);
@@ -147,7 +147,7 @@ export function Navbar({
 						<Link
 							href="/"
 							className=" flex-none gap-2 items-center mr-2">
-							<div className="w-fit whitespace-nowrap mr-fit pr-3 text-xl tracking-wide flex-fit">
+							<div className="w-fit whitespace-nowrap mr-fit pr-3 text-lg tracking-wide flex-fit">
 								<span className="text-pnw-gold">PNW </span>
 								<span>Additive Manufacturing</span>
 							</div>
@@ -270,7 +270,7 @@ export function Footer(): JSX.Element {
 					<Link
 						href={"/schedule"}
 						className="text-gray-300 my-2 text-xs">
-						Hours of Operation
+						Pickup Schedule
 					</Link>
 				</div>
 				<div className="inline-block mx-6">
@@ -293,8 +293,8 @@ export function Footer(): JSX.Element {
 					<br />
 					<a
 						className="text-gray-300 my-2 text-xs"
-						href="mailto:support@pnw3d.com">
-						support@pnw3d.com
+						href="mailto:jung416@pnw.edu">
+						jung416@pnw.edu
 					</a>
 				</div>
 			</HorizontalWrap>

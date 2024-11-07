@@ -4,7 +4,7 @@ import {
 	deleteRequest,
 	fulfillRequest
 } from "@/app/api/server-actions/request";
-import Account from "@/app/Types/Account/Account";
+import Account, { AccountPermission } from "@/app/Types/Account/Account";
 import { isAllComplete } from "@/app/Types/Part/Part";
 import Request, {
 	getTotalCost,
@@ -19,10 +19,12 @@ import {
 	RegularCog,
 	RegularExit,
 	RegularEye,
+	RegularPagination,
+	RegularSearchAlt,
 	RegularTrashCan,
 } from "lineicons-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useFormState } from "react-dom";
 import { setQuote } from "@/app/api/server-actions/maintainer";
 import PartEditor from "./PartEditor";
@@ -32,6 +34,9 @@ import RequestPricing from "@/app/components/Request/Pricing";
 import { RequestOverview } from "@/app/components/RequestOverview";
 import { formateDate } from "@/app/api/util/Constants";
 import FormLoadingSpinner from "@/app/components/FormLoadingSpinner";
+import Machine from "@/app/components/Machine";
+import { AccountContext } from "@/app/ContextProviders";
+import { addMinutes } from "@/app/utils/TimeUtils";
 
 export default function RequestEditor({
 	request,
@@ -53,14 +58,20 @@ export default function RequestEditor({
 	const [deleteRequestError, deleteRequestAction] = useFormState(deleteRequest, "");
 
 	let totalGrams = 0;
+	let maxLeadTime = 0;
 	let totalPriceInCents = 0;
 	let allAnalysisMachines: string[] = [];
 	for (const part of request.parts) {
+		if (part.filament && part.filament.leadTimeInDays > maxLeadTime) {
+			maxLeadTime = part.filament.leadTimeInDays;
+		}
+
 		if (part.model && part.model.analysisResults) {
 			totalGrams += part.model!.analysisResults!.estimatedFilamentUsedInGrams;
 
+
 			if (part.filament) {
-				totalPriceInCents += part.model!.analysisResults.estimatedFilamentUsedInGrams * part.filament.costPerGramInCents;
+				totalPriceInCents += part.model!.analysisResults.estimatedFilamentUsedInGrams * part.quantity * part.filament.costPerGramInCents;
 			}
 
 			if (allAnalysisMachines.indexOf(part.model.analysisResults.machineModel) == -1) {
@@ -73,27 +84,29 @@ export default function RequestEditor({
 		<>
 			<div className="lg:flex justify-between items-start">
 				<div className="w-full">
-					<h1 className="text-4xl font-thin">
+					<h1 className="text-2xl font-thin">
 						Manage {request.name}
 					</h1>
-					<p className="max-lg:block mt-2 max-lg:mb-6">
+					<p className="max-lg:block mt-2 max-lg:mb-6 text-sm">
 						{request.firstName} {request.lastName} placed this
 						request on{" "}
 						{request.submitTime.toLocaleDateString("en-us", {
 							weekday: "long",
 							month: "short",
-							day: "numeric"
+							day: "numeric",
+							hour: "numeric"
 						})}
 						.
 					</p>
+					{/* <p className="text-xs"><RegularSearchAlt className="inline"></RegularSearchAlt> Copy printing name to Clipboard</p> */}
+					{/* <p className="mt-2 opacity-50 text-sm">{request.firstName} {request.lastName} - {request.parts.map(p => p.model.name).join(", ")}</p> */}
 				</div>
 
 				<div className="items-end flex w-full">
 					<div className="flex w-full gap-2 lg:justify-end max-lg:justify-between">
 						<Link href="/dashboard/maintainer/orders">
-							<button className="outline outline-1 outline-gray-300 bg-white text-black fill-black flex flex-row gap-2 justify-end items-center px-3 py-2 text-sm w-fit mb-0">
-								<RegularExit className="w-auto h-6 fill-inherit"></RegularExit>
-								<span className="text-sm font-medium">Go Back</span>
+							<button className="outline outline-1 outline-gray-300 bg-white text-black fill-black px-3 py-2 text-sm w-fit mb-0">
+								<RegularExit className="inline mb-0.5 fill-inherit"></RegularExit> <span className="text-sm font-normal">Go Back</span>
 							</button>
 						</Link>
 						<div className="flex gap-2">
@@ -103,12 +116,11 @@ export default function RequestEditor({
 									onClick={() =>
 										setShowActions(!showActions)
 									}>
-									<span className="text-sm font-medium">Actions</span>
 									<RegularCog
 										className={`${showActions
 											? "rotate-180"
 											: "rotate-0"
-											} ml-2 w-6 h-auto fill-inherit inline transition-transform ease-in-out duration-500`}></RegularCog>
+											} mb-0.5 h-auto fill-inherit inline transition-transform ease-in-out duration-500`} /> <span className="text-sm font-normal">Actions</span>
 								</button>
 								<div
 									className={`${showActions ? "" : "hidden"} mt-2 absolute w-fit h-fit bg-white right-0 py-2 px-2 rounded-md flex flex-col gap-1 z-10 outline outline-1 outline-gray-300`}>
@@ -181,7 +193,17 @@ export default function RequestEditor({
 										index={index}
 										isQuoted={_hasQuote}
 										filaments={availableFilaments}
-										count={request.parts.length}></PartEditor>
+										count={request.parts.length}
+										processingMachine={{
+											failReason: "",
+											filaments: [],
+											identifier: "Sam",
+											isHealthy: true,
+											model: "A1",
+											progress: 75,
+											status: "Printing",
+											timeRemaining: "20",
+										}} />
 								))}
 							</div>
 						</div>
@@ -196,26 +218,20 @@ export default function RequestEditor({
 						hidden={true}>
 						<div className="shadow-md rounded-md p-4 lg:p-6 bg-white mb-4 outline outline-1 outline-gray-300 hover:outline-gray-400 transition-all duration-75">
 							<div className="max-h-60 w-full text-sm overflow-scroll">
-								<CopyBlock
-									customStyle={{ width: "100%" }}
-									text={JSON.stringify(
-										{
-											...request,
-											parts: request.parts.map((part) => {
-												return {
-													...part,
-													// Remove nested request for clarity.
-													request: undefined
-												};
-											})
-										},
-										null,
-										4
-									)}
-									language="JSON"
-									showLineNumbers={false}
-									codeBlock={true}
-								/>
+								{JSON.stringify(
+									{
+										...request,
+										parts: request.parts.map((part) => {
+											return {
+												...part,
+												// Remove nested request for clarity.
+												request: undefined
+											};
+										})
+									},
+									null,
+									4
+								)}
 							</div>
 						</div>
 					</DropdownSection>} */}
@@ -226,12 +242,14 @@ export default function RequestEditor({
 						{isAllPriced(request) ? (
 							<>
 								<RequestPricing request={request} />
-								<br />
+								<hr className="mb-4" />
+
+								<p className="mb-2 font-light text-sm">Filament lead-time is {maxLeadTime} Days.</p>
 
 								{hasQuote(request) && <>
 
-									<label>Estimated Completion</label>
-									<input type="date" name="estimated-completion-date" id="estimated-completion-date" readOnly value={request.quote!.estimatedCompletionDate.toISOString().split("T")[0]} required></input>
+									<label className="font-normal">Estimated Completion</label>
+									<input className="py-2" type="date" name="estimated-completion-date" id="estimated-completion-date" readOnly value={request.quote!.estimatedCompletionDate.toISOString().split("T")[0]} required></input>
 
 								</>}
 
@@ -260,7 +278,7 @@ export default function RequestEditor({
 													readOnly
 													value={request.id}></input>
 												<label>Estimated Completion</label>
-												<input type="date" name="estimated-completion-date" id="estimated-completion-date" min={new Date().toLocaleDateString('en-us')} required></input>
+												<input className="py-2" type="date" name="estimated-completion-date" id="estimated-completion-date" min={new Date().toLocaleDateString('en-us')} required></input>
 												<button
 													className="py-4 shadow-md text-left flex justify-between w-full mb-0"
 													disabled={!partsAllPriced}>
@@ -276,52 +294,55 @@ export default function RequestEditor({
 													</div>
 												</button>
 											</form>
-											<p className="text-red-500 text-base mt-2">
+											{quoteState && <p className="text-red-500 text-base mt-2">
 												{quoteState}
-											</p>
+											</p>}
 										</>
 									)
 								)}
 							</>
 						) : (
-							<p>Request has not been Quoted.</p>
+							<>
+								<p>Request has not been Quoted.</p>
+								<span className="text-sm mt-2">All parts must be priced before submission.</span>
+							</>
 						)}
 					</div>
 
 					<div className="py-2 pt-4 px-1 w-full">
 						Requester Information
 					</div>
-					<div className="p-4 lg:p-6 rounded-sm shadow-sm bg-white font-light text-base outline outline-2 outline-gray-200">
+					<div className="p-4 lg:p-6 rounded-sm shadow-sm bg-white font-light outline outline-2 outline-gray-200">
 						<p className="text-2xl">
 							{requester.firstName} {requester.lastName}
 						</p>
 
 						<a
-							className="block my-2 text-pnw-gold"
+							className="block my-2 text-pnw-gold text-sm"
 							href={`mailto:${requester.email}`}>
 							Contact at {requester.email}
 						</a>
 
-						<p>{requester.yearOfStudy} joined {requester.joinedAt.toLocaleDateString("en-us", {
+						<p className="text-sm">{requester.yearOfStudy}, joined {requester.joinedAt.toLocaleDateString("en-us", {
 							weekday: "long",
 							month: "short",
 							day: "numeric"
 						})}.</p>
 
 
-						<DropdownSection name={"Email Performance"} className="px-0 mt-2">
+						<DropdownSection hidden={true} name={"Email Performance"} className="px-0 text-sm mt-2">
 							<table className="bg-background px-1 py-2 w-full mt-1 out">
 								<thead>
 									<tr>
-										<th className="pt-3">Message</th>
-										<th className="pt-3">Status</th>
+										<th className="pt-3 text-xs">Message</th>
+										<th className="pt-3 text-xs">Status</th>
 									</tr>
 								</thead>
 								<tbody>
 									{request.emails.map(email => <>
 										<tr className="bg-transparent">
-											<td className="first-letter:uppercase">{email.kind}</td>
-											<td>{email.seenAt == null ? <span><RegularEye className="inline fill-cool-black mb-0.5" /> Unread</span> : <span><RegularEye className="inline fill-pnw-gold mb-0.5" /> {email.seenAt.toLocaleDateString("en-us", {
+											<td className="first-letter:uppercase text-sm">{email.kind}</td>
+											<td className="text-sm">{email.seenAt == null ? <span><RegularEye className="inline fill-cool-black mb-0.5" /> Unread</span> : <span><RegularEye className="inline fill-pnw-gold mb-0.5" /> {email.seenAt.toLocaleDateString("en-us", {
 												month: "short",
 												day: "numeric",
 												hour: "2-digit",

@@ -32,6 +32,7 @@ import { BufferGeometry, Euler, Vector3 } from "three";
 import { Label } from "./Inputs";
 import { ToastContainer, cssTransition, toast } from 'react-toastify';
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
+import Link from "next/link";
 
 function AddPartButton({
 	onChange
@@ -130,15 +131,15 @@ export function RequestPartForm({
 				<div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 
 				<div className="fixed inset-0 flex w-screen items-center justify-center shadow-lg">
-					<Dialog.Panel className="rounded-md bg-white p-6 pb-10 max-lg:w-full max-lg:mx-4 out">
+					<Dialog.Panel className="rounded-md bg-white p-8 max-lg:w-full max-lg:mx-4 out">
 						<Dialog.Title className="mb-4 flex max-lg:flex-col lg:justify-between lg:items-center gap-4">
-							<div className="flex items-center gap-2">
-								<RegularEmptyFile className="inline w-5 h-5 fill-gray-500"></RegularEmptyFile>
+							<div className="flex font-light text-xl items-center gap-2">
+								<RegularEmptyFile className="inline fill-pnw-gold"></RegularEmptyFile>
 								{modifyingPart?.ModelName}
 							</div>
-							<div className="flex max-lg:justify-between gap-4">
+							<div className="flex max-lg:justify-between gap-2">
 								<div
-									className="flex items-center gap-2 text-gray-500 fill-gray-500 hover:cursor-pointer"
+									className="flex items-center gap-2 py-2 opacity-75 font-light hover:cursor-pointer"
 									onClick={() => {
 										parts.splice(
 											parts.indexOf(modifyingPart!),
@@ -146,12 +147,13 @@ export function RequestPartForm({
 										);
 										setParts(parts);
 										setModifyingPart(undefined);
+										toast.success(`Removed ${modifyingPart!.ModelName} from your request.`);
 									}}>
 									Remove
 									<RegularCrossCircle></RegularCrossCircle>
 								</div>
 								<button
-									className="flex m-0 bg-transparent items-center gap-2 fill-pnw-gold text-pnw-gold hover:cursor-pointer"
+									className="flex m-0 bg-transparent items-center gap-2 py-2 fill-pnw-gold text-pnw-gold font-light hover:cursor-pointer"
 									onClick={() => setModifyingPart(undefined)}>
 									Continue
 									<RegularArrowRight></RegularArrowRight>
@@ -159,31 +161,29 @@ export function RequestPartForm({
 							</div>
 						</Dialog.Title>
 						<div className="lg:flex gap-4">
-							<div className="max-lg:hidden flex flex-col max-w-96">
+							<div className="max-lg:hidden flex flex-col max-w-96 h-auto">
 								<label>View Model</label>
 								{modifyingPart?.File && (
-									<>
-										<div className="w-full aspect-square outline-gray-300 bg-gray-50 outline-1 outline rounded-sm relative shadow-sm">
-											<ModelViewer
-												showOrientation={
-													!modifyingPart!
-														.IsUserOriented
-												}
-												onClickOrientation={(
-													rotation
-												) => {
-													modifyingPart.IsUserOriented =
-														true;
-													setModifyingPart({
-														...modifyingPart,
-														IsUserOriented: true
-													});
-												}}
-												modelFile={
-													modifyingPart.File
-												}></ModelViewer>
-										</div>
-									</>
+									<div className="w-full h-full shadow-sm out">
+										<ModelViewer
+											showOrientation={
+												!modifyingPart!
+													.IsUserOriented
+											}
+											onClickOrientation={(
+												rotation
+											) => {
+												modifyingPart.IsUserOriented =
+													true;
+												setModifyingPart({
+													...modifyingPart,
+													IsUserOriented: true
+												});
+											}}
+											modelFile={
+												modifyingPart.File
+											}></ModelViewer>
+									</div>
 								)}
 							</div>
 
@@ -201,17 +201,21 @@ export function RequestPartForm({
 										setModifyingPart(modifyingPart);
 									}}></input>
 
-								<label>Process</label>
-								<select defaultValue="fdm">
-									<option value="fdm">
+								<label>Process / Material</label>
+								<p className="mb-4 text-xs">Review each <Link className="underline" target="_blank" href={"/materials"}>process and material</Link> before submission.</p>
+								<select defaultValue="FDM">
+									<option value="FDM`">
 										3D Printing (FDM)
 									</option>
-									<option disabled value="resin">
-										Resin Printing (SLA)
+									<option disabled value="LCD`">
+										Resin Printing
+									</option>
+									<option disabled value="Metal FFF">
+										Metal Printing
 									</option>
 								</select>
 
-								<label>Filament Preference</label>
+								{/* <label>Filament Preference</label> */}
 								<PopupFilamentSelector
 									filaments={filaments}
 									defaultFilament={{

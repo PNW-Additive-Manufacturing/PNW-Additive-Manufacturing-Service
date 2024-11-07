@@ -102,8 +102,12 @@ export default async function RootLayout({
 										path: "/team"
 									},
 									{
-										name: "Pickup Schedule",
+										name: "Schedule",
 										path: "/schedule"
+									},
+									{
+										name: "Our Services",
+										path: "/materials"
 									}
 								];
 
@@ -118,7 +122,7 @@ export default async function RootLayout({
 										permission == AccountPermission.Admin
 									) {
 										elements.push({
-											name: "Management Panel",
+											name: "Management",
 											path: "/dashboard/maintainer"
 										});
 									}

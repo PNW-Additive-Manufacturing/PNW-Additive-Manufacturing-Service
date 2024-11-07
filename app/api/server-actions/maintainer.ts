@@ -372,6 +372,8 @@ export async function addFilament(
 	const monoColor = data.get("filament-mono-color") as string;
 	const diColorA = data.get("filament-di-colorA") as string;
 	const diColorB = data.get("filament-di-colorB") as string;
+	const leadTimeInDays = Number.parseInt(data.get("filament-lead-time-in-days") as string);
+	const technology = data.get("filament-technology") as string;
 
 	const newSwatch: SwatchConfiguration = {
 		name: colorName,
@@ -388,7 +390,9 @@ export async function addFilament(
 		color: newSwatch,
 		inStock: true,
 		costPerGramInCents: materialCostInCents,
-		details
+		details,
+		leadTimeInDays: 1,
+		technology: "FDM"
 	});
 
 	//successful

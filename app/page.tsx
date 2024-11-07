@@ -5,6 +5,7 @@ import HorizontalWrap from "./components/HorizontalWrap";
 import Gallery from "./components/Gallery";
 import Link from "next/link";
 import { AvailabilityText } from "./components/LocalSchedule";
+import { RegularArrowRight, RegularPackage } from "lineicons-react";
 
 function DiscordServer() {
 	return (
@@ -77,7 +78,7 @@ export default async function Home() {
 								<li>Creative Models</li>
 							</ul>
 
-							<div className="pt-10">
+							<div className="pt-6">
 								<div className="sm:flex gap-2">
 									<a
 										href={"/request-part"}
@@ -108,7 +109,7 @@ export default async function Home() {
 								autoplay={true}
 								slides={[
 									<>
-										<div className="bg-gray-100 rounded-md shadow-sm w-full h-80">
+										<div className="bg-gray-100 rounded-md shadow-sm w-full h-72">
 											<Image
 												src={"/assets/lab_setup_1.jpg"}
 												width={760}
@@ -129,7 +130,7 @@ export default async function Home() {
 										</p>
 									</>,
 									<>
-										<div className="bg-gray-100 rounded-md shadow-sm w-full h-80">
+										<div className="bg-gray-100 rounded-md shadow-sm w-full h-72">
 											<Image
 												src="/assets/am_simple_logos.jpg"
 												width={760}
@@ -144,7 +145,7 @@ export default async function Home() {
 										</p>
 									</>,
 									<>
-										<div className="bg-gray-100 rounded-md shadow-sm w-full h-80">
+										<div className="bg-gray-100 rounded-md shadow-sm w-full h-72">
 											<Image
 												src="/assets/lion.jpg"
 												width={760}
@@ -163,14 +164,14 @@ export default async function Home() {
 											width={760}
 											height={760}
 											alt=""
-											className="pt-0 w-full bg-black rounded-md h-80"></Image>
+											className="pt-0 w-full bg-black rounded-md h-72"></Image>
 										<p className="text-base px-2 lg:text-center w-full font-light mt-2">
 											Express your creativity by designing
 											and requesting artistic models.
 										</p>
 									</>,
 									<>
-										<div className="bg-gray-100 rounded-md shadow-sm w-full h-80">
+										<div className="bg-gray-100 rounded-md shadow-sm w-full h-72">
 											<Image
 												src="/assets/luke_moreno_battle_bot_2.jpg"
 												width={760}
@@ -194,7 +195,7 @@ export default async function Home() {
 						<div
 							id="services">
 							<div>
-								<h2 className="w-fit font-normal text-2xl pb-2">
+								<h2 className="w-fit font-medium text-2xl pb-2">
 									Our Manufacturing Services
 								</h2>
 								<div className="w-fit lg:pr-24">
@@ -206,16 +207,46 @@ export default async function Home() {
 										target="_blank"
 										href="https://xometry.pro/en-eu/articles/3d-printing-sla-vs-fdm/">
 										Xometry (3D Technologies Comparison)
-									</a>
-									. We continue to actively expand our
-									manufacturing capabilities, if you'd like to
-									operate these machines come to our weekly
-									meetings on MyPNWLife!
+									</a>.
 								</div>
 							</div>
 						</div>
-						<hr />
-						<div className="grid grid-cols-1 gap-12">
+						{/* <hr /> */}
+						<div className="grid grid-cols-1 lg:grid-cols-3 2xl:grid-cols-4 gap-8 mt-8">
+							<div className="bg-background p-4 w-full out">
+								<Image src="/assets/Bambu+Lab+A1+3D+Printer+multi+color.png" alt="Bambu Lab A1 3D Printer" width={720} height={720} className="rounded-md mb-4 w-full h-52 object-cover" />
+								<h2 className="text-xl text-pnw-gold font-semibold">FDM 3D Printing</h2>
+								<p className="mt-2"></p>
+								<p className="mt-2">Great for prototyping in medium-strength application due to the cost-effective nature.</p>
+							</div>
+
+							<div className="bg-background p-4 w-full out opacity-50 max-lg:hidden">
+								<Image src="/assets/mars4ultra.png" alt="Mars 4 Ultra Printer" width={720} height={720} className="rounded-md mb-4 w-full h-52 object-cover" />
+								<h2 className="text-xl font-semibold">Resin 3D Printing</h2>
+								<p className="mt-2">Coming 2025</p>
+								<p className="mt-2">Optimal for creating detailed and smooth-surfaced models, ideal for small intricate parts.</p>
+							</div>
+
+							<div className="bg-background p-4 w-full out opacity-50 max-lg:hidden">
+								<Image src="/assets/metalx.png" alt="Metal X Printer" width={720} height={720} className="rounded-md mb-4 w-full h-52 object-cover" />
+								<h2 className="text-xl font-semibold">MetalX 3D Printing</h2>
+								<p className="mt-2">Coming 2025</p>
+								<p className="mt-2">The MetalX produces durable and strong metal parts, specifically designed for critical applications.</p>
+							</div>
+
+							<div>
+								<Link className="w-full" href="/materials">
+									<button className="h-fit text-left bg-background text-pnw-gold fill-pnw-gold outline-1 outline outline-pnw-gold">
+										View our Inventory
+										<RegularArrowRight className="inline ml-2 fill-inherit" />
+									</button>
+								</Link>
+								Explore our complete inventory of 3D printing machines, materials, and processes, along with detailed information on lead times and costs.
+							</div>
+						</div>
+
+
+						{/* <div className="grid grid-cols-1 gap-12">
 							<div className="flex flex-col lg:flex-row gap-4">
 								<Image
 									className="w-full max-lg:h-44 lg:w-48 shadow-md rounded-md"
@@ -301,16 +332,16 @@ export default async function Home() {
 									</ul>
 								</div>
 							</a>
-						</div>
+						</div> */}
 					</HorizontalWrap>
 				</div>
-				<HorizontalWrap className="py-8">
+				{/* <HorizontalWrap className="py-8">
 					Looking to learn more?
 					<div className="flex flex-col md:flex-row w-fit mt-6 gap-2 justify-center">
 						<DiscordServer />
 						<GithubProject />
 					</div>
-				</HorizontalWrap>
+				</HorizontalWrap> */}
 			</div >
 		</>
 	);

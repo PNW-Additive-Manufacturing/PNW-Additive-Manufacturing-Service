@@ -2,10 +2,12 @@ import { modifyPart, revokePart } from "@/app/api/server-actions/maintainer";
 import { FilamentSelector } from "@/app/components/FilamentSelector";
 import FormLoadingSpinner from "@/app/components/FormLoadingSpinner";
 import { CurrencyInput } from "@/app/components/Inputs";
+import Machine, { getMachineImageURL, MachineData, MachineIndicator } from "@/app/components/Machine";
 import ModelViewer from "@/app/components/ModelViewer";
 import RefundMessage from "@/app/components/Part/RefundMessage";
 import { SelectorStatusPill } from "@/app/components/StatusPill";
 import { getSingleColor, NamedSwatch } from "@/app/components/Swatch";
+import Image from "next/image";
 import Filament from "@/app/Types/Filament/Filament";
 import Part, {
 	isRefunded,
@@ -46,6 +48,7 @@ import { useFormState } from "react-dom";
 import { useForm } from "react-hook-form";
 import { Color } from "three";
 import { string } from "zod";
+import { toast } from "react-toastify";
 
 function PartRevokeForm({
 	part,
@@ -109,7 +112,8 @@ export default function PartEditor({
 	index,
 	isQuoted,
 	filaments,
-	count
+	count,
+	processingMachine
 }: {
 	request: RequestWithParts;
 	part: PartWithModel;
@@ -117,6 +121,7 @@ export default function PartEditor({
 	isQuoted: boolean;
 	filaments: Filament[];
 	count: number;
+	processingMachine?: MachineData;
 }) {
 	const { register, watch, setValue, getValues } = useForm<{
 		costInDollars: number;
@@ -165,8 +170,7 @@ export default function PartEditor({
 			}
 
 			const action = await modifyPart(prevState, data);
-			if (action == undefined || action!.length == 0)
-				setShowPartModified(true);
+			if (action == undefined || action!.length == 0) toast.success(`Part ${part.model.name} has been successfully modified!`);
 			return action;
 		},
 		""
@@ -185,32 +189,26 @@ export default function PartEditor({
 					setShowRevoke(show);
 					setValue("status", PartStatus.Pending);
 				}}></PartRevokeForm>
-			<Snackbar
-				anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-				open={showPartModified}
-				onClose={() => setShowPartModified(false)}
-				autoHideDuration={3500}
-				TransitionComponent={Slide}
-				className="max-lg:mb-5">
-				<Alert
-					severity="info"
-					variant="filled"
-					sx={{ width: "100%", borderRadius: "12px" }}>
-					Part {part.model && `${part.model.name} `}was successfully
-					updated!
-				</Alert>
-			</Snackbar>
-			<form action={formAction}>
+			<form action={formAction} className="h-auto">
 				<input
 					readOnly={true}
 					hidden
 					value={part.id}
 					name="partId"
 					id="partId"></input>
-				<div
-					className={`shadow-sm rounded-sm p-4 lg:p-6 bg-white outline outline-2 outline-gray-200`}>
-					<div className={`lg:flex gap-4`}>
-						{/* <div className="max-lg:hidden w-fit text-lg text-center">
+
+				{/* {processingMachine && <div className="flex items-end gap-2 w-full px-1 mb-2">
+					<div className="flex gap-2 items-center w-full" style={{ borderBottomRightRadius: "0px", borderBottomLeftRadius: "0px" }}>
+						<span className="text-nowrap">Printing on {processingMachine.identifier} ({processingMachine.model})</span>
+						<span>{processingMachine.progress}%</span>
+						<progress className="opacity-50" value={processingMachine.progress} max={100}></progress>
+					</div>
+				</div>} */}
+				<div className="flex gap-4 w-full items-end h-full">
+					<div
+						className={`shadow-sm rounded-sm p-4 lg:p-6 w-full bg-white outline outline-2 outline-gray-200`} style={{ borderTopLeftRadius: "0px", borderTopRightRadius: "0px" }}>
+						<div className={`lg:flex gap-4`}>
+							{/* <div className="max-lg:hidden w-fit text-lg text-center">
 							{index + 1}
 							<button
 								className={`flex flex-col p-0 mt-1 text-sm text-cool-black hover:text-cool-black mb-0 bg-transparent hover:bg-transparent hover:fill-black enabled:fill-pnw-gold enabled:text-pnw-gold`}
@@ -219,237 +217,237 @@ export default function PartEditor({
 								<FormLoadingSpinner className="w-6 h-auto mt-2" />
 							</button>
 						</div> */}
-						<div className="w-full">
-							{isRefunded(part) ? (
-								<></>
-							) : (
-								isPaid(request) &&
-								part.status != PartStatus.Failed &&
-								watch("status") == PartStatus.Failed && (
-									<div className="mt-4 px-0">
-										<textarea
-											{...register("reasonForRefund")}
-											className="outline outline-1 outline-gray-300 mb-0 w-full"
-											required
-											placeholder="Reason for failure"></textarea>
+							<div className="w-full">
+								{isRefunded(part) ? (
+									<></>
+								) : (
+									isPaid(request) &&
+									part.status != PartStatus.Failed &&
+									watch("status") == PartStatus.Failed && (
+										<div className="mt-4 px-0">
+											<textarea
+												{...register("reasonForRefund")}
+												className="outline outline-1 outline-gray-300 mb-0 w-full"
+												required
+												placeholder="Reason for failure"></textarea>
 
-										<div className="w-full">
-											<div className="flex items-center gap-2 w-full">
-												<input
-													{...register(
-														"refundQuantity",
-														{
-															value: part.quantity,
-															min: 1,
-															max: part.quantity,
-															required: true
-														}
-													)}
-													className="mb-0 w-full"
-													type="range"
-													required
-													min={1}
-													max={part.quantity}></input>
-
-												<input
-													className="min-w-12 p-0 min w-fit text-center mb-0 bg-transparent"
-													type="number"
-													required={false}
-													value={watch(
-														"refundQuantity"
-													)}
-													min={1}
-													max={part.quantity}
-													onChange={(ev) =>
-														setValue(
+											<div className="w-full">
+												<div className="flex items-center gap-2 w-full">
+													<input
+														{...register(
 															"refundQuantity",
-															ev.currentTarget
-																.valueAsNumber
-														)
-													}></input>
+															{
+																value: part.quantity,
+																min: 1,
+																max: part.quantity,
+																required: true
+															}
+														)}
+														className="mb-0 w-full"
+														type="range"
+														required
+														min={1}
+														max={part.quantity}></input>
+
+													<input
+														className="min-w-12 p-0 min w-fit text-center mb-0 bg-transparent"
+														type="number"
+														required={false}
+														value={watch(
+															"refundQuantity"
+														)}
+														min={1}
+														max={part.quantity}
+														onChange={(ev) =>
+															setValue(
+																"refundQuantity",
+																ev.currentTarget
+																	.valueAsNumber
+															)
+														}></input>
+												</div>
+
+												{isPriced(part) && (
+													<p>
+														Account will be refunded $
+														{(
+															part.priceInDollars! *
+															watch("refundQuantity")
+														).toFixed(2)}
+													</p>
+												)}
 											</div>
-
-											{isPriced(part) && (
-												<p>
-													Account will be refunded $
-													{(
-														part.priceInDollars! *
-														watch("refundQuantity")
-													).toFixed(2)}
-												</p>
-											)}
 										</div>
-									</div>
-								)
-							)}
+									)
+								)}
 
-							<div className={count < 3 ? "lg:flex" : ""}>
-								<div className="w-full">
-									<div className="w-full flex flex-wrap gap-x-2 gap-y-2 items-center mb-2">
-										<SelectorStatusPill
-											register={register("status", {
-												onChange: (
-													ev: ChangeEvent<HTMLSelectElement>
-												) => {
-													if (
-														ev.currentTarget
-															.value ==
-														PartStatus.Denied
-													) {
-														setShowRevoke(true);
+								<div className={count < 3 ? "lg:flex" : ""}>
+									<div className="w-full">
+										<div className="w-full flex flex-wrap gap-x-2 gap-y-2 items-center mb-2">
+											<SelectorStatusPill
+												register={register("status", {
+													onChange: (
+														ev: ChangeEvent<HTMLSelectElement>
+													) => {
+														if (
+															ev.currentTarget
+																.value ==
+															PartStatus.Denied
+														) {
+															setShowRevoke(true);
+														}
 													}
-												}
-											})}
-											statusColor={selectedStatusColor}
-											defaultValue={part.status}>
-											{part.status !=
-												PartStatus.Denied && !request.isFulfilled && (
+												})}
+												statusColor={selectedStatusColor}
+												defaultValue={part.status}>
+												{part.status !=
+													PartStatus.Denied && !request.isFulfilled && (
+														<option
+															value={PartStatus.Pending}
+															key={PartStatus.Pending}>
+															Pending
+														</option>
+													)}
+												{!request.isFulfilled && !isPriced(part) && (
 													<option
-														value={PartStatus.Pending}
-														key={PartStatus.Pending}>
-														Pending
+														value={PartStatus.Denied}
+														key={PartStatus.Denied}>
+														Denied
 													</option>
 												)}
-											{!request.isFulfilled && !isPriced(part) && (
-												<option
-													value={PartStatus.Denied}
-													key={PartStatus.Denied}>
-													Denied
-												</option>
-											)}
-											{request.isFulfilled && <option
-												value={
-													PartStatus.Printed
-												}
-												key={
-													PartStatus.Printed
-												}>
-												Printed
-											</option>}
-											{!request.isFulfilled && isPaid(request) && (
-												<>
-													<option
-														value={
-															PartStatus.Printing
-														}
-														key={
-															PartStatus.Printing
-														}>
-														Printing
-													</option>
-													<option
-														value={
-															PartStatus.Printed
-														}
-														key={
-															PartStatus.Printed
-														}>
-														Printed
-													</option>
-													<option
-														value={
-															PartStatus.Failed
-														}
-														key={PartStatus.Failed}>
-														Failed
-													</option>
-												</>
-											)}
-										</SelectorStatusPill>
-										<div className="text-2xl text-wrap">
-											{part.model.name} x{part.quantity}
+												{request.isFulfilled && <option
+													value={
+														PartStatus.Printed
+													}
+													key={
+														PartStatus.Printed
+													}>
+													Printed
+												</option>}
+												{!request.isFulfilled && isPaid(request) && (
+													<>
+														<option
+															value={
+																PartStatus.Printing
+															}
+															key={
+																PartStatus.Printing
+															}>
+															Printing
+														</option>
+														<option
+															value={
+																PartStatus.Printed
+															}
+															key={
+																PartStatus.Printed
+															}>
+															Printed
+														</option>
+														<option
+															value={
+																PartStatus.Failed
+															}
+															key={PartStatus.Failed}>
+															Failed
+														</option>
+													</>
+												)}
+											</SelectorStatusPill>
+											<div className="text-xl text-wrap">
+												{part.model.name}
+											</div>
+											{isChanged && <button
+												className={`w-fit text-sm px-0 py-0 text-cool-black hover:text-cool-black mb-0 bg-transparent hover:bg-transparent hover:fill-black enabled:fill-pnw-gold enabled:text-pnw-gold enabled:animate-pulse`}
+												disabled={!isChanged || request.isFulfilled}>
+												<RegularUpload className="p-0.5 w-5 h-5 inline"></RegularUpload>
+												<span className="ml-2 text-inherit">
+													Save
+												</span>
+												{/* <FormLoadingSpinner className="ml-2" /> */}
+											</button>}
 										</div>
-										<button
-											className={`w-fit text-sm px-0 py-0 text-cool-black hover:text-cool-black mb-0 bg-transparent hover:bg-transparent hover:fill-black enabled:fill-pnw-gold enabled:text-pnw-gold enabled:animate-pulse`}
-											disabled={!isChanged || request.isFulfilled}>
-											<RegularUpload className="p-0.5 w-5 h-5 inline"></RegularUpload>
-											<span className="ml-2 text-inherit">
-												Save
-											</span>
-											{/* <FormLoadingSpinner className="ml-2" /> */}
-										</button>
-									</div>
-									<div>
-										<p className="my-0.5">
-											<span className="font-light">
-												{"Technology: "}
-											</span>
-											Fused Deposition Modeling
-										</p>
+										<div className="text-sm">
+											<p className="my-0.5">
+												<span className="font-light">
+													{"Technology: "}
+												</span>
+												Fused Deposition Modeling
+											</p>
 
-										<div className="my-0.5">
-											{part.supplementedFilament !=
-												undefined ? (
-												<>
-													<span className="font-light mr-1">
-														{
-															"Supplemented Filament:"
-														}
-													</span>
-													{`${part.filament!.material.toUpperCase()} `}
-													<NamedSwatch
-														swatch={
-															part.filament!.color
-														}></NamedSwatch>
-													<span>{" with"}</span>
-													{` ${part.supplementedFilament.material.toUpperCase()} `}
-													<NamedSwatch
-														swatch={
-															part
-																.supplementedFilament
-																.color
-														}></NamedSwatch>
-												</>
-											) : showFilamentSupplement ? (
-												<div className="flex">
-													<div className="font-light mr-1">
-														{
-															"Supplementing Filament:"
-														}
-													</div>
-													<FilamentSelector
-														defaultColor={
-															part.filament?.color
-														}
-														defaultMaterial={
-															part.filament
-																?.material
-														}
-														onChange={(
-															material,
-															colorName
-														) => {
-															setValue(
-																"supplementedFilamentMaterial",
-																material
-															);
-															setValue(
-																"supplementedFilamentColorName",
+											<div className="my-0.5">
+												{part.supplementedFilament !=
+													undefined ? (
+													<>
+														<span className="font-light mr-1">
+															{
+																"Supplemented Filament:"
+															}
+														</span>
+														{`${part.filament!.material.toUpperCase()} `}
+														<NamedSwatch
+															swatch={
+																part.filament!.color
+															}></NamedSwatch>
+														<span>{" with"}</span>
+														{` ${part.supplementedFilament.material.toUpperCase()} `}
+														<NamedSwatch
+															swatch={
+																part
+																	.supplementedFilament
+																	.color
+															}></NamedSwatch>
+													</>
+												) : showFilamentSupplement ? (
+													<div className="flex">
+														<div className="font-light mr-1">
+															{
+																"Supplementing Filament:"
+															}
+														</div>
+														<FilamentSelector
+															defaultColor={
+																part.filament?.color
+															}
+															defaultMaterial={
+																part.filament
+																	?.material
+															}
+															onChange={(
+																material,
 																colorName
-															);
-														}}
-														includeSwatchVisual={
-															false
-														}
-														filaments={
-															filaments
-														}></FilamentSelector>
-												</div>
-											) : (
-												<>
-													<span className="font-light">
-														{"Filament: "}
-													</span>
-													{part.filament ==
-														undefined ? (
-														<>No longer Available</>
-													) : (
-														<>
-															{`${part.filament.material.toUpperCase()} `}
-															<NamedSwatch swatch={part.filament.color} />
-														</>
-													)}
-													{/* {watch(
+															) => {
+																setValue(
+																	"supplementedFilamentMaterial",
+																	material
+																);
+																setValue(
+																	"supplementedFilamentColorName",
+																	colorName
+																);
+															}}
+															includeSwatchVisual={
+																false
+															}
+															filaments={
+																filaments
+															}></FilamentSelector>
+													</div>
+												) : (
+													<>
+														<span className="font-light">
+															{"Filament: "}
+														</span>
+														{part.filament ==
+															undefined ? (
+															<>No longer Available</>
+														) : (
+															<>
+																{`${part.filament.material.toUpperCase()} `}
+																<NamedSwatch swatch={part.filament.color} />
+															</>
+														)}
+														{/* {watch(
 														"status",
 														part.status
 													) == PartStatus.Pending && (
@@ -465,96 +463,103 @@ export default function PartEditor({
 															}
 														</span>
 													)} */}
-												</>
-											)}
-										</div>
+													</>
+												)}
+											</div>
 
-										<div className="my-0.5">
-											<span className="font-light">
-												{"Cost per-unit: "}
-											</span>
-											<span className={(getValues("costInDollars") == undefined || getValues("costInDollars").toString() == "") ? "opacity-50" : ""}>$</span>
-											<input required className="inline w-fit p-0 mb-0 bg-transparent outline-none min-w-fit focus:outline-none"
-												disabled={isQuoted}
-												{...register("costInDollars", {
-													min: 0
-												})}
-												placeholder={(part.model.analysisResults ? `${((part.model.analysisResults!.estimatedFilamentUsedInGrams * part.filament!.costPerGramInCents) / 100).toFixed(2)} (Recommended)` : (0).toFixed(2))}
-												defaultValue={part.priceInDollars} />
+											<div className="my-0.5">
+												<span className="font-light">
+													{"Quantity: "}
+												</span>
+												x{part.quantity}
+											</div>
+
+											<div className="my-0.5">
+												<span className="font-light">
+													{"Cost per-unit: "}
+												</span>
+												<span className={(getValues("costInDollars") == undefined || getValues("costInDollars").toString() == "") ? "opacity-50" : ""}>$</span>
+												<input required className="inline w-fit p-0 mb-0 bg-transparent outline-none min-w-fit focus:outline-none"
+													disabled={isQuoted}
+													{...register("costInDollars", {
+														min: 0
+													})}
+													placeholder={(part.model.analysisResults ? `${((part.model.analysisResults!.estimatedFilamentUsedInGrams * part.filament!.costPerGramInCents) / 100).toFixed(2)} (Recommended)` : (0).toFixed(2))}
+													defaultValue={part.priceInDollars} />
+											</div>
 										</div>
 									</div>
-								</div>
-								<div className={count > 2 ? "mt-6 w-auto" : "lg:w-96 2xl:w-132"}>
-									<div className="w-full h-48 outline-gray-300 bg-gray-50 outline-1 outline rounded-sm relative shadow-sm max-lg:mt-8">
-										<ModelViewer
-											isAvailable={!part.model.isPurged}
-											modelSize={part.model?.fileSizeInBytes}
-											swatch={
-												part.supplementedFilament
-													?.color ??
-												part.filament?.color
-											}
-											modelURL={`/api/download/model?modelId=${part.modelId}`}></ModelViewer>
-									</div>
-									<div>
-										<div className="bg-background flex w-full p-3 gap-4 text-sm rounded-b-sm justify-between items-start">
-											{part.model.analysisResults ? (
-												<div className="flex text-nowrap items-center gap-4">
-													<div>
-														<RegularTimer className="w-5.5 h-5.5 inline mr-2 mb-0.5"></RegularTimer>
-														{part.model.analysisResults.estimatedDuration}
+									<div className="2xl:flex items-start gap-4">
+										<div className={count > 2 ? "mt-6 w-full" : "lg:w-80"}>
+											<div className="w-full h-36 outline-gray-300 bg-gray-50 outline-1 outline rounded-sm relative shadow-sm max-lg:mt-8">
+												<ModelViewer
+													isAvailable={!part.model.isPurged}
+													modelSize={part.model?.fileSizeInBytes}
+													swatch={
+														part.supplementedFilament
+															?.color ??
+														part.filament?.color
+													}
+													modelURL={`/api/download/model?modelId=${part.modelId}`}></ModelViewer>
+											</div>
+											<div>
+												<div className="bg-background w-full p-3 text-xs rounded-b-sm">
+													<div className="flex gap-4 justify-between items-center">
+														{part.model.analysisResults ? (
+															<div className="flex text-nowrap items-center gap-2 opacity-75">
+																<div>
+																	<RegularTimer className="w-5.5 h-5.5 inline mr-1 mb-0.5"></RegularTimer>
+																	{part.model.analysisResults.estimatedDuration}
+																</div>
+																<div>
+																	<RegularWeight className="w-5.5 h-5.5 inline mr-1 mb-0.5"></RegularWeight>
+																	{
+																		part.model
+																			.analysisResults
+																			.estimatedFilamentUsedInGrams
+																	}{" "}
+																	g
+																</div>
+															</div>
+														) : part.model.analysisFailedReason ? <>
+
+															<p className="opacity-50 text-red-600 fill-red-600">{part.model.analysisFailedReason}</p>
+
+														</> : <p className="opacity-50">Queued for Analysis</p>}
+
+														{!part.model.isPurged && <a className={`opacity-50 ${!part.model.isPurged && "hover:opacity-100"} text-nowrap`}
+															href={part.model.isPurged ? undefined : `/api/download/model?modelId=${part.modelId}`}
+															download={`${part.model.name}.stl`}
+															target="_blank">
+															Download
+															<RegularDownload className="ml-2 inline mb-0.5"></RegularDownload>
+														</a>}
+
 													</div>
-													<div>
-														<RegularWeight className="w-5.5 h-5.5 inline mr-2 mb-0.5"></RegularWeight>
-														{
-															part.model
-																.analysisResults
-																.estimatedFilamentUsedInGrams
-														}{" "}
-														g
-													</div>
+													{part.status == PartStatus.Printing && processingMachine && <div className="flex items-end gap-2 w-full mt-2 opacity-75 text-xs">
+														<div className="flex gap-2 items-center w-full" style={{ borderBottomRightRadius: "0px", borderBottomLeftRadius: "0px" }}>
+															<span className="text-nowrap">Printing on {processingMachine.identifier} ({processingMachine.model})</span>
+															<span>{processingMachine.progress}%</span>
+															<progress className="colored" value={processingMachine.progress} max={100}></progress>
+														</div>
+													</div>}
 												</div>
-											) : part.model.analysisFailedReason ? <>
-
-												<p className="opacity-50 text-red-500 fill-red-500">{part.model.analysisFailedReason}
-													{/* <RegularReload className="inline ml-2 hover:animate-spin"></RegularReload> */}
-												</p>
-
-											</> : <p className="opacity-50">Queued for Analysis</p>}
-
-											<div className="flex gap-4 flex-nowrap items-start">
-												{/* {part.model.analysisResults && <a className="opacity-50 hover:opacity-100"
-													href={`/api/download/model?modelId=${part.modelId}`}
-													download={`${part.model.name}.stl`}
-													target="_blank">
-													Send to Farm
-												</a>} */}
-												{!part.model.isPurged && <a className={`opacity-50 ${!part.model.isPurged && "hover:opacity-100"} text-nowrap`}
-													href={part.model.isPurged ? undefined : `/api/download/model?modelId=${part.modelId}`}
-													download={`${part.model.name}.stl`}
-													target="_blank">
-													Download
-													<RegularDownload className="ml-2 inline mb-0.5"></RegularDownload>
-												</a>}
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
+						{/* <div className="mt-2">
+							<RefundMessage part={part}></RefundMessage>
+						</div> */}
+						{isRevoked(part) && (
+							<Alert severity="warning">
+								Request Revoked {part.deniedReason}
+							</Alert>
+						)}
 					</div>
-					<div className="mt-2">
-						<RefundMessage part={part}></RefundMessage>
-					</div>
-					{isRevoked(part) && (
-						<Alert severity="warning">
-							Request Revoked {part.deniedReason}
-						</Alert>
-					)}
-
-					<div></div>
 				</div>
-
 				{error && <p className="text-red-500 px-2">{error}</p>}
 			</form>
 		</div>

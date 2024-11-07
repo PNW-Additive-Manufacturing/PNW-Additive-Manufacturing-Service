@@ -28,50 +28,52 @@ export interface MachineData {
 	timeRemaining: string;
 }
 
-export function MachineIndicator(machinedData: MachineData) {
-	function getImageWithModel(model: string): string {
-		switch (model) {
-			case "X1":
-				return "/assets/Bambu Lab X1_cover.png";
-			case "X1C":
-				return "/assets/Bambu Lab X1 Carbon_cover.png";
-			case "X1E":
-				return "/assets/Bambu Lab X1E_cover.png";
-			case "P1S":
-				return "/assets/Bambu Lab P1S_cover.png";
-			case "P1P":
-				return "/assets/Bambu Lab P1P_cover.png";
-			case "A1M":
-				return "/assets/Bambu Lab A1 mini_cover.png";
-			case "A1":
-				return "/assets/Bambu Lab A1_cover.png";
-			case "Mars 4 Ultra":
-				return "/assets/mars4ultra.jpg"
-			default:
-				// TODO: Replace with an unknown printer cover photo.
-				return "/assets/Bambu Lab X1_cover.png";
-		}
+
+export function getMachineImageURL(model: string): string {
+	switch (model) {
+		case "X1":
+			return "/assets/Bambu Lab X1_cover.png";
+		case "X1C":
+			return "/assets/Bambu Lab X1 Carbon_cover.png";
+		case "X1E":
+			return "/assets/Bambu Lab X1E_cover.png";
+		case "P1S":
+			return "/assets/Bambu Lab P1S_cover.png";
+		case "P1P":
+			return "/assets/Bambu Lab P1P_cover.png";
+		case "A1M":
+			return "/assets/Bambu Lab A1 mini_cover.png";
+		case "A1":
+			return "/assets/Bambu Lab A1_cover.png";
+		case "Mars 4 Ultra":
+			return "/assets/mars4ultra.jpg"
+		default:
+			// TODO: Replace with an unknown printer cover photo.
+			return "/assets/Bambu Lab X1_cover.png";
 	}
+}
+
+export function MachineIndicator(machinedData: MachineData) {
 
 	return (
 		<>
 			<div
 				style={{ backgroundColor: "#efefef" }}
-				className="rounded-lg flex flex-col justify-between">
-				<div className="h-32 w-32">
+				className="rounded-md flex flex-col justify-between">
+				<div className="w-full h-full">
 					<Image
-						src={getImageWithModel(machinedData.model)}
+						src={getMachineImageURL(machinedData.model)}
 						alt={`${machinedData.model} cover`}
 						width={720}
 						height={720}
-						className="h-32 w-32 object-contain rounded-lg"
+						className="w-full h-full object-contain rounded-lg"
 					/>
 				</div>
-				<div>
-					<p className="text-center font-medium m-0 p-0 text-sm pb-2 mb-1 text-wrap px-1">
+				{(machinedData.identifier ?? machinedData.model) != "" && <div>
+					<p className="text-center text-sm font-medium m-0 p-0 pb-2 mb-1 text-wrap px-1">
 						{machinedData.identifier ?? machinedData.model}
 					</p>
-				</div>
+				</div>}
 			</div>
 		</>
 	);
@@ -101,7 +103,9 @@ export default function Machine(
 				// }`}>
 				className={`p-4 bg-white outline outline-2 outline-gray-200 lg:flex gap-4 w-full relative shadow-sm`}>
 				<div className="flex gap-2">
-					<MachineIndicator {...machinedData}></MachineIndicator>
+					<div className="h-32 w-32">
+						<MachineIndicator {...machinedData}></MachineIndicator>
+					</div>
 					<div className="flex gap-1.5 h-fit">
 						{machinedData.filaments != undefined &&
 							machinedData.filaments.length > 0 ? (

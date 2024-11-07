@@ -35,9 +35,7 @@ export function formatToCSSGradient(
 	if (swatch?.diColor == undefined) {
 		throw new TypeError("Swatch must be a diColor!");
 	}
-	return `linear-gradient(${degree}deg, ${swatch.diColor!.colorA} 0%, ${
-		swatch.diColor.colorB
-	} 100%)`;
+	return `linear-gradient(${degree}deg, ${swatch.diColor!.colorA} 0%, ${swatch.diColor.colorB} 100%)`;
 }
 
 export function getSingleColor(swatch: SwatchConfiguration): string {
@@ -76,6 +74,19 @@ export function Swatch({ swatch }: { swatch: SwatchConfiguration }) {
 						: undefined
 			}}></span>
 	);
+}
+
+export function SwatchColorBlock({ swatch }: { swatch: SwatchConfiguration }) {
+	return <div>
+		<div className="w-auto h-8 out" style={{
+			backgroundColor: swatch.monoColor,
+			backgroundImage:
+				swatch.diColor != undefined
+					? formatToCSSGradient(swatch)
+					: undefined
+		}} />
+		<span className="text-sm px-1 text-nowrap">{swatch.name}</span>
+	</div>
 }
 
 // export function SwatchSelector({

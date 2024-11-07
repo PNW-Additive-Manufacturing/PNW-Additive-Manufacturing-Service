@@ -8,6 +8,7 @@ import { useDebounce } from "react-use";
 import { Label } from "./Inputs";
 import FilamentBlock from "../experiments/FilamentBlock";
 import { useState } from "react";
+import { RegularEye } from "lineicons-react";
 
 export default function PopupFilamentSelector({
 	filaments,
@@ -135,8 +136,9 @@ export default function PopupFilamentSelector({
 				</div>
 				{selectedFilament != undefined && showDescription && (
 					// <Swatch swatch={selectedFilament.color}></Swatch>
-					<div className="mb-4">
+					<div>
 						<FilamentBlock filament={selectedFilament} />
+						<a target="_blank" className="block text-sm mt-2 hover:underline" href={`/materials#${selectedFilament.technology}-${selectedFilament.material.replaceAll(" ", "-")}`}>View properties of {selectedFilament.material} <RegularEye className="inline mb-0.5" /></a>
 					</div>
 				)}
 			</div>

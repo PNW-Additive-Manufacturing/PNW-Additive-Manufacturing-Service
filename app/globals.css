@@ -251,11 +251,15 @@ img
 }
 
 progress {
+  height: fit-content;
 	width: 100%;
 }
-progress::-webkit-progress-value {background-color: var(--pnw-gold) !important;}
-progress::-moz-progress-bar {background-color: var(--pnw-gold) !important;}
-progress {color: var(--pnw-gold);}
+progress::-webkit-progress-value {background-color: rgb(105, 105, 105);}
+progress::-moz-progress-bar {background-color: rgb(105, 105, 105);}
+progress {color: rgb(105, 105, 105);}
+progress.colored::-webkit-progress-value {background-color: var(--pnw-gold) !important;}
+progress.colored::-moz-progress-bar {background-color: var(--pnw-gold) !important;}
+progress.colored {color: var(--pnw-gold);}
 
 select
 {

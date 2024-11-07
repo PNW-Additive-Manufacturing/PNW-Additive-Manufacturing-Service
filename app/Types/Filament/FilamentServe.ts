@@ -12,6 +12,8 @@ export default class FilamentServe {
 			inStock: filamentRow.instock,
 			details: filamentRow.details,
 			material: filamentRow.material,
+			technology: filamentRow.technology,
+			leadTimeInDays: filamentRow.leadtimeindays,
 			costPerGramInCents: Number.parseFloat(
 				filamentRow.costpergramincents
 			),
@@ -51,7 +53,7 @@ export default class FilamentServe {
 	}
 
 	public static async queryAll(): Promise<Filament[]> {
-		const query = await db`SELECT * FROM Filament`;
+		const query = await db`SELECT * FROM Filament ORDER BY Id ASC`;
 		const allFilament: Filament[] = query.map(
 			(filamentRow) => FilamentServe.fromSQLRow(filamentRow)!
 		);

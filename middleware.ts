@@ -20,6 +20,7 @@ export async function middleware(request: NextRequest) {
 		nextUrl.startsWith("/api/hooks/stripe") ||
 		nextUrl.startsWith("/favicon.ico") ||
 		nextUrl.startsWith("/robots.txt") ||
+		nextUrl.startsWith("/materials") ||
 		nextUrl.startsWith("/user/login") ||
 		nextUrl.startsWith("/not-found") ||
 		nextUrl.startsWith("/user/create-account") ||

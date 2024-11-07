@@ -4,7 +4,9 @@
   "description": "Additive Manufacturing Service CRON Jobs",
   "main": "index.js",
   "scripts": {
-    "run": "npx tsc & node ./out/cron.js",
+    "dev": "npx tsc & node ./out/cron.js",
+    "start": "node ./out/cron.js",
+    "build:ts": "npx tsc",
     "build:docker": "docker image build -t ams-cron ."
   },
   "author": "Aaron Jung",

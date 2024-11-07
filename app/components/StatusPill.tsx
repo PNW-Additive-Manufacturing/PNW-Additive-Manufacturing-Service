@@ -41,15 +41,15 @@ export function SelectorStatusPill({
 
 	return (
 		<div
-			className={`${className} bg-gray-50 w-fit rounded-lg p-1.5 flex font-normal select-none uppercase text-nowrap`}>
+			className={`${className} bg-gray-50 w-fit text-xs rounded-lg p-1.5 flex select-none uppercase text-nowrap`}>
 			<div
-				className={`rounded-full h-5 mr-2 aspect-square`}
+				className={`rounded-full h-4 mr-2 aspect-square`}
 				style={{ backgroundColor: statusColor }} />
 			<select
 				id="status"
 				name="status"
 				defaultValue={defaultValue}
-				className="my-auto mr-1 text-sm p-0 uppercase outline-none"
+				className="my-auto mr-1 p-0 uppercase outline-none"
 				{...register}>
 				{children}
 			</select>

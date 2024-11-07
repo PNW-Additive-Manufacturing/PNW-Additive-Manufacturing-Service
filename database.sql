@@ -1,6 +1,9 @@
 DROP TYPE IF EXISTS PermissionType CASCADE;
 CREATE TYPE PermissionType AS ENUM ('user', 'maintainer', 'admin');
 
+DROP TYPE IF EXISTS Technology CASCADE;
+CREATE TYPE Technology AS ENUM ('FDM', 'LCD', 'Metal FFF');
+
 DROP TABLE IF EXISTS Account CASCADE;
 CREATE TABLE Account (
   Email varchar(254) PRIMARY KEY,
@@ -62,14 +65,16 @@ CREATE TABLE AccountPasswordResetCode (
 DROP TABLE IF EXISTS Filament CASCADE;
 CREATE TABLE Filament (
   Id SMALLSERIAL PRIMARY KEY,
-  Material varchar(20) NOT NULL,
+  Material varchar(50) NOT NULL,
   Details VARCHAR(100) NOT NULL,
   ColorName varchar(50) NOT NULL,
+  Technology Technology NOT NULL,
   MonoColor varchar(20),
   DiColorA varchar(20),
   DiColorB varchar(20),
   InStock bool NOT NULL DEFAULT TRUE,
   CostPerGramInCents REAL NOT NULL,
+  LeadTimeInDays INT NOT NULL CHECK (LeadTimeInDays >= 0),
   UNIQUE (ColorName, Material),
   CONSTRAINT COLOR_CHK CHECK (
 	(MonoColor IS NOT NULL AND (DiColorA IS NULL AND DiColorB IS NULL)) OR

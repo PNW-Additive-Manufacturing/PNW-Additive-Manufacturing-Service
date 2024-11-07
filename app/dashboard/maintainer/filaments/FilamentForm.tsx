@@ -98,6 +98,21 @@ export function FilamentForm() {
 				/>
 			</div>
 
+			<Input
+				type="number"
+				name="filament-lead-time-in-days"
+				id="filament-lead-time-in-days"
+				label="Lead Time in Days"
+				placeholder="1" />
+
+			<Input
+				type="text"
+				name="filament-technology"
+				id="filament-technology"
+				label="Technology"
+				placeholder="FDM, Resin, Metal FFF"
+				required={true} />
+
 			<label>Details</label>
 			<textarea
 				id="filament-details"

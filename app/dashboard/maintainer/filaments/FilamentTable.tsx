@@ -89,7 +89,7 @@ export function FilamentList({
 
 	return (
 		<>
-			<label className="ml-2">Filaments</label>
+			<label>Filaments</label>
 			<div className="p-4 lg:p-6 rounded-sm shadow-sm bg-white out">
 				<p className="text-red-600">{error}</p>
 				<Table className="spaced">
@@ -99,6 +99,8 @@ export function FilamentList({
 							<th className="text-left">Color</th>
 							<th className="text-left">Cost per Gram</th>
 							<th className="text-left">In Stock</th>
+							<th className="text-left">Lead Time</th>
+							<th className="text-left">Technology</th>
 							<th className="text-left">Details</th>
 							<th className="text-left pr-5">Actions</th>
 						</tr>
@@ -120,15 +122,17 @@ export function FilamentList({
 										<option value="false">false</option>
 									</select>
 								</td>
-								<td>{f.details}</td>
+								<td>{f.leadTimeInDays}</td>
+								<td>{f.technology}</td>
+								<td className="text-sm">{f.details}</td>
 								<td>
-									<button
+									{/* <button
 										className="bg-red-600 px-2 py-1 w-fit rounded-lg border-none mb-0"
 										onClick={(e) =>
 											clickHandler(f.material, f.color)
 										}>
 										Delete
-									</button>
+									</button> */}
 								</td>
 							</tr>
 						))}
