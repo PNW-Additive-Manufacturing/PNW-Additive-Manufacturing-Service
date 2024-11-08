@@ -159,7 +159,7 @@ export default async function RootLayout({
 						/>
 						<main
 							className="w-full lg:mt-4 px-0 h-fit lg:pt-2"
-							style={{ minHeight: "95vh" }}>
+							style={{ minHeight: "92vh" }}>
 							<>
 								{children}
 								<ToastContainer
