@@ -64,7 +64,7 @@ export default async function Materials() {
 
     return <>
         <HorizontalWrap>
-            <h1 className="w-fit text-3xl font-normal mb-2"><RegularDiamondAlt className="inline mb-1 p-0.5 fill-pnw-gold" /> Process and Materials</h1>
+            <h1 className="w-fit text-2xl font-normal mb-2"><RegularDiamondAlt className="inline mb-1 p-0.5 fill-pnw-gold" /> Process and Materials</h1>
             <p className="mb-2">
                 Choosing the correct manufacturing process and material is essential to ensure the part meets its functional, aesthetic, and durability requirements.
             </p>

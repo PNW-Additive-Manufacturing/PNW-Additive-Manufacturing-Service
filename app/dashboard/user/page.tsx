@@ -39,7 +39,7 @@ export default function Page() {
 
 	return (
 		<>
-			<h1 className="text-3xl tracking-wide font-light">
+			<h1 className="text-2xl tracking-wide font-light">
 				Your Requests
 			</h1>
 

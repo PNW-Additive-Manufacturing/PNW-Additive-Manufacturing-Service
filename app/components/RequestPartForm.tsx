@@ -3,34 +3,18 @@
 import { useFormState, useFormStatus } from "react-dom";
 import { Input, InputBig } from "@/app/components/Input";
 import { requestPart } from "@/app/api/server-actions/request-part";
-import DropdownSection from "./DropdownSection";
-import { FilamentSelector } from "./FilamentSelector";
-import { ChangeEventHandler, LegacyRef, Ref, useRef, useState } from "react";
-import {
-	RegularAddFiles,
-	RegularEmptyFile,
-	RegularQuestionCircle,
-	RegularPencil,
-	RegularTrashCan,
-	RegularShip,
-	RegularPackage,
-	RegularArrowRight,
-	RegularCrossCircle,
-	RegularSpinnerSolid
-} from "lineicons-react";
-import QuantityInput from "./QuantityInput";
+import { ChangeEventHandler, LegacyRef, useRef, useState } from "react";
+import { RegularEmptyFile, RegularArrowRight, RegularCrossCircle, RegularSpinnerSolid } from "lineicons-react";
 import Table from "./Table";
-import { Dialog, Tab } from "@headlessui/react";
+import { Dialog } from "@headlessui/react";
 import Model from "../Types/Model/Model";
 import Filament from "../Types/Filament/Filament";
 import PopupFilamentSelector from "./PopupFilamentSelector";
 import ModelViewer from "./ModelViewer";
-import { modifyPart } from "../api/server-actions/maintainer";
-import { NamedSwatch, Swatch, SwatchConfiguration, templatePNW } from "./Swatch";
-import FormLoadingSpinner from "./FormLoadingSpinner";
-import { BufferGeometry, Euler, Vector3 } from "three";
+import { Swatch, SwatchConfiguration } from "./Swatch";
+import { BufferGeometry } from "three";
 import { Label } from "./Inputs";
-import { ToastContainer, cssTransition, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 import Link from "next/link";
 
@@ -39,7 +23,7 @@ function AddPartButton({
 }: {
 	onChange: ChangeEventHandler<HTMLInputElement>;
 }) {
-	var inputRef = useRef<LegacyRef<HTMLInputElement>>();
+	var inputRef = useRef<HTMLInputElement>();
 
 	return (
 		<div className="hover:cursor-pointer opacity-70 hover:opacity-100">
@@ -59,12 +43,12 @@ function AddPartButton({
 			<div
 				onClick={(ev) => {
 					ev.preventDefault();
-					(inputRef.current?.valueOf() as HTMLInputElement).click();
+					inputRef.current!.click();
 				}}
-				className="rounded-md border-dashed border-2 px-2 border-pnw-gold w-full h-full bg-pnw-gold-light min-h-24 text-center flex gap-4 justify-center items-center">
+				className="rounded-md border-dashed border-2 px-4 border-pnw-gold w-full h-full bg-pnw-gold-light min-h-24 text-center flex gap-4 justify-center items-center">
 				<div>
 					<h2>Select to upload Models</h2>
-					<p className="text-sm mt-2">Models must be in <span className="underline font-semibold">Millimeters</span> and <span className="underline font-semibold">{"<"} 20 MB</span></p>
+					<p className="text-xs mt-2">Models must be in <span className="font-bold">Millimeters</span> and <span className="font-bold text-nowrap">{"<"} 20 MB</span></p>
 				</div>
 			</div>
 		</div>
@@ -108,22 +92,11 @@ export function RequestPartForm({
 	children?: any;
 }): JSX.Element {
 	let [error, formAction] = useFormState<string, FormData>(requestPart, "");
-
 	let [parts, setParts] = useState<PartData[]>([]);
 	let [modifyingPart, setModifyingPart] = useState<PartData>();
 	let [tooSmallPromptCount, setTooSmallPromptCount] = useState(0);
 
-	// const isHavingTrouble = tooSmallPromptCount > 1;
-
-	// Loop through each part and enable the modifyingPart popup if not given a print orientation by the user!
-	// if (modifyPart == null) {
-	// 	for (let part of parts) {
-	// 		if (!part.IsUserOriented) {
-	// 			setModifyingPart(part);
-	// 			break;
-	// 		}
-	// 	}
-	// }
+	const checkboxElem = useRef<HTMLInputElement>();
 
 	return (
 		<>
@@ -237,18 +210,15 @@ export function RequestPartForm({
 				</div>
 			</Dialog>
 
-			{/* {isHavingTrouble && <div className="bg-red-50 outline-2 outline-red-200 outline-dashed p-6 mb-6">
-				<h2 className="text-lg font-normal">Having issues uploading your model?</h2>
-
-				<ul className="mt-2">
-					{tooSmallPromptCount > 1 && <>
-						<li>Model is too Small: <Link href={"https://www.youtube.com/watch?v=dYo6kzmtLw0"} className="underline">Export to STL in Millimeters for 3D Printing using Onshape</Link></li>
-					</>}
-				</ul>
-			</div>} */}
-
 			<form
 				action={(formData) => {
+					// This isn't exactly necessary to all browsers, some will require the user to check the box and some will not. 
+					// We could also just disable the submit button in the future.
+					if (!checkboxElem.current!.checked) {
+						toast.error("You must accept accept all terms and conditions before submission.");
+						return;
+					}
+
 					for (var part of parts) {
 						formData.append("file", part.File);
 						formData.append("quantity", part.Quantity.toString());
@@ -257,18 +227,6 @@ export function RequestPartForm({
 					}
 					formAction(formData);
 				}}>
-				{/* <div className="grid grid-cols-3 gap-6 mb-6">
-					<div className="out bg-white outline-pnw-gold p-6">
-						<h2>FDM / Plastic Printing</h2>
-						<p className="text-sm mt-2">PLA, PETG, ABS, CP</p>
-					</div>
-					<div className="out bg-white outline-pnw-gold p-6">
-						<h2>Resin Printing</h2>
-					</div>
-					<div className="out bg-white outline-pnw-gold p-6">
-						<h2>Metal X</h2>
-					</div>
-				</div> */}
 				<div className="bg-white rounded-sm w-full lg:flex p-6 gap-6 out">
 					<div
 						className="w-full max-lg:mb-4"
@@ -430,24 +388,22 @@ export function RequestPartForm({
 							placeholder="Anything else we should know? Just prototyping, need high-quality?"
 						/>
 
-						<div className="lg:px-4 text-sm my-4">
-							<div className="font-semibold py-2">
-								What is next?
-							</div>
+						<div className="text-sm lg:px-2 my-4">
+							<label>What is next?</label>
 							<p
 								className="text-sm"
 								style={{ maxWidth: "600px" }}>
-								Once you submit this request, it will be added to your account, and you'll receive email updates regarding the status of your parts.
-								If you're looking for a more detailed view of your requests and orders, please head over to your orders page once submitted.
+								Upon submission, this request will be added to your account, and you'll receive email updates on its status. For more details, visit your orders page.
 							</p>
+
+							<div className="text-sm mt-3">
+								<input className="w-fit inline mb-0 mr-2" type="checkbox" defaultChecked={false} required={true} ref={checkboxElem as any} />
+								By checking this box, you acknowledge and accept all terms and conditions listed above.
+							</div>
 						</div>
 
 						<RequestPartFormSubmit parts={parts} />
 					</div>
-
-
-					{/* <div className="max-lg:hidden col-start-1 col-span-2 row-start-4 row-span-1 h-14">
-					</div> */}
 				</div>
 				{error && (
 					<p className="px-2 text-sm text-red-500 col-start-3 col-span-1">

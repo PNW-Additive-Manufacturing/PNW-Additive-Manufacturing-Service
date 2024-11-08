@@ -13,7 +13,7 @@ import RequestsTable from "@/app/components/RequestsTable";
 export default async function Maintainer({ params }: { params: any }) {
 	return (
 		<>
-			<h1 className="text-3xl tracking-wide font-light">
+			<h1 className="text-2xl tracking-wide font-light">
 				Request Management
 			</h1>
 

@@ -38,7 +38,7 @@ export default function Team() {
 	return (
 		<>
 			<HorizontalWrap>
-				<h1 className="w-fit text-3xl font-normal">
+				<h1 className="w-fit text-2xl font-normal">
 					Our Team
 				</h1>
 				<p className="mt-2">

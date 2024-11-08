@@ -246,67 +246,61 @@ export default function ModelViewer({
 					</button>
 				</div>
 			) : (
-				<>
-					<Canvas
-						className="rounded-lg bg-background"
-						frameloop="demand"
-						shadows
-						style={{
-							width: "100%",
-							height: "100%",
-						}}>
-						<EngineeringCamera
-							focusedGeometry={STLModel}></EngineeringCamera>
+				<Canvas
+					className="rounded-lg bg-background block w-full h-full"
+					frameloop="demand"
+					shadows>
+					<EngineeringCamera
+						focusedGeometry={STLModel}></EngineeringCamera>
 
-						<ambientLight></ambientLight>
+					<ambientLight></ambientLight>
 
-						<group>
-							<mesh
-								receiveShadow
-								material={
-									new MeshStandardMaterial({ color: "#efefef" })
-								}
-								position={new Vector3(0, 0, STLModel.boundingBox!.max.x > 2 ? -0.01 : -0.0001)}>
-
-								<planeGeometry args={[256, 256]}></planeGeometry>
-							</mesh>
-
-							<mesh>
-								<gridHelper
-									args={[256, 10, "#b1810b", "#a6a6a6"]}
-									rotation={new Euler(Math.PI / 2)}></gridHelper>
-							</mesh>
-						</group>
-
+					<group>
 						<mesh
-							castShadow={true}
-							receiveShadow={true}
-							geometry={STLModel}
-							scale={1}
-							position={new Vector3(0, 0, 0)}>
-							{/* <UtilitySphere radius={0.001}></UtilitySphere> */}
-							<meshStandardMaterial
-								metalness={0.5}
-								color={
-									new Color("#b1810b")
-									// new Color(getSingleColor(swatch))
-								}></meshStandardMaterial>
-							{/* <meshLambertMaterial
+							receiveShadow
+							material={
+								new MeshStandardMaterial({ color: "#efefef" })
+							}
+							position={new Vector3(0, 0, STLModel.boundingBox!.max.x > 2 ? -0.01 : -0.0001)}>
+
+							<planeGeometry args={[256, 256]}></planeGeometry>
+						</mesh>
+
+						<mesh>
+							<gridHelper
+								args={[256, 10, "#b1810b", "#a6a6a6"]}
+								rotation={new Euler(Math.PI / 2)}></gridHelper>
+						</mesh>
+					</group>
+
+					<mesh
+						castShadow={true}
+						receiveShadow={true}
+						geometry={STLModel}
+						scale={1}
+						position={new Vector3(0, 0, 0)}>
+						{/* <UtilitySphere radius={0.001}></UtilitySphere> */}
+						<meshStandardMaterial
+							metalness={0.5}
+							color={
+								new Color("#b1810b")
+								// new Color(getSingleColor(swatch))
+							}></meshStandardMaterial>
+						{/* <meshLambertMaterial
 								reflectivity={1}
 								flatShading={false}
 								color={new Color(getSingleColor(swatch))}
 							/> */}
 
-							<spotLight
-								onUpdate={(me) => me.lookAt(new Vector3())}
-								position={[-128, -128, 128 * 2]}
-								decay={0.05}
-								castShadow
-								intensity={Math.PI * 2}>
-							</spotLight>
-						</mesh>
-					</Canvas>
-				</>
+						<spotLight
+							onUpdate={(me) => me.lookAt(new Vector3())}
+							position={[-128, -128, 128 * 2]}
+							decay={0.05}
+							castShadow
+							intensity={Math.PI * 2}>
+						</spotLight>
+					</mesh>
+				</Canvas>
 			)}
 		</div>
 	);

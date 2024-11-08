@@ -14,7 +14,7 @@ export default function Schedule() {
 	return (
 		<>
 			<HorizontalWrap>
-				<h1 className="text-3xl tracking-wide font-light">Pickup Schedule</h1>
+				<h1 className="text-2xl tracking-wide font-light">Pickup Schedule</h1>
 				<p className="mt-2">The Additive Manufacturing Service is available throughout the <span className="font-semibold">Fall</span> and <span className="font-semibold">Spring</span> semesters and confines with the <a className="underline" href="https://www.pnw.edu/registrar/academic-schedule/">PNW Academic Calendar</a>.</p>
 				<hr />
 
@@ -33,11 +33,11 @@ export default function Schedule() {
 					</div>
 
 					<div className="mt-4 grid lg:grid-cols-7 max-lg:flex-col w-full gap-6">
-						{weeklySchedule.map((item: any, i: number) => <div className={`lg:min-h-48 flex-grow out bg-white text-black`}>
+						{weeklySchedule.map((item: any, i: number) => <div className={`lg:min-h-48 flex-grow out bg-white text-black text-sm`}>
 							<p className={`px-4 py-2 w-full bg-gray-100 ${currentDay == i ? "bg-pnw-gold text-white" : "text-opacity-50"}`}>{weekdays[i]}</p>
 							<div className="px-4 py-2">
 								{item == null ? <>Closed</> : <>
-									{(item.open as Date).toLocaleTimeString("en-us", { hour: '2-digit', minute: '2-digit'})}
+									{(item.open as Date).toLocaleTimeString("en-us", { hour: '2-digit', minute: '2-digit' })}
 									{" - "}
 									{(item.close as Date).toLocaleTimeString("en-us", { hour: '2-digit', minute: '2-digit' })}
 								</>}

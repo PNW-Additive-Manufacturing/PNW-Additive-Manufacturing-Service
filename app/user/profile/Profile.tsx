@@ -13,12 +13,12 @@ export default function Profile({ account }: { account: Account }) {
 
 	return (
 		<HorizontalWrap>
-			<h1 className="text-3xl tracking-wide font-light">Your Account</h1>
+			<h1 className="text-2xl tracking-wide font-light">Your Account</h1>
 			<br />
 			<div className="p-6 rounded-md text-base bg-cool-black shadow-md">
 				<div className="lg:flex justify-between items-center">
 					<div>
-						<p className="text-3xl font-light text-white">
+						<p className="text-2xl font-light text-white">
 							{account.firstName} {account.lastName}
 						</p>
 						<p className="text-sm text-gray-300">

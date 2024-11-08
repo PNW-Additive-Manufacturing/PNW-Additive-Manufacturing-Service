@@ -30,7 +30,7 @@ export default async function Maintainer() {
 	return (
 		<>
 
-			<h1 className="text-3xl tracking-wide font-light mb-8">
+			<h1 className="text-2xl tracking-wide font-light mb-8">
 				Welcome, {jwtPayload?.firstname} {jwtPayload?.lastname}!
 			</h1>
 

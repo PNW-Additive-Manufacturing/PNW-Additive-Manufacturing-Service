@@ -281,9 +281,9 @@ export default function PartEditor({
 									)
 								)}
 
-								<div className={count < 3 ? "lg:flex" : ""}>
-									<div className="w-full">
-										<div className="w-full flex flex-wrap gap-x-2 gap-y-2 items-center mb-2">
+								<div className={count < 3 ? "lg:flex justify-between" : "w-full"}>
+									<div>
+										<div className="flex flex-wrap gap-x-2 gap-y-2 items-center mb-2">
 											<SelectorStatusPill
 												register={register("status", {
 													onChange: (
@@ -489,8 +489,8 @@ export default function PartEditor({
 											</div>
 										</div>
 									</div>
-									<div className="2xl:flex items-start gap-4">
-										<div className={count > 2 ? "mt-6 w-full" : "lg:w-80"}>
+									<div className={`flex items-start gap-4 ${count > 2 ? "w-full mt-4" : "lg:w-1/3"}`}>
+										<div className="w-full h-full">
 											<div className="w-full h-36 outline-gray-300 bg-gray-50 outline-1 outline rounded-sm relative shadow-sm max-lg:mt-8">
 												<ModelViewer
 													isAvailable={!part.model.isPurged}
@@ -504,7 +504,7 @@ export default function PartEditor({
 											</div>
 											<div>
 												<div className="bg-background w-full p-3 text-xs rounded-b-sm">
-													<div className="flex gap-4 justify-between items-center">
+													<div className="flex gap-2 flex-wrap justify-between items-center">
 														{part.model.analysisResults ? (
 															<div className="flex text-nowrap items-center gap-2 opacity-75">
 																<div>
@@ -538,9 +538,9 @@ export default function PartEditor({
 													</div>
 													{part.status == PartStatus.Printing && processingMachine && <div className="flex items-end gap-2 w-full mt-2 opacity-75 text-xs">
 														<div className="flex gap-2 items-center w-full" style={{ borderBottomRightRadius: "0px", borderBottomLeftRadius: "0px" }}>
-															<span className="text-nowrap">Printing on {processingMachine.identifier} ({processingMachine.model})</span>
-															<span>{processingMachine.progress}%</span>
-															<progress className="colored" value={processingMachine.progress} max={100}></progress>
+															<span className="xl:text-nowrap">Printing on {processingMachine.identifier} ({processingMachine.model})</span>
+															<span className="max-xl:hidden">{processingMachine.progress}%</span>
+															<progress className="colored max-xl:hidden" value={processingMachine.progress} max={100}></progress>
 														</div>
 													</div>}
 												</div>

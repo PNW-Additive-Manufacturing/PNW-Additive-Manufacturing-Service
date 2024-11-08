@@ -44,9 +44,7 @@ export default async function Page() {
 				<div className="flex items-center gap-2">
 					{/* <span className="text-sm">Payment serviced by Stripe</span> */}
 					<Link
-						href={`/api/purchase/wallet?amountInCents=${
-							amount * 100
-						}&paymentMethod=stripe`}>
+						href={`/api/purchase/wallet?amountInCents=${amount * 100}&paymentMethod=stripe`}>
 						<button
 							disabled={disabled}
 							className="mb-0 px-3 py-2 text-base bg-gradient-linear-pnw-mystic text-black">
@@ -60,7 +58,7 @@ export default async function Page() {
 
 	return (
 		<HorizontalWrap>
-			<h1 className="text-3xl tracking-wide font-light">Your Wallet</h1>
+			<h1 className="text-2xl tracking-wide font-light">Your Wallet</h1>
 			<br />
 			<div className="mb-4 p-6 rounded-md text-base text-white bg-cool-black shadow-md">
 				<p className="text-white text-2xl font-light">
@@ -105,9 +103,8 @@ export default async function Page() {
 			<div className="py-2 pr-2 w-full flex justify-between items-center">
 				<span>Transaction History</span>
 				<RegularChevronDown
-					className={`fill-slate-500 w-5 h-5 ${
-						true ? "rotate-0" : "rotate-180"
-					} transition-transform`}></RegularChevronDown>
+					className={`fill-slate-500 w-5 h-5 ${true ? "rotate-0" : "rotate-180"
+						} transition-transform`}></RegularChevronDown>
 			</div>
 			<div className="">
 				{transactions.length == 0 ? (
@@ -118,15 +115,14 @@ export default async function Page() {
 					<div className="flex flex-col gap-2">
 						{transactions.map((value) => (
 							<div
-								className={`px-4 py-6 outline outline-1 ${
-									value.paymentStatus ==
+								className={`px-4 py-6 outline outline-1 ${value.paymentStatus ==
 									WalletTransactionStatus.Paid
-										? "outline-gray-300"
-										: "outline-yellow-700"
-								} bg-white rounded-md flex justify-between items-center`}>
+									? "outline-gray-300"
+									: "outline-yellow-700"
+									} bg-white rounded-md flex justify-between items-center`}>
 								<div className="flex text-lg items-center">
 									{value.paymentStatus ==
-									WalletTransactionStatus.Paid ? (
+										WalletTransactionStatus.Paid ? (
 										<RegularCirclePlus className="h-6 w-auto fill-green-600 mr-2"></RegularCirclePlus>
 									) : (
 										<RegularCirclePlus className="h-6 w-auto fill-yellow-700 mr-2"></RegularCirclePlus>
@@ -136,7 +132,7 @@ export default async function Page() {
 								</div>
 								<div className="text-sm">
 									{value.paymentStatus ==
-									WalletTransactionStatus.Paid ? (
+										WalletTransactionStatus.Paid ? (
 										<>
 											{value.paymentMethod.toUpperCase()}{" "}
 											On{" "}
@@ -151,7 +147,7 @@ export default async function Page() {
 											)}
 										</>
 									) : value.paymentStatus ==
-									  WalletTransactionStatus.Cancelled ? (
+										WalletTransactionStatus.Cancelled ? (
 										"Cancelled"
 									) : (
 										<Link href="/api/purchase/wallet">

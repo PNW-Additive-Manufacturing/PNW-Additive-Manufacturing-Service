@@ -56,7 +56,7 @@ export default function Page() {
 		<HorizontalWrap>
 			<div className="mx-auto w-fit">
 				{/* <AMSIcon /> */}
-				<h1 className="text-3xl mt-8">Validate PNW Email</h1>
+				<h1 className="text-2xl mt-8">Validate PNW Email</h1>
 				<p className="mt-4">
 					You must confirm your student or faculty email at PNW to use
 					this service.

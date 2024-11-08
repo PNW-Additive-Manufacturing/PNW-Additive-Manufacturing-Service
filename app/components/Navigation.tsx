@@ -4,10 +4,12 @@ import { AccountPermission } from "../Types/Account/Account";
 import {
 	RegularArrowRight,
 	RegularChevronDown,
+	RegularCloudUpload,
 	RegularFriendly,
 	RegularHappy,
 	RegularMenu,
 	RegularSearchAlt,
+	RegularUpload,
 	RegularUser
 } from "lineicons-react";
 import {
@@ -40,7 +42,7 @@ function NavbarLink({
 		<Link
 			onClick={onClick}
 			href={path}
-			className="rounded-md whitespace-nowrap xl:rounded-none w-full p-4 xl:p-0 bg-gray-100 sm:bg-transparent xl:w-fit border-b-4 border-b-pnw-gold-light border-opacity-10 text-base hover:text-pnw-gold active:text-pnw-gold">
+			className="rounded-md whitespace-nowrap xl:rounded-none w-full p-4 xl:p-0 bg-gray-100 sm:bg-transparent xl:w-fit border-b-4 border-b-pnw-gold-light border-opacity-10 hover:text-pnw-gold active:text-pnw-gold">
 			{name}
 		</Link>
 	);
@@ -74,7 +76,7 @@ export function AccountDetails({
 					) : (
 						<span>Account</span>
 					)}
-					<RegularArrowRight className="h-10 fill-inherit"></RegularArrowRight>
+					{/* <RegularUser className="inline mt-0.5" /> */}
 				</div>
 			</Link>
 		</>
@@ -83,13 +85,13 @@ export function AccountDetails({
 			<Link
 				onClick={onLinkClick}
 				href="/user/login"
-				className="text-center text-base whitespace-nowrap rounded-md bottom-0 h-fit bg-gray-100 flex flex-col gap-4 px-4 py-2">
+				className="text-center text-sm whitespace-nowrap rounded-md bottom-0 h-fit bg-gray-100 flex flex-col gap-4 px-4 py-2">
 				Sign In
 			</Link>
 			<Link
 				onClick={onLinkClick}
 				href="/user/create-account"
-				className="text-center text-base whitespace-nowrap rounded-md bottom-0 h-fit bg-pnw-gold-light flex flex-col gap-4 px-4 py-2">
+				className="text-center text-sm whitespace-nowrap rounded-md bottom-0 h-fit bg-pnw-gold-light flex flex-col gap-4 px-4 py-2">
 				Create Account
 			</Link>
 		</>
@@ -100,8 +102,8 @@ export function ColorfulRequestPrintButton() {
 	return (
 		<a
 			href="/request-part/"
-			className="bg-gradient-linear-pnw-mystic text-center tracking-wider whitespace-nowrap font-semibold uppercase rounded-md bottom-0 h-fit bg-gray-100 flex flex-col gap-4 px-4 py-2">
-			Request Print
+			className="bg-gradient-linear-pnw-mystic text-center tracking-wider whitespace-nowrap font-semibold uppercase rounded-md bottom-0 h-fit bg-gray-100 flex flex-col gap-4 p-2 px-2.5">
+			<RegularUpload className="inline w-6 h-6 p-1 fill-cool-black" />
 		</a>
 	);
 }
@@ -143,6 +145,7 @@ export function Navbar({
 		<div className="top-0 sticky shadow-md z-10 max-lg:mb-2">
 			<div className="w-full h-fit bg-white">
 				<HorizontalWrap>
+					{/* <div className="w-full px-6 py-3"> */}
 					<nav className="flex flex-row h-full overflow-x-clip w-full items-center align-middle">
 						<Link
 							href="/"
@@ -154,7 +157,7 @@ export function Navbar({
 						</Link>
 
 						{/* Long List of links and dropdown */}
-						<div className="hidden xl:flex ml-auto items-center justify-end tracking-wider gap-5 overflow-x-auto">
+						<div className="hidden xl:flex ml-auto items-center justify-end tracking-wider gap-4 overflow-x-scroll">
 							{links.map((val) => (
 								<NavbarLink
 									key={val.name}
@@ -227,6 +230,7 @@ export function Navbar({
 							)}
 						</div>
 					</nav>
+					{/* </div> */}
 				</HorizontalWrap>
 			</div>
 			{/* <div className="xl:hidden bg-gray-100">
