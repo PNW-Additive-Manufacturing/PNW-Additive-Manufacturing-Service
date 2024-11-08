@@ -122,7 +122,7 @@ export default async function RootLayout({
 										permission == AccountPermission.Admin
 									) {
 										elements.push({
-											name: "Management",
+											name: "Management Panel",
 											path: "/dashboard/maintainer"
 										});
 									}
@@ -159,7 +159,7 @@ export default async function RootLayout({
 						/>
 						<main
 							className="w-full lg:mt-4 px-0 h-fit lg:pt-2"
-							style={{ minHeight: "92vh" }}>
+							style={{ minHeight: "95vh" }}>
 							<>
 								{children}
 								<ToastContainer
