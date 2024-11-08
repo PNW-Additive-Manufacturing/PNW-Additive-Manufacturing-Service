@@ -283,8 +283,8 @@ export default function ModelViewer({
 						<meshStandardMaterial
 							metalness={0.5}
 							color={
-								new Color("#b1810b")
-								// new Color(getSingleColor(swatch))
+								// new Color("#b1810b")
+								new Color(getSingleColor(swatch))
 							}></meshStandardMaterial>
 						{/* <meshLambertMaterial
 								reflectivity={1}

@@ -21,6 +21,7 @@ import {
 	RegularEye,
 	RegularPagination,
 	RegularSearchAlt,
+	RegularStarFill,
 	RegularTrashCan,
 } from "lineicons-react";
 import Link from "next/link";
@@ -32,7 +33,7 @@ import Filament from "@/app/Types/Filament/Filament";
 import DropdownSection from "@/app/components/DropdownSection";
 import RequestPricing from "@/app/components/Request/Pricing";
 import { RequestOverview } from "@/app/components/RequestOverview";
-import { formateDate } from "@/app/api/util/Constants";
+import { formateDate, formateDateWithTime } from "@/app/api/util/Constants";
 import FormLoadingSpinner from "@/app/components/FormLoadingSpinner";
 import Machine from "@/app/components/Machine";
 import { AccountContext } from "@/app/ContextProviders";
@@ -178,13 +179,16 @@ export default function RequestEditor({
 						</div>}
 
 						<div>
-							<div className="flex flex-wrap justify-between py-2 px-1 w-full">
+							<div className="flex flex-wrap justify-between items-center py-2 px-1 w-full">
 								<span>Manage {request.parts.length} {request.parts.length > 1 ? "Parts" : "Part"}</span>
-								{(totalGrams > 0 || totalPriceInCents > 0) && <div>
-									<span className="mr-2 font-light max-lg:hidden">Automatic Analysis using {allAnalysisMachines.join(", ")}</span>
-									<span>${(totalPriceInCents / 100).toFixed(2)} consuming {Math.round(totalGrams)} Grams</span>
+								{(totalGrams > 0 || totalPriceInCents > 0) && <div className="text-sm bg-background px-1 rounded-md">
+									<RegularStarFill className="inline fill-pnw-gold opacity-75" style={{ marginBottom: "3px" }} />
+									<span className="font-light max-lg:hidden"> Performed Automatic Analysis using {allAnalysisMachines.join(", ")} </span>
+									<span className="font-medium">${(totalPriceInCents / 100).toFixed(2)} consuming {Math.round(totalGrams)} Grams</span>.
 								</div>}
 							</div>
+
+
 							<div className={`grid ${request.parts.length > 2 && "2xl:grid-cols-2"} gap-4`}>
 								{request.parts.map((part, index) => (
 									<PartEditor
@@ -237,69 +241,61 @@ export default function RequestEditor({
 					</DropdownSection>} */}
 				</div>
 				<div className="max-md:w-full lg:w-1/3" style={{ maxWidth: "400px" }}>
-					<div className="py-2 pt-2 px-1 w-full">Payment Details</div>
+					<div className="py-2 pt-2 px-1 w-full">Invoice</div>
 					<div className="p-4 lg:p-6 rounded-t-sm shadow-sm bg-white font-light outline outline-2 outline-gray-200">
 						{isAllPriced(request) ? (
 							<>
 								<RequestPricing request={request} />
-								<hr className="mb-4" />
 
-								<p className="mb-2 font-light text-sm">Filament lead-time is {maxLeadTime} Days.</p>
+								<div className="gap-4 mt-4">
 
-								{hasQuote(request) && <>
-
-									<label className="font-normal">Estimated Completion</label>
-									<input className="py-2" type="date" name="estimated-completion-date" id="estimated-completion-date" readOnly value={request.quote!.estimatedCompletionDate.toISOString().split("T")[0]} required></input>
-
-								</>}
-
-								{isQuotePaid ? (
-									<>
-										<AlreadyQuoteButton
-											request={request}></AlreadyQuoteButton>
-									</>
-								) : hasQuote(request) ? (
-									<button
-										className="mb-0 py-4 shadow-md text-left w-full"
-										type="button">
-										<div>Waiting for Payment</div>
-										<p className="text-white font-light text-sm mt-1">
-											{`${requester.firstName} ${requester.lastName} has been notified.`}
-										</p>
-									</button>
-								) : (
-									isAllPriced(request) && (
+									{isQuotePaid ? (
 										<>
-											<form action={setQuoteFormAction}>
-												<input
-													hidden
-													type="number"
-													name="requestId"
-													readOnly
-													value={request.id}></input>
-												<label>Estimated Completion</label>
-												<input className="py-2" type="date" name="estimated-completion-date" id="estimated-completion-date" min={new Date().toLocaleDateString('en-us')} required></input>
-												<button
-													className="py-4 shadow-md text-left flex justify-between w-full mb-0"
-													disabled={!partsAllPriced}>
-													<div>
-														Submit Quote for $
-														{getTotalCost(
-															request
-														).totalCost.toFixed(2)}
-														<p className="text-white font-light text-sm pt-1">
-															{`${requester.firstName} ${requester.lastName} will receive the quote.`}
-															<FormLoadingSpinner className="fill-white ml-2" />
-														</p>
-													</div>
-												</button>
-											</form>
-											{quoteState && <p className="text-red-500 text-base mt-2">
-												{quoteState}
-											</p>}
+											<AlreadyQuoteButton
+												request={request}></AlreadyQuoteButton>
 										</>
-									)
-								)}
+									) : hasQuote(request) ? (
+										<button
+											className="mb-0 py-4 shadow-md text-left w-full"
+											type="button">
+											<div>Waiting for Payment</div>
+											<p className="text-white font-light text-sm mt-1">
+												{`${requester.firstName} ${requester.lastName} has been notified.`}
+											</p>
+										</button>
+									) : (
+										isAllPriced(request) && (
+											<>
+												<form action={setQuoteFormAction} className="w-full">
+													<input
+														hidden
+														type="number"
+														name="requestId"
+														readOnly
+														value={request.id}></input>
+													<input className="py-2" type="date" name="estimated-completion-date" id="estimated-completion-date" min={new Date().toLocaleDateString('en-us')} required></input>
+													<button
+														className="py-4 shadow-md text-left text-sm flex justify-between w-full mb-0"
+														disabled={!partsAllPriced}>
+														<div>
+															Submit Quote for $
+															{getTotalCost(
+																request
+															).totalCost.toFixed(2)}
+															<p className="text-white font-light text-sm pt-1">
+																{`${requester.firstName} ${requester.lastName} will receive the quote.`}
+																<FormLoadingSpinner className="fill-white ml-2" />
+															</p>
+														</div>
+													</button>
+												</form>
+												{quoteState && <p className="text-red-500 text-base mt-2">
+													{quoteState}
+												</p>}
+											</>
+										)
+									)}
+								</div>
 							</>
 						) : (
 							<>
@@ -313,7 +309,7 @@ export default function RequestEditor({
 						Requester Information
 					</div>
 					<div className="p-4 lg:p-6 rounded-sm shadow-sm bg-white font-light outline outline-2 outline-gray-200">
-						<p className="text-2xl">
+						<p className="text-xl">
 							{requester.firstName} {requester.lastName}
 						</p>
 
@@ -364,7 +360,7 @@ export default function RequestEditor({
 function AlreadyQuoteButton({ request }: { request: Request }) {
 	return (
 		<button
-			className="mb-0 py-4 shadow-md text-left w-full"
+			className="mb-0 shadow-md text-left text-sm w-full"
 			disabled>
 			Quote Processed
 			<p className="text-white font-light text-sm">

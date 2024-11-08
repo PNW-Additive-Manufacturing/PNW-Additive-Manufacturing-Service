@@ -1,5 +1,7 @@
+import { formateDate, formateDateWithTime } from "@/app/api/util/Constants";
 import { isRefunded } from "@/app/Types/Part/Part";
 import {
+	getLeadTime,
 	getTotalCost,
 	hasQuote,
 	isAllPriced,
@@ -20,12 +22,13 @@ export default function RequestPricing({
 		);
 
 	const costs = getTotalCost(request);
+	const leadTime = getLeadTime(request);
 
 	return (
 		<>
-			<>
+			<div>
 				{request.parts.map((part) => (
-					<p className="text-sm text-nowrap overflow-ellipsis overflow-hidden">
+					<p className="text-sm text-nowrap overflow-ellipsis overflow-hidden w-fit">
 						{`\$${(part.priceInDollars! * part.quantity).toFixed(
 							2
 						)}`}{" "}
@@ -51,10 +54,22 @@ export default function RequestPricing({
 						)}
 					</p>
 				))}
-			</>
+			</div>
 
-			<hr className="my-4 block" />
-			<p className="text-sm font-light flex justify-between">
+			<p className="text-sm font-light flex justify-between mt-4">
+				<span className="text-nowrap">Lead-Time</span>
+				<span className="text-right w-full">
+					{leadTime} {leadTime > 1 ? "Days" : "Day"}
+				</span>
+			</p>
+			<p className="text-sm font-light flex justify-between mb-4">
+				<span className="text-nowrap">Estimated Completion </span>
+				<span className="text-right w-full">
+					{formateDate(request.quote!.estimatedCompletionDate)}
+				</span>
+			</p>
+
+			<p className="text-sm font-light flex justify-between mt-4">
 				<span>Subtotal</span>
 				<span className="text-right w-full">
 					{" "}
@@ -75,6 +90,7 @@ export default function RequestPricing({
 					${costs.totalCost.toFixed(2)}
 				</span>
 			</p>
+
 		</>
 	);
 }

@@ -3,12 +3,14 @@
 import { AccountPermission } from "../Types/Account/Account";
 import {
 	RegularArrowRight,
+	RegularCart,
 	RegularChevronDown,
 	RegularCloudUpload,
 	RegularFriendly,
 	RegularHappy,
 	RegularMenu,
 	RegularSearchAlt,
+	RegularShoppingBasket,
 	RegularUpload,
 	RegularUser
 } from "lineicons-react";
@@ -103,7 +105,7 @@ export function ColorfulRequestPrintButton() {
 		<a
 			href="/request-part/"
 			className="bg-gradient-linear-pnw-mystic text-center tracking-wider whitespace-nowrap font-semibold uppercase rounded-md bottom-0 h-fit bg-gray-100 flex flex-col gap-4 p-2 px-2.5">
-			<RegularUpload className="inline w-6 h-6 p-1 fill-cool-black" />
+			<RegularCart className="inline w-6 h-6 p-1 fill-cool-black" />
 		</a>
 	);
 }

@@ -148,3 +148,13 @@ export function getTotalCost(request: RequestWithParts): {
 		totalRefunded
 	};
 }
+
+export function getLeadTime(request: RequestWithParts) {
+	let maxLeadTime = 0;
+	for (const part of request.parts) {
+		if (part.filament && part.filament.leadTimeInDays > maxLeadTime) {
+			maxLeadTime = part.filament.leadTimeInDays;
+		}
+	}
+	return maxLeadTime;
+}

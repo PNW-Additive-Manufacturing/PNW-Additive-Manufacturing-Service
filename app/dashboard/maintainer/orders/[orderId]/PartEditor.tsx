@@ -39,6 +39,7 @@ import {
 	RegularPlus,
 	RegularReload,
 	RegularSpinnerSolid,
+	RegularStarFill,
 	RegularTimer,
 	RegularUpload,
 	RegularWeight
@@ -281,7 +282,56 @@ export default function PartEditor({
 									)
 								)}
 
-								<div className={count < 3 ? "lg:flex justify-between" : "w-full"}>
+								<div className={count < 3 ? "flex max-lg:flex-col-reverse gap-4" : "w-full flex gap-4 flex-col-reverse"}>
+									<div className={`flex items-start gap-4 ${count > 2 ? "w-full" : "lg:w-1/3"}`}>
+										<div className="w-full h-full">
+											<div className="w-full h-36 outline-gray-300 bg-gray-50 outline-1 outline rounded-sm relative shadow-sm">
+												<ModelViewer
+													isAvailable={!part.model.isPurged}
+													modelSize={part.model?.fileSizeInBytes}
+													swatch={
+														part.supplementedFilament
+															?.color ??
+														part.filament?.color
+													}
+													modelURL={`/api/download/model?modelId=${part.modelId}`}></ModelViewer>
+											</div>
+											<div>
+												<div className="bg-background w-full p-3 text-xs rounded-b-sm">
+													<div className="flex gap-2 flex-wrap justify-between items-center">
+														{part.model.analysisResults ? (
+															<div className="w-fit gap-2 opacity-75">
+																<RegularStarFill className="inline fill-pnw-gold opacity-75" style={{ marginBottom: "3px" }} />
+
+																{/* <RegularTimer className="w-5.5 h-5.5 inline mr-1 mb-0.5"/> */}
+																{" "}{part.model.analysisResults.estimatedDuration} consuming {part.model.analysisResults.estimatedFilamentUsedInGrams} Grams
+															</div>
+														) : part.model.analysisFailedReason ? <>
+
+															<p className="opacity-50 text-red-600 fill-red-600">{part.model.analysisFailedReason}</p>
+
+														</> : <p className="opacity-50">Queued for Analysis</p>}
+
+														{!part.model.isPurged && <a className={`opacity-50 ${!part.model.isPurged && "hover:opacity-100"} text-nowrap`}
+															href={part.model.isPurged ? undefined : `/api/download/model?modelId=${part.modelId}`}
+															download={`${part.model.name}.stl`}
+															target="_blank">
+															Download
+															<RegularDownload className="ml-2 inline mb-0.5"></RegularDownload>
+														</a>}
+
+													</div>
+													{part.status == PartStatus.Printing && processingMachine && <div className="flex items-end gap-2 w-full mt-2 opacity-75 text-xs">
+														<div className="flex gap-2 items-center w-full" style={{ borderBottomRightRadius: "0px", borderBottomLeftRadius: "0px" }}>
+															<span className="xl:text-nowrap">Printing on {processingMachine.identifier} ({processingMachine.model})</span>
+															<span className="max-xl:hidden">{processingMachine.progress}%</span>
+															<progress className="colored max-xl:hidden" value={processingMachine.progress} max={100}></progress>
+														</div>
+													</div>}
+												</div>
+											</div>
+										</div>
+									</div>
 									<div>
 										<div className="flex flex-wrap gap-x-2 gap-y-2 items-center mb-2">
 											<SelectorStatusPill
@@ -486,64 +536,6 @@ export default function PartEditor({
 													})}
 													placeholder={(part.model.analysisResults ? `${((part.model.analysisResults!.estimatedFilamentUsedInGrams * part.filament!.costPerGramInCents) / 100).toFixed(2)} (Recommended)` : (0).toFixed(2))}
 													defaultValue={part.priceInDollars} />
-											</div>
-										</div>
-									</div>
-									<div className={`flex items-start gap-4 ${count > 2 ? "w-full mt-4" : "lg:w-1/3"}`}>
-										<div className="w-full h-full">
-											<div className="w-full h-36 outline-gray-300 bg-gray-50 outline-1 outline rounded-sm relative shadow-sm max-lg:mt-8">
-												<ModelViewer
-													isAvailable={!part.model.isPurged}
-													modelSize={part.model?.fileSizeInBytes}
-													swatch={
-														part.supplementedFilament
-															?.color ??
-														part.filament?.color
-													}
-													modelURL={`/api/download/model?modelId=${part.modelId}`}></ModelViewer>
-											</div>
-											<div>
-												<div className="bg-background w-full p-3 text-xs rounded-b-sm">
-													<div className="flex gap-2 flex-wrap justify-between items-center">
-														{part.model.analysisResults ? (
-															<div className="flex text-nowrap items-center gap-2 opacity-75">
-																<div>
-																	<RegularTimer className="w-5.5 h-5.5 inline mr-1 mb-0.5"></RegularTimer>
-																	{part.model.analysisResults.estimatedDuration}
-																</div>
-																<div>
-																	<RegularWeight className="w-5.5 h-5.5 inline mr-1 mb-0.5"></RegularWeight>
-																	{
-																		part.model
-																			.analysisResults
-																			.estimatedFilamentUsedInGrams
-																	}{" "}
-																	g
-																</div>
-															</div>
-														) : part.model.analysisFailedReason ? <>
-
-															<p className="opacity-50 text-red-600 fill-red-600">{part.model.analysisFailedReason}</p>
-
-														</> : <p className="opacity-50">Queued for Analysis</p>}
-
-														{!part.model.isPurged && <a className={`opacity-50 ${!part.model.isPurged && "hover:opacity-100"} text-nowrap`}
-															href={part.model.isPurged ? undefined : `/api/download/model?modelId=${part.modelId}`}
-															download={`${part.model.name}.stl`}
-															target="_blank">
-															Download
-															<RegularDownload className="ml-2 inline mb-0.5"></RegularDownload>
-														</a>}
-
-													</div>
-													{part.status == PartStatus.Printing && processingMachine && <div className="flex items-end gap-2 w-full mt-2 opacity-75 text-xs">
-														<div className="flex gap-2 items-center w-full" style={{ borderBottomRightRadius: "0px", borderBottomLeftRadius: "0px" }}>
-															<span className="xl:text-nowrap">Printing on {processingMachine.identifier} ({processingMachine.model})</span>
-															<span className="max-xl:hidden">{processingMachine.progress}%</span>
-															<progress className="colored max-xl:hidden" value={processingMachine.progress} max={100}></progress>
-														</div>
-													</div>}
-												</div>
 											</div>
 										</div>
 									</div>
