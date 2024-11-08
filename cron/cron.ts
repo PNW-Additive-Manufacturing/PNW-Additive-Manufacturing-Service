@@ -103,7 +103,7 @@ const analyzeModelsTask = cron.schedule("*/30 * * * * *", async () => {
 	console.error(`Model analysis on ${unAnalyzedModel.name} has failed too many times:\n${errorContent}`);
 
 	// We had no luck analyzing the model, we will mark it as a fail!
-	await sql`INSERT INTO ModelAnalysis (ModelId, FailedReason, MachineModel, MachineManufacturer) VALUES (${unAnalyzedModel.id}, ${errorContent}, 'X1C', 'Bambu Lab')`;
+	await sql`INSERT INTO ModelAnalysis (ModelId, FailedReason, MachineModel, MachineManufacturer) VALUES (${unAnalyzedModel.id}, ${errorContent}, 'X1C', 'BBL')`;
 });
 
 // Run at midnight every day.
