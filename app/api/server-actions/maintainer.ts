@@ -234,7 +234,7 @@ export async function modifyPart(
 
 	const includesCost = parsedData.data!.costInDollars != undefined;
 	if (includesCost)
-		newValues["pricecents"] = parsedData.data.costInDollars! * 100;
+		newValues["pricecents"] = Math.round(parsedData.data.costInDollars! * 100);
 
 	const includesRefund =
 		parsedData.data.reasonForRefund != undefined &&

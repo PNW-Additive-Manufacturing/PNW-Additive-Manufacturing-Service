@@ -183,8 +183,8 @@ export default function RequestEditor({
 								<span>Manage {request.parts.length} {request.parts.length > 1 ? "Parts" : "Part"}</span>
 								{(totalGrams > 0 || totalPriceInCents > 0) && <div className="text-sm bg-background px-1 rounded-md">
 									<RegularStarFill className="inline fill-pnw-gold opacity-75" style={{ marginBottom: "3px" }} />
-									<span className="font-light max-lg:hidden"> Performed Automatic Analysis using {allAnalysisMachines.join(", ")} </span>
-									<span className="font-medium">${(totalPriceInCents / 100).toFixed(2)} consuming {Math.round(totalGrams)} Grams</span>.
+									<span className="font-light "> Automatic Analysis using {allAnalysisMachines.join(", ")} </span>
+									<span className="font-medium">${(totalPriceInCents / 100).toFixed(2)} consuming {Math.round(totalGrams)} Grams</span>
 								</div>}
 							</div>
 
@@ -240,7 +240,7 @@ export default function RequestEditor({
 						</div>
 					</DropdownSection>} */}
 				</div>
-				<div className="max-md:w-full lg:w-1/3" style={{ maxWidth: "400px" }}>
+				<div className="w-full lg:w-1/3 xl:w-2/6" >
 					<div className="py-2 pt-2 px-1 w-full">Invoice</div>
 					<div className="p-4 lg:p-6 rounded-t-sm shadow-sm bg-white font-light outline outline-2 outline-gray-200">
 						{isAllPriced(request) ? (
@@ -319,14 +319,14 @@ export default function RequestEditor({
 							Contact at {requester.email}
 						</a>
 
-						<p className="text-sm">{requester.yearOfStudy}, joined {requester.joinedAt.toLocaleDateString("en-us", {
+						<p className="text-sm">{requester.yearOfStudy} joined {requester.joinedAt.toLocaleDateString("en-us", {
 							weekday: "long",
 							month: "short",
 							day: "numeric"
 						})}.</p>
 
 
-						<DropdownSection hidden={true} name={"Email Performance"} className="px-0 text-sm mt-2">
+						<DropdownSection name={"Email Performance"} className="px-0 text-sm mt-2">
 							<table className="bg-background px-1 py-2 w-full mt-1 out">
 								<thead>
 									<tr>

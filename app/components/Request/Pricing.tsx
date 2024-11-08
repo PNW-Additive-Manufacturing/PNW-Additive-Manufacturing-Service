@@ -29,9 +29,9 @@ export default function RequestPricing({
 			<div>
 				{request.parts.map((part) => (
 					<p className="text-sm text-nowrap overflow-ellipsis overflow-hidden w-fit">
-						{`\$${(part.priceInDollars! * part.quantity).toFixed(
+						<span className="font-mono text-gray-500">{`\$${(part.priceInDollars! * part.quantity).toFixed(
 							2
-						)}`}{" "}
+						)}`}</span>{" "}
 						{part.quantity > 1 ? (
 							<>
 								{` (\$${part.priceInDollars!.toFixed(
@@ -56,40 +56,40 @@ export default function RequestPricing({
 				))}
 			</div>
 
-			<p className="text-sm font-light flex justify-between mt-4">
-				<span className="text-nowrap">Lead-Time</span>
-				<span className="text-right w-full">
-					{leadTime} {leadTime > 1 ? "Days" : "Day"}
-				</span>
-			</p>
-			<p className="text-sm font-light flex justify-between mb-4">
-				<span className="text-nowrap">Estimated Completion </span>
-				<span className="text-right w-full">
-					{formateDate(request.quote!.estimatedCompletionDate)}
-				</span>
-			</p>
-
-			<p className="text-sm font-light flex justify-between mt-4">
+			<p className="text-sm font-light flex justify-between mt-2">
 				<span>Subtotal</span>
-				<span className="text-right w-full">
+				<span className="text-right w-full font-mono text-gray-500">
 					{" "}
 					${costs.totalCost.toFixed(2)}
 				</span>
 			</p>
 			<p className="text-sm font-light flex justify-between">
 				<span>Fees</span>
-				<span className="text-right w-full">
+				<span className="text-right w-full font-mono text-gray-500">
 					{" "}
 					${costs.fees.toFixed(2)}
 				</span>
 			</p>
 			<p className="text-xl flex justify-between mt-1">
 				<span className="font-semibold">Total</span>
-				<span className="text-right w-full">
+				<span className="text-right w-full font-mono text-gray-500">
 					{" "}
 					${costs.totalCost.toFixed(2)}
 				</span>
 			</p>
+
+			<p className="text-sm font-light flex justify-between mt-4">
+				<span className="text-nowrap">Lead-Time</span>
+				<span className="text-right w-full">
+					{leadTime} {leadTime > 1 ? "Days" : "Day"}
+				</span>
+			</p>
+			{request.quote && <p className="text-sm font-light flex justify-between mb-4">
+				<span className="text-nowrap">Estimated Completion </span>
+				<span className="text-right w-full">
+					{formateDate(request.quote!.estimatedCompletionDate)}
+				</span>
+			</p>}
 
 		</>
 	);
