@@ -211,37 +211,37 @@ export default async function Home() {
 								</div>
 							</div>
 						</div>
-						{/* <hr /> */}
+						<hr />
 						<div className="grid grid-cols-1 lg:grid-cols-3 2xl:grid-cols-4 gap-8 mt-8">
-							<div className="bg-background p-4 w-full out">
+							<div className="w-full">
 								<Image src="/assets/Bambu+Lab+A1+3D+Printer+multi+color.png" alt="Bambu Lab A1 3D Printer" width={720} height={720} className="rounded-md mb-4 w-full h-52 object-cover" />
-								<h2 className="text-xl text-pnw-gold font-semibold">FDM 3D Printing</h2>
+								<h2 className="text-lg text-pnw-gold font-semibold">FDM 3D Printing</h2>
 								<p className="mt-2"></p>
-								<p className="mt-2">Great for prototyping in medium-strength application due to the cost-effective nature.</p>
+								<p className="mt-2">Perfect for prototyping medium-strength parts, offering a cost-effective solution for functional prototypes and design testing.</p>
 							</div>
 
-							<div className="bg-background p-4 w-full out opacity-50 max-lg:hidden">
+							<div className="bg-background p-4 w-full opacity-50 max-lg:hidden rounded-md">
 								<Image src="/assets/mars4ultra.png" alt="Mars 4 Ultra Printer" width={720} height={720} className="rounded-md mb-4 w-full h-52 object-cover" />
-								<h2 className="text-xl font-semibold">Resin 3D Printing</h2>
+								<h2 className="text-lg font-semibold">Resin 3D Printing</h2>
 								<p className="mt-2">Coming 2025</p>
 								<p className="mt-2">Optimal for creating detailed and smooth-surfaced models, ideal for small intricate parts.</p>
 							</div>
 
-							<div className="bg-background p-4 w-full out opacity-50 max-lg:hidden">
+							<div className="bg-background p-4 w-full opacity-50 max-lg:hidden rounded-md">
 								<Image src="/assets/metalx.png" alt="Metal X Printer" width={720} height={720} className="rounded-md mb-4 w-full h-52 object-cover" />
-								<h2 className="text-xl font-semibold">MetalX 3D Printing</h2>
+								<h2 className="text-lg font-semibold">MetalX 3D Printing</h2>
 								<p className="mt-2">Coming 2025</p>
 								<p className="mt-2">The MetalX produces durable and strong metal parts, specifically designed for critical applications.</p>
 							</div>
 
 							<div>
 								<Link className="w-full" href="/materials">
-									<button className="h-fit text-left bg-background text-pnw-gold fill-pnw-gold outline-1 outline outline-pnw-gold">
+									<button className="h-fit text-left opacity-75 mb-2 font-medium hover:opacity-100 bg-background text-cool-black fill-cool-black outline-1 outline outline-cool-black">
 										View our Inventory
 										<RegularArrowRight className="inline ml-2 fill-inherit" />
 									</button>
 								</Link>
-								Explore our complete inventory of 3D printing machines, materials, and processes, along with detailed information on lead times and costs.
+								<span>Browse our full inventory of 3D printers, materials, and processes, including lead times and costs.</span>
 							</div>
 						</div>
 

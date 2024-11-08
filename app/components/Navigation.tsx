@@ -147,7 +147,7 @@ export function Navbar({
 						<Link
 							href="/"
 							className=" flex-none gap-2 items-center mr-2">
-							<div className="w-fit whitespace-nowrap mr-fit pr-3 text-lg tracking-wide flex-fit">
+							<div className="w-fit whitespace-nowrap mr-fit pr-3 text-xl tracking-wide flex-fit">
 								<span className="text-pnw-gold">PNW </span>
 								<span>Additive Manufacturing</span>
 							</div>
