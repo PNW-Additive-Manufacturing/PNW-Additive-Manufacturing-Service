@@ -198,7 +198,7 @@ export default async function Home() {
 					</div>
 				</HorizontalWrap >
 
-				<div className="bg-white py-6 pb-10">
+				<div className="bg-white py-8 pb-12">
 					<HorizontalWrap>
 						<div
 							id="services">

@@ -76,7 +76,7 @@ export function AccountDetails({
 					) : (
 						<span>Account</span>
 					)}
-					{/* <RegularUser className="inline mt-0.5" /> */}
+					<RegularArrowRight className="inline mt-0.5" />
 				</div>
 			</Link>
 		</>
