@@ -30,7 +30,7 @@ export function AvailabilityText() {
     const hydrated = useHydration();
 
     return <Suspense key={hydrated ? "local" : "utc"}>
-        <div className="w-fit max-md:pl-2 py-3 text-xs tracking-wider mb-5">
+        <div className="w-fit max-md:pl-2 py-3 text-sm tracking-wider mb-5">
             {isOpen ? <>We are available for pickup until {formatTime(closingTime!)}: </> : <>We are currently closed: </>}
             <a
                 href={"/schedule"}

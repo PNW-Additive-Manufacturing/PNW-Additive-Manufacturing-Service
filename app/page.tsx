@@ -100,7 +100,9 @@ export default async function Home() {
 									</div>
 								</div>
 
-								<AvailabilityText />
+								<div className="mt-1">
+									<AvailabilityText />
+								</div>
 							</div>
 						</div>
 						<div className="w-full xl:w-2/3 max-xl:mb-6 xl:pl-12">
@@ -220,18 +222,18 @@ export default async function Home() {
 								<p className="mt-2">Perfect for prototyping medium-strength parts, offering a cost-effective solution for functional prototypes and design testing.</p>
 							</div>
 
-							<div className="bg-background p-4 w-full opacity-50 max-lg:hidden rounded-md">
+							<div className="bg-background p-4 w-full opacity-50 rounded-md">
 								<Image src="/assets/mars4ultra.png" alt="Mars 4 Ultra Printer" width={720} height={720} className="rounded-md mb-4 w-full h-52 object-cover" />
 								<h2 className="text-lg font-semibold">Resin 3D Printing</h2>
 								<p className="mt-2">Coming 2025</p>
 								<p className="mt-2">Optimal for creating detailed and smooth-surfaced models, ideal for small intricate parts.</p>
 							</div>
 
-							<div className="bg-background p-4 w-full opacity-50 max-lg:hidden rounded-md">
+							<div className="bg-background p-4 w-full opacity-50 rounded-md">
 								<Image src="/assets/metalx.png" alt="Metal X Printer" width={720} height={720} className="rounded-md mb-4 w-full h-52 object-cover" />
-								<h2 className="text-lg font-semibold">MetalX 3D Printing</h2>
+								<h2 className="text-lg font-semibold">Metal X 3D Printing</h2>
 								<p className="mt-2">Coming 2025</p>
-								<p className="mt-2">The MetalX produces durable and strong metal parts, specifically designed for critical applications.</p>
+								<p className="mt-2">The Metal X produces extremely strong custom metal parts designed for high-end applications.</p>
 							</div>
 
 							<div>

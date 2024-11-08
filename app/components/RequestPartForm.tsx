@@ -202,7 +202,7 @@ export function RequestPartForm({
 									}}></input>
 
 								<label>Process / Material</label>
-								<p className="mb-4 text-xs">Review each <Link className="underline" target="_blank" href={"/materials"}>process and material</Link> before submission.</p>
+								<p className="mb-4 text-sm">Review each <Link className="underline" target="_blank" href={"/materials"}>process and material</Link> before submission.</p>
 								<select defaultValue="FDM">
 									<option value="FDM`">
 										3D Printing (FDM)
