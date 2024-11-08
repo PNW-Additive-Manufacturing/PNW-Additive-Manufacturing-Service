@@ -238,7 +238,7 @@ export default async function Home() {
 
 							<div>
 								<Link className="w-full" href="/materials">
-									<button className="h-fit text-left opacity-75 mb-2 font-medium hover:opacity-100 bg-background text-cool-black fill-cool-black outline-1 outline outline-cool-black">
+									<button className="h-fit text-left opacity-75 mb-2 font-medium hover:opacity-100 bg-background text-cool-black fill-cool-black out">
 										View our Inventory
 										<RegularArrowRight className="inline ml-2 fill-inherit" />
 									</button>
