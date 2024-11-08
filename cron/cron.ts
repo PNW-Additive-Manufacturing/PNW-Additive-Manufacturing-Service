@@ -148,20 +148,24 @@ async function queryModelsPendingPurge()
 async function queryUnAnalyzedModel()
 {
 	return (await sql`SELECT 
-			m.OwnerEmail, 
-			f.Material AS FilamentMaterial, 
-			f.MonoColor, 
-			f.DiColorA, 
-			p.Quantity,
-			f.DiColorB, 
-			m.Id, 
-			m.Name
-			FROM Model m
-			LEFT JOIN ModelAnalysis ma ON m.Id = ma.ModelId
-			LEFT JOIN Part p ON m.Id = p.ModelId
-			LEFT JOIN Filament f ON p.AssignedFilamentId = f.Id
-			WHERE m.IsPurged = false AND ma.ModelId IS NULL
-			LIMIT 1;`).at(0);
+						m.OwnerEmail, 
+						f.Material AS FilamentMaterial, 
+						f.MonoColor, 
+						f.DiColorA, 
+						p.Quantity,
+						f.DiColorB, 
+						m.Id, 
+						m.Name
+					FROM Model m
+					LEFT JOIN ModelAnalysis ma ON m.Id = ma.ModelId
+					LEFT JOIN Part p ON m.Id = p.ModelId
+					LEFT JOIN Filament f ON p.AssignedFilamentId = f.Id
+					WHERE m.IsPurged = false 
+						AND ma.ModelId IS NULL 
+						AND p.Quantity IS NOT NULL
+					ORDER BY p.Id
+					LIMIT 1;
+					`).at(0);
 }
 
 function useEnvVariable(name: string): string

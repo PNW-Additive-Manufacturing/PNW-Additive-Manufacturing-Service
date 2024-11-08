@@ -72,7 +72,14 @@ export default async function Home() {
 							</p>
 
 							<ul style={{ maxWidth: "600px" }}>
-								<li>Leverage rapid prototyping to create custom connectors, mounts, prosthetics, creative models, and more!</li>
+								<li>Utilize rapid prototyping to create custom connectors and mounts.</li>
+								<li>Produce creative models, prosthetics, and more with 3D Printing solutions.</li>
+								{/* <ul>
+									<li>Rapid-prototyping</li>
+									<li>Connectors / Mounts</li>
+									<li>Prosthetics</li>
+								</ul> */}
+
 							</ul>
 
 
@@ -99,7 +106,7 @@ export default async function Home() {
 									</div>
 								</div>
 
-								<div className="my-4">
+								<div className="my-4 mb-8">
 									<AvailabilityText />
 								</div>
 							</div>
@@ -110,7 +117,7 @@ export default async function Home() {
 								autoplay={true}
 								slides={[
 									<>
-										<div className="bg-gray-100 rounded-md shadow-sm w-full h-60">
+										<div className="bg-gray-100 rounded-md shadow-sm w-full h-64">
 											<Image
 												src={"/assets/lab_setup_1.jpg"}
 												width={760}
@@ -131,7 +138,7 @@ export default async function Home() {
 										</p>
 									</>,
 									<>
-										<div className="bg-gray-100 rounded-md shadow-sm w-full h-60">
+										<div className="bg-gray-100 rounded-md shadow-sm w-full h-64">
 											<Image
 												src="/assets/am_simple_logos.jpg"
 												width={760}
@@ -146,7 +153,7 @@ export default async function Home() {
 										</p>
 									</>,
 									<>
-										<div className="bg-gray-100 rounded-md shadow-sm w-full h-60">
+										<div className="bg-gray-100 rounded-md shadow-sm w-full h-64">
 											<Image
 												src="/assets/lion.jpg"
 												width={760}
@@ -165,14 +172,14 @@ export default async function Home() {
 											width={760}
 											height={760}
 											alt=""
-											className="pt-0 w-full bg-black rounded-md h-60"></Image>
+											className="pt-0 w-full bg-black rounded-md h-64"></Image>
 										<p className="text-sm px-2 lg:text-center w-full font-light mt-2">
 											Express your creativity by designing
 											and requesting artistic models.
 										</p>
 									</>,
 									<>
-										<div className="bg-gray-100 rounded-md shadow-sm w-full h-60">
+										<div className="bg-gray-100 rounded-md shadow-sm w-full h-64">
 											<Image
 												src="/assets/luke_moreno_battle_bot_2.jpg"
 												width={760}
@@ -196,7 +203,7 @@ export default async function Home() {
 						<div
 							id="services">
 							<div>
-								<h2 className="w-fit font-medium text-xl pb-2">Manufacturing Services</h2>
+								<h2 className="w-fit font-medium text-xl pb-2">Our Manufacturing Services</h2>
 								<div className="w-fit">
 									Each production method offers different
 									benefits and drawbacks. We recommend taking
@@ -238,12 +245,12 @@ export default async function Home() {
 
 							<div className="max-2xl:grid-cols-3">
 								<Link className="w-full" href="/materials">
-									<button className="h-fit text-sm text-left opacity-75 mb-2 font-medium hover:opacity-100 bg-background text-cool-black fill-cool-black out">
+									<button className="h-fit text-sm flex items-center justify-between text-right mb-2 font-medium bg-background text-cool-black fill-cool-black out">
 										View our Inventory
-										<RegularDiamondAlt className="inline ml-2 fill-inherit mb-0.5" />
+										<RegularDiamondAlt className="inline mr-2 fill-inherit mb-0.5" />
 									</button>
 								</Link>
-								<span className="font-light text-cool-black text-sm">Browse our full inventory of 3D printers, materials, and processes, including lead times and costs.</span>
+								<p className="text-cool-black text-sm">Browse our full inventory of 3D printers, materials, and processes, including lead times and costs.</p>
 							</div>
 						</div>
 

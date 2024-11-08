@@ -191,7 +191,7 @@ export default function Machine(
 											</p>
 										</div>
 										<progress
-											className="w-full"
+											className="w-full colored"
 											value={machinedData.progress}
 											max={100}></progress>
 									</div>

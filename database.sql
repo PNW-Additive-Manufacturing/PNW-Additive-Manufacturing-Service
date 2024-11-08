@@ -97,7 +97,6 @@ CREATE TABLE Printer (
 DROP TABLE IF EXISTS Request CASCADE;
 CREATE TABLE Request (
   Id SERIAL PRIMARY KEY,
-	-- 256 
   Name varchar(300) NOT NULL,
   OwnerEmail varchar(254) REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE,
   SubmitTime timestamp with time zone NOT NULL DEFAULT NOW(),
