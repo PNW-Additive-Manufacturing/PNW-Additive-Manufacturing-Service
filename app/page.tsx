@@ -231,7 +231,7 @@ export default async function Home() {
 
 							<div className="bg-background p-4 w-full opacity-50 rounded-md">
 								<Image src="/assets/metalx.png" alt="Metal X Printer" width={720} height={720} className="rounded-md mb-4 w-full h-52 object-cover" />
-								<h2 className="text-lg font-semibold">Metal X 3D Printing</h2>
+								<h2 className="text-lg font-semibold">Markforged Metal X</h2>
 								<p className="mt-2">Coming 2025</p>
 								<p className="mt-2">The Metal X produces extremely strong custom metal parts designed for high-end applications.</p>
 							</div>
