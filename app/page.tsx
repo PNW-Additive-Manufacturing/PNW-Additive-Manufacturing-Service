@@ -222,7 +222,7 @@ export default async function Home() {
 								<div className="w-full opacity-75 text-sm">
 									<Image src="/assets/mars4ultra.png" alt="Mars 4 Ultra Printer" width={720} height={720} className="rounded-md mb-4 w-full h-48 object-cover" />
 									<h2 className="text-lg font-semibold">Resin 3D Printing</h2>
-									<p className="mt-2">Coming 2025</p>
+									<p className="mt-2">Coming Spring 2025</p>
 									<p className="mt-2">Optimal for creating detailed and smooth-surfaced models, ideal for small intricate parts.</p>
 								</div>
 							</div>
@@ -231,7 +231,7 @@ export default async function Home() {
 								<div className="w-full opacity-75 text-sm">
 									<Image src="/assets/metalx.png" alt="Metal X Printer" width={720} height={720} className="rounded-md mb-4 w-full h-48 object-cover" />
 									<h2 className="text-lg font-semibold">Markforged Metal X</h2>
-									<p className="mt-2">Coming 2025</p>
+									<p className="mt-2">Coming Spring 2025</p>
 									<p className="mt-2">The Metal X produces extremely strong custom metal parts designed for high-end applications.</p>
 								</div>
 							</div>
