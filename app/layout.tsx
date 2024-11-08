@@ -106,7 +106,7 @@ export default async function RootLayout({
 										path: "/schedule"
 									},
 									{
-										name: "Our Services",
+										name: "Our Inventory",
 										path: "/materials"
 									}
 								];

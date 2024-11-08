@@ -66,7 +66,7 @@ DROP TABLE IF EXISTS Filament CASCADE;
 CREATE TABLE Filament (
   Id SMALLSERIAL PRIMARY KEY,
   Material varchar(50) NOT NULL,
-  Details VARCHAR(100) NOT NULL,
+  Details VARCHAR(1000) NOT NULL,
   ColorName varchar(50) NOT NULL,
   Technology Technology NOT NULL,
   MonoColor varchar(20),
