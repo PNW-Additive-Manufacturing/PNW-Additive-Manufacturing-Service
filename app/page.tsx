@@ -218,7 +218,6 @@ export default async function Home() {
 							<div className="w-full">
 								<Image src="/assets/Bambu+Lab+A1+3D+Printer+multi+color.png" alt="Bambu Lab A1 3D Printer" width={720} height={720} className="rounded-md mb-4 w-full h-52 object-cover" />
 								<h2 className="text-lg text-pnw-gold font-semibold">FDM 3D Printing</h2>
-								<p className="mt-2"></p>
 								<p className="mt-2">Perfect for prototyping medium-strength parts, offering a cost-effective solution for functional prototypes and design testing.</p>
 							</div>
 

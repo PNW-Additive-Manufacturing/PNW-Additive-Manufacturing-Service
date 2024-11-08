@@ -111,6 +111,9 @@ export function RequestPartForm({
 
 	let [parts, setParts] = useState<PartData[]>([]);
 	let [modifyingPart, setModifyingPart] = useState<PartData>();
+	let [tooSmallPromptCount, setTooSmallPromptCount] = useState(0);
+
+	// const isHavingTrouble = tooSmallPromptCount > 1;
 
 	// Loop through each part and enable the modifyingPart popup if not given a print orientation by the user!
 	// if (modifyPart == null) {
@@ -233,6 +236,16 @@ export function RequestPartForm({
 					</Dialog.Panel>
 				</div>
 			</Dialog>
+
+			{/* {isHavingTrouble && <div className="bg-red-50 outline-2 outline-red-200 outline-dashed p-6 mb-6">
+				<h2 className="text-lg font-normal">Having issues uploading your model?</h2>
+
+				<ul className="mt-2">
+					{tooSmallPromptCount > 1 && <>
+						<li>Model is too Small: <Link href={"https://www.youtube.com/watch?v=dYo6kzmtLw0"} className="underline">Export to STL in Millimeters for 3D Printing using Onshape</Link></li>
+					</>}
+				</ul>
+			</div>} */}
 
 			<form
 				action={(formData) => {
@@ -373,7 +386,8 @@ export function RequestPartForm({
 													console.log(maxValue);
 
 													if (maxValue < 10 || (p.Geometry.boundingBox!.max.z - p.Geometry.boundingBox!.min.z <= 3)) {
-														toast.error(`The model ${p.ModelName} is too small. Ensure you have exported the model using Millimeters!`);
+														setTooSmallPromptCount(tooSmallPromptCount + 1);
+														toast.error(<span>The model {p.ModelName} is too small. Ensure you have exported the model using Millimeters!<br />Refer to <Link target="_blank" href={"https://youtu.be/dYo6kzmtLw0?si=kGcNq7dc2Hynqad_&t=375"} className="underline">Export STL in Millimeters using Onshape</Link></span>);
 														return false;
 													}
 
