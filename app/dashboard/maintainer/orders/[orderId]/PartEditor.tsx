@@ -32,6 +32,8 @@ import {
 	Snackbar
 } from "@mui/material";
 import {
+	RegularAlarm,
+	RegularAlarmClock,
 	RegularCloudDownload,
 	RegularCrossCircle,
 	RegularDownload,
@@ -40,6 +42,7 @@ import {
 	RegularReload,
 	RegularSpinnerSolid,
 	RegularStarFill,
+	RegularSthethoscope,
 	RegularTimer,
 	RegularUpload,
 	RegularWeight
@@ -300,11 +303,8 @@ export default function PartEditor({
 												<div className="bg-background w-full p-3 text-xs rounded-b-sm">
 													<div className="flex gap-2 flex-wrap justify-between items-center">
 														{part.model.analysisResults ? (
-															<div className="w-fit gap-2 opacity-75">
-																<RegularStarFill className="inline fill-pnw-gold opacity-75" style={{ marginBottom: "3px" }} />
-
-																{/* <RegularTimer className="w-5.5 h-5.5 inline mr-1 mb-0.5"/> */}
-																{" "}{part.model.analysisResults.estimatedDuration} consuming {part.model.analysisResults.estimatedFilamentUsedInGrams} Grams
+															<div className="w-fit gap-2 text-gray-500 fill-gray-500">
+																<span className="mr-2">Analysis</span><RegularAlarmClock className="inline mb-0.5" /> {part.model.analysisResults.estimatedDuration}<RegularWeight className="ml-2 inline mb-0.5" /> {part.model.analysisResults.estimatedFilamentUsedInGrams} Grams
 															</div>
 														) : part.model.analysisFailedReason ? <>
 
@@ -321,13 +321,13 @@ export default function PartEditor({
 														</a>}
 
 													</div>
-													{part.status == PartStatus.Printing && processingMachine && <div className="flex items-end gap-2 w-full mt-2 opacity-75 text-xs">
+													{/* {part.status == PartStatus.Printing && processingMachine && <div className="flex items-end gap-2 w-full mt-2 opacity-75 text-xs">
 														<div className="flex gap-2 items-center w-full" style={{ borderBottomRightRadius: "0px", borderBottomLeftRadius: "0px" }}>
 															<span className="xl:text-nowrap">Printing on {processingMachine.identifier} ({processingMachine.model})</span>
 															<span className="max-xl:hidden">{processingMachine.progress}%</span>
 															<progress className="colored max-xl:hidden" value={processingMachine.progress} max={100}></progress>
 														</div>
-													</div>}
+													</div>} */}
 												</div>
 											</div>
 										</div>

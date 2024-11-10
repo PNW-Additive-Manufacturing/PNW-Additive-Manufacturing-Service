@@ -81,7 +81,7 @@ export default class FilamentServe {
 	): Promise<number> {
 		try {
 			const insertRow =
-				await db`INSERT INTO Filament (InStock, Material, ColorName, MonoColor, DiColorA, DiColorB, CostPerGramInCents, Details) VALUES (${
+				await db`INSERT INTO Filament (InStock, Material, ColorName, MonoColor, DiColorA, DiColorB, CostPerGramInCents, Details, LeadTimeInDays, Technology) VALUES (${
 					filament.inStock
 				}, ${filament.material}, ${filament.color.name}, ${
 					filament.color.monoColor ?? null
@@ -89,7 +89,8 @@ export default class FilamentServe {
 					filament.color.diColor?.colorB ?? null
 				}, ${filament.costPerGramInCents}, ${
 					filament.details
-				}) RETURNING Id`;
+				}, ${filament.leadTimeInDays},
+				${filament.technology}) RETURNING Id`;
 
 			return insertRow.at(0)!.id;
 		} catch (error) {

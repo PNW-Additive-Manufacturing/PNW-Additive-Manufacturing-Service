@@ -159,7 +159,7 @@ export function Navbar({
 						</Link>
 
 						{/* Long List of links and dropdown */}
-						<div className="hidden xl:flex ml-auto items-center justify-end tracking-wider gap-4 overflow-x-scroll">
+						<div className="hidden xl:flex ml-auto items-center justify-end tracking-wider gap-4 overflow-x-hidden">
 							{links.map((val) => (
 								<NavbarLink
 									key={val.name}

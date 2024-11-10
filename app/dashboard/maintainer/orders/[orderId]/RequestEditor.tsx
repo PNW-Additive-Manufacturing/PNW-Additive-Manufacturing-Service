@@ -183,7 +183,7 @@ export default function RequestEditor({
 								<span>Manage {request.parts.length} {request.parts.length > 1 ? "Parts" : "Part"}</span>
 								{(totalGrams > 0 || totalPriceInCents > 0) && <div className="text-sm bg-background px-1 rounded-md">
 									<RegularStarFill className="inline fill-pnw-gold opacity-75" style={{ marginBottom: "3px" }} />
-									<span className="font-light "> Automatic Analysis using {allAnalysisMachines.join(", ")} </span>
+									<span className="font-light "> Analysis using {allAnalysisMachines.join(", ")} </span>
 									<span className="font-medium">${(totalPriceInCents / 100).toFixed(2)} consuming {Math.round(totalGrams)} Grams</span>
 								</div>}
 							</div>

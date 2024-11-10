@@ -237,15 +237,15 @@ export default async function Home() {
 							<div className="bg-background p-4 w-full rounded-md">
 								<div className="w-full opacity-75 text-sm">
 									<Image src="/assets/metalx.png" alt="Metal X Printer" width={720} height={720} className="rounded-md mb-4 w-full h-48 object-cover" />
-									<h2 className="text-lg font-semibold">Markforged Metal X</h2>
+									<h2 className="text-lg font-semibold">MetalFFF Metal X</h2>
 									<p className="mt-2">Coming Spring 2025</p>
-									<p className="mt-2">The Metal X produces extremely strong custom metal parts designed for high-end applications.</p>
+									<p className="mt-2">The Markforged Metal X produces extremely strong custom metal parts designed for high-end applications.</p>
 								</div>
 							</div>
 
-							<div className="max-2xl:grid-cols-3">
+							<div className="col-span-1 md:col-span-3ewq2">
 								<Link className="w-full" href="/materials">
-									<button className="h-fit text-sm flex items-center justify-between text-right mb-2 font-medium bg-background text-cool-black fill-cool-black out">
+									<button className="h-fit w-full text-sm flex gap-2 items-center justify-between text-right mb-2 font-medium bg-background text-cool-black fill-cool-black out">
 										View our Inventory
 										<RegularDiamondAlt className="inline mr-2 fill-inherit mb-0.5" />
 									</button>
@@ -344,6 +344,7 @@ export default async function Home() {
 						</div> */}
 					</HorizontalWrap>
 				</div>
+
 				{/* <HorizontalWrap className="py-8">
 					Looking to learn more?
 					<div className="flex flex-col md:flex-row w-fit mt-6 gap-2 justify-center">

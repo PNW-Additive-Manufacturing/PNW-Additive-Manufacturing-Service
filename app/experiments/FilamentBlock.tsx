@@ -19,7 +19,7 @@ export default function FilamentBlock({ filament }: { filament: Filament }) {
 					<a target="_blank" href={`/materials#${filament.technology}-${filament.material.replaceAll(" ", "-")}`} className="text-lg">
 						{filament.material} {filament.color.name}
 					</a>
-					<p className="text-sm overflow-x-scroll" style={{ maxWidth: "450px" }}>{filament.details}</p>
+					<p className="text-sm" style={{ maxWidth: "450px" }}>{filament.details}</p>
 				</div>
 			</div>
 		</div>

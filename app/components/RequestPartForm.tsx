@@ -166,6 +166,7 @@ export function RequestPartForm({
 							<div>
 								<label>Quantity</label>
 								<input
+									className="w-full"
 									type="number"
 									min={1}
 									max={80}
@@ -396,9 +397,15 @@ export function RequestPartForm({
 								Upon submission, this request will be added to your account, and you'll receive email updates on its status. For more details, visit your orders page.
 							</p>
 
-							<div className="text-sm mt-3">
-								<input className="w-fit inline mb-0 mr-2" type="checkbox" defaultChecked={false} required={true} ref={checkboxElem as any} />
-								By checking this box, you acknowledge and accept all terms and conditions listed above.
+							<div className="text-sm mt-3 flex gap-4">
+								<div>
+									<label className="text-nowrap">Lead-Time</label>
+									1 Days
+								</div>
+								<div>
+									<input className="w-fit inline mb-0 mr-2" type="checkbox" defaultChecked={false} required={true} ref={checkboxElem as any} />
+									By checking this box, you acknowledge and accept all terms and conditions listed above.
+								</div>
 							</div>
 						</div>
 

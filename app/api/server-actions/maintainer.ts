@@ -391,8 +391,8 @@ export async function addFilament(
 		inStock: true,
 		costPerGramInCents: materialCostInCents,
 		details,
-		leadTimeInDays: 1,
-		technology: "FDM"
+		leadTimeInDays: leadTimeInDays,
+		technology: technology
 	});
 
 	//successful
