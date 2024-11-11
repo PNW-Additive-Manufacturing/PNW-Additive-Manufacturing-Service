@@ -101,9 +101,9 @@ export default function RequestDetails({
 		<>
 			<div className="lg:flex justify-between items-start">
 				<div className="w-full max-lg:mb-6">
-					<h1 className="text-2xl font-thin">{request.name}</h1>
+					<h1 className="text-4xl font-thin">{request.name}</h1>
 
-					<p className="max-lg:block mt-2 text-sm">
+					<p className="max-lg:block mt-2">
 						You placed this request on{" "}
 						{request.submitTime.toLocaleDateString("en-us", {
 							weekday: "long",
@@ -166,137 +166,6 @@ export default function RequestDetails({
 
 			<hr className="my-4 lg:my-4" />
 
-			<div className="w-full flex gap-6 justify-between">
-				<div className="w-full h-full">
-					<div className="py-2 pl-1 w-full">Request Overview</div>
-					<div className="shadow-sm p-4 lg:p-6 rounded-sm bg-white out h-full">
-						<Timeline
-							options={[
-								{
-									title: "Requested",
-									description: (
-										<>
-											Submitted on{" "}
-											{formateDate(request.submitTime)}.
-										</>
-									),
-									disabled: false
-								},
-								{
-									title: "Quoted",
-									description: (
-										<>
-											{request.quote?.paidAt == undefined
-												? "Payment is pending."
-												: `Paid on 
-											${formateDate(request.quote?.paidAt)}.`}
-										</>
-									),
-									disabled: !hasQuote(request)
-								},
-								{
-									title: "Processing",
-									description: (
-										<>Parts are being processed.</>
-									),
-									disabled: isAllPending(request.parts)
-								},
-								{
-									title: "Available for Pickup",
-									description: <>{isOpen ? "Pickup at the PNW Design Studio." : "Pickup currently not Available."}</>,
-									disabled: !isAllComplete(request.parts)
-								},
-								{
-									title: "Fulfilled",
-									// description: `On ${formateDate(
-									// 	request.fulfilledAt!
-									// )}`,
-									disabled: !request.isFulfilled
-								}
-							]}
-						/>
-
-					</div>
-
-				</div>
-
-				<div className="h-full">
-					<div className="py-2 pl-1 w-full" id="payment_details">
-						Payment Details
-					</div>
-					<div className="p-4 lg:p-6 rounded-sm shadow-sm bg-white font-light outline outline-2 outline-gray-200">
-						{hasQuote(request) ? (
-							<>
-								<RequestPricing request={request} />
-								<br />
-								{/* <button className="text-sm font-light text-left" disabled={true}>Download Receipt</button> */}
-								<form action={payFormAction}>
-									<input
-										hidden
-										type="number"
-										name="requestId"
-										readOnly
-										value={request.id}></input>
-									<RequestQuotePaymentButton
-										request={request}
-									/>
-								</form>
-								<p className="text-red-500 pl-4">
-									{payState.errorMessage}
-								</p>
-							</>
-						) : (
-							<>
-								<p>Request has not been Quoted.</p>
-								<p className="text-sm">
-									You will receive an email once Quoted.
-								</p>
-							</>
-						)}
-					</div>
-				</div>
-
-				{/* {payState.isComplete &&
-					payState.errorMessage == undefined ? (
-						<>
-							<AlreadyPaidButton
-								request={request}></AlreadyPaidButton>
-						</>
-					) : (
-						<>
-							<form action={payFormAction}>
-								<input
-									hidden
-									type="number"
-									name="requestId"
-									readOnly
-									value={request.id}></input>
-								<RequestQuotePaymentButton request={request} />
-							</form>
-							<p className="text-red-500 pl-4">
-								{payState.errorMessage}
-							</p>
-						</>
-					)} */}
-				{/* <div className="py-2 pr-2 w-full">Contact Us</div>
-					<div className="p-6 rounded-md shadow-md bg-white font-light outline outline-1 outline-gray-300">
-						<div className="min-h-32">
-							<p>No messages have been sent.</p>
-							<p className="text-sm">
-								Allow up to 48 hours for a response.
-							</p>
-						</div>
-						<form>
-							<textarea
-								// TODO: Enable in the future.
-								disabled={true}
-								className="mt-4 mb-0 min-h-14 h-14 w-full"
-								placeholder="Enter your Message"></textarea>
-						</form>
-					</div> */}
-			</div>
-
-
 			<div className="lg:flex gap-8">
 				<div className="lg:grow">
 					<div className="flex flex-col gap-2">
@@ -345,6 +214,130 @@ export default function RequestDetails({
 							</div>
 						</div>
 					</div>
+				</div>
+				<div className="lg:w-92 lg:min-w-92" style={{ minWidth: "23rem" }}>
+					<div className="py-2 pl-1 w-full">Request Overview</div>
+					<div className="shadow-sm p-4 lg:p-6 rounded-sm bg-white out">
+						<Timeline
+							options={[
+								{
+									title: "Requested",
+									description: (
+										<>
+											Submitted on{" "}
+											{formateDate(request.submitTime)}.
+										</>
+									),
+									disabled: false
+								},
+								{
+									title: "Quoted",
+									description: (
+										<>
+											{request.quote?.paidAt == undefined
+												? "Payment is pending."
+												: `Paid on 
+											${formateDate(request.quote?.paidAt)}.`}
+										</>
+									),
+									disabled: !hasQuote(request)
+								},
+								{
+									title: "Processing",
+									description: (
+										<>Parts are being processed.</>
+									),
+									disabled: isAllPending(request.parts)
+								},
+								{
+									title: "Available for Pickup",
+									description: <>{isOpen ? "Pickup at the PNW Design Studio." : "Pickup currently not Available."}</>,
+									disabled: !isAllComplete(request.parts)
+								},
+								{
+									title: "Fulfilled",
+									// description: `On ${formateDate(
+									// 	request.fulfilledAt!
+									// )}`,
+									disabled: !request.isFulfilled
+								}
+							]}
+						/>
+
+					</div>
+
+					<div className="py-2 pl-1 w-full mt-2" id="payment_details">
+						Payment Details
+					</div>
+					<div className="p-4 lg:p-6 rounded-sm shadow-sm bg-white font-light outline outline-2 outline-gray-200">
+						{hasQuote(request) ? (
+							<>
+								<RequestPricing request={request} />
+								<br />
+								{/* <button className="text-sm font-light text-left" disabled={true}>Download Receipt</button> */}
+								<form action={payFormAction}>
+									<input
+										hidden
+										type="number"
+										name="requestId"
+										readOnly
+										value={request.id}></input>
+									<RequestQuotePaymentButton
+										request={request}
+									/>
+								</form>
+								<p className="text-red-500 pl-4">
+									{payState.errorMessage}
+								</p>
+							</>
+						) : (
+							<>
+								<p>Request has not been Quoted.</p>
+								<p className="text-sm">
+									You will receive an email once Quoted.
+								</p>
+							</>
+						)}
+					</div>
+
+					{/* {payState.isComplete &&
+					payState.errorMessage == undefined ? (
+						<>
+							<AlreadyPaidButton
+								request={request}></AlreadyPaidButton>
+						</>
+					) : (
+						<>
+							<form action={payFormAction}>
+								<input
+									hidden
+									type="number"
+									name="requestId"
+									readOnly
+									value={request.id}></input>
+								<RequestQuotePaymentButton request={request} />
+							</form>
+							<p className="text-red-500 pl-4">
+								{payState.errorMessage}
+							</p>
+						</>
+					)} */}
+					{/* <div className="py-2 pr-2 w-full">Contact Us</div>
+					<div className="p-6 rounded-md shadow-md bg-white font-light outline outline-1 outline-gray-300">
+						<div className="min-h-32">
+							<p>No messages have been sent.</p>
+							<p className="text-sm">
+								Allow up to 48 hours for a response.
+							</p>
+						</div>
+						<form>
+							<textarea
+								// TODO: Enable in the future.
+								disabled={true}
+								className="mt-4 mb-0 min-h-14 h-14 w-full"
+								placeholder="Enter your Message"></textarea>
+						</form>
+					</div> */}
 				</div>
 			</div>
 		</>
