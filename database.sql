@@ -70,6 +70,7 @@ CREATE TABLE Filament (
   ColorName varchar(50) NOT NULL,
   Technology Technology NOT NULL,
   MonoColor varchar(20),
+  Hint VARCHAR(50),
   DiColorA varchar(20),
   DiColorB varchar(20),
   InStock bool NOT NULL DEFAULT TRUE,

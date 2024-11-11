@@ -101,9 +101,9 @@ export default function RequestDetails({
 		<>
 			<div className="lg:flex justify-between items-start">
 				<div className="w-full max-lg:mb-6">
-					<h1 className="text-4xl font-thin">{request.name}</h1>
+					<h1 className="text-2xl font-thin">{request.name}</h1>
 
-					<p className="max-lg:block mt-2">
+					<p className="max-lg:block mt-2 text-sm">
 						You placed this request on{" "}
 						{request.submitTime.toLocaleDateString("en-us", {
 							weekday: "long",
@@ -166,58 +166,10 @@ export default function RequestDetails({
 
 			<hr className="my-4 lg:my-4" />
 
-			<div className="lg:flex gap-8">
-				<div className="lg:grow">
-					<div className="flex flex-col gap-2">
-						{request.isFulfilled && (
-							<RequestOverview
-								title="Request Fulfilled"
-								description={`Request was fulfilled on ${formateDate(
-									request.fulfilledAt!
-								)}.`}
-							/>
-						)}
-						{request.comments != null && <div>
-
-							<div className="w-full py-2 pl-1 text-nowrap">Request Specifications</div>
-							<div className="shadow-sm p-4 lg:p-6 rounded-sm bg-white out">
-								<p>Comments from {request.firstName} {request.lastName}: {request.comments}</p>
-							</div>
-
-						</div>}
-
-						<div>
-							<div className="w-full py-2 pl-1">
-								<div className="text-nowrap">
-									{"Viewing "}
-									{request.parts.length}{" "}
-									{request.parts.length > 1 ? "Parts" : "Part"}
-								</div>
-							</div>
-
-							{!request.isFulfilled && isAllComplete(request.parts) && !request.isFulfilled && (
-								<div className="mb-4 out p-4 lg:p-6 rounded-sm shadow-sm bg-white w-full">
-									<p className="text-pnw-gold font-semibold"><RegularPackage className="fill-pnw-gold inline mr-2 w-5 h-5"></RegularPackage>Available for Pickup</p>
-									<p>{isOpen
-										? <> One of our team members are at the Design Studio. You may pickup your parts until <span className="font-semibold">{formatTime(closingTime!)}</span>.</>
-										: <> Unfortunately none of our team members can assist you at this time. See our <Link className="underline" href={"/schedule"}>availability</Link>.</>}</p>
-								</div>
-							)}
-
-							<div className={`grid ${request.parts.length > 2 && "2xl:grid-cols-2"} gap-4`}>
-								{request.parts.map((part, index) => (
-									<PartDetails
-										part={part}
-										index={index}
-										count={request.parts.length}></PartDetails>
-								))}
-							</div>
-						</div>
-					</div>
-				</div>
-				<div className="lg:w-92 lg:min-w-92" style={{ minWidth: "23rem" }}>
+			<div className="w-full flex gap-6 justify-between">
+				<div className="w-full h-full">
 					<div className="py-2 pl-1 w-full">Request Overview</div>
-					<div className="shadow-sm p-4 lg:p-6 rounded-sm bg-white out">
+					<div className="shadow-sm p-4 lg:p-6 rounded-sm bg-white out h-full">
 						<Timeline
 							options={[
 								{
@@ -266,7 +218,10 @@ export default function RequestDetails({
 
 					</div>
 
-					<div className="py-2 pl-1 w-full mt-2" id="payment_details">
+				</div>
+
+				<div className="h-full">
+					<div className="py-2 pl-1 w-full" id="payment_details">
 						Payment Details
 					</div>
 					<div className="p-4 lg:p-6 rounded-sm shadow-sm bg-white font-light outline outline-2 outline-gray-200">
@@ -299,8 +254,9 @@ export default function RequestDetails({
 							</>
 						)}
 					</div>
+				</div>
 
-					{/* {payState.isComplete &&
+				{/* {payState.isComplete &&
 					payState.errorMessage == undefined ? (
 						<>
 							<AlreadyPaidButton
@@ -322,7 +278,7 @@ export default function RequestDetails({
 							</p>
 						</>
 					)} */}
-					{/* <div className="py-2 pr-2 w-full">Contact Us</div>
+				{/* <div className="py-2 pr-2 w-full">Contact Us</div>
 					<div className="p-6 rounded-md shadow-md bg-white font-light outline outline-1 outline-gray-300">
 						<div className="min-h-32">
 							<p>No messages have been sent.</p>
@@ -338,6 +294,57 @@ export default function RequestDetails({
 								placeholder="Enter your Message"></textarea>
 						</form>
 					</div> */}
+			</div>
+
+
+			<div className="lg:flex gap-8">
+				<div className="lg:grow">
+					<div className="flex flex-col gap-2">
+						{request.isFulfilled && (
+							<RequestOverview
+								title="Request Fulfilled"
+								description={`Request was fulfilled on ${formateDate(
+									request.fulfilledAt!
+								)}.`}
+							/>
+						)}
+						{request.comments != null && <div>
+
+							<div className="w-full py-2 pl-1 text-nowrap">Request Specifications</div>
+							<div className="shadow-sm p-4 lg:p-6 rounded-sm bg-white out">
+								<p>Comments from {request.firstName} {request.lastName}: {request.comments}</p>
+							</div>
+
+						</div>}
+
+						<div>
+							<div className="w-full py-2 pl-1">
+								<div className="text-nowrap">
+									{"Viewing "}
+									{request.parts.length}{" "}
+									{request.parts.length > 1 ? "Parts" : "Part"}
+								</div>
+							</div>
+
+							{!request.isFulfilled && isAllComplete(request.parts) && !request.isFulfilled && (
+								<div className="mb-4 out p-4 lg:p-6 rounded-sm shadow-sm bg-white w-full">
+									<p className="text-pnw-gold font-semibold"><RegularPackage className="fill-pnw-gold inline mr-2 w-5 h-5"></RegularPackage>Available for Pickup</p>
+									<p>{isOpen
+										? <> One of our team members are at the Design Studio. You may pickup your parts until <span className="font-semibold">{formatTime(closingTime!)}</span>.</>
+										: <> Unfortunately none of our team members can assist you at this time. See our <Link className="underline" href={"/schedule"}>availability</Link>.</>}</p>
+								</div>
+							)}
+
+							<div className={`grid ${request.parts.length > 2 && "2xl:grid-cols-2"} gap-4`}>
+								{request.parts.map((part, index) => (
+									<PartDetails
+										part={part}
+										index={index}
+										count={request.parts.length}></PartDetails>
+								))}
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</>

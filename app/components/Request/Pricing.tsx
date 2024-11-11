@@ -26,7 +26,7 @@ export default function RequestPricing({
 
 	return (
 		<>
-			<div>
+			{/* <div>
 				{request.parts.map((part) => (
 					<p className="text-sm text-nowrap overflow-ellipsis overflow-hidden w-fit">
 						<span className="font-mono text-gray-500">{`\$${(part.priceInDollars! * part.quantity).toFixed(
@@ -54,9 +54,9 @@ export default function RequestPricing({
 						)}
 					</p>
 				))}
-			</div>
+			</div> */}
 
-			<p className="text-sm font-light flex justify-between mt-2">
+			<p className="text-sm font-light flex justify-between">
 				<span>Subtotal</span>
 				<span className="text-right w-full font-mono text-gray-500">
 					{" "}
