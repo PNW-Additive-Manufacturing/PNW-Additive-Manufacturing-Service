@@ -61,6 +61,7 @@ export default function RequestEditor({
 	let totalGrams = 0;
 	let maxLeadTime = 0;
 	let totalPriceInCents = 0;
+	let isAllAnalyzed = true;
 	let allAnalysisMachines: string[] = [];
 	for (const part of request.parts) {
 		if (part.filament && part.filament.leadTimeInDays > maxLeadTime) {
@@ -78,6 +79,9 @@ export default function RequestEditor({
 			if (allAnalysisMachines.indexOf(part.model.analysisResults.machineModel) == -1) {
 				allAnalysisMachines.push(part.model.analysisResults.machineModel);
 			}
+		}
+		else if (isAllAnalyzed) {
+			isAllAnalyzed = false;
 		}
 	}
 
@@ -179,12 +183,15 @@ export default function RequestEditor({
 						</div>}
 
 						<div>
-							<div className="flex flex-wrap justify-between items-center py-2 px-1 w-full">
+							<div className="flex flex-wrap gap-x-4 justify-between items-center py-2 px-1 w-full">
 								<span>Manage {request.parts.length} {request.parts.length > 1 ? "Parts" : "Part"}</span>
-								{(totalGrams > 0 || totalPriceInCents > 0) && <div className="text-sm bg-background px-1 rounded-md">
+								{(totalGrams > 0 || totalPriceInCents > 0) && <div className="text-sm bg-background xl:px-1 rounded-md">
 									<RegularStarFill className="inline fill-pnw-gold opacity-75" style={{ marginBottom: "3px" }} />
 									<span className="font-light "> Analysis using {allAnalysisMachines.join(", ")} </span>
-									<span className="font-medium">${(totalPriceInCents / 100).toFixed(2)} consuming {Math.round(totalGrams)} Grams</span>
+									<span className="font-medium">
+										${(totalPriceInCents / 100).toFixed(2)} consuming {Math.round(totalGrams)} Grams
+										{!isAllAnalyzed && <> (Incomplete)</>}
+									</span>
 								</div>}
 							</div>
 
@@ -338,7 +345,7 @@ export default function RequestEditor({
 									{request.emails.map(email => <>
 										<tr className="bg-transparent">
 											<td className="first-letter:uppercase text-sm">{email.kind}</td>
-											<td className="text-sm">{email.seenAt == null ? <span><RegularEye className="inline fill-cool-black mb-0.5" /> Unread</span> : <span><RegularEye className="inline fill-pnw-gold mb-0.5" /> {email.seenAt.toLocaleDateString("en-us", {
+											<td className="text-sm">{email.seenAt == null ? <span><RegularEye className="inline fill-cool-black mb-0.5" /> Unclicked</span> : <span><RegularEye className="inline fill-pnw-gold mb-0.5" /> {email.seenAt.toLocaleDateString("en-us", {
 												month: "short",
 												day: "numeric",
 												hour: "2-digit",

@@ -60,7 +60,7 @@ export default function Team() {
 						avatar="https://cdn.discordapp.com/avatars/1137236521573953576/6196559e0ff81d2bc03fcaf713e6fb56.png?size=640" />
 					<Card
 						name="Gabriel Jang"
-						role="Tressure"
+						role="Treasurer"
 						email="jang233@pnw.edu"
 						avatar="https://cdn.discordapp.com/avatars/696941923365158962/dbc3369d91221001a05c55c62ffb8d10.png?size=640" />
 					<Card

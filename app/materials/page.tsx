@@ -24,6 +24,10 @@ const materialMapping: Record<string, { coverUrl?: string, hint?: string }> = {
         coverUrl: "/assets/filaments/blocks.jpg",
         hint: "Heat and impact Resistant"
     },
+    "PAHT-CF":
+    {
+        hint: "Carbon Fiber Reinforced High Temperature Nylon"
+    },
     "TPU":
     {
         hint: "Flexible"

@@ -31,7 +31,7 @@ export function AvailabilityText() {
 
     return <Suspense key={hydrated ? "local" : "utc"}>
         <div className="w-fit text-xs tracking-wider">
-            {isOpen ? <>We are available for pickup until {formatTime(closingTime!)}: </> : <>We are currently closed: </>}
+            {isOpen ? <><div className="bg-pnw-gold mr-1.5 inline-block w-2 h-2 opacity-75 aspect-square animate-pulse rounded-full outline outline-2 outline-gray-200" />We are available for pickup until {formatTime(closingTime!)}: </> : <>We are currently closed: </>}
             <a
                 href={"/schedule"}
                 className="underline">

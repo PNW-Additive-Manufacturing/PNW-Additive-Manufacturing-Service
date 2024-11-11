@@ -398,10 +398,10 @@ export function RequestPartForm({
 							</p>
 
 							<div className="text-sm mt-3 flex gap-4">
-								<div>
+								{/* <div>
 									<label className="text-nowrap">Lead-Time</label>
 									1 Days
-								</div>
+								</div> */}
 								<div>
 									<input className="w-fit inline mb-0 mr-2" type="checkbox" defaultChecked={false} required={true} ref={checkboxElem as any} />
 									By checking this box, you acknowledge and accept all terms and conditions listed above.

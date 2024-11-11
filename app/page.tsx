@@ -111,11 +111,14 @@ export default async function Home() {
 								</div>
 							</div>
 						</div>
-						<div className="w-full xl:w-2/5 max-xl:mb-6">
-							<Gallery
+						<div className="w-fit">
+							<video src={"/assets/Timeline 1.mov"} className="max-xl:hidden rounded-md" style={{ height: "17.5rem" }} autoPlay={true} muted={true} loop={true}></video>
+							{/* <Gallery
 								buttonStyle="sphere"
-								autoplay={true}
+								autoplay={false}
 								slides={[
+									<>
+									</>,
 									<>
 										<div className="bg-gray-100 rounded-md shadow-sm w-full h-64">
 											<Image
@@ -193,10 +196,10 @@ export default async function Home() {
 											three-pound Battle Bots.
 										</p>
 									</>
-								]}></Gallery>
+								]}></Gallery> */}
 						</div>
 					</div>
-				</HorizontalWrap >
+				</HorizontalWrap>
 
 				<div className="bg-white py-8 pb-12">
 					<HorizontalWrap>
@@ -218,16 +221,18 @@ export default async function Home() {
 							</div>
 						</div>
 						<hr style={{ marginBottom: "0px" }} />
-						<div className="grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-4 gap-8 mt-6">
-							<div className="w-full py-4 text-sm">
-								<Image src="/assets/Bambu+Lab+A1+3D+Printer+multi+color.png" alt="Bambu Lab A1 3D Printer" width={720} height={720} className="rounded-md mb-4 w-full h-48 object-cover" />
-								<h2 className="text-lg text-pnw-gold font-semibold">FDM 3D Printing</h2>
-								<p className="mt-2">Perfect for prototyping medium-strength parts, offering a cost-effective solution for functional prototypes and design testing.</p>
+						<div className="grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-5 gap-8 mt-6">
+							<div className="out p-4 w-full rounded-md shadow-sm">
+								<div className="w-full text-sm">
+									<Image src="/assets/bambu_x1e_with_ams.png" alt="Bambu Lab A1 3D Printer" width={720} height={720} className="rounded-md mb-4 w-full h-48 object-cover object-bottom" />
+									<h2 className="text-lg text-pnw-gold font-semibold">FDM Bambu Lab</h2>
+									<p className="mt-2">Perfect for prototyping medium-strength parts, offering a cost-effective solution for functional prototypes and design testing.</p>
+								</div>
 							</div>
 
 							<div className="bg-background p-4 w-full rounded-md">
 								<div className="w-full opacity-75 text-sm">
-									<Image src="/assets/mars4ultra.png" alt="Mars 4 Ultra Printer" width={720} height={720} className="rounded-md mb-4 w-full h-48 object-cover" />
+									<Image src="/assets/mars4ultra.png" alt="Mars 4 Ultra Printer" width={720} height={720} className="rounded-md mb-4 w-full h-48 object-cover object-bottom" />
 									<h2 className="text-lg font-semibold">Resin 3D Printing</h2>
 									<p className="mt-2">Coming Spring 2025</p>
 									<p className="mt-2">Optimal for creating detailed and smooth-surfaced models, ideal for small intricate parts.</p>
@@ -236,14 +241,26 @@ export default async function Home() {
 
 							<div className="bg-background p-4 w-full rounded-md">
 								<div className="w-full opacity-75 text-sm">
-									<Image src="/assets/metalx.png" alt="Metal X Printer" width={720} height={720} className="rounded-md mb-4 w-full h-48 object-cover" />
-									<h2 className="text-lg font-semibold">MetalFFF Metal X</h2>
+									<Image src="/assets/metalx.png" alt="Metal X Printer" width={720} height={720} className="rounded-md mb-4 w-full h-48 object-cover object-bottom" />
+									<h2 className="text-lg font-semibold">Metal FFF Metal X</h2>
+									{/* <p className="mt-2 flex text-nowrap gap-2">Provided by <Image className="inline w-full h-fit opacity-75" src={"/assets/logos/markforged.png"} alt={"Markforged"} width={120} height={120} /></p> */}
 									<p className="mt-2">Coming Spring 2025</p>
-									<p className="mt-2">The Markforged Metal X produces extremely strong custom metal parts designed for high-end applications.</p>
+									<p className="mt-2">The Markforged Metal X produces extremely strong custom metal parts designed for high-stress applications.</p>
 								</div>
 							</div>
 
-							<div className="col-span-1 md:col-span-3ewq2">
+							{/* <div className="bg-background p-4 w-full rounded-md"></div> */}
+
+							{/* <div className="bg-background p-4 w-full rounded-md">
+								<div className="w-full opacity-75 text-sm">
+									<Image src="/assets/fuse_1_store_thumb_2x_1.webp" alt="FormLabs Fuse 1+ 30W" width={720} height={720} className="rounded-md mb-4 w-full h-48 object-cover" />
+									<h2 className="text-lg font-semibold">SLS Fuse 1+ 30W</h2>
+									<p className="mt-2">Looking for Funding</p>
+									<p className="mt-2">Designed for industrial-quality production with a range of high-performance nylon powders.</p>
+								</div>
+							</div> */}
+
+							<div className="col-span-1 md:col-span-3 2xl:col-span-2">
 								<Link className="w-full" href="/materials">
 									<button className="h-fit w-full text-sm flex gap-2 items-center justify-between text-right mb-2 font-medium bg-background text-cool-black fill-cool-black out">
 										View our Inventory
@@ -344,7 +361,20 @@ export default async function Home() {
 						</div> */}
 					</HorizontalWrap>
 				</div>
+				{/* <div className="py-10">
+					<HorizontalWrap>
 
+						<h2 className="text-xl font-medium mb-2">Our Sponsors and Donators</h2>
+						<p>We are incredibly grateful to our sponsors and donators, whose generous support enables us to push the boundaries of Additive Manufacturing at Purdue Northwest.</p>
+						<div className="flex gap-12 py-6 opacity-65">
+							<Image className="h-14 w-fit py-2" src={"/assets/logos/bambulab.png"} alt={"Bambu Lab"} width={720} height={720}></Image>
+							<Image className="h-14 w-fit py-4" src={"/assets/logos/formlabs.png"} alt={"Formlabs"} width={720} height={720}></Image>
+							<Image className="h-14 w-fit py-2" src={"/assets/logos/onshape.png"} alt={"Onshape"} width={720} height={720}></Image>
+							<Image className="h-14 w-fit py-2" src={"/assets/logos/blacktoerunning.png"} alt={"Black Toe Clothing"} width={720} height={720}></Image>
+						</div>
+
+					</HorizontalWrap>
+				</div> */}
 				{/* <HorizontalWrap className="py-8">
 					Looking to learn more?
 					<div className="flex flex-col md:flex-row w-fit mt-6 gap-2 justify-center">

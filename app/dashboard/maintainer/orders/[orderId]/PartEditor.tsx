@@ -288,7 +288,7 @@ export default function PartEditor({
 								<div className={count < 3 ? "flex max-lg:flex-col-reverse gap-4" : "w-full flex gap-4 flex-col-reverse"}>
 									<div className={`flex items-start gap-4 ${count > 2 ? "w-full" : "lg:w-1/3"}`}>
 										<div className="w-full h-full">
-											<div className="w-full h-36 outline-gray-300 bg-gray-50 outline-1 outline rounded-sm relative shadow-sm">
+											<div className="w-full h-36 out bg-gray-50 rounded-sm relative shadow-sm">
 												<ModelViewer
 													isAvailable={!part.model.isPurged}
 													modelSize={part.model?.fileSizeInBytes}

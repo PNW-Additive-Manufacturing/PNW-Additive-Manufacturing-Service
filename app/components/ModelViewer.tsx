@@ -231,7 +231,7 @@ export default function ModelViewer({
 				</div> : isAvailable ? (
 					<div className="flex justify-center align-middle items-center h-full w-full">
 						<button
-							className="px-4 py-2 text-sm font-normal rounded-sm w-fit m-0"
+							className="px-4 py-2 text-xs font-normal rounded-sm w-fit m-0"
 							type="button"
 							onClick={loadModelSTL}>
 							View Model {modelSize && <span className="max-lg:hidden">({Math.round(modelSize / 1000)} kB)</span>}
