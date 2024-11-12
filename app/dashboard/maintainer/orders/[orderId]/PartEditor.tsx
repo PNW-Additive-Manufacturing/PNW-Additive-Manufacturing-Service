@@ -292,11 +292,11 @@ export default function PartEditor({
 												<ModelViewer
 													isAvailable={!part.model.isPurged}
 													modelSize={part.model?.fileSizeInBytes}
-													swatch={
-														part.supplementedFilament
-															?.color ??
-														part.filament?.color
-													}
+													// swatch={
+													// 	part.supplementedFilament
+													// 		?.color ??
+													// 	part.filament?.color
+													// }
 													modelURL={`/api/download/model?modelId=${part.modelId}`}></ModelViewer>
 											</div>
 											<div>

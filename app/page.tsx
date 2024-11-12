@@ -112,7 +112,7 @@ export default async function Home() {
 							</div>
 						</div>
 						<div className="w-fit">
-							<video src={"/assets/Timeline 1.mov"} className="max-xl:hidden rounded-md" style={{ height: "17.5rem" }} autoPlay={true} muted={true} loop={true}></video>
+							<video src={"/assets/Timeline 1.mov"} className="max-xl:hidden rounded-md" style={{ maxHeight: "17.5rem" }} autoPlay={true} muted={true} loop={true}></video>
 							{/* <Gallery
 								buttonStyle="sphere"
 								autoplay={false}

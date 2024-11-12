@@ -26,7 +26,7 @@ const materialMapping: Record<string, { coverUrl?: string, hint?: string }> = {
     },
     "PAHT-CF":
     {
-        hint: "Carbon Fiber Reinforced High Temperature Nylon"
+        hint: "Carbon Fiber reinforced Nylon"
     },
     "TPU":
     {
