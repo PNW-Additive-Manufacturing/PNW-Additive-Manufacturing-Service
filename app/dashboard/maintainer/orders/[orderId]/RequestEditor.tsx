@@ -94,7 +94,7 @@ export default function RequestEditor({
 
 		if (machineData.machines) {
 			for (let currentMachine of machineData.machines) {
-				if (part.status == PartStatus.Printing && currentMachine.filename?.toLowerCase()?.includes(part.model.name.toLowerCase()) && !(currentMachine.identifier in printingMachines)) {
+				if (currentMachine.filename?.toLowerCase()?.includes(part.model.name.toLowerCase()) && !(currentMachine.identifier in printingMachines)) {
 					printingMachines.push(currentMachine.identifier);
 					break;
 				}
