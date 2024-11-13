@@ -5,7 +5,7 @@ import {
 	fulfillRequest
 } from "@/app/api/server-actions/request";
 import Account, { AccountPermission } from "@/app/Types/Account/Account";
-import { isAllComplete } from "@/app/Types/Part/Part";
+import { isAllComplete, PartStatus } from "@/app/Types/Part/Part";
 import Request, {
 	getTotalCost,
 	hasQuote,
@@ -94,8 +94,9 @@ export default function RequestEditor({
 
 		if (machineData.machines) {
 			for (let currentMachine of machineData.machines) {
-				if (currentMachine.status == "Printing" && currentMachine.filename?.toLowerCase()?.includes(part.model.name.toLowerCase()) && !(currentMachine.identifier in printingMachines)) {
+				if (part.status == PartStatus.Printing && currentMachine.filename?.toLowerCase()?.includes(part.model.name.toLowerCase()) && !(currentMachine.identifier in printingMachines)) {
 					printingMachines.push(currentMachine.identifier);
+					break;
 				}
 			}
 		}
