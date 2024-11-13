@@ -8,6 +8,7 @@ import RefundMessage from "@/app/components/Part/RefundMessage";
 import { SelectorStatusPill } from "@/app/components/StatusPill";
 import { getSingleColor, NamedSwatch } from "@/app/components/Swatch";
 import Image from "next/image";
+import { FaRegCopy } from "react-icons/fa6";
 import Filament from "@/app/Types/Filament/Filament";
 import Part, {
 	isRefunded,
@@ -201,26 +202,10 @@ export default function PartEditor({
 					name="partId"
 					id="partId"></input>
 
-				{/* {processingMachine && part.status == PartStatus.Printing && <div className="flex items-end text-sm gap-2 w-full px-1 mb-2">
-					<div className="flex gap-2 items-center w-full" style={{ borderBottomRightRadius: "0px", borderBottomLeftRadius: "0px" }}>
-						<span className="text-nowrap">Printing on {processingMachine.identifier} ({processingMachine.model})</span>
-						<span>{processingMachine.progress}%</span>
-						<progress className="colored h-2 opacity-75" value={processingMachine.progress} max={100}></progress>
-					</div>
-				</div>} */}
 				<div className="flex gap-4 w-full h-full">
 					<div
 						className={`shadow-sm rounded-sm p-4 lg:p-6 w-full bg-white outline outline-2 outline-gray-200`} style={{ borderTopLeftRadius: "0px", borderTopRightRadius: "0px" }}>
 						<div className={`lg:flex gap-4`}>
-							{/* <div className="max-lg:hidden w-fit text-lg text-center">
-							{index + 1}
-							<button
-								className={`flex flex-col p-0 mt-1 text-sm text-cool-black hover:text-cool-black mb-0 bg-transparent hover:bg-transparent hover:fill-black enabled:fill-pnw-gold enabled:text-pnw-gold`}
-								disabled={!isChanged}>
-								<RegularUpload className="w-6 h-6 inline"></RegularUpload>
-								<FormLoadingSpinner className="w-6 h-auto mt-2" />
-							</button>
-						</div> */}
 							<div className="w-full">
 								{isRefunded(part) ? (
 									<></>
@@ -300,41 +285,51 @@ export default function PartEditor({
 													modelURL={`/api/download/model?modelId=${part.modelId}`}></ModelViewer>
 											</div>
 											<div>
-												<div className="bg-background w-full p-3 text-xs rounded-b-sm">
+												<div className="bg-background text-gray-500 w-full p-3 text-xs rounded-b-sm">
 													<div className="flex gap-2 flex-wrap justify-between items-center">
-														{part.model.analysisResults ? (
-															<div className="w-fit gap-2 text-gray-500 fill-gray-500">
-																<span className="mr-2">Analysis</span><RegularAlarmClock className="inline mb-0.5" /> {part.model.analysisResults.estimatedDuration}<RegularWeight className="ml-2 inline mb-0.5" /> {part.model.analysisResults.estimatedFilamentUsedInGrams} Grams
-															</div>
-														) : part.model.analysisFailedReason ? <>
+														{part.model.analysisResults
+															? <>
+																<div className="w-fit gap-2 fill-gray-500">
+																	<span className="mr-2">Analysis</span><RegularAlarmClock className="inline mb-0.5" /> {part.model.analysisResults.estimatedDuration}<RegularWeight className="ml-2 inline mb-0.5" /> {part.model.analysisResults.estimatedFilamentUsedInGrams} Grams
+																</div>
+															</>
+															: part.model.analysisFailedReason
+																? <>
+																	<p className="text-red-600 fill-red-600">{part.model.analysisFailedReason}</p>
+																</>
+																: <p className="text-gray-500">Queued for Analysis</p>}
 
-															<p className="opacity-50 text-red-600 fill-red-600">{part.model.analysisFailedReason}</p>
-
-														</> : <p className="opacity-50">Queued for Analysis</p>}
-
-														{!part.model.isPurged && <a className={`opacity-50 ${!part.model.isPurged && "hover:opacity-100"} text-nowrap`}
+														{!part.model.isPurged && <a className={`text-gray-500 fill-gray-500 hover:text-black hover:fill-black text-nowrap`}
 															href={part.model.isPurged ? undefined : `/api/download/model?modelId=${part.modelId}`}
 															download={`${part.model.name}.stl`}
 															target="_blank">
 															Download
-															<RegularDownload className="ml-2 inline mb-0.5"></RegularDownload>
+															<RegularDownload className="ml-2 inline mb-0.5 fill-inherit"></RegularDownload>
 														</a>}
 
 													</div>
-													{part.status == PartStatus.Printing && processingMachine && <div className="flex items-end gap-2 w-full mt-2 opacity-75 text-xs">
+													{part.status == PartStatus.Printing && processingMachine && <div className="flex items-end gap-2 w-full mt-2 text-xs text-gray-500">
 														<div className="flex gap-2 items-center w-full" style={{ borderBottomRightRadius: "0px", borderBottomLeftRadius: "0px" }}>
 															<span className="xl:text-nowrap">Printing on {processingMachine.identifier} ({processingMachine.model})</span>
 															<span className="max-xl:hidden">{processingMachine.progress}%</span>
-															<progress className="colored max-xl:hidden h-2.5" value={processingMachine.progress} max={100}></progress>
+															<progress className="colored max-xl:hidden h-2 opacity-75" value={processingMachine.progress} max={100}></progress>
 														</div>
 													</div>}
+													{/* <div className="flex items-end gap-2 w-full mt-2 text-xs text-gray-500">
+														<div className="flex gap-2 items-center w-full" style={{ borderBottomRightRadius: "0px", borderBottomLeftRadius: "0px" }}>
+															<span className="xl:text-nowrap">Printing on Sam (X1C)</span>
+															<span className="max-xl:hidden">75%</span>
+															<progress className="colored max-xl:hidden h-2 opacity-75" value={75} max={100}></progress>
+														</div>
+													</div> */}
 												</div>
 											</div>
 										</div>
 									</div>
 									<div>
-										<div className="flex flex-wrap gap-x-2 gap-y-2 items-center mb-2">
+										<div className="flex flex-wrap gap-x-2 gap-y-2 items-center mb-2 ">
 											<SelectorStatusPill
+												className={count > 3 ? "2xl:w-full" : ""}
 												register={register("status", {
 													onChange: (
 														ev: ChangeEvent<HTMLSelectElement>
@@ -404,25 +399,29 @@ export default function PartEditor({
 													</>
 												)}
 											</SelectorStatusPill>
-											<div className="text-lg text-wrap">
+											<div className="text-lg text-wrap hover:fill-pnw-gold hover:text-pnw-gold hover:cursor-pointer" onClick={() => {
+												navigator.clipboard
+													.writeText(part.model.name)
+													.then(() => toast.success(`Part copied to clipboard!`, { autoClose: 1000 }));
+											}}>
 												{part.model.name}
+												{/* <FaRegCopy className="inline fill-inherit mb-1" style={{ padding: "3px" }}></FaRegCopy> */}
 											</div>
 											{isChanged && <button
-												className={`w-fit text-sm px-0 py-0 text-cool-black hover:text-cool-black mb-0 bg-transparent hover:bg-transparent hover:fill-black enabled:fill-pnw-gold enabled:text-pnw-gold enabled:animate-pulse`}
+												className={`w-fit text-xs px-0 py-0 text-cool-black hover:text-cool-black mb-0 bg-transparent hover:bg-transparent hover:fill-black enabled:fill-pnw-gold enabled:text-pnw-gold enabled:animate-pulse`}
 												disabled={!isChanged || request.isFulfilled}>
 												<RegularUpload className="p-0.5 w-5 h-5 inline"></RegularUpload>
 												<span className="ml-2 text-inherit">
 													Save
 												</span>
-												{/* <FormLoadingSpinner className="ml-2" /> */}
 											</button>}
 										</div>
 										<div className="text-sm">
 											<p className="my-0.5">
 												<span className="font-light">
-													{"Technology: "}
+													{"Manufacturing Process: "}
 												</span>
-												Fused Deposition Modeling
+												{part.filament?.technology}
 											</p>
 
 											<div className="my-0.5">
@@ -542,9 +541,7 @@ export default function PartEditor({
 								</div>
 							</div>
 						</div>
-						{/* <div className="mt-2">
-							<RefundMessage part={part}></RefundMessage>
-						</div> */}
+
 						{isRevoked(part) && (
 							<Alert severity="warning">
 								Request Revoked {part.deniedReason}
