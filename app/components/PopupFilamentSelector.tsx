@@ -49,13 +49,14 @@ export default function PopupFilamentSelector({
 
 	const selectedMaterial = watch("material");
 	const filamentsMatchingMaterial = filaments.filter(
-		(filament) => filament.material == selectedMaterial
+		(filament) => filament.material == selectedMaterial && filament.inStock
 	);
 	const selectedColorName = watch("colorName");
 	const selectedFilament = filaments.find(
 		(filament) =>
 			filament.material == selectedMaterial &&
-			filament.color.name == selectedColorName
+			filament.color.name == selectedColorName &&
+			filament.inStock
 	);
 
 	function changeFilament(material?: string, colorName?: string) {

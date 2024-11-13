@@ -182,7 +182,7 @@ export function RequestPartForm({
 								<p className="mb-4 text-sm">Review each <Link className="underline" target="_blank" href={"/materials"}>process and material</Link> before submission.</p>
 								<select defaultValue="FDM">
 									<option value="FDM`">
-										3D Printing (FDM)
+										FDM
 									</option>
 									<option disabled value="LCD`">
 										Resin Printing
