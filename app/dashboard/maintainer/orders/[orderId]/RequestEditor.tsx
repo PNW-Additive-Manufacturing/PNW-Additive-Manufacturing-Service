@@ -166,7 +166,7 @@ export default function RequestEditor({
 
 			<hr className="my-4 lg:my-4" />
 
-			<div className="lg:flex gap-8">
+			<div className="lg:flex gap-6">
 				<div className="lg:grow">
 					<div className="flex flex-col gap-2 mb-3">
 						{request.isFulfilled && (

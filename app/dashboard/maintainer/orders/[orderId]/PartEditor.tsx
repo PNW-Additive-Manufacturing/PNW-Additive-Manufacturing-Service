@@ -329,7 +329,7 @@ export default function PartEditor({
 									<div>
 										<div className="flex flex-wrap gap-x-2 gap-y-2 items-center mb-2 ">
 											<SelectorStatusPill
-												className={count > 3 ? "2xl:w-full" : ""}
+												className={count >= 3 ? "will-change-auto w-auto" : ""}
 												register={register("status", {
 													onChange: (
 														ev: ChangeEvent<HTMLSelectElement>
