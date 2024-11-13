@@ -38,6 +38,7 @@ import FormLoadingSpinner from "@/app/components/FormLoadingSpinner";
 import Machine from "@/app/components/Machine";
 import { AccountContext } from "@/app/ContextProviders";
 import { addMinutes } from "@/app/utils/TimeUtils";
+import usePrinters from "@/app/hooks/usePrinters";
 
 export default function RequestEditor({
 	request,
@@ -57,6 +58,8 @@ export default function RequestEditor({
 	const [quoteState, setQuoteFormAction] = useFormState(setQuote, "");
 	const [fulfillState, fulfillAction] = useFormState(fulfillRequest, "");
 	const [deleteRequestError, deleteRequestAction] = useFormState(deleteRequest, "");
+
+	const machineData = usePrinters(true, 60);
 
 	let totalGrams = 0;
 	let maxLeadTime = 0;
@@ -195,27 +198,21 @@ export default function RequestEditor({
 								</div>}
 							</div>
 
-
 							<div className={`grid ${request.parts.length > 2 && "2xl:grid-cols-2"} gap-4`}>
-								{request.parts.map((part, index) => (
-									<PartEditor
+								{request.parts.map((part, index) => {
+									const printStatus = machineData?.machines == null ? null : machineData.machines!.find(m => {
+										return m.filename == null ? false : m.filename.toLowerCase().includes(part.model.name.toLowerCase());
+									});
+
+									return <PartEditor
 										request={request}
 										part={part}
 										index={index}
 										isQuoted={_hasQuote}
 										filaments={availableFilaments}
 										count={request.parts.length}
-										processingMachine={{
-											failReason: "",
-											filaments: [],
-											identifier: "Sam",
-											isHealthy: true,
-											model: "A1",
-											progress: 75,
-											status: "Printing",
-											timeRemaining: "20",
-										}} />
-								))}
+										processingMachine={printStatus} />
+								})}
 							</div>
 						</div>
 					</div>

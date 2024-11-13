@@ -125,7 +125,7 @@ export default function PartEditor({
 	isQuoted: boolean;
 	filaments: Filament[];
 	count: number;
-	processingMachine?: MachineData;
+	processingMachine?: MachineData | null;
 }) {
 	const { register, watch, setValue, getValues } = useForm<{
 		costInDollars: number;
@@ -185,7 +185,7 @@ export default function PartEditor({
 	);
 
 	return (
-		<div key={part.id}>
+		<div key={part.id} className="h-full">
 			<PartRevokeForm
 				part={part}
 				showRevoke={showRevoke}
@@ -193,7 +193,7 @@ export default function PartEditor({
 					setShowRevoke(show);
 					setValue("status", PartStatus.Pending);
 				}}></PartRevokeForm>
-			<form action={formAction} className="h-auto">
+			<form action={formAction} className="h-full">
 				<input
 					readOnly={true}
 					hidden
@@ -201,14 +201,14 @@ export default function PartEditor({
 					name="partId"
 					id="partId"></input>
 
-				{/* {processingMachine && <div className="flex items-end gap-2 w-full px-1 mb-2">
+				{/* {processingMachine && part.status == PartStatus.Printing && <div className="flex items-end text-sm gap-2 w-full px-1 mb-2">
 					<div className="flex gap-2 items-center w-full" style={{ borderBottomRightRadius: "0px", borderBottomLeftRadius: "0px" }}>
 						<span className="text-nowrap">Printing on {processingMachine.identifier} ({processingMachine.model})</span>
 						<span>{processingMachine.progress}%</span>
-						<progress className="opacity-50" value={processingMachine.progress} max={100}></progress>
+						<progress className="colored h-2 opacity-75" value={processingMachine.progress} max={100}></progress>
 					</div>
 				</div>} */}
-				<div className="flex gap-4 w-full items-end h-full">
+				<div className="flex gap-4 w-full h-full">
 					<div
 						className={`shadow-sm rounded-sm p-4 lg:p-6 w-full bg-white outline outline-2 outline-gray-200`} style={{ borderTopLeftRadius: "0px", borderTopRightRadius: "0px" }}>
 						<div className={`lg:flex gap-4`}>
@@ -287,8 +287,8 @@ export default function PartEditor({
 
 								<div className={count < 3 ? "flex max-lg:flex-col-reverse gap-4" : "w-full flex gap-4 flex-col-reverse"}>
 									<div className={`flex items-start gap-4 ${count > 2 ? "w-full" : "lg:w-1/3"}`}>
-										<div className="w-full h-full">
-											<div className="w-full h-36 out bg-gray-50 rounded-sm relative shadow-sm">
+										<div className="w-full h-full out">
+											<div className="w-full h-36 out bg-gray-50 rounded-sm">
 												<ModelViewer
 													isAvailable={!part.model.isPurged}
 													modelSize={part.model?.fileSizeInBytes}
@@ -321,13 +321,13 @@ export default function PartEditor({
 														</a>}
 
 													</div>
-													{/* {part.status == PartStatus.Printing && processingMachine && <div className="flex items-end gap-2 w-full mt-2 opacity-75 text-xs">
+													{part.status == PartStatus.Printing && processingMachine && <div className="flex items-end gap-2 w-full mt-2 opacity-75 text-xs">
 														<div className="flex gap-2 items-center w-full" style={{ borderBottomRightRadius: "0px", borderBottomLeftRadius: "0px" }}>
 															<span className="xl:text-nowrap">Printing on {processingMachine.identifier} ({processingMachine.model})</span>
 															<span className="max-xl:hidden">{processingMachine.progress}%</span>
-															<progress className="colored max-xl:hidden" value={processingMachine.progress} max={100}></progress>
+															<progress className="colored max-xl:hidden h-2.5" value={processingMachine.progress} max={100}></progress>
 														</div>
-													</div>} */}
+													</div>}
 												</div>
 											</div>
 										</div>
@@ -404,7 +404,7 @@ export default function PartEditor({
 													</>
 												)}
 											</SelectorStatusPill>
-											<div className="text-xl text-wrap">
+											<div className="text-lg text-wrap">
 												{part.model.name}
 											</div>
 											{isChanged && <button

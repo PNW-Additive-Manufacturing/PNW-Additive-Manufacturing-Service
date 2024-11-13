@@ -2,6 +2,7 @@
 
 import FarmUploadForm from "@/app/components/FarmUploadForm";
 import Machine, { MachineData } from "@/app/components/Machine";
+import usePrinters from "@/app/hooks/usePrinters";
 import Filament from "@/app/Types/Filament/Filament";
 import { RegularSpinnerSolid } from "lineicons-react";
 import { useEffect, useState } from "react";
@@ -12,59 +13,9 @@ export default function Farm({
 }: {
 	availableFilaments: Filament[];
 }) {
-	const [machines, setMachines] = useState<{
-		machines: MachineData[] | null;
-		lastUpdated: number;
-	}>({ lastUpdated: Date.now(), machines: null });
-	const [isLoading, setLoading] = useState(false);
+	const { machines, lastFetched, failedReason, refresh, isFetching } = usePrinters(true);
 
-	async function updateMachines() {
-		setLoading(true);
-
-		await new Promise((res) => setTimeout(res, 500));
-
-		try {
-			const fetchedData = await (
-				await fetch("/api/farm/printers", { cache: "no-cache" })
-			).json();
-
-			console.log("Fetched", fetchedData);
-
-			if (!fetchedData.success) {
-				throw new Error("Response not marked as succeeded!");
-			}
-
-			delete fetchedData.success;
-
-			setMachines({
-				machines: Object.values(fetchedData) as MachineData[],
-				lastUpdated: Date.now()
-			});
-		} catch (ex) {
-			console.error("Unable to fetch Farm!", ex);
-		}
-
-		setLoading(false);
-	}
-
-	useEffect(() => {
-		const interval = setInterval(() => {
-			if (!isLoading) {
-				updateMachines();
-			}
-		}, 10000);
-
-		//Clearing the interval
-		return () => clearInterval(interval);
-	});
-
-	useEffect(() => {
-		if (machines?.machines == null && !isLoading) {
-			updateMachines();
-		}
-	}, []);
-
-	let isOutOfDate = machines.lastUpdated + 15000 < Date.now();
+	let isOutOfDate = lastFetched == null || lastFetched.getTime() + 15000 < Date.now();
 
 	return (
 		<>
@@ -86,44 +37,44 @@ export default function Farm({
 				</div>
 
 				<div className="flex h-fit gap-4 items-center">
-					{machines.machines && (
+					{machines && (
 						<div>
 							{Math.round(
-								(machines.machines.filter(
+								(machines.filter(
 									(m) => m.status == "Printing"
 								).length /
-									machines.machines.length) *
+									machines.length) *
 								100
 							)}
 							% Utilization
 						</div>
 					)}
 
-					{machines.machines && (
-						<p>{machines.machines.length ?? 0} Printers</p>
+					{machines && (
+						<p>{machines.length ?? 0} Printers</p>
 					)}
 					<div
-						className={`flex items-center hover:text-pnw-gold hover:fill-pnw-gold fill-black hover:cursor-pointer ${isLoading && "fill-pnw-gold text-pnw-gold"
+						className={`flex items-center hover:text-pnw-gold hover:fill-pnw-gold fill-black hover:cursor-pointer ${isFetching && "fill-pnw-gold text-pnw-gold"
 							}`}
-						onClick={async () => await updateMachines()}>
+						onClick={async () => await refresh()}>
 						Reload
 						<RegularSpinnerSolid
-							className={`fill-inherit w-auto h-auto inline ml-2 ${isLoading && "animate-spin"
+							className={`fill-inherit w-auto h-auto inline ml-2 ${isFetching && "animate-spin"
 								}`}></RegularSpinnerSolid>
 					</div>
 				</div>
 			</div>
 
-			{machines.machines == null ? (
+			{machines == null ? (
 				<>Not loaded!</>
 			) : (
 				<>
 					<div className="flex gap-6">
 						<div className="w-full grid grid-cols-3 row-auto gap-4 gap-y-4 h-fit">
-							{machines.machines.map((p) => (
+							{machines.map((p) => (
 								<Machine
 									{...p}
-									onUpdate={() => updateMachines()}></Machine>
+									onUpdate={() => refresh()}></Machine>
 							))}
 						</div>
 

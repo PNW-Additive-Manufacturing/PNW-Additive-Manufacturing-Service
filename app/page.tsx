@@ -46,7 +46,7 @@ export default async function Home() {
 		<>
 			<div>
 				<HorizontalWrap>
-					<div className="xl:flex justify-between gap-6 lg:m-0">
+					<div className="xl:flex justify-between gap-10 lg:m-0">
 						<div className="w-fit mb-2">
 							<h1 className="w-fit mb-4 text-2xl font-normal">
 								<span>Welcome to the</span>
@@ -112,7 +112,7 @@ export default async function Home() {
 							</div>
 						</div>
 						<div className="w-fit">
-							<video src={"/assets/Timeline 1.mov"} className="max-xl:hidden rounded-md" style={{ maxHeight: "17.5rem" }} autoPlay={true} muted={true} loop={true}></video>
+							<video src={"/assets/Timeline 1.mov"} className="max-xl:hidden rounded-md" style={{ maxHeight: "17.5rem" }} autoPlay={true} muted={true} loop={true} preload={"none"} playsInline={true} poster="/assets/lab_setup_1.jpg"></video>
 							{/* <Gallery
 								buttonStyle="sphere"
 								autoplay={false}
