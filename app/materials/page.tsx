@@ -104,7 +104,7 @@ export default async function Materials() {
                                                 </div>
                                                 <div>
                                                     <p className="text-gray-600">Lead Time: {m.leadTimeInDays}-{m.leadTimeInDays + 2} Days.</p>
-                                                    <p className="text-gray-600">Starting at ${(Math.min(...filamentsOfMaterial.map(f => f.costPerGramInCents)) / 100).toFixed(2)} USD per Gram.</p>
+                                                    <p className="text-gray-600">Starting at ${(Math.min(...filamentsOfMaterial.map(f => f.costPerGramInCents)) / 100)} USD per Gram.</p>
                                                     <div className={materialMapping[m.material]?.coverUrl ? "" : `mt-2 pb-2.5 rounded-md`}>
                                                         <label className="mt-1">Colors</label>
                                                         <div className="flex gap-4">
