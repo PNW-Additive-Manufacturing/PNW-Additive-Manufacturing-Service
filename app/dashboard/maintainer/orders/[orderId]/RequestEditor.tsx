@@ -20,11 +20,14 @@ import {
 	RegularExit,
 	RegularEye,
 	RegularPagination,
+	RegularPlay,
+	RegularPlayStoreFill,
+	RegularReload,
 	RegularSearchAlt,
 	RegularStarFill,
 	RegularTrashCan,
 } from "lineicons-react";
-import Link from "next/link";
+import { FiActivity } from "react-icons/fi";
 import { useContext, useState } from "react";
 import { useFormState } from "react-dom";
 import { setQuote } from "@/app/api/server-actions/maintainer";
@@ -39,6 +42,7 @@ import Machine from "@/app/components/Machine";
 import { AccountContext } from "@/app/ContextProviders";
 import { addMinutes } from "@/app/utils/TimeUtils";
 import usePrinters from "@/app/hooks/usePrinters";
+import Link from "next/link";
 
 export default function RequestEditor({
 	request,
@@ -61,6 +65,7 @@ export default function RequestEditor({
 
 	const machineData = usePrinters(true, 60);
 
+	let printingMachines: string[] = [];
 	let totalGrams = 0;
 	let maxLeadTime = 0;
 	let totalPriceInCents = 0;
@@ -85,6 +90,14 @@ export default function RequestEditor({
 		}
 		else if (isAllAnalyzed) {
 			isAllAnalyzed = false;
+		}
+
+		if (machineData.machines) {
+			for (let currentMachine of machineData.machines) {
+				if (currentMachine.filename?.toLowerCase()?.includes(part.model.name.toLowerCase()) && !(currentMachine.identifier in printingMachines)) {
+					printingMachines.push(currentMachine.identifier);
+				}
+			}
 		}
 	}
 
@@ -186,16 +199,24 @@ export default function RequestEditor({
 						</div>}
 
 						<div>
-							<div className="flex flex-wrap gap-x-4 justify-between items-center py-2 px-1 w-full">
+							<div className="flex flex-wrap gap-4 justify-between items-center py-2 px-1 w-full">
 								<span>Manage {request.parts.length} {request.parts.length > 1 ? "Parts" : "Part"}</span>
-								{(totalGrams > 0 || totalPriceInCents > 0) && <div className="text-sm bg-background xl:px-1 rounded-md">
-									<RegularStarFill className="inline fill-pnw-gold opacity-75" style={{ marginBottom: "3px" }} />
-									<span className="font-light "> Analysis using {allAnalysisMachines.join(", ")} </span>
-									<span className="font-medium">
-										${(totalPriceInCents / 100).toFixed(2)} consuming {Math.round(totalGrams)} Grams
-										{!isAllAnalyzed && <> (Incomplete)</>}
-									</span>
-								</div>}
+								<div className="flex flex-wrap gap-y-4 gap-x-2 text-sm">
+
+									{printingMachines.length > 0 && <span className="font-light">
+										{/* <RegularReload className="inline fill-pnw-gold opacity-80 animate-spin" style={{ marginBottom: "3px" }} />  */}
+										<FiActivity className="inline stroke-pnw-gold" style={{ marginBottom: "3px" }} /> Printing on <span className="font-medium">{printingMachines.join(", ")}</span>
+									</span>}
+
+									{(totalGrams > 0 || totalPriceInCents > 0) && <div className="bg-background xl:px-1 rounded-md">
+										<RegularStarFill className="inline fill-pnw-gold opacity-75" style={{ marginBottom: "3px" }} />
+										<span className="font-light "> Analysis using {allAnalysisMachines.join(", ")} </span>
+										<span className="font-medium">
+											${(totalPriceInCents / 100).toFixed(2)} consuming {Math.round(totalGrams)} Grams
+											{!isAllAnalyzed && <> (Incomplete)</>}
+										</span>
+									</div>}
+								</div>
 							</div>
 
 							<div className={`grid ${request.parts.length > 2 && "2xl:grid-cols-2"} gap-4`}>
