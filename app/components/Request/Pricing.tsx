@@ -48,7 +48,7 @@ export default function RequestPricing({
 							<label>Requester Details</label>
 							<p className="text-sm">Name: {request.name}</p>
 							<p className="text-sm">Submit Date: {formateDate(request.submitTime)}</p>
-							<p className="text-sm">Pay Date: {formateDate(request.quote!.paidAt)}</p>
+							{request?.quote?.paidAt && <p className="text-sm">Pay Date: {formateDate(request.quote.paidAt)}</p>}
 						</div>
 					</div>
 
