@@ -71,6 +71,7 @@ export function AccountDetails({
 					{accountDetails.isSingedIn ? (
 						<>
 							<span className="text-nowrap">
+								${accountDetails.account!.balanceInDollars}{" "}
 								{accountDetails.account!.firstName}{" "}
 								{accountDetails.account!.lastName}
 							</span>

@@ -7,6 +7,7 @@ import { AccountContext } from "@/app/ContextProviders";
 import ModelViewer from "@/app/components/ModelViewer";
 import StatusPill from "@/app/components/StatusPill";
 import { NamedSwatch, templatePNW } from "@/app/components/Swatch";
+import { useReactToPrint } from "react-to-print";
 import {
 	getStatusColor,
 	isAllComplete,
@@ -41,7 +42,7 @@ import {
 	RegularWarning
 } from "lineicons-react";
 import Link from "next/link";
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { Vector3 } from "three";
 import Alert from "@mui/material/Alert";
@@ -56,6 +57,7 @@ import { RequestOverview } from "../../../components/RequestOverview";
 import { closingTime, isOpen } from "@/app/components/LocalSchedule";
 import { addMinutes } from "@/app/utils/TimeUtils";
 import { jsPDF } from "jspdf";
+import { FaRegFilePdf } from "react-icons/fa";
 
 function generatePDF(request: RequestWithParts) {
 	const receiptPDF = new jsPDF({
@@ -80,6 +82,9 @@ export default function RequestDetails({
 		cancelRequest,
 		""
 	);
+
+	const invoiceRef = useRef<HTMLDivElement>();
+	const handlePrint = useReactToPrint({ contentRef: invoiceRef as any });
 
 	const [payState, payFormAction] = useFormState(
 		async (prevState: any, data: any) => {
@@ -166,7 +171,7 @@ export default function RequestDetails({
 
 			<hr className="my-4 lg:my-4" />
 
-			<div className="lg:flex gap-8">
+			<div className="lg:flex gap-6">
 				<div className="lg:grow">
 					<div className="flex flex-col gap-2">
 						{request.isFulfilled && (
@@ -272,9 +277,11 @@ export default function RequestDetails({
 					<div className="p-4 lg:p-6 rounded-sm shadow-sm bg-white font-light outline outline-2 outline-gray-200">
 						{hasQuote(request) ? (
 							<>
-								<RequestPricing request={request} />
+								<div ref={invoiceRef as any}>
+									<RequestPricing request={request} />
+								</div>
 								<br />
-								{/* <button className="text-sm font-light text-left" disabled={true}>Download Receipt</button> */}
+								{/* <button className="text-sm font-light text-left " onClick={() => handlePrint()}>Download Receipt<FaRegFilePdf className="fill-white ml-2 mb-0.5 inline"></FaRegFilePdf></button> */}
 								<form action={payFormAction}>
 									<input
 										hidden

@@ -1,7 +1,8 @@
 import db from "@/app/api/Database";
 import Account, {
 	AccountEmailVerification,
-	AccountPermission
+	AccountPermission,
+	AccountWithTransactions
 } from "./Account";
 import postgres from "postgres";
 import { WalletTransaction, WalletTransactionStatus } from "./Wallet";
@@ -46,6 +47,30 @@ export default class AccountServe {
 				isBanned: accountRow.isbanned
 			}
 		});
+	}
+
+	public static async queryAllWithTransactions(
+	): Promise<AccountWithTransactions[]> {
+		const query = await db`SELECT * FROM Account`;
+
+		return await Promise.all(query.map(async (accountRow) => {
+
+			const transactions = await AccountServe.queryTransactionsFor(accountRow.email);
+
+			return {
+				transactions: transactions,
+				email: accountRow.email,
+				firstName: accountRow.firstname,
+				lastName: accountRow.lastname,
+				isEmailVerified: accountRow.isemailverified,
+				permission: accountRow.permission as AccountPermission,
+				balanceInDollars: (await AccountServe.getBalance(accountRow.email)) / 100,
+				joinedAt: accountRow.joinedat,
+				isTwoStepAuthVerified: accountRow.istwostepauthverified,
+				yearOfStudy: accountRow.yearofstudy,
+				isBanned: accountRow.isbanned
+			} as AccountWithTransactions;
+		}));
 	}
 
 	public static async queryByEmail(
@@ -156,7 +181,6 @@ export default class AccountServe {
 				accountEmail: accountEmail,
 				amountInCents: transactionRow!.amountincents,
 				feesInCents: transactionRow!.feesincents,
-				taxInCents: transactionRow!.taxincents,
 				paidAt: transactionRow!.paidat,
 				paymentStatus: transactionRow!.status,
 				paymentMethod: transactionRow!.paymentmethod,
@@ -181,7 +205,6 @@ export default class AccountServe {
 				accountEmail: transactionRow!.accountemail,
 				amountInCents: transactionRow!.amountincents,
 				feesInCents: transactionRow!.feesincents,
-				taxInCents: transactionRow!.taxincents,
 				paidAt: transactionRow!.paidat,
 				paymentStatus: transactionRow!.status,
 				paymentMethod: transactionRow!.paymentmethod,
@@ -203,7 +226,6 @@ export default class AccountServe {
 				accountEmail: row.accountemail,
 				amountInCents: row.amountincents,
 				feesInCents: row.feesincents,
-				taxInCents: row.taxincents,
 				paymentStatus: row.status,
 				paidAt: row.paidat,
 				paymentMethod: row.paymentmethod,
@@ -232,15 +254,10 @@ export default class AccountServe {
 		const insertQuery = await dbContext`INSERT INTO WalletTransaction ${db({
 			accountemail: transaction.accountEmail,
 			amountincents: transaction.amountInCents,
-			taxincents: transaction.taxInCents,
 			feesincents: transaction.feesInCents,
 			paymentmethod: transaction.paymentMethod,
-			stripecheckoutid: transaction.stripeCheckoutId,
 			status: transaction.paymentStatus,
-			paidat:
-				transaction.paymentStatus == WalletTransactionStatus.Paid
-					? Date.now()
-					: null
+			paidat: transaction.paidAt
 		})} 
 			RETURNING Id`;
 

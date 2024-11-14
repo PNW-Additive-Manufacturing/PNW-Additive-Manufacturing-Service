@@ -23,7 +23,7 @@ CREATE TABLE Account (
 );
 
 DROP TYPE IF EXISTS WalletTransactionPaymentMethod CASCADE;
-CREATE TYPE WalletTransactionPaymentMethod AS ENUM ('refund', 'gift', 'stripe', 'none');
+CREATE TYPE WalletTransactionPaymentMethod AS ENUM ('refund', 'cash', 'gift');
 
 DROP TYPE IF EXISTS PaymentStatus CASCADE;
 CREATE TYPE PaymentStatus AS ENUM ('pending', 'paid', 'cancelled');
@@ -33,17 +33,15 @@ CREATE TABLE WalletTransaction (
   Id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   AccountEmail VARCHAR(254) REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE,
   AmountInCents BIGINT NOT NULL,
-  TaxInCents BIGINT NOT NULL,
   FeesInCents BIGINT NOT NULL,
   Status PaymentStatus NOT NULL DEFAULT 'pending',
   PaidAt TIMESTAMP WITH TIME ZONE DEFAULT NULL,
   PaymentMethod WalletTransactionPaymentMethod NOT NULL,
-  StripeCheckoutID VARCHAR,
---   RefundedPartId SERIAL REFERENCES Request(Id) ON DELETE CASCADE ON UPDATE CASCADE, 
+  RefundedPartId SERIAL REFERENCES Request(Id) ON DELETE CASCADE ON UPDATE CASCADE, 
   CONSTRAINT PAID_CHK CHECK (
-  	(Status = 'paid' AND PaidAt IS NOT NULL AND PaymentMethod='stripe' AND StripeCheckoutID IS NOT NULL) OR
-  	(Status = 'paid' AND PaidAt IS NOT NULL AND PaymentMethod='none') OR
-	-- (Status = 'paid' AND PaidAt IS NOT NULL AND PaymentMethod='refund' AND RefundedPartId IS NOT NULL) OR
+  	(Status = 'paid' AND PaidAt IS NOT NULL AND PaymentMethod='cash') OR
+  	(Status = 'paid' AND PaidAt IS NOT NULL AND PaymentMethod='gift') OR
+	  (Status = 'paid' AND PaidAt IS NOT NULL AND PaymentMethod='refund' AND RefundedPartId IS NOT NULL) OR
     (Status = 'pending')
   )
 );
@@ -74,7 +72,7 @@ CREATE TABLE Filament (
   DiColorA varchar(20),
   DiColorB varchar(20),
   InStock bool NOT NULL DEFAULT TRUE,
-  CostPerGramInCents REAL NOT NULL,
+  CostPerGramInCents REAL NOT NULL CHECK (CostPerGramInCents >= 0),
   LeadTimeInDays INT NOT NULL CHECK (LeadTimeInDays >= 0),
   UNIQUE (ColorName, Material),
   CONSTRAINT COLOR_CHK CHECK (
@@ -176,17 +174,15 @@ CREATE TABLE Part (
   AssignedFilamentId SMALLINT REFERENCES Filament(Id) ON DELETE SET NULL ON UPDATE CASCADE,
   SupplementedFilamentId SMALLINT REFERENCES Filament(Id) ON DELETE SET NULL ON UPDATE CASCADE,
   PriceCents BIGINT DEFAULT NULL,
-  RefundWalletTransactionId UUID REFERENCES WalletTransaction(Id) ON DELETE RESTRICT ON UPDATE CASCADE,
   RefundReason VARCHAR(500),
   RefundQuantity INT,
   RevokedReason VARCHAR(500),
   CONSTRAINT REVOKE_DATA_CHK CHECK (
-	(Status = 'denied' AND RevokedReason IS NOT NULL AND PriceCents IS NULL) OR
-	(Status != 'denied' AND RevokedReason IS NULL)
-  ),
+    (Status = 'denied' AND RevokedReason IS NOT NULL AND PriceCents IS NULL) OR
+    (Status != 'denied' AND RevokedReason IS NULL)),
   CONSTRAINT REFUND_DATA_CHK CHECK (
-	(RefundQuantity IS NOT NULL AND RefundReason IS NOT NULL AND RefundWalletTransactionId IS NOT NULL) OR
-	(RefundQuantity IS NULL AND RefundReason IS NULL AND RefundWalletTransactionId IS NULL)
+	(RefundQuantity IS NOT NULL AND RefundReason IS NOT NULL) OR
+	(RefundQuantity IS NULL AND RefundReason IS NULL)
   )
 );
 

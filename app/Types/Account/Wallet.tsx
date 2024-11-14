@@ -1,7 +1,7 @@
 export enum WalletTransactionPaymentMethod {
-	Stripe = "stripe",
 	Refund = "refund",
-	None = "none"
+	Cash = "cash",
+	Gift = "gift"
 }
 
 export enum WalletTransactionStatus {
@@ -14,16 +14,9 @@ export interface WalletTransaction {
 	id: string;
 	accountEmail: string;
 	amountInCents: number;
-	taxInCents: number;
 	feesInCents: number;
 	paymentStatus: WalletTransactionStatus;
 	paidAt?: Date;
 	paymentMethod: WalletTransactionPaymentMethod;
 	stripeCheckoutId?: string;
-}
-
-export function IsPayingWithStripe(walletTransaction: WalletTransaction) {
-	return (
-		walletTransaction.paymentMethod == WalletTransactionPaymentMethod.Stripe
-	);
 }

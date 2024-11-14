@@ -269,7 +269,6 @@ export async function modifyPart(
 					accountEmail: previousPart.model.ownerEmail!,
 					amountInCents: Math.round(refundTotalInDollars * 100),
 					feesInCents: 0,
-					taxInCents: 0,
 					paymentMethod: WalletTransactionPaymentMethod.Refund,
 					paymentStatus: WalletTransactionStatus.Paid
 				},

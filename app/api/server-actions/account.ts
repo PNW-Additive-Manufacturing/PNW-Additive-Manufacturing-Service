@@ -16,6 +16,7 @@ import getConfig from "@/app/getConfig";
 import { APIData, resOkData, resError, resOk } from "../APIResponse";
 import { addMinutes } from "@/app/utils/TimeUtils";
 import { NextResponse } from "next/server";
+import { WalletTransaction, WalletTransactionPaymentMethod, WalletTransactionStatus } from "@/app/Types/Account/Wallet";
 
 const envConfig = getConfig();
 
@@ -242,7 +243,7 @@ export async function resetPassword(prevState: ActionResponse, formData: FormDat
 		newPassword: formData.get("new-password"),
 		code: formData.get("code")
 	});
-	if (!parsedForm.success) return resError(parsedForm.error.toString())
+	if (!parsedForm.success) return resError(parsedForm.error.toString());
 
 	// Query a password reset request with the given code.
 	const passwordReset = (await db`SELECT * FROM AccountPasswordResetCode WHERE Code=${parsedForm.data.code}`).at(0);
@@ -311,4 +312,45 @@ export async function editPassword(
 	}
 
 	return "";
+}
+
+const addFundsSchema = z.object({
+	amountInDollars: z.coerce.number().min(0.01),
+	transactionType: z.literal("cash").or(z.literal("gift")),
+	accountEmail: z.string()
+});
+export async function addFunds(prevState: any, formData: FormData): Promise<APIData<WalletTransaction>> {
+	const parsedForm = addFundsSchema.safeParse({
+		amountInDollars: formData.get("amount-in-dollars"),
+		transactionType: formData.get("transaction-type"),
+		accountEmail: formData.get("account-email")
+	});
+	if (!parsedForm.success) return resError(parsedForm.error.toString());
+	
+	let permission = (await getJwtPayload())?.permission;
+	if (permission != AccountPermission.Admin)
+	{
+		return resError("You do not have permission.");
+	}
+
+	try
+	{
+		let transaction: Omit<WalletTransaction, "id"> = {
+			accountEmail: parsedForm.data.accountEmail,
+			amountInCents: parsedForm.data.amountInDollars * 100,
+			feesInCents: 0,
+			paymentMethod: parsedForm.data.transactionType as WalletTransactionPaymentMethod,
+			paymentStatus: WalletTransactionStatus.Paid,
+			paidAt: new Date()
+		};
+
+		(transaction as WalletTransaction).id = await AccountServe.insertTransaction(transaction);
+
+		return resOkData(transaction as WalletTransaction);
+	}
+	catch (ex)
+	{
+		console.error(ex);
+		return resError("Failed to add Funds!");
+	}
 }

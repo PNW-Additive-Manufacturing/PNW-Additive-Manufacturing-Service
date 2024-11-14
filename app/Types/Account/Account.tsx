@@ -1,4 +1,5 @@
 import { authenticator } from "otplib";
+import { WalletTransaction } from "./Wallet";
 
 export enum AccountPermission {
 	User = "user",
@@ -6,6 +7,7 @@ export enum AccountPermission {
 	Admin = "admin"
 }
 
+export type AccountWithTransactions = Account & { transactions: WalletTransaction[] }
 export type AccountWithPassword = Account & { hashedPassword: string };
 export type AccountWithTwoStepAuthentication = Account & {
 	twoStepAuthSecret?: string;
