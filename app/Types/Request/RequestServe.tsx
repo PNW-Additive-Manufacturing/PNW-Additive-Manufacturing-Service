@@ -358,4 +358,11 @@ export class RequestServe {
 
 		await dbContext`DELETE FROM Request WHERE Id = ${requestId} `;
 	}
+
+	public static async setPartsAsPrinted(requestId: number, dbContext?: postgres.Sql<{}>) {
+		dbContext = dbContext ?? db;
+
+		await dbContext`UPDATE Request SET FulfilledAt=NOW() WHERE Id=${requestId}`;
+
+	}
 }

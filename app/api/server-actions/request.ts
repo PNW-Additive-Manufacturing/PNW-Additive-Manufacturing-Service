@@ -40,7 +40,6 @@ export async function cancelRequest(prevState: string, data: FormData) {
 	}
 
 	await RequestServe.delete(request.id);
-	console.log("Canceled!");
 	redirect("/dashboard/user");
 }
 
@@ -68,8 +67,12 @@ export async function fulfillRequest(
 	}
 
 	// TODO: Make sure nothing has started printing AND the quote has not been paid!
-	if (!isAllComplete(request.parts)) {
-		return "Request cannot be fulfilled until all parts are complete!";
+	// Correction: What if we have already printed them out for free or been paid another way outside of the website?
+	// - We still want to track the order as it was last configured.
+	if (!isAllComplete(request.parts)) 
+	{
+		// Update database and mark all as completed.
+		await RequestServe.setPartsAsPrinted(request.id);
 	}
 
 	await RequestServe.setAsFulfilled(request.id);

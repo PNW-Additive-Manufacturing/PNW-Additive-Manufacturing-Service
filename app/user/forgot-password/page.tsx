@@ -19,9 +19,10 @@ export default function ForgotPassword() {
 				<div className="lg:mx-auto mb-4 w-fit">
 					<AMSIcon />
 				</div>
-				<h1 className="text-xl text-center font-normal">
-					Reset password via Email
+				<h1 className="text-xl lg:text-center font-normal mb-2">
+					Reset Your Password
 				</h1>
+				<p className="text-sm lg:text-center">A link to reset your password will be sent to the associated email address.</p>
 				<br />
 				<div className="py-2 w-full">
 					<form action={formAction}>
@@ -31,7 +32,7 @@ export default function ForgotPassword() {
 							id="email"
 							name="email"
 							required={true}
-							placeholder="Enter your PNW Email"
+							placeholder="leo@pnw.edu"
 						/>
 						<FormSubmitButton label="Reset Password" />
 						{res && (!res.success

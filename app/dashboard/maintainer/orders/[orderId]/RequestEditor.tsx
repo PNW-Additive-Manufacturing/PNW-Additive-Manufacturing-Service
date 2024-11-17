@@ -63,6 +63,8 @@ export default function RequestEditor({
 	const [fulfillState, fulfillAction] = useFormState(fulfillRequest, "");
 	const [deleteRequestError, deleteRequestAction] = useFormState(deleteRequest, "");
 
+	console.log(fulfillState);
+
 	const machineData = usePrinters(true, 60);
 
 	let printingMachines: string[] = [];
@@ -120,6 +122,7 @@ export default function RequestEditor({
 						})}
 						.
 					</p>
+					<p>#{request.id}</p>
 					{/* <p className="text-xs"><RegularSearchAlt className="inline"></RegularSearchAlt> Copy printing name to Clipboard</p> */}
 					{/* <p className="mt-2 opacity-50 text-sm">{request.firstName} {request.lastName} - {request.parts.map(p => p.model.name).join(", ")}</p> */}
 				</div>
@@ -152,10 +155,7 @@ export default function RequestEditor({
 											className="bg-transparent px-3 py-2 text-sm mb-0 w-full text-black hover:text-black rounded-none hover:bg-transparent hover:underline"
 											type="submit"
 											onClick={() => setShowRevoke(true)}
-											disabled={
-												request.isFulfilled ||
-												!isAllComplete(request.parts)
-											}>
+											disabled={request.isFulfilled}>
 											Mark as Fulfilled
 											<RegularCheckBox className="ml-2 w-6 h-6 inline-block fill-black"></RegularCheckBox>
 										</button>

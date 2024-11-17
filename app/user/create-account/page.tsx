@@ -60,7 +60,7 @@ export default function CreateAccount() {
 							type="text"
 							id="user"
 							name="email"
-							placeholder="Enter your PNW Email"
+							placeholder="leo@pnw.edu"
 						/>
 						<div className="lg:flex gap-4">
 							<Input

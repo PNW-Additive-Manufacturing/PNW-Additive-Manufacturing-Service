@@ -81,22 +81,18 @@ export default function RequestPricing({
 			</div>
 
 			<div className="print:hidden">
-				{request.parts.map(part => <p className="print:hidden text-sm text-nowrap overflow-ellipsis overflow-hidden mb-2 flex justify-between gap-4 w-full">
-					<span className="font-normal">
+				{request.parts.map(part => <p className="print:hidden text-sm text-nowrap overflow-ellipsis overflow-hidden mb-2 flex items-center justify-between gap-4 w-full">
+					<span className="flex-grow truncate font-normal">
 						{part.model.name} x{part.quantity}
 					</span>
-					<span className="text-gray-500">{`\$${(part.priceInDollars! * part.quantity).toFixed(
-						2
-					)}`}</span>
-					{part.quantity > 1 ? (
-						<>
-							{` (\$${part.priceInDollars!.toFixed(
-								2
-							)} per Unit) `}{" "}
-						</>
-					) : (
-						<></>
-					)}
+					<span className="flex-shrink-0 text-gray-500 print:text-black">
+						<span className="text-gray-500 print:text-black">{`\$${(part.priceInDollars! * part.quantity).toFixed(2)}`}</span>
+						{part.quantity > 1 && (
+							<>
+								{` (\$${part.priceInDollars!.toFixed(2)} per Unit) `}{" "}
+							</>
+						)}
+					</span>
 					{isRefunded(part) && (
 						<p className="text-red-500 text-sm">
 							Refunded ({part.refund!.quantity} Unit
@@ -146,7 +142,6 @@ export default function RequestPricing({
 					{formateDate(request.quote!.estimatedCompletionDate)}
 				</span>
 			</p>}
-
 		</div>
 	);
 }

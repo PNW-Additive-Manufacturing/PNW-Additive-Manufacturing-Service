@@ -35,7 +35,7 @@ export default function Login() {
 							id="email"
 							name="email"
 							required={true}
-							placeholder="Enter your PNW Email"
+							placeholder="leo@pnw.edu"
 						/>
 						<Input
 							label="Password"
