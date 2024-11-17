@@ -122,7 +122,7 @@ export default function RequestEditor({
 						})}
 						.
 					</p>
-					<p>#{request.id}</p>
+					<p className="text-sm">#{request.id}</p>
 					{/* <p className="text-xs"><RegularSearchAlt className="inline"></RegularSearchAlt> Copy printing name to Clipboard</p> */}
 					{/* <p className="mt-2 opacity-50 text-sm">{request.firstName} {request.lastName} - {request.parts.map(p => p.model.name).join(", ")}</p> */}
 				</div>

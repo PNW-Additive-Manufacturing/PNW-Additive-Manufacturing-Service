@@ -76,7 +76,7 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
                 {/* <label>Search</label> */}
                 <div className="lg:flex gap-4">
                     <input type="text" className="p-2 text-sm rounded-sm px-3" placeholder="Search name or Email" onChange={(ev) => applyFilters(ev.currentTarget.value)}></input>
-                    <select ref={permissionFilterElemRef as any} className="w-fit text-sm" defaultValue={"everyone"} onChange={(ev) => applyFilters(undefined, ev.currentTarget.value as any)}>
+                    <select title="Permission" ref={permissionFilterElemRef as any} className="w-fit text-sm" defaultValue={"everyone"} onChange={(ev) => applyFilters(undefined, ev.currentTarget.value as any)}>
                         <option value="everyone">Everyone</option>
                         <option value={AccountPermission.Admin}>Admin</option>
                         <option value={AccountPermission.Maintainer}>Maintainer</option>
@@ -88,7 +88,7 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
                 <div className="flex flex-col gap-2 overflow-y-scroll" style={{ maxHeight: "500px" }}>
                     {filteredAccounts.map(account => <div className={`w-full rounded-md text-sm bg-background flex justify-between p-3 hover:bg-pnw-gold hover:text-white hover:fill-white hover:cursor-pointer transition-colors ${selectedAccount == account && "bg-pnw-gold text-white fill-white"}`} onClick={() => setSelectedAccount(account)}>
                         <span>
-                            <span className="mr-2">{account.isEmailVerified ? <><RegularCheckmark className="inline fill-inherit"></RegularCheckmark></> : <><RegularWarning className="inline fill-red-300"></RegularWarning> Unverified</>}</span>
+                            <span className="mr-2">{account.isEmailVerified ? <><RegularCheckmark className="inline fill-inherit"></RegularCheckmark></> : <><RegularWarning className="inline fill-red-300 mr-2"></RegularWarning> Unverified</>}</span>
 
                             {account.firstName} {account.lastName} ({account.yearOfStudy})
                         </span>
@@ -124,7 +124,7 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
                         <form action={addFundsAction}>
                             <div className="lg:flex gap-2">
                                 <input className="bg-white py-2.5 text-sm" type="number" id="amount-in-dollars" name="amount-in-dollars" required placeholder="$0.00" />
-                                <select className="bg-white py-2.5 text-sm w-fit" id="transaction-type" name="transaction-type" required>
+                                <select title="Method" className="bg-white py-2.5 text-sm w-fit" id="transaction-type" name="transaction-type" required>
                                     <option value="cash">Cash</option>
                                     <option value="gift">Gift</option>
                                 </select>
