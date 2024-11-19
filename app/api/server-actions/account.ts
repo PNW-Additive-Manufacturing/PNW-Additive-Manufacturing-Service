@@ -328,7 +328,7 @@ export async function addFunds(prevState: any, formData: FormData): Promise<APID
 	if (!parsedForm.success) return resError(parsedForm.error.toString());
 	
 	let permission = (await getJwtPayload())?.permission;
-	if (permission != AccountPermission.Admin)
+	if (permission != AccountPermission.Maintainer)
 	{
 		return resError("You do not have permission.");
 	}

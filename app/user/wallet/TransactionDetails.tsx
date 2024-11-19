@@ -20,90 +20,74 @@ export default function TransactionDetails({ transaction }: { transaction: Walle
     return <>
 
         {/* PDF Information */}
-        <div ref={receiptRef as any} className="hidden print:block">
+        <div ref={receiptRef as any} className="bg-white hidden print:block">
             <div className="p-12">
-                <h1 className="hidden print:block w-fit mb-4 text-2xl font-medium">
+                <h1 className="w-fit mb-4 text-2xl font-medium">
                     <span className="text-pnw-gold"> PNW </span>
                     Additive Manufacturing Service
                 </h1>
 
-                <div className="flex gap-4 justify-between">
-                    <div>
-                        <p>Additive Manufacturing Club of PNW</p>
-                        <p>pnw3d.com</p>
-                    </div>
-                    <div>
-                        <p className="text-3xl uppercase font-extralight">Receipt</p>
-                    </div>
-                </div>
+                <p>Additive Manufacturing Club of PNW</p>
+                <p>2233 171st St, Hammond, IN 46323 (Design Studio)</p>
+                <p>For contact information, visit the team page at pnw3d.com.</p>
 
-                <br />
+                <div className="p-6 bg-background rounded-md mt-6">
 
-                <div className="out bg-background">
-                    <div className="p-4">
-                        <div className="flex justify-between gap-6">
-                            <div>
-                                <h2 className="text-xl font-medium uppercase">{transaction.accountEmail.split("@").at(0)}</h2>
-                                <p className="text-sm">Purchase Method: {transaction.paymentMethod.toUpperCase()}</p>
-                                <p className="text-sm">Purchase No: #{transaction.id}</p>
-                            </div>
+                    <h2 className="text-lg mb-2 font-medium">Transaction Details (#{transaction.id}):</h2>
 
-                            <div className="flex gap-12 text-right">
-                                <div>
-                                    <label>Purchase Information</label>
-                                    {transaction.paidAt && <p className="text-sm">{formateDate(transaction.paidAt)}</p>}
-                                    <p className="text-sm">{transaction.accountEmail}</p>
-                                </div>
-                            </div>
-
+                    <div className="flex gap-12">
+                        <div>
+                            <p className="font-medium mb-0.5">Payment Information:</p>
+                            <p className="text-sm">Payment Status: <span className="font-medium">{transaction.paymentStatus.toUpperCase()}</span></p>
+                            <p className="text-sm">Payment Method: <span className="font-medium">{transaction.paymentMethod.toUpperCase()}</span></p>
+                            {transaction.paidAt && <p className="text-sm">Date: <span className="font-medium">{formateDate(transaction.paidAt)}</span></p>}
                         </div>
-
+                        <div>
+                            <p className="font-medium mb-0.5">Customer:</p>
+                            <p className="text-sm">Email: <span className="font-medium uppercase">{transaction.accountEmail}</span></p>
+                        </div>
                     </div>
 
-                    <table className="hidden print:table w-full mt-2">
-                        <thead>
-                            <tr>
-                                <th className="text-xs">Item</th>
-                                <th className="text-xs">Unit Cost</th>
-                                <th className="text-xs">Quantity</th>
-                                <th className="text-xs text-right">Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr className="hidden print:table-row">
-                                <td>PNW Additive Manufacturing Service Funds</td>
-                                <td>${(transaction.amountInCents / 100).toFixed(2)}</td>
-                                <td>1</td>
-                                <td className="text-right">${(transaction.amountInCents / 100).toFixed(2)}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div className="out">
+                        <table className="w-full mt-6">
+                            <thead>
+                                <tr>
+                                    <th className="text-xs w-1/3 pt-4">Item</th>
+                                    <th className="text-xs w-1/3 pt-4">Amount</th>
+                                    <th className="text-xs w-1/3 pt-4">Quantity</th>
+                                    <th className="text-xs pt-4">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td className="text-sm">Additive Manufacturing Service Funds</td>
+                                    <td className="text-sm">${(transaction.amountInCents / 100).toFixed(2)}</td>
+                                    <td className="text-sm">1</td>
+                                    <td className="text-sm">${(transaction.amountInCents / 100).toFixed(2)}</td>
+                                </tr>
+                            </tbody>
+                        </table>
 
-                    <div className="p-4">
+                        <div className="p-4 mb-2">
 
-                        <p className="text-sm font-light flex justify-between">
-                            <span>Subtotal</span>
-                            <span className="text-right w-full text-gray-500">
-                                {" "}
-                                ${(transaction.amountInCents / 100).toFixed(2)}
-                            </span>
-                        </p>
+                            <p className="text-sm font-light flex justify-between">
+                                <span>Subtotal</span>
+                                <span className="text-right w-full"> ${(transaction.amountInCents / 100).toFixed(2)}</span>
+                            </p>
 
-                        <p className="text-sm font-light flex justify-between">
-                            <span>Tax</span>
-                            <span className="text-right w-full text-gray-500">
-                                {" "}
-                                ${(0).toFixed(2)}
-                            </span>
-                        </p>
+                            <p className="text-sm font-light flex justify-between">
+                                <span>Tax</span>
+                                <span className="text-right w-full"> ${(0).toFixed(2)}</span>
+                            </p>
 
-                        <p className="text-xl flex justify-between mt-1">
-                            <span className="font-semibold">Total</span>
-                            <span className="text-right w-full text-gray-500">
-                                {" "}
-                                ${(transaction.amountInCents / 100).toFixed(2)}
-                            </span>
-                        </p>
+                            <p className="text-xl flex justify-between font-semibold">
+                                <span>Total</span>
+                                <span className="text-right w-full">
+                                    {" "}
+                                    ${(transaction.amountInCents / 100).toFixed(2)}
+                                </span>
+                            </p>
+                        </div>
                     </div>
 
                 </div>
