@@ -41,43 +41,45 @@ export default function Profile({ account, transactions }: { account: Account, t
 
 			</HorizontalWrap>
 			<div className="bg-white">
-				<HorizontalWrap className="py-12">
-					<h2 id="wallet" className="w-fit text-xl font-normal mb-1">Wallet</h2>
-					<p>Wallet is a prepaid balance exclusively for ordering parts within our platform to reduce the cost of 3D Printing.</p>
-					<br />
-					<div className="mb-4 p-6 rounded-md text-base text-white bg-cool-black shadow-md">
-						<p className="text-white text-xl font-light">
-							Balance ${account.balanceInDollars.toFixed(2)}
-						</p>
-					</div>
-
-					<div className="out bg-white p-6">
-						<span className="font-semibold">We only accept in-person transactions! </span>
-						To deposit funds into your account, please visit the <a className="underline" href="https://maps.app.goo.gl/bLNnJAGoQFB3UPWZ7">
-							PNW Design Studio
-						</a> during our operating hours and speak with an officer of the Additive Manufacturing club.
-						<ul className="mt-2">
-							<li>If you are part of a design team or club, you can request reimbursement through a Student Services Fee (SSF) request (or COOL) using the receipt we provide.</li>
-						</ul>
-					</div>
-
-					<br />
-
-					<DropdownSection className="px-0" name={"Purchase History"}>
-						<div className="">
-							{transactions.length == 0 ? (
-								<div className="outline outline-1 outline-gray-300 px-4 py-6 bg-white rounded-md">
-									You have not made any transactions.
-								</div>
-							) : (
-								<div className="flex flex-col gap-2">
-									{transactions.map((value) => (
-										<TransactionDetails transaction={value}></TransactionDetails>
-									))}
-								</div>
-							)}
+				<HorizontalWrap>
+					<div className="py-8">
+						<h2 id="wallet" className="w-fit text-xl font-normal mb-1">Wallet</h2>
+						<p>Wallet is a prepaid balance exclusively for ordering parts within our platform to reduce the cost of 3D Printing.</p>
+						<br />
+						<div className="mb-4 p-6 rounded-md text-base text-white bg-cool-black shadow-md">
+							<p className="text-white text-xl font-light">
+								Balance ${account.balanceInDollars.toFixed(2)}
+							</p>
 						</div>
-					</DropdownSection>
+
+						<div className="out bg-white p-6">
+							<span className="font-semibold">We only accept in-person transactions! </span>
+							To deposit funds into your account, please visit the <a className="underline" href="https://maps.app.goo.gl/bLNnJAGoQFB3UPWZ7">
+								PNW Design Studio
+							</a> during our operating hours and speak with an officer of the Additive Manufacturing club.
+							<ul className="mt-2">
+								<li>If you are part of a design team or club, you can request reimbursement through a Student Services Fee (SSF) request (or COOL) using the receipt we provide.</li>
+							</ul>
+						</div>
+
+						<br />
+
+						<DropdownSection className="px-0" name={"Purchase History"}>
+							<div className="">
+								{transactions.length == 0 ? (
+									<div className="outline outline-1 outline-gray-300 px-4 py-6 bg-white rounded-md">
+										You have not made any transactions.
+									</div>
+								) : (
+									<div className="flex flex-col gap-2">
+										{transactions.map((value) => (
+											<TransactionDetails transaction={value}></TransactionDetails>
+										))}
+									</div>
+								)}
+							</div>
+						</DropdownSection>
+					</div>
 				</HorizontalWrap>
 			</div>
 		</>
