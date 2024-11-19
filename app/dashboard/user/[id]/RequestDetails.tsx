@@ -509,7 +509,7 @@ function RequestQuotePaymentButton({ request }: { request: RequestWithParts }) {
 		return (
 			<button className="shadow-md text-left w-full mb-0" disabled>
 				Pay with Wallet
-				<Link href={"/user/wallet"} className="block">
+				<Link href={"/user/profile#wallet"} className="block">
 					<p className="text-white font-light text-sm underline">
 						You lack the required balance.
 					</p>

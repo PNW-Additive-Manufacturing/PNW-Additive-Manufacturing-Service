@@ -5,106 +5,81 @@ import Account from "@/app/Types/Account/Account";
 import Link from "next/link";
 import { ChangePasswordForm } from "./ChangePasswordForm";
 import { Suspense, useState } from "react";
+import DropdownSection from "@/app/components/DropdownSection";
+import { WalletTransaction } from "@/app/Types/Account/Wallet";
+import TransactionDetails from "../../components/TransactionDetails";
+import { RegularCheckmark, RegularWarning } from "lineicons-react";
+import { formateDate } from "@/app/api/util/Constants";
 
-export default function Profile({ account }: { account: Account }) {
-	const [showPasswordReset, setShowPasswordReset] = useState(false);
-
-
-
+export default function Profile({ account, transactions }: { account: Account, transactions: WalletTransaction[] }) {
 	return (
-		<HorizontalWrap>
-			<h1 className="text-2xl tracking-wide font-light">Your Account</h1>
-			<br />
-			<div className="p-6 rounded-md text-base bg-cool-black shadow-md">
-				<div className="lg:flex justify-between items-center">
+		<>
+			<HorizontalWrap className="pb-10">
+				<h1 className="text-2xl tracking-wide font-light mb-2">Welcome, {account.firstName} {account.lastName}!</h1>
+				<hr />
+				<div className="grid gap-y-6 lg:grid-cols-2">
 					<div>
-						<p className="text-2xl font-light text-white">
-							{account.firstName} {account.lastName}
-						</p>
-						<p className="text-sm text-gray-300">
-							Member since{" "}
-							{account.joinedAt.toLocaleDateString("en-us", {
-								weekday: "long",
-								month: "short",
-								day: "numeric"
-							})} as a {account.yearOfStudy}
-						</p>
-					</div>
-					<div className="hidden lg:block">
-						<Link href="/user/wallet">
-							<div className="text-2xl text-right text-white">
-								<p className="text-sm text-gray-300">
-									Manage Wallet
-								</p>
-								<div></div>$
-								{account.balanceInDollars.toFixed(2)}
-							</div>
-						</Link>
-					</div>
-				</div>
-			</div>
-
-			<div className="px-4">
-				<div className="lg:hidden">
-					<div className="flex justify-between gap-10 py-6">
-						<Link
-							href="/user/wallet"
-							className="font-semibold lg:w-52">
-							Wallet
-						</Link>
-						<p>
-							Available balance: $
-							{account.balanceInDollars.toFixed(2)}
-						</p>
-					</div>
-				</div>
-
-				<br />
-				<div className="flex gap-10 py-2">
-					Contact Information
-					<div>
+						<h3 className="mb-0.5">Contact Information</h3>
 						<p>{account.firstName} {account.lastName}</p>
-						<p>{account.email} ({account.isEmailVerified ? <>Verified</> : <span className="font-semibold">Unverified</span>})</p>
+						<p>
+							<span>{account.email}</span>
+							<span className="ml-2 text-xs">{account.isEmailVerified ? <span className="text-pnw-gold bg-pnw-gold-light py-0.5 px-2 rounded-lg"><RegularCheckmark className="inline fill-pnw-gold mb-0.5 mr-2" />Verified</span> : <span className="bg-red-100 py-0.5 px-2 rounded-lg"><RegularWarning className="inline fill-red-300 mr-2 mb-0.5"></RegularWarning> Unverified</span>}</span>
+						</p>
+					</div>
+					<div>
+						<h3 className="mb-0.5">Registration Details</h3>
+						<p>Registered on {formateDate(account.joinedAt)}</p>
+						<p>Joined as {account.yearOfStudy}</p>
 					</div>
 				</div>
+				<br />
+				<a
+					className="text-sm hover:text-red-500"
+					href="/user/logout">
+					Sign out of Account
+				</a>
 
-				<div className="py-2">
-					<div className="flex gap-10 items-center">
-						<p>Manage Password</p>
-						<button
-							className="w-fit text-sm mb-0 px-3 py-1.5"
-							onClick={() => setShowPasswordReset(true)}>
-							Modify
-						</button>
+			</HorizontalWrap>
+			<div className="bg-white">
+				<HorizontalWrap className="py-12">
+					<h2 id="wallet" className="w-fit text-xl font-normal mb-1">Wallet</h2>
+					<p>Wallet is a prepaid balance exclusively for ordering parts within our platform to reduce the cost of 3D Printing.</p>
+					<br />
+					<div className="mb-4 p-6 rounded-md text-base text-white bg-cool-black shadow-md">
+						<p className="text-white text-xl font-light">
+							Balance ${account.balanceInDollars.toFixed(2)}
+						</p>
 					</div>
-					{showPasswordReset && (
-						<ChangePasswordForm className="px-0 bg-transparent" />
-					)}
-				</div>
 
-				{/* <div className="flex gap-10 py-2">
-					Notifications
-					<Suspense>
-						{Notification.permission == "granted" ? <>
+					<div className="out bg-white p-6">
+						<span className="font-semibold">We only accept in-person transactions! </span>
+						To deposit funds into your account, please visit the <a className="underline" href="https://maps.app.goo.gl/bLNnJAGoQFB3UPWZ7">
+							PNW Design Studio
+						</a> during our operating hours and speak with an officer of the Additive Manufacturing club.
+						<ul className="mt-2">
+							<li>If you are part of a design team or club, you can request reimbursement through a Student Services Fee (SSF) request (or COOL) using the receipt we provide.</li>
+						</ul>
+					</div>
 
-							<p className="underline hover:cursor-pointer" onClick={() => {
+					<br />
 
-								const notification = new Notification("Mars 4 Ultra has Completed!", { body: "I am testing!", icon: "/assets/am_logo.png" });
-
-							}}>Test Notification</p>
-
-						</> : <p className="underline hover:cursor-pointer" onClick={() => Notification.requestPermission()}>Enable</p>}
-					</Suspense>
-				</div> */}
-
-				<div className="py-2 mt-4">
-					<a
-						className="text-red-500 font-bold w-fit"
-						href="/user/logout">
-						Sign out of Account
-					</a>
-				</div>
+					<DropdownSection className="px-0" name={"Purchase History"}>
+						<div className="">
+							{transactions.length == 0 ? (
+								<div className="outline outline-1 outline-gray-300 px-4 py-6 bg-white rounded-md">
+									You have not made any transactions.
+								</div>
+							) : (
+								<div className="flex flex-col gap-2">
+									{transactions.map((value) => (
+										<TransactionDetails transaction={value}></TransactionDetails>
+									))}
+								</div>
+							)}
+						</div>
+					</DropdownSection>
+				</HorizontalWrap>
 			</div>
-		</HorizontalWrap>
+		</>
 	);
 }

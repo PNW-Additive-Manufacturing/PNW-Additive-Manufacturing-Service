@@ -5,6 +5,7 @@ import {
 	RegularArrowRight,
 	RegularCart,
 	RegularChevronDown,
+	RegularChevronRight,
 	RegularCloudUpload,
 	RegularFriendly,
 	RegularHappy,
@@ -30,6 +31,7 @@ import { usePathname } from "next/navigation";
 import HorizontalWrap from "./HorizontalWrap";
 import { AccountContext } from "../ContextProviders";
 import { CurrencySpan } from "./Spans";
+import { CgProfile } from "react-icons/cg";
 
 function NavbarLink({
 	name,
@@ -44,7 +46,7 @@ function NavbarLink({
 		<Link
 			onClick={onClick}
 			href={path}
-			className="rounded-md whitespace-nowrap xl:rounded-none w-full p-4 xl:p-0 bg-gray-100 sm:bg-transparent xl:w-fit border-b-4 border-b-pnw-gold-light border-opacity-10 hover:text-pnw-gold active:text-pnw-gold">
+			className="rounded-md whitespace-nowrap xl:rounded-none w-full p-4 xl:p-0 bg-gray-100 sm:bg-transparent xl:w-fit border-b-4 border-b-black border-opacity-5 hover:text-pnw-gold hover:border-b-pnw-gold hover:border-opacity-100 active:text-pnw-gold">
 			{name}
 		</Link>
 	);
@@ -67,7 +69,7 @@ export function AccountDetails({
 			<Link href={"/user/profile"}>
 				<div
 					onClick={() => setExpanded(() => !expanded)}
-					className={`bg-gray-100 h-10 rounded-md hover:cursor-pointer hover:text-pnw-gold hover:fill-pnw-gold flex flex-row items-center gap-2 px-4`}>
+					className={`bg-gray-100 h-10 rounded-md hover:cursor-pointer hover:text-pnw-gold hover:fill-pnw-gold flex flex-row items-center gap-2 px-3`}>
 					{accountDetails.isSingedIn ? (
 						<>
 							<span className="text-nowrap">
@@ -79,7 +81,7 @@ export function AccountDetails({
 					) : (
 						<span>Account</span>
 					)}
-					<RegularArrowRight className="inline mt-0.5" />
+					<RegularChevronRight className="inline mt-0.5" />
 				</div>
 			</Link>
 		</>
@@ -88,15 +90,16 @@ export function AccountDetails({
 			<Link
 				onClick={onLinkClick}
 				href="/user/login"
-				className="text-center text-sm whitespace-nowrap rounded-md bottom-0 h-fit bg-gray-100 flex flex-col gap-4 px-4 py-2">
-				Sign In
+				className="bg-pnw-gold-light text-sm whitespace-nowrap rounded-md bottom-0 h-fit flex gap-2 items-center px-4 py-2">
+				Sign in
+				<RegularArrowRight className="inline"></RegularArrowRight>
 			</Link>
-			<Link
+			{/* <Link
 				onClick={onLinkClick}
 				href="/user/create-account"
-				className="text-center text-sm whitespace-nowrap rounded-md bottom-0 h-fit bg-pnw-gold-light flex flex-col gap-4 px-4 py-2">
+				className="text-center text-sm whitespace-nowrap rounded-md bottom-0  h-fit bg-pnw-gold-light flex flex-col gap-4 px-4 py-2">
 				Create Account
-			</Link>
+			</Link> */}
 		</>
 	);
 }
@@ -149,25 +152,27 @@ export function Navbar({
 			<div className="w-full h-fit bg-white">
 				<HorizontalWrap>
 					{/* <div className="w-full px-6 py-3"> */}
-					<nav className="flex flex-row h-full overflow-x-clip w-full items-center align-middle">
-						<Link
-							href="/"
-							className=" flex-none gap-2 items-center mr-2">
-							<div className="w-fit whitespace-nowrap mr-fit pr-3 text-xl tracking-wide flex-fit">
-								<span className="text-pnw-gold">PNW </span>
-								<span>Additive Manufacturing</span>
+					<nav className="h-full max-xl:flex overflow-x-clip w-full items-center align-middle">
+						<div className="hidden xl:flex justify-between items-center gap-8">
+							<div className="hidden xl:flex items-end justify-end tracking-wider gap-4 overflow-x-hidden">
+								<Link
+									href="/">
+									<div className="w-11">
+										<Image src={"/assets/am_cropped.png"} alt={"Additive Manufacturing"} width={480} height={480}></Image>
+									</div>
+									{/* <div className="text-nowrap text-xl tracking-wide flex-fit">
+										<span className="text-pnw-gold">PNW </span>
+										<span>Additive Manufacturing</span>
+									</div> */}
+								</Link>
+								{links.map((val) => (
+									<NavbarLink
+										key={val.name}
+										name={val.name}
+										path={val.path}
+									/>
+								))}
 							</div>
-						</Link>
-
-						{/* Long List of links and dropdown */}
-						<div className="hidden xl:flex ml-auto items-center justify-end tracking-wider gap-4 overflow-x-hidden">
-							{links.map((val) => (
-								<NavbarLink
-									key={val.name}
-									name={val.name}
-									path={val.path}
-								/>
-							))}
 							<div className="flex gap-2">
 								{specialElements == null ? (
 									<></>
@@ -176,6 +181,12 @@ export function Navbar({
 								)}
 							</div>
 						</div>
+
+						<Link href="/" className="mr-2 xl:hidden">
+							<div className="w-10">
+								<Image src={"/assets/am_cropped.png"} alt={"Additive Manufacturing"} width={480} height={480}></Image>
+							</div>
+						</Link>
 
 						{/* Small dropdown for mobile screens */}
 						<RegularMenu
@@ -292,6 +303,8 @@ export function Footer(): JSX.Element {
 					</a>
 					<br />
 					<a
+						rel="noopener"
+						title="Visit Github"
 						href="https://github.com/PNW-Additive-Manufacturing"
 						target="_blank"
 						className="text-gray-300 my-2 text-xs">

@@ -2,7 +2,6 @@ User-Agent: *
 Disallow: /api/
 Disallow: /dashboard/
 Disallow: /user/profile/
-Disallow: /user/wallet/
 Disallow: /experiments/
 Disallow: /user/not-verified/
 Disallow: /user/verify-email/
