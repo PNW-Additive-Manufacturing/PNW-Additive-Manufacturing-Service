@@ -14,6 +14,7 @@ export interface WalletTransaction {
 	id: string;
 	accountEmail: string;
 	amountInCents: number;
+	customerPaidInCents: number;
 	feesInCents: number;
 	paymentStatus: WalletTransactionStatus;
 	paidAt?: Date;

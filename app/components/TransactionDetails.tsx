@@ -5,12 +5,13 @@ import Table from "@/app/components/Table";
 import { WalletTransaction, WalletTransactionPaymentMethod, WalletTransactionStatus } from "@/app/Types/Account/Wallet";
 import { RegularCirclePlus } from "lineicons-react";
 import Link from "next/link";
-import { useRef } from "react";
+import { MutableRefObject, useRef } from "react";
 import { FaRegFilePdf } from "react-icons/fa";
 import { useReactToPrint } from "react-to-print";
 import Image from "next/image";
+import Account from "../Types/Account/Account";
 
-export default function TransactionDetails({ transaction }: { transaction: WalletTransaction }) {
+export default function TransactionDetails({ transaction }: { transaction: WalletTransaction & Account }) {
     const receiptRef = useRef<HTMLElement>();
     const handlePrint = useReactToPrint({
         contentRef: receiptRef as any,
@@ -20,79 +21,88 @@ export default function TransactionDetails({ transaction }: { transaction: Walle
     return <>
 
         {/* PDF Information */}
+        {/* <div ref={receiptRef as any} className="bg-white"> */}
         <div ref={receiptRef as any} className="bg-white hidden print:block">
             <div className="p-12">
-                <h1 className="w-fit mb-4 text-2xl font-medium">
-                    <span className="text-pnw-gold"> PNW </span>
-                    Additive Manufacturing Service
+                <h1 className="flex gap-4 items-center justify-between w-full mb-4 text-2xl font-medium">
+                    <div>
+                        <span className="text-pnw-gold"> PNW </span>
+                        Additive Manufacturing Service
+                    </div>
+                    <div className="w-10">
+                        <Image src={"/assets/am_cropped.png"} alt={"Additive Manufacturing"} width={480} height={480}></Image>
+                    </div>
                 </h1>
 
                 <p>Additive Manufacturing Club of PNW</p>
-                <p>2233 171st St, Hammond, IN 46323 (Design Studio)</p>
-                <p>For contact information, visit the team page at pnw3d.com.</p>
+                <p>2200 169th St, Hammond, IN 46323 (Design Studio)</p>
+                <p>For contact information, visit the team page at <span className="underline">pnw3d.com</span>.</p>
 
-                <div className="p-6 bg-background rounded-md mt-6">
+                <hr />
 
-                    <h2 className="text-lg mb-2 font-medium">Transaction Details (#{transaction.id}):</h2>
+                <h2 className="text-lg mb-2 font-medium">Receipt (#{transaction.id}):</h2>
 
-                    <div className="flex gap-12">
-                        <div>
-                            <p className="font-medium mb-0.5">Payment Information:</p>
-                            <p className="text-sm">Payment Status: <span className="font-medium">{transaction.paymentStatus.toUpperCase()}</span></p>
-                            <p className="text-sm">Payment Method: <span className="font-medium">{transaction.paymentMethod.toUpperCase()}</span></p>
-                            {transaction.paidAt && <p className="text-sm">Date: <span className="font-medium">{formateDate(transaction.paidAt)}</span></p>}
-                        </div>
-                        <div>
-                            <p className="font-medium mb-0.5">Customer:</p>
-                            <p className="text-sm">Email: <span className="font-medium uppercase">{transaction.accountEmail}</span></p>
-                        </div>
+                <div className="flex gap-12">
+                    <div>
+                        <p className="mb-1">Payment Information:</p>
+                        <p className="text-sm">Payment Status: <span className="font-bold">{transaction.paymentStatus.toUpperCase()}</span></p>
+                        <p className="text-sm">Payment Method: <span className="font-bold">{transaction.paymentMethod.toUpperCase()}</span></p>
+                        {transaction.paidAt && <p className="text-sm">Date: <span className="font-bold">{formateDate(transaction.paidAt)}</span></p>}
                     </div>
+                    <div>
+                        <p className="mb-1">Customer:</p>
+                        <p className="text-sm">Name: <span className="font-bold">{transaction.firstName} {transaction.lastName}</span></p>
+                        <p className="text-sm">Email: <span className="font-bold uppercase">{transaction.accountEmail}</span></p>
+                    </div>
+                </div>
 
-                    <div className="out">
-                        <table className="w-full mt-6">
-                            <thead>
-                                <tr>
-                                    <th className="text-xs w-1/3 pt-4">Item</th>
-                                    <th className="text-xs w-1/3 pt-4">Amount</th>
-                                    <th className="text-xs w-1/3 pt-4">Quantity</th>
-                                    <th className="text-xs pt-4">Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td className="text-sm">Additive Manufacturing Service Funds</td>
-                                    <td className="text-sm">${(transaction.amountInCents / 100).toFixed(2)}</td>
-                                    <td className="text-sm">1</td>
-                                    <td className="text-sm">${(transaction.amountInCents / 100).toFixed(2)}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <div className="out">
+                    <table className="w-full mt-6">
+                        <thead>
+                            <tr>
+                                <th className="text-xs w-1/3 pt-4">Item</th>
+                                <th className="text-xs w-1/3 pt-4">Amount</th>
+                                <th className="text-xs w-1/3 pt-4">Quantity</th>
+                                <th className="text-xs pt-4">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td className="text-sm">Additive Manufacturing Service Funds</td>
+                                <td className="text-sm">${(transaction.amountInCents / 100).toFixed(2)}</td>
+                                <td className="text-sm">1</td>
+                                <td className="text-sm">${(transaction.amountInCents / 100).toFixed(2)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
 
-                        <div className="p-4 mb-2">
+                    <div className="p-4 mb-4">
 
-                            <p className="text-sm font-light flex justify-between">
-                                <span>Subtotal</span>
-                                <span className="text-right w-full"> ${(transaction.amountInCents / 100).toFixed(2)}</span>
-                            </p>
+                        <p className="text-sm font-light flex justify-between">
+                            <span>Subtotal</span>
+                            <span className="text-right w-full"> ${(transaction.amountInCents / 100).toFixed(2)}</span>
+                        </p>
 
-                            <p className="text-sm font-light flex justify-between">
-                                <span>Tax</span>
-                                <span className="text-right w-full"> ${(0).toFixed(2)}</span>
-                            </p>
+                        <p className="text-sm font-light flex justify-between">
+                            <span>Tax</span>
+                            <span className="text-right w-full">${(0).toFixed(2)}</span>
+                        </p>
 
-                            <p className="text-xl flex justify-between font-semibold">
-                                <span>Total</span>
-                                <span className="text-right w-full">
-                                    {" "}
-                                    ${(transaction.amountInCents / 100).toFixed(2)}
-                                </span>
-                            </p>
-                        </div>
+                        <p className="flex justify-between font-semibold">
+                            <span>Total</span>
+                            <span className="text-right w-full">${(transaction.amountInCents / 100).toFixed(2)}</span>
+                        </p>
+
+                        {transaction.paidAt && <p className="flex justify-between font-semibold">
+                            <span className="text-nowrap">Paid by Customer</span>
+                            <span className="text-right w-full">${(transaction.customerPaidInCents / 100).toFixed(2)}</span>
+                        </p>}
                     </div>
 
                 </div>
+
             </div>
-        </div >
+        </div>
 
         <div
             className={`w-full px-4 py-4 outline outline-1 ${transaction.paymentStatus ==

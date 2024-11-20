@@ -328,7 +328,7 @@ export async function addFunds(prevState: any, formData: FormData): Promise<APID
 	if (!parsedForm.success) return resError(parsedForm.error.toString());
 	
 	let permission = (await getJwtPayload())?.permission;
-	if (permission != AccountPermission.Maintainer)
+	if (permission == AccountPermission.User)
 	{
 		return resError("You do not have permission.");
 	}
@@ -339,6 +339,7 @@ export async function addFunds(prevState: any, formData: FormData): Promise<APID
 			accountEmail: parsedForm.data.accountEmail,
 			amountInCents: parsedForm.data.amountInDollars * 100,
 			feesInCents: 0,
+			customerPaidInCents: parsedForm.data.transactionType == "gift" ? 0 : parsedForm.data.amountInDollars * 100,
 			paymentMethod: parsedForm.data.transactionType as WalletTransactionPaymentMethod,
 			paymentStatus: WalletTransactionStatus.Paid,
 			paidAt: new Date()

@@ -164,6 +164,20 @@ export default class AccountServe {
 		});
 	}
 
+	public static transactionFromSQLQuery(row: postgres.Row): WalletTransaction {
+		return {
+			id: row!.id,
+			accountEmail: row.accountemail,
+			amountInCents: row!.amountincents,
+			customerPaidInCents: row!.customerpaidincents,
+			feesInCents: row!.feesincents,
+			paidAt: row!.paidat,
+			paymentStatus: row!.status,
+			paymentMethod: row!.paymentmethod,
+			stripeCheckoutId: row!.stripecheckoutid
+		}
+	}
+
 	public static async queryPendingTransaction(
 		accountEmail: string,
 		dbContext?: postgres.Sql<{}>
@@ -174,18 +188,7 @@ export default class AccountServe {
 			await dbContext`SELECT * FROM WalletTransaction WHERE AccountEmail=${accountEmail} AND Status=${WalletTransactionStatus.Pending}`;
 		const transactionRow = transactionQuery.at(0);
 
-		return transactionRow == undefined
-			? undefined
-			: {
-				id: transactionRow!.id,
-				accountEmail: accountEmail,
-				amountInCents: transactionRow!.amountincents,
-				feesInCents: transactionRow!.feesincents,
-				paidAt: transactionRow!.paidat,
-				paymentStatus: transactionRow!.status,
-				paymentMethod: transactionRow!.paymentmethod,
-				stripeCheckoutId: transactionRow!.stripecheckoutid
-			};
+		return transactionRow == undefined ? undefined : AccountServe.transactionFromSQLQuery(transactionRow);
 	}
 
 	public static async queryTransaction(
@@ -198,18 +201,7 @@ export default class AccountServe {
 			await dbContext`SELECT * FROM WalletTransaction WHERE Id=${transactionId}`;
 		const transactionRow = transactionQuery.at(0);
 
-		return transactionRow == undefined
-			? undefined
-			: {
-				id: transactionRow!.id,
-				accountEmail: transactionRow!.accountemail,
-				amountInCents: transactionRow!.amountincents,
-				feesInCents: transactionRow!.feesincents,
-				paidAt: transactionRow!.paidat,
-				paymentStatus: transactionRow!.status,
-				paymentMethod: transactionRow!.paymentmethod,
-				stripeCheckoutId: transactionRow!.stripecheckoutid
-			};
+		return transactionRow == undefined ? undefined : AccountServe.transactionFromSQLQuery(transactionRow);
 	}
 
 	public static async queryTransactionsFor(
@@ -220,18 +212,7 @@ export default class AccountServe {
 
 		return (
 			await dbContext`SELECT  * FROM WalletTransaction WHERE AccountEmail=${accountEmail} ORDER BY PaidAt DESC`
-		).map<WalletTransaction>((row) => {
-			return {
-				id: row.id,
-				accountEmail: row.accountemail,
-				amountInCents: row.amountincents,
-				feesInCents: row.feesincents,
-				paymentStatus: row.status,
-				paidAt: row.paidat,
-				paymentMethod: row.paymentmethod,
-				stripeCheckoutId: row.stripecheckoutid
-			};
-		});
+		).map<WalletTransaction>((row) => AccountServe.transactionFromSQLQuery(row));
 	}
 
 	public static async deleteTransaction(
@@ -256,6 +237,7 @@ export default class AccountServe {
 			amountincents: transaction.amountInCents,
 			feesincents: transaction.feesInCents,
 			paymentmethod: transaction.paymentMethod,
+			customerpaidincents: transaction.customerPaidInCents,
 			status: transaction.paymentStatus,
 			paidat: transaction.paidAt
 		})} 

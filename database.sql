@@ -23,7 +23,7 @@ CREATE TABLE Account (
 );
 
 DROP TYPE IF EXISTS WalletTransactionPaymentMethod CASCADE;
-CREATE TYPE WalletTransactionPaymentMethod AS ENUM ('refund', 'cash', 'gift');
+CREATE TYPE WalletTransactionPaymentMethod AS ENUM ('cash', 'gift');
 
 DROP TYPE IF EXISTS PaymentStatus CASCADE;
 CREATE TYPE PaymentStatus AS ENUM ('pending', 'paid', 'cancelled');
@@ -34,14 +34,13 @@ CREATE TABLE WalletTransaction (
   AccountEmail VARCHAR(254) REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE,
   AmountInCents BIGINT NOT NULL,
   FeesInCents BIGINT NOT NULL,
+  CustomerPaidInCents BIGINT NOT NULL,
   Status PaymentStatus NOT NULL DEFAULT 'pending',
   PaidAt TIMESTAMP WITH TIME ZONE DEFAULT NULL,
   PaymentMethod WalletTransactionPaymentMethod NOT NULL,
-  RefundedPartId SERIAL REFERENCES Request(Id) ON DELETE CASCADE ON UPDATE CASCADE, 
   CONSTRAINT PAID_CHK CHECK (
   	(Status = 'paid' AND PaidAt IS NOT NULL AND PaymentMethod='cash') OR
   	(Status = 'paid' AND PaidAt IS NOT NULL AND PaymentMethod='gift') OR
-	  (Status = 'paid' AND PaidAt IS NOT NULL AND PaymentMethod='refund' AND RefundedPartId IS NOT NULL) OR
     (Status = 'pending')
   )
 );

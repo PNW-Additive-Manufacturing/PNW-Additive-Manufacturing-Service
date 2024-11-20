@@ -263,21 +263,8 @@ export async function modifyPart(
 
 			console.log(`Refunding ${refundTotalInDollars.toFixed(2)}`);
 
-			// Insert a new transaction
-			let transactionId = await AccountServe.insertTransaction(
-				{
-					accountEmail: previousPart.model.ownerEmail!,
-					amountInCents: Math.round(refundTotalInDollars * 100),
-					feesInCents: 0,
-					paymentMethod: WalletTransactionPaymentMethod.Refund,
-					paymentStatus: WalletTransactionStatus.Paid
-				},
-				dbContext
-			);
-
 			newValues["refundreason"] = parsedData.data!.reasonForRefund!;
 			newValues["refundquantity"] = parsedData.data!.refundQuantity!;
-			newValues["refundwallettransactionid"] = transactionId!;
 		}
 
 		console.log(

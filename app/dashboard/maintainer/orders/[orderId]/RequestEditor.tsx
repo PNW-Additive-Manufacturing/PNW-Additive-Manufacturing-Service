@@ -282,6 +282,7 @@ export default function RequestEditor({
 										</>
 									) : hasQuote(request) ? (
 										<button
+											disabled={true}
 											className="mb-0 py-4 shadow-md text-left w-full"
 											type="button">
 											<div>Waiting for Payment</div>

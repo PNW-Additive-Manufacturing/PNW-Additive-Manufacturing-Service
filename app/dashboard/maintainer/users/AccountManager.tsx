@@ -25,7 +25,10 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
 
             selectedAccount?.transactions.push(result);
         }
-        else toast.error(`Failed to allocate funds to ${selectedAccount?.firstName} ${selectedAccount?.lastName}.`);
+        else {
+            toast.error(`Failed to allocate funds to ${selectedAccount?.firstName} ${selectedAccount?.lastName}.`);
+            console.error(result.errorMessage);
+        }
 
 
         return result;
@@ -51,8 +54,6 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
 
         setFilteredAccounts(newFilteredAccounts);
     }
-
-    console.log(selectedAccount?.permission, selectedAccount);
 
     return <>
 

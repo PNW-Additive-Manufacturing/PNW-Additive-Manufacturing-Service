@@ -23,7 +23,7 @@ export default function Profile({ account, transactions }: { account: Account, t
 						<p>{account.firstName} {account.lastName}</p>
 						<p>
 							<span>{account.email}</span>
-							<span className="ml-2 text-xs">{account.isEmailVerified ? <span className="text-pnw-gold bg-pnw-gold-light py-0.5 px-2 rounded-lg"><RegularCheckmark className="inline fill-pnw-gold mb-0.5 mr-2" />Verified</span> : <span className="bg-red-100 py-0.5 px-2 rounded-lg"><RegularWarning className="inline fill-red-300 mr-2 mb-0.5"></RegularWarning> Unverified</span>}</span>
+							<span className="ml-2 text-xs">{account.isEmailVerified ? <span className="text-pnw-gold bg-pnw-gold-light py-0.5 px-2 rounded-lg"><RegularCheckmark className="inline fill-pnw-gold mb-0.5 mr-2" />Verified</span> : <span className="bg-red-100 py-0.5 px-2 rounded-lg text-red-400"><RegularWarning className="inline fill-red-400 mr-2 mb-0.5"></RegularWarning>Unverified</span>}</span>
 						</p>
 					</div>
 					<div>
@@ -73,7 +73,7 @@ export default function Profile({ account, transactions }: { account: Account, t
 								) : (
 									<div className="flex flex-col gap-2">
 										{transactions.map((value) => (
-											<TransactionDetails transaction={value}></TransactionDetails>
+											<TransactionDetails transaction={Object.assign(value, account)}></TransactionDetails>
 										))}
 									</div>
 								)}
