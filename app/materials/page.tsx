@@ -96,7 +96,7 @@ export default async function Materials() {
 
                                             <div className="flex flex-col justify-between">
                                                 <div>
-                                                    <h3 id={`${m.technology}-${m.material.replaceAll(" ", "-")}`} className="text-xl target:bg-yellow-100 target:px-2 w-fit">
+                                                    <h3 id={`${m.technology.toLowerCase()}-${m.material.replaceAll(" ", "-").toLowerCase()}`} className="text-xl target:bg-yellow-100 target:px-2 w-fit">
                                                         {m.material}
                                                         {materialMapping[m.material]?.hint != undefined && <span className="text-pnw-gold font-semibold ml-2">| {materialMapping[m.material]?.hint}</span>}
                                                     </h3>

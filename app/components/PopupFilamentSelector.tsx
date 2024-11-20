@@ -139,7 +139,7 @@ export default function PopupFilamentSelector({
 					// <Swatch swatch={selectedFilament.color}></Swatch>
 					<div>
 						<FilamentBlock filament={selectedFilament} />
-						<a target="_blank" className="block text-sm mt-2 hover:underline" href={`/materials#${selectedFilament.technology}-${selectedFilament.material.replaceAll(" ", "-")}`}>View properties of {selectedFilament.material} <RegularEye className="inline mb-0.5" /></a>
+						<a target="_blank" className="block text-sm mt-2 hover:underline" href={`/materials#${selectedFilament.technology.toLowerCase()}-${selectedFilament.material.replaceAll(" ", "-").toLowerCase()}`}>View properties of {selectedFilament.material} <RegularEye className="inline mb-0.5" /></a>
 					</div>
 				)}
 			</div>
