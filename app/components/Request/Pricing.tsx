@@ -136,7 +136,7 @@ export default function RequestPricing({
 					{leadTime} {leadTime > 1 ? "Days" : "Day"}
 				</span>
 			</p>
-			{request.quote && <p className="print:hidden text-sm font-light flex justify-between mb-4">
+			{request.quote && <p className="print:hidden text-sm font-light flex justify-between">
 				<span className="text-nowrap">Estimated Completion </span>
 				<span className="text-right w-full">
 					{formateDate(request.quote!.estimatedCompletionDate)}

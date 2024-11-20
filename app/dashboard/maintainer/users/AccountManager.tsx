@@ -124,15 +124,19 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
 
                         <form action={addFundsAction}>
                             <div className="lg:flex gap-2">
-                                <input className="bg-white py-2.5 text-sm" type="number" id="amount-in-dollars" name="amount-in-dollars" required placeholder="$0.00" />
-                                <select title="Method" className="bg-white py-2.5 text-sm w-fit" id="transaction-type" name="transaction-type" required>
+                                <input className="bg-white py-2.5 text-sm mb-0 px-3" type="text" id="amount-in-dollars" name="amount-in-dollars" required placeholder="$0.00" />
+                                <select title="Method" className="bg-white py-2.5 text-sm w-fit mb-0" id="transaction-type" name="transaction-type" required>
                                     <option value="cash">Cash</option>
                                     <option value="gift">Gift</option>
                                 </select>
                                 <input type="text" id="account-email" name="account-email" value={selectedAccount.email} readOnly hidden />
                                 <div className="w-fit text-xs text-white">
-                                    <FormSubmitButton label={"Add Funds"}></FormSubmitButton>
+                                    <FormSubmitButton className="mb-0" label={"Add Funds"}></FormSubmitButton>
                                 </div>
+                            </div>
+                            <div className="flex items-center gap-2 px-0.5 py-3 text-sm">
+                                <input id="send-email" name="send-email" className="mb-0 outline-none w-3.5 h-3" type="checkbox" defaultChecked={true} />
+                                <p>Send an email to {selectedAccount.firstName} with the receipt attached.</p>
                             </div>
                         </form>
 

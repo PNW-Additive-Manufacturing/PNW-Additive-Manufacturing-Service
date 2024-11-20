@@ -98,16 +98,16 @@ export default async function RootLayout({
 							links={(() => {
 								let elements: { name: string; path: string }[] = [
 									{
+										name: "Our Inventory",
+										path: "/materials"
+									},
+									{
 										name: "Contact Us",
 										path: "/team"
 									},
 									{
 										name: "Schedule",
 										path: "/schedule"
-									},
-									{
-										name: "Our Inventory",
-										path: "/materials"
 									}
 								];
 

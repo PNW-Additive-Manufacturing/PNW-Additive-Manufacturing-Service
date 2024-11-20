@@ -157,9 +157,7 @@ export function Navbar({
 							<div className="hidden xl:flex items-end justify-end tracking-wider gap-4 overflow-x-hidden">
 								<Link
 									href="/">
-									<div className="w-11">
-										<Image src={"/assets/am_cropped.png"} alt={"Additive Manufacturing"} width={480} height={480}></Image>
-									</div>
+									<Image className="w-11" style={{ height: "29.5px" }} src={"/assets/am_cropped.png"} alt={"Additive Manufacturing"} width={480} height={480}></Image>
 									{/* <div className="text-nowrap text-xl tracking-wide flex-fit">
 										<span className="text-pnw-gold">PNW </span>
 										<span>Additive Manufacturing</span>

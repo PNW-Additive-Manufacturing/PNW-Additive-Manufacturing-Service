@@ -11,7 +11,7 @@ import { AccountPermission, emailVerificationExpirationDurationInDays } from "@/
 import ActionResponse, { ActionResponsePayload } from "./ActionResponse";
 import { z } from "zod";
 import AccountServe from "@/app/Types/Account/AccountServe";
-import { sendEmail, verifyEmailTemplate } from "../util/Mail";
+import { fundsAdded, sendEmail, verifyEmailTemplate } from "../util/Mail";
 import getConfig from "@/app/getConfig";
 import { APIData, resOkData, resError, resOk } from "../APIResponse";
 import { addMinutes } from "@/app/utils/TimeUtils";
@@ -317,13 +317,15 @@ export async function editPassword(
 const addFundsSchema = z.object({
 	amountInDollars: z.coerce.number().min(0.01),
 	transactionType: z.literal("cash").or(z.literal("gift")),
+	sendEmail: z.coerce.boolean(),
 	accountEmail: z.string()
 });
 export async function addFunds(prevState: any, formData: FormData): Promise<APIData<WalletTransaction>> {
 	const parsedForm = addFundsSchema.safeParse({
 		amountInDollars: formData.get("amount-in-dollars"),
 		transactionType: formData.get("transaction-type"),
-		accountEmail: formData.get("account-email")
+		accountEmail: formData.get("account-email"),
+		sendEmail: formData.get("send-email")
 	});
 	if (!parsedForm.success) return resError(parsedForm.error.toString());
 	
@@ -331,6 +333,13 @@ export async function addFunds(prevState: any, formData: FormData): Promise<APID
 	if (permission == AccountPermission.User)
 	{
 		return resError("You do not have permission.");
+	}
+
+	// The account receiving the funding.
+	const fundingAccount = await AccountServe.queryByEmail(parsedForm.data.accountEmail);
+	if (fundingAccount == undefined)
+	{
+		return resError("That account does not exist!");
 	}
 
 	try
@@ -346,6 +355,11 @@ export async function addFunds(prevState: any, formData: FormData): Promise<APID
 		};
 
 		(transaction as WalletTransaction).id = await AccountServe.insertTransaction(transaction);
+
+		if (parsedForm.data.sendEmail && transaction.paymentStatus == WalletTransactionStatus.Paid)
+		{
+			sendEmail(parsedForm.data.accountEmail, "Thank you for your Purchase", await fundsAdded(transaction as WalletTransaction));
+		}
 
 		return resOkData(transaction as WalletTransaction);
 	}

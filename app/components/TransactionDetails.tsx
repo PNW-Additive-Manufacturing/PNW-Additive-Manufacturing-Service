@@ -105,18 +105,18 @@ export default function TransactionDetails({ transaction }: { transaction: Walle
         </div>
 
         <div
+            id={`transaction-${transaction.id}`}
             className={`w-full px-4 py-4 outline outline-1 ${transaction.paymentStatus ==
                 WalletTransactionStatus.Paid
                 ? "outline-gray-300"
                 : "outline-yellow-700"
-                } bg-white rounded-md flex justify-between items-center`}>
+                } bg-white rounded-md flex justify-between items-center target:bg-yellow-50`}>
             <div className="flex text-md items-center">
                 {transaction.paymentStatus ==
                     WalletTransactionStatus.Paid ? (
                     <RegularCirclePlus className="h-5 w-auto fill-green-600 mr-2"></RegularCirclePlus>
                 ) : (
                     <RegularCirclePlus className="h-5 w-auto fill-yellow-700 mr-2"></RegularCirclePlus>
-                    // <RegularQuestionCircle className="h-7 w-auto fill-gray-500 mr-2"></RegularQuestionCircle>
                 )}
                 ${(transaction.amountInCents / 100).toFixed(2)}
             </div>

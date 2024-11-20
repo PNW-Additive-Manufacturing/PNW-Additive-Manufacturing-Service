@@ -201,10 +201,21 @@ export default async function Home() {
 					</div>
 				</HorizontalWrap>
 
-				<div className="bg-white py-8 pb-12">
+				{/* <div className="bg-white py-8">
 					<HorizontalWrap>
-						<div
-							id="services">
+						<h2 className="w-fit font-medium text-xl pb-2">What is Possible?</h2>
+						<div className="w-fit">
+							You can befit from our engineering and club resources.
+						</div>
+						<hr style={{ marginBottom: "0px" }} />
+
+
+					</HorizontalWrap>
+				</div> */}
+
+				<div className="bg-white py-8">
+					<HorizontalWrap>
+						<div id="services">
 							<div>
 								<h2 className="w-fit font-medium text-xl pb-2">Our Manufacturing Services</h2>
 								<div className="w-fit">
@@ -270,95 +281,6 @@ export default async function Home() {
 								<p className="text-cool-black text-sm">Browse our full inventory of 3D printers, materials, and processes, including lead times and costs.</p>
 							</div>
 						</div>
-
-
-						{/* <div className="grid grid-cols-1 gap-12">
-							<div className="flex flex-col lg:flex-row gap-4">
-								<Image
-									className="w-full max-lg:h-44 lg:w-48 shadow-md rounded-md"
-									alt=""
-									src="/assets/Bambu+Lab+A1+3D+Printer+multi+color.png"
-									width={720}
-									height={720}></Image>
-								<div className="py-1 2xl:w-1/2">
-									<span className="text-pnw-gold text-lg font-semibold">
-										FDM 3D Printing
-									</span>{" "}
-									involves melting thermoplastic filament and
-									layering it to create objects. It can be
-									used for prototyping, allowing designers to
-									quickly test and iterate on designs.
-									<ul className="mt-2">
-										<li>
-											Rapid and cost-effective
-											prototyping.
-										</li>
-										<li>
-											Materials: PLA, PLA Aero, PETG, ABS,
-											TPU, CF, PC, and more!
-										</li>
-									</ul>
-								</div>
-							</div>
-							<div className="flex flex-col lg:flex-row gap-4">
-								<Image
-									className="w-full max-lg:h-44 lg:w-48 shadow-md rounded-md"
-									alt=""
-									src="/assets/miniatures-category.png"
-									width={720}
-									height={720}></Image>
-								<div className="py-1 2xl:w-1/2">
-									<span className="text-pnw-gold text-lg font-semibold">
-										SLA/LCD Resin Printing
-									</span>{" "}
-									enables creation of highly detailed and
-									intricate designs. This method is especially
-									suited for applications like jewelry, dental
-									models, and miniature figures.
-									<ul className="mt-2">
-										<li>
-											Unmatched precision and smoothness.
-										</li>
-										<li>Arriving November 2024.</li>
-									</ul>
-								</div>
-							</div>
-							<a
-								id="metalX"
-								className="flex flex-col lg:flex-row gap-4 font-normal">
-								<Image
-									className="w-full max-lg:h-44 lg:w-48 shadow-md rounded-md"
-									alt=""
-									src="/assets/metal_f.jpg"
-									width={720}
-									height={720}></Image>
-								<div className="py-1 2xl:w-1/2">
-									<span className="text-pnw-gold text-lg font-semibold">
-										Markforged Metal X
-									</span>{" "}
-									utilizes a unique process to produce metal
-									parts. It starts with a composite of metal
-									powder and a FDM-like polymer binder
-									filament, which is 3D printed into the
-									desired shape. After printing, the part
-									undergoes a debinding process to remove the
-									binding polymer, followed by sintering in a
-									furnace to achieve full density and
-									strength.
-									<ul className="mt-2">
-										<li>
-											Custom in-university machined metal
-											parts.
-										</li>
-										<li>
-											Materials: 17-4PH Stainless Steel,
-											H13 Tool Steel, and more!
-										</li>
-										<li>Arriving Spring 2025.</li>
-									</ul>
-								</div>
-							</a>
-						</div> */}
 					</HorizontalWrap>
 				</div>
 				{/* <div className="py-10">
