@@ -125,7 +125,8 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
                         <form action={addFundsAction}>
                             <div className="lg:flex gap-2">
                                 <input className="bg-white py-2.5 text-sm mb-0 px-3" type="text" id="amount-in-dollars" name="amount-in-dollars" required placeholder="$0.00" />
-                                <select title="Method" className="bg-white py-2.5 text-sm w-fit mb-0" id="transaction-type" name="transaction-type" required>
+                                <select title="Method" defaultValue={"none"} className="bg-white py-2.5 text-sm w-fit mb-0" id="transaction-type" name="transaction-type" required>
+                                    <option value="none" disabled selected>Choose Method</option>
                                     <option value="cash">Cash</option>
                                     <option value="gift">Gift</option>
                                 </select>
