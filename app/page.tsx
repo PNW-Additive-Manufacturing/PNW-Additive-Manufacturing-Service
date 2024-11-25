@@ -254,7 +254,7 @@ export default async function Home() {
 							<div className="bg-background p-4 w-full rounded-md">
 								<div className="w-full opacity-75 text-sm">
 									<Image src="/assets/metalx.png" alt="Metal X Printer" width={720} height={720} className="rounded-md mb-4 w-full h-48 object-cover object-bottom" />
-									<h2 className="text-lg font-semibold">Metal FFF Metal X</h2>x
+									<h2 className="text-lg font-semibold">Metal FFF Metal X</h2>
 									{/* <p className="mt-2 flex text-nowrap gap-2">Provided by <Image className="inline w-full h-fit opacity-75" src={"/assets/logos/markforged.png"} alt={"Markforged"} width={120} height={120} /></p> */}
 									<p className="mt-2">Coming Spring 2025</p>
 									<p className="mt-2">The Markforged Metal X produces extremely strong custom metal parts designed for high-stress applications.</p>
