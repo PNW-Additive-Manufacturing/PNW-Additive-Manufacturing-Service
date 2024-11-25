@@ -8,6 +8,7 @@ import ModelViewer from "@/app/components/ModelViewer";
 import StatusPill from "@/app/components/StatusPill";
 import { NamedSwatch, templatePNW } from "@/app/components/Swatch";
 import { useReactToPrint } from "react-to-print";
+import Image from "next/image";
 import {
 	getStatusColor,
 	isAllComplete,
@@ -58,16 +59,6 @@ import { closingTime, isOpen } from "@/app/components/LocalSchedule";
 import { addMinutes } from "@/app/utils/TimeUtils";
 import { jsPDF } from "jspdf";
 import { FaRegFilePdf } from "react-icons/fa";
-
-function generatePDF(request: RequestWithParts) {
-	const receiptPDF = new jsPDF({
-		orientation: "portrait",
-		unit: "in"
-	});
-
-	receiptPDF.text(`Request ${request.name}`, 0, 0);
-	// receiptPDF.
-}
 
 export default function RequestDetails({
 	request
@@ -281,7 +272,88 @@ export default function RequestDetails({
 									<RequestPricing request={request} />
 								</div>
 								<br />
-								{/* <button className="text-sm font-light text-left " onClick={() => handlePrint()}>Download Receipt<FaRegFilePdf className="fill-white ml-2 mb-0.5 inline"></FaRegFilePdf></button> */}
+
+								{/* PDF Document */}
+								{/* <div ref={invoiceRef as any} className="bg-white"> */}
+								<div ref={invoiceRef as any} className="bg-white hidden print:block">
+									<div className="p-12">
+										<h1 className="flex gap-4 items-center justify-between w-full mb-4 text-2xl font-medium">
+											<div>
+												<span className="text-pnw-gold"> PNW </span>
+												Additive Manufacturing Service
+											</div>
+											<div className="w-10">
+												<Image src={"/assets/am_cropped.png"} alt={"Additive Manufacturing"} width={480} height={480}></Image>
+											</div>
+										</h1>
+
+										<p>Additive Manufacturing Club of PNW</p>
+										<p>2200 169th St, Hammond, IN 46323 (Design Studio)</p>
+										<p>For contact information, visit the team page at <span className="underline">pnw3d.com</span>.</p>
+
+										<hr />
+
+										<h2 className="text-lg mb-2 font-medium">Invoice for {request.name}:</h2>
+
+										<div className="flex gap-12">
+											{/* <div>
+												<p className="mb-1">Payment Information:</p>
+												<p className="text-sm">Payment Status: <span className="font-bold">{transaction.paymentStatus.toUpperCase()}</span></p>
+												<p className="text-sm">Payment Method: <span className="font-bold">{transaction.paymentMethod.toUpperCase()}</span></p>
+												{transaction.paidAt && <p className="text-sm">Date: <span className="font-bold">{formateDate(transaction.paidAt)}</span></p>}
+											</div> */}
+											<div>
+												<p className="mb-1">Customer:</p>
+												<p className="text-sm">Name: <span className="font-bold">{request.firstName} {request.lastName}</span></p>
+												<p className="text-sm">Email: <span className="font-bold uppercase">{request.requesterEmail}</span></p>
+											</div>
+										</div>
+
+										<div className="out">
+											<table className="w-full mt-6">
+												<thead>
+													<tr>
+														<th className="text-xs w-1/3 pt-4">Item</th>
+														<th className="text-xs w-1/3 pt-4">Amount</th>
+														<th className="text-xs w-1/3 pt-4">Quantity</th>
+														<th className="text-xs pt-4">Total</th>
+													</tr>
+												</thead>
+												<tbody>
+													{request.parts.map(p => <tr>
+														<td className="text-sm">{p.model.name}</td>
+														<td className="text-sm">${p.priceInDollars!.toFixed(2)}</td>
+														<td className="text-sm">{p.quantity}</td>
+														<td className="text-sm">${(p.priceInDollars! * p.quantity).toFixed(2)}</td>
+													</tr>)}
+												</tbody>
+											</table>
+
+											<div className="p-4 mb-4">
+
+												<p className="text-sm font-light flex justify-between">
+													<span>Subtotal</span>
+													<span className="text-right w-full"> ${(request.quote!.totalPriceInCents / 100).toFixed(2)}</span>
+												</p>
+
+												<p className="text-sm font-light flex justify-between">
+													<span>Tax</span>
+													<span className="text-right w-full">${(0).toFixed(2)}</span>
+												</p>
+
+												<p className="flex justify-between font-semibold">
+													<span>Total</span>
+													<span className="text-right w-full">${(request.quote!.totalPriceInCents / 100).toFixed(2)}</span>
+												</p>
+											</div>
+
+										</div>
+
+									</div>
+								</div>
+
+								<button className="text-sm font-light text-left " onClick={() => handlePrint()}>Download Invoice<FaRegFilePdf className="fill-white ml-2 mb-0.5 inline"></FaRegFilePdf></button>
+
 								<form action={payFormAction}>
 									<input
 										hidden

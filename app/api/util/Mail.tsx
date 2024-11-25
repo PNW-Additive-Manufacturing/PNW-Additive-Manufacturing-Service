@@ -11,6 +11,7 @@ import { RequestServe } from "@/app/Types/Request/RequestServe";
 import { randomUUID } from "crypto";
 import { WalletTransaction } from "@/app/Types/Account/Wallet";
 import Account from "@/app/Types/Account/Account";
+import Mail from "nodemailer/lib/mailer";
 
 DOMPurify.setConfig({ USE_PROFILES: { html: false } });
 
@@ -62,13 +63,14 @@ export async function sendRequestEmail(emailKind: RequestEmail["kind"], request:
 	}
 }
 
-export async function sendEmail(to: string, subject: string, html: string) {
+export async function sendEmail(to: string, subject: string, html: string, attachments?: Mail.Attachment[]) {
 	try {
 		const sessionInfo = await transporter.sendMail({
 			from: `Additive Manufacturing Service of PNW <${envConfig.email.user}>`,
 			to,
 			subject,
-			html
+			html,
+			attachments
 		});
 		return sessionInfo.messageId;
 	} catch (error) {
@@ -105,10 +107,10 @@ export async function emailTemplateDearUser(
 export async function fundsAdded(transaction: WalletTransaction) {
 	return emailTemplate(`
 		<p style="font-family: inherit; color: rgb(64, 64, 64); font-size: medium;">
-			\$${(transaction.amountInCents / 100).toFixed(2)} has been added to your account. To view this transaction in detail, please click on the button below.
+			\$${(transaction.amountInCents / 100).toFixed(2)} has been added to your account. You can apply these funds to pay for 3D Printing services. 
 		</p>
-		<a href=${`${envConfig.hostURL}/user/profile#transaction-${transaction.id}`} target="_blank" style="font-family: inherit; text-decoration:none; height: fit-content; width: fit-content; display: block;">
-			<button style="font-family: inherit; text-decoration: none; border-radius: 5px; padding: 1rem 1.2rem 1rem 1.2rem; padding-top: 12px; padding-bottom: 12px; display: block; margin-bottom: 0px; outline: none; border: none; background-color: #2b2b2b; color: white; font-size: large; font-weight: 500; text-wrap: nowrap; width: auto; font-size: small;">View Transaction</button>
+		<a href=${`${envConfig.hostURL}/api/download/receipt?transactionId=${transaction.id}`} target="_blank" style="font-family: inherit; text-decoration:none; height: fit-content; width: fit-content; display: block;">
+			<button style="font-family: inherit; text-decoration: none; border-radius: 5px; padding: 1rem 1.2rem 1rem 1.2rem; padding-top: 12px; padding-bottom: 12px; display: block; margin-bottom: 0px; outline: none; border: none; background-color: #2b2b2b; color: white; font-size: large; font-weight: 500; text-wrap: nowrap; width: auto; font-size: small;">Download Receipt</button>
 		</a>`
 	);
 }

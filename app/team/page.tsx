@@ -45,8 +45,9 @@ export default function Team() {
 					Our Team
 				</h1>
 				<p className="mt-2">
-					We have a passion for 3D Printing. Feel free to reach out to
-					us for any questions regarding printing or modeling.
+					We are passionate about 3D Printing, and many of our team members are actively involved in both the Additive Manufacturing Club and the ASME Club.
+					This shared expertise allows us to provide comprehensive support for all your 3D printing and modeling needs.
+					Feel free to reach out with any questions or projects you'd like assistance with—please allow up to two days for a response.
 				</p>
 				<br />
 

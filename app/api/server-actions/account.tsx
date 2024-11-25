@@ -7,7 +7,7 @@ import { getJwtPayload, retrieveSafeJWTPayload } from "@/app/api/util/JwtHelper"
 import { cookies } from "next/headers";
 import db from "@/app/api/Database";
 import { hashAndSaltPassword } from "../util/PasswordHelper";
-import { AccountPermission, emailVerificationExpirationDurationInDays } from "@/app/Types/Account/Account";
+import Account, { AccountPermission, emailVerificationExpirationDurationInDays } from "@/app/Types/Account/Account";
 import ActionResponse, { ActionResponsePayload } from "./ActionResponse";
 import { z } from "zod";
 import AccountServe from "@/app/Types/Account/AccountServe";
@@ -15,7 +15,6 @@ import { fundsAdded, sendEmail, verifyEmailTemplate } from "../util/Mail";
 import getConfig from "@/app/getConfig";
 import { APIData, resOkData, resError, resOk } from "../APIResponse";
 import { addMinutes } from "@/app/utils/TimeUtils";
-import { NextResponse } from "next/server";
 import { WalletTransaction, WalletTransactionPaymentMethod, WalletTransactionStatus } from "@/app/Types/Account/Wallet";
 
 const envConfig = getConfig();
@@ -36,16 +35,14 @@ export async function tryLogin(prevState: string, formData: FormData) {
 	//WARNING: if in a try/catch, it will not work
 	let permission = (await getJwtPayload())?.permission;
 	//no error checking for Jwt payload since used just logged in
-	
+
 	const wantedRedirect = formData.get("redirect") as string;
-	if (wantedRedirect && wantedRedirect.startsWith(envConfig.hostURL))
-	{
+	if (wantedRedirect && wantedRedirect.startsWith(envConfig.hostURL)) {
 		console.log(`Redirecting to ${wantedRedirect}`);
 
 		redirect(wantedRedirect);
 	}
-	else
-	{
+	else {
 		redirect("/");
 	}
 }
@@ -328,22 +325,19 @@ export async function addFunds(prevState: any, formData: FormData): Promise<APID
 		sendEmail: formData.get("send-email")
 	});
 	if (!parsedForm.success) return resError(parsedForm.error.toString());
-	
+
 	let permission = (await getJwtPayload())?.permission;
-	if (permission == AccountPermission.User)
-	{
+	if (permission == AccountPermission.User) {
 		return resError("You do not have permission.");
 	}
 
 	// The account receiving the funding.
 	const fundingAccount = await AccountServe.queryByEmail(parsedForm.data.accountEmail);
-	if (fundingAccount == undefined)
-	{
+	if (fundingAccount == undefined) {
 		return resError("That account does not exist!");
 	}
 
-	try
-	{
+	try {
 		let transaction: Omit<WalletTransaction, "id"> = {
 			accountEmail: parsedForm.data.accountEmail,
 			amountInCents: parsedForm.data.amountInDollars * 100,
@@ -356,15 +350,14 @@ export async function addFunds(prevState: any, formData: FormData): Promise<APID
 
 		(transaction as WalletTransaction).id = await AccountServe.insertTransaction(transaction);
 
-		if (parsedForm.data.sendEmail && transaction.paymentStatus == WalletTransactionStatus.Paid)
-		{
+		if (parsedForm.data.sendEmail && transaction.paymentStatus == WalletTransactionStatus.Paid && transaction.customerPaidInCents > 0) {
+
 			sendEmail(parsedForm.data.accountEmail, "Thank you for your Purchase", await fundsAdded(transaction as WalletTransaction));
 		}
 
 		return resOkData(transaction as WalletTransaction);
 	}
-	catch (ex)
-	{
+	catch (ex) {
 		console.error(ex);
 		return resError("Failed to add Funds!");
 	}

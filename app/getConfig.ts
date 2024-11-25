@@ -20,8 +20,6 @@ export default function getConfig() {
 	const uploadModelDir = getProcessEnvironmentVariable("MODEL_UPLOAD_DIR");
 	const dbConnectionString = getProcessEnvironmentVariable("DB_CONNECTION");
 	const jwtSecret = getProcessEnvironmentVariable("JWT_SECRET");
-	const stripeAPIKey = getProcessEnvironmentVariable("STRIPE_API_KEY");
-	const stripeHookSecret = getProcessEnvironmentVariable("STRIPE_HOOK_KEY");
 	const parsedEnvironment = environmentSchema.safeParse(
 		getProcessEnvironmentVariable("NODE_ENV")
 	);
@@ -41,8 +39,6 @@ export default function getConfig() {
 		sessionCookie: "session-token",
 		dbConnectionString,
 		jwtSecret,
-		stripeAPIKey,
-		stripeHookSecret,
 		hostURL,
 		joinHostURL(path: string): URL {
 			return new URL(path, this.hostURL);

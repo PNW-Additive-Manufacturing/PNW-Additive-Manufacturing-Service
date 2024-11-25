@@ -46,24 +46,24 @@ export default function Login() {
 							placeholder="Enter your Password"
 						/>
 						<a href="/user/forgot-password">
-							<p className="w-full pb-4 text-sm text-left underline">
+							<p className="w-full pb-4 text-sm text-left">
 								Have you forgot your password? Reset it here!
 							</p>
 						</a>
-						<Label content={"Session Duration"} />
-						<select id="session-duration" defaultValue={"1w"}>
+						{/* <Label content={"Session Duration"} /> */}
+						<select hidden id="session-duration" defaultValue={"1w"}>
 							<option value="1d">Day</option>
 							<option value="1w">Week</option>
 							<option value="1m">Month</option>
 							<option value="1y">Year</option>
 						</select>
-						<FormSubmitButton label="Sign In" />
-						<p className="text-sm text-red-500">{error}</p>
+						<FormSubmitButton className="mb-0" label="Sign In" />
+						{error && <p className="text-sm text-red-500">{error}</p>}
 					</form>
 				</div>
 
 				<a href="/user/create-account">
-					<p className="w-full pb-4 text-sm text-left underline">
+					<p className="w-full pb-4 text-sm text-left">
 						Don't have an account? Create one!
 					</p>
 				</a>

@@ -47,7 +47,7 @@ function MaterialWizard({ filaments }: { filaments: Filament[] }) {
                 <div className="flex justify-between">
                     <div>
                         <label>What strength are you looking for?</label>
-                        <select className="w-fit">
+                        <select title="Strength" className="w-fit">
                             {Object.entries(materialWizardOptions).map(o => <option value={o[1]}>{o[0]}</option>)}
                         </select>
                     </div>

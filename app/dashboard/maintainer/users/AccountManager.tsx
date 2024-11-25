@@ -23,7 +23,10 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
         if (result.success) {
             toast.success(`Successfully added \$${formData.get("amount-in-dollars")} to the account of ${selectedAccount?.firstName} ${selectedAccount?.lastName}.`);
 
-            selectedAccount?.transactions.push(result);
+            if (selectedAccount) {
+                selectedAccount.transactions.push(result);
+                selectedAccount.balanceInDollars += (result.amountInCents / 100);
+            }
         }
         else {
             toast.error(`Failed to allocate funds to ${selectedAccount?.firstName} ${selectedAccount?.lastName}.`);

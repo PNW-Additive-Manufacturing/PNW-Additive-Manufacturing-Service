@@ -16,8 +16,7 @@ export default function usePrinters(autoRefresh: boolean = false, updateInterval
         {
             setIsFetching(true);
 
-			const fetchedData = await (await fetch("/api/farm/printers", { cache: "no-cache" })).json();
-			console.log("Fetched", fetchedData);
+			const fetchedData = await (await fetch("/api/farm/printers", { next: { revalidate: 10 } })).json();
 
 			if (!fetchedData.success) 
             {

@@ -10,19 +10,14 @@ import { FaRegFilePdf } from "react-icons/fa";
 import { useReactToPrint } from "react-to-print";
 import Image from "next/image";
 import Account from "../Types/Account/Account";
+import { PDFViewer } from "@react-pdf/renderer";
+import { WalletTransactionReceiptPDF } from "../PDFs/Receipt";
 
 export default function TransactionDetails({ transaction }: { transaction: WalletTransaction & Account }) {
-    const receiptRef = useRef<HTMLElement>();
-    const handlePrint = useReactToPrint({
-        contentRef: receiptRef as any,
-        documentTitle: "PNW Additive Manufacturing Service Receipt"
-    });
-
     return <>
 
         {/* PDF Information */}
-        {/* <div ref={receiptRef as any} className="bg-white"> */}
-        <div ref={receiptRef as any} className="bg-white hidden print:block">
+        {/* <div ref={receiptRef as any} className="bg-white">
             <div className="p-12">
                 <h1 className="flex gap-4 items-center justify-between w-full mb-4 text-2xl font-medium">
                     <div>
@@ -50,7 +45,7 @@ export default function TransactionDetails({ transaction }: { transaction: Walle
                         {transaction.paidAt && <p className="text-sm">Date: <span className="font-bold">{formateDate(transaction.paidAt)}</span></p>}
                     </div>
                     <div>
-                        <p className="mb-1">Customer:</p>
+                        <p className="mb-1 text-base">Customer:</p>
                         <p className="text-sm">Name: <span className="font-bold">{transaction.firstName} {transaction.lastName}</span></p>
                         <p className="text-sm">Email: <span className="font-bold uppercase">{transaction.accountEmail}</span></p>
                     </div>
@@ -102,7 +97,7 @@ export default function TransactionDetails({ transaction }: { transaction: Walle
                 </div>
 
             </div>
-        </div>
+        </div> */}
 
         <div
             id={`transaction-${transaction.id}`}
@@ -121,9 +116,9 @@ export default function TransactionDetails({ transaction }: { transaction: Walle
                 ${(transaction.amountInCents / 100).toFixed(2)}
             </div>
             <div className="flex gap-4 items-center">
-                {transaction.paymentMethod != WalletTransactionPaymentMethod.Gift && <div className="text-sm bg-gray-50 rounded-lg px-3 py-1 fill-black hover:text-pnw-gold hover:fill-pnw-gold hover:cursor-pointer" onClick={() => handlePrint()}>
+                {transaction.paymentMethod != WalletTransactionPaymentMethod.Gift && <a href={`/api/download/receipt?transactionId=${transaction.id}`} target="_blank" className="text-sm bg-gray-50 rounded-lg px-3 py-1 fill-black hover:text-pnw-gold hover:fill-pnw-gold hover:cursor-pointer">
                     Download Receipt<FaRegFilePdf className="fill-inherit ml-2 inline"></FaRegFilePdf>
-                </div>}
+                </a>}
                 <div className="text-sm">
                     {transaction.paymentStatus ==
                         WalletTransactionStatus.Paid ? (

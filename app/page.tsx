@@ -59,7 +59,7 @@ export default async function Home() {
 							<p
 								style={{ maxWidth: "600px" }}
 								className="overflow-hidden full pb-4">
-								Created by the PNW Additive Manufacturing Club,
+								Created by the PNW Additive Manufacturing and ASME Club,
 								this service enables PNW students, and faculty
 								members to explore the world of 3D Printing.
 								Operating in the Purdue Northwest{" "}
@@ -74,6 +74,7 @@ export default async function Home() {
 							<ul style={{ maxWidth: "600px" }}>
 								<li>Utilize rapid prototyping to create custom connectors and mounts.</li>
 								<li>Produce creative models, prosthetics, and more with 3D Printing solutions.</li>
+								<li>Guidance in designing or optimizing models for 3D Printing using CAD.</li>
 								{/* <ul>
 									<li>Rapid-prototyping</li>
 									<li>Connectors / Mounts</li>
@@ -111,8 +112,8 @@ export default async function Home() {
 								</div>
 							</div>
 						</div>
-						<div className="w-fit">
-							<video src={"/assets/Timeline 1.mov"} className="max-xl:hidden rounded-md" style={{ maxHeight: "17.5rem" }} autoPlay={true} muted={true} loop={true} preload={"none"} playsInline={true} poster="/assets/lab_setup_1.jpg"></video>
+						<div className="">
+							<video src={"/assets/Timeline 1.mov"} className="max-xl:hidden rounded-md ml-auto" style={{ maxHeight: "18.5rem" }} autoPlay={true} muted={true} loop={true} preload={"none"} playsInline={true} poster="/assets/lab_setup_1.jpg"></video>
 							{/* <Gallery
 								buttonStyle="sphere"
 								autoplay={false}
@@ -253,7 +254,7 @@ export default async function Home() {
 							<div className="bg-background p-4 w-full rounded-md">
 								<div className="w-full opacity-75 text-sm">
 									<Image src="/assets/metalx.png" alt="Metal X Printer" width={720} height={720} className="rounded-md mb-4 w-full h-48 object-cover object-bottom" />
-									<h2 className="text-lg font-semibold">Metal FFF Metal X</h2>
+									<h2 className="text-lg font-semibold">Metal FFF Metal X</h2>x
 									{/* <p className="mt-2 flex text-nowrap gap-2">Provided by <Image className="inline w-full h-fit opacity-75" src={"/assets/logos/markforged.png"} alt={"Markforged"} width={120} height={120} /></p> */}
 									<p className="mt-2">Coming Spring 2025</p>
 									<p className="mt-2">The Markforged Metal X produces extremely strong custom metal parts designed for high-stress applications.</p>
