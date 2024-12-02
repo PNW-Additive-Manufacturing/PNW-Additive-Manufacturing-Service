@@ -112,17 +112,9 @@ export default function RequestEditor({
 						Manage {request.name}
 					</h1>
 					<p className="max-lg:block mt-2 max-lg:mb-6 text-sm">
-						{request.firstName} {request.lastName} placed this
-						request on{" "}
-						{request.submitTime.toLocaleDateString("en-us", {
-							weekday: "long",
-							month: "short",
-							day: "numeric",
-							hour: "numeric"
-						})}
-						.
+						{`${request.firstName} ${request.lastName} placed this request on ${formateDateWithTime(request.submitTime)}${request.needBy ? `, requested by ${formateDateWithTime(request.needBy)}` : ''}.`}
 					</p>
-					<p className="text-sm">#{request.id}</p>
+
 					{/* <p className="text-xs"><RegularSearchAlt className="inline"></RegularSearchAlt> Copy printing name to Clipboard</p> */}
 					{/* <p className="mt-2 opacity-50 text-sm">{request.firstName} {request.lastName} - {request.parts.map(p => p.model.name).join(", ")}</p> */}
 				</div>

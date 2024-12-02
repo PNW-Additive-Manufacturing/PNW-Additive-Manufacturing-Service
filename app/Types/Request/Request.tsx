@@ -1,3 +1,4 @@
+import { addDays } from "@/app/utils/TimeUtils";
 import Part, {
 	isAllComplete,
 	isAllPending,
@@ -17,6 +18,7 @@ export default interface Request {
 	lastName: string;
 	requesterEmail: string;
 	comments?: string;
+	needBy: Date;
 	quote?: {
 		isPaid: boolean;
 		paidAt: Date;
@@ -149,12 +151,14 @@ export function getTotalCost(request: RequestWithParts): {
 	};
 }
 
-export function getLeadTime(request: RequestWithParts) {
-	let maxLeadTime = 0;
-	for (const part of request.parts) {
-		if (part.filament && part.filament.leadTimeInDays > maxLeadTime) {
-			maxLeadTime = part.filament.leadTimeInDays;
-		}
-	}
-	return maxLeadTime;
+export function getLeadTimeInDays(leadTimes: number[]) {
+	return leadTimes.sort((a, b) => b - a).at(0);
+}
+
+export function getRequestLeadTimeInDays(request: RequestWithParts) {
+	return getLeadTimeInDays(request.parts.map(p => p.filament) as any);
+}
+
+export function getLeadTimeDate(currentDate: Date, leadTimes: number[]): Date {
+	return leadTimes.length > 0 ? addDays(currentDate, getLeadTimeInDays(leadTimes)!) : currentDate;
 }

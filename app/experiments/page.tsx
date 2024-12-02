@@ -5,6 +5,7 @@ import FilamentServe from "../Types/Filament/FilamentServe";
 import FilamentBlock from "./FilamentBlock";
 import PopupFilamentSelector from "../components/PopupFilamentSelector";
 import SendTestEmailForm from "./SendTestEmailForm";
+import DateTest from "./DateTest";
 
 export default async function Page() {
 	const availableFilaments = await FilamentServe.queryAll();
@@ -13,6 +14,8 @@ export default async function Page() {
 		<HorizontalWrap>
 			<h1 className="text-2xl">AMS Experiments</h1>
 			<br />
+
+			<DateTest></DateTest>
 
 			{/* <Farm availableFilaments={availableFilaments} /> */}
 

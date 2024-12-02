@@ -12,6 +12,8 @@ import { RequestServe } from "@/app/Types/Request/RequestServe";
 import AccountServe from "@/app/Types/Account/AccountServe";
 import Account from "@/app/Types/Account/Account";
 import { getModelPath } from "@/app/files";
+import FilamentServe from "@/app/Types/Filament/FilamentServe";
+import { addDays, addMinutes } from "@/app/utils/TimeUtils";
 
 const uploadDir = path.join(process.cwd(), "uploads", "stl");
 
@@ -50,6 +52,8 @@ export async function requestPart(prevState: string, formData: FormData) {
 	let material = formData.getAll("material") as string[];
 	let quantity = formData.getAll("quantity") as string[];
 	let notesPerPart = formData.getAll("notes") as string[];
+
+	const needBy = new Date(formData.get("need-by") as string);
 
 	requestName = requestName.trim();
 	if (requestName == "" && files != null) {
@@ -105,13 +109,23 @@ export async function requestPart(prevState: string, formData: FormData) {
 		return "Error, server cannot create uploads folder, try again later!";
 	}
 
+	const createdAt = new Date();
+
+	console.log(needBy);
+
+	if (createdAt > needBy)
+	{
+		// Cheeky, should almost never happen.
+		return "You are requesting your parts to be ready in the past, update when you need these parts.";
+	}
+
 	let requestId: number;
 
 	//update database
 	try {
 		let success = await db.begin(async (sql) => {
 			const request =
-				await sql`insert into request (name, owneremail, comments) values (${requestName}, ${account.email}, ${notes}) returning id`;
+				await sql`insert into request (name, owneremail, comments, needby) values (${requestName}, ${account.email}, ${notes}, ${needBy}) returning id`;
 
 			requestId = Number.parseInt(request[0].id);
 
@@ -129,14 +143,15 @@ export async function requestPart(prevState: string, formData: FormData) {
 					throw new Error("Quantity must at least be one!");
 				}
 
-				// TODO: Replace separate filament queries with singular.
-				const filamentId =
-					await sql`select id from filament where ColorName=${color[i]} and Material=${material[i]} and InStock=true`;
+				const filament = await FilamentServe.queryIdByNameAndMaterial(color[i], material[i], true);
+				if (filament == undefined) {
+					throw new Error(`${color[i]} ${material[i]} is not in stock!`);
+				}
 
-				//if no filament with matching color and material was found,
-				//check if the user specified the 'Other' option in the web page (empty string == other)
-				if (filamentId.length === 0 && color && material) {
-					throw new Error(`No ${color} ${material} in stock`);
+				if (addDays(createdAt, filament.leadTimeInDays) > needBy)
+				{
+					// This is bad news for the requester - we aren't going to do anything about it just yet.
+					console.log("MEANIEEEE");
 				}
 
 				const modelRow =
@@ -155,13 +170,9 @@ export async function requestPart(prevState: string, formData: FormData) {
 				fs.writeFileSync(modelPath, buffer as any);
 
 				const partId = await sql`
-				insert into part (requestid, modelid, quantity, assignedfilamentid) 
-				values (
-					${requestId}, ${modelId}, ${quantity[i]}, ${
-					!filamentId ? null : filamentId[0].id
-				}
-				) 
-				returning id;
+					insert into part (requestid, modelid, quantity, assignedfilamentid) 
+					values (${requestId}, ${modelId}, ${quantity[i]}, ${filament.id}) 
+					returning id;
 				`;
 
 				console.log(partId);

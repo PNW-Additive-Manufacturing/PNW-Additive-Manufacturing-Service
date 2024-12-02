@@ -38,7 +38,7 @@ export function Input({
 			<Label content={label}></Label>
 			<input
 				required={required}
-				className="w-full"
+				className="lg:text-sm w-full"
 				id={id}
 				name={name}
 				type={type}
@@ -77,7 +77,7 @@ export function InputCheckbox({
 			<label className="mb-0 text-nowrap">{label}</label>
 			<input
 				required={required}
-				className="outline-none border-none w-5 h-5 mb-0"
+				className="lg:text-sm outline-none border-none w-5 h-5 mb-0"
 				id={id}
 				name={name}
 				type="checkbox"
@@ -113,10 +113,10 @@ export function InputBig({
 			style={style}>
 			{label && <p className="uppercase br-2">{label}</p>}
 			<textarea
-				className="box-border resize-y w-full mb-0"
+				className="lg:text-sm box-border resize-y w-full mb-0"
 				id={id}
 				name={name}
-				rows={4}
+				rows={5}
 				maxLength={max}
 				placeholder={placeholder}></textarea>
 		</div>

@@ -42,10 +42,13 @@ export default class FilamentServe {
 
 	public static async queryIdByNameAndMaterial(
 		filamentColorName: string,
-		filamentMaterial: string
+		filamentMaterial: string,
+		inStock?: boolean
 	): Promise<Filament | undefined> {
+		inStock = inStock == undefined ? true : inStock;
+
 		const query =
-			await db`SELECT * FROM Filament WHERE ColorName=${filamentColorName} AND Material=${filamentMaterial}`;
+			await db`SELECT * FROM Filament WHERE ColorName=${filamentColorName} AND Material=${filamentMaterial} AND InStock=${inStock}`;
 		const filamentRow = query.at(0);
 		if (filamentRow == undefined) return;
 

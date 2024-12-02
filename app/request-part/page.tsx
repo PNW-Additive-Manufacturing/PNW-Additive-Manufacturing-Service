@@ -17,8 +17,8 @@ export default async function Request() {
 
 	return (
 		<>
-			<HorizontalWrap>
-				<div className="max-lg:px-4 mb-6">
+			<HorizontalWrap className="mb-12">
+				<div className="mb-6">
 					<h1 className="w-fit text-2xl font-normal mb-2">
 						Fill out a Request
 					</h1>
@@ -27,12 +27,6 @@ export default async function Request() {
 						designs, we use top-notch consumer 3D Printers to ensure
 						an outstanding result of your models. You can view our <Link className="underline" target="_blank" href={"/materials"}>materials we have on hand</Link> to choose the right process and material for your parts.
 					</p>
-					<ul className="mt-3 text-sm">
-						<li>Uploaded models must adhere to <Link className="underline" href={"https://formlabs.com/blog/design-for-manufacturing-with-3d-printing/"} target="_blank">3D Printing Design for Manufacturing (DFM) principles</Link>; otherwise, they may be deemed unprintable.</li>
-						<li>Submissions must not contain NSFW content, including weapons or inappropriate material and are prohibited from being resold individually.</li>
-						<li>Uploaded models will be stored securely until the end of the academic year.</li>
-						<li>Refunds must be processed in-person and require a valid reason other than design errors.</li>
-					</ul>
 				</div>
 				<RequestPartForm
 					filaments={filaments}

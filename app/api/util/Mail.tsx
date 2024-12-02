@@ -6,7 +6,7 @@ import nodemailer from "nodemailer";
 import DOMPurify from "isomorphic-dompurify";
 import getConfig from "@/app/getConfig";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
-import { formateDate } from "./Constants";
+import { formateDate, formateDateWithTime } from "./Constants";
 import { RequestServe } from "@/app/Types/Request/RequestServe";
 import { randomUUID } from "crypto";
 import { WalletTransaction } from "@/app/Types/Account/Wallet";
@@ -195,7 +195,7 @@ export async function requestCompletedHTML(request: RequestWithParts, trackingId
 export async function maintainerRequestReceived(request: RequestWithParts) {
 	return emailTemplate(`
 		<p style="font-family: inherit; color: rgb(64, 64, 64); font-size: medium;">
-			${request.firstName} ${request.lastName} has submitted a new request for ${request.name}.
+			${request.firstName} ${request.lastName} has submitted a new request for ${request.name}${request.needBy && ` expected by ${formateDateWithTime(request.needBy)}`}.
 		</p>
 		<a href=${`${envConfig.hostURL}/dashboard/maintainer/orders/${request.id}`} target="_blank" style="font-family: inherit; text-decoration:none; height: fit-content; width: fit-content; display: block;">
 			<button style="font-family: inherit; text-decoration: none; border-radius: 5px; padding: 1rem 1.2rem 1rem 1.2rem; padding-top: 12px; padding-bottom: 12px; display: block; margin-bottom: 0px; outline: none; border: none; background-color: #2b2b2b; color: white; font-size: large; font-weight: 500; text-wrap: nowrap; width: auto; font-size: small;">Manage Request</button>

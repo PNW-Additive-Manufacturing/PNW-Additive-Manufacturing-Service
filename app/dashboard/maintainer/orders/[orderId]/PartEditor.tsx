@@ -402,7 +402,7 @@ export default function PartEditor({
 											<div className="text-lg text-wrap hover:fill-pnw-gold hover:text-pnw-gold hover:cursor-pointer" onClick={() => {
 												navigator.clipboard
 													.writeText(part.model.name)
-													.then(() => toast.success(`Part copied to clipboard!`, { autoClose: 1000 }));
+													.then(() => toast.success(`Part name copied to clipboard!`, { autoClose: 1000 }));
 											}}>
 												{part.model.name}
 												{/* <FaRegCopy className="inline fill-inherit mb-1" style={{ padding: "3px" }}></FaRegCopy> */}

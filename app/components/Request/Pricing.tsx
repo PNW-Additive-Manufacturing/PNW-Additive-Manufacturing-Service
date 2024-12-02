@@ -1,7 +1,7 @@
 import { formateDate, formateDateWithTime } from "@/app/api/util/Constants";
 import { isRefunded } from "@/app/Types/Part/Part";
 import {
-	getLeadTime,
+	getLeadTimeInDays,
 	getTotalCost,
 	hasQuote,
 	isAllPriced,
@@ -23,7 +23,7 @@ export default function RequestPricing({
 		);
 
 	const costs = getTotalCost(request);
-	const leadTime = getLeadTime(request);
+	const leadTime = getLeadTimeInDays(request.parts.map(p => p.filament!.leadTimeInDays));
 
 	return (
 		<div className="print:p-6">
@@ -130,12 +130,16 @@ export default function RequestPricing({
 				</span>
 			</p>
 
-			<p className="print:hidden text-sm font-light flex justify-between mt-4">
-				<span className="text-nowrap">Lead-Time</span>
-				<span className="text-right w-full">
-					{leadTime} {leadTime > 1 ? "Days" : "Day"}
-				</span>
-			</p>
+			{leadTime && <>
+
+				<p className="print:hidden text-sm font-light flex justify-between mt-4">
+					<span className="text-nowrap">Lead-Time</span>
+					<span className="text-right w-full">
+						{leadTime} {leadTime > 1 ? "Days" : "Day"}
+					</span>
+				</p>
+
+			</>}
 			{request.quote && <p className="print:hidden text-sm font-light flex justify-between">
 				<span className="text-nowrap">Estimated Completion </span>
 				<span className="text-right w-full">

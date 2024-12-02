@@ -62,7 +62,6 @@ input:focus, textarea:focus{
   outline:solid 2px black;
 }
 input, button, textarea, select {
-  border-radius: 5px;
   padding: 0.8rem 1.2rem 0.8rem 1.2rem;
 }
 button 
@@ -70,11 +69,13 @@ button
 	font-size: 1rem;
   line-height: 1.5rem;
 	font-weight: 300;
+  border-radius: 0.25rem;
 }
 input, textarea, select {
   border: 0px;
   font-weight: normal;
   background-color: rgb(var(--background-rgb));
+  border-radius: 0.125rem;
 }
 input, textarea, select 
 {
@@ -141,7 +142,7 @@ select[multiple]
 	width: 100%;
 	padding: 4px;
 	border-left: 4px solid var(--pnw-gold);
-	border-radius: 0px;
+  border-radius: 0.125rem;
 }
 
 button {

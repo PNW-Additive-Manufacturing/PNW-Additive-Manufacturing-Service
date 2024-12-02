@@ -19,6 +19,7 @@ export class RequestServe {
 		query: RequestQuery
 	): Promise<RequestWithParts[]> {
 		const dbQuery = await db`SELECT r.Id, 
+		r.NeedBy,
 		r.Name, 
 		r.Comments,
 		r.OwnerEmail,
@@ -65,6 +66,7 @@ export class RequestServe {
 				fulfilledAt: requestRow.fulfilledat,
 				submitTime: requestRow.submittime,
 				requesterEmail: requestRow.owneremail,
+				needBy: requestRow.needby,
 				quote:
 					requestRow.totalpriceincents != undefined
 						? {
@@ -100,6 +102,7 @@ export class RequestServe {
 		id: string | number
 	): Promise<RequestWithParts | undefined> {
 		const query = await db`SELECT r.Id,
+	r.NeedBy,
 	r.Name,
 	r.Comments,
 	r.OwnerEmail,
@@ -135,6 +138,7 @@ export class RequestServe {
 			fulfilledAt: requestRow.fulfilledat,
 			submitTime: requestRow.submittime,
 			requesterEmail: requestRow.owneremail,
+			needBy: requestRow.needby,
 			quote:
 				requestRow.totalpriceincents != undefined
 					? {
@@ -165,6 +169,7 @@ export class RequestServe {
 
 	public static async fetchAll(): Promise<RequestWithParts[]> {
 		const query = await db`SELECT r.Id,
+	r.NeedBy,
 	r.Name,
 	r.Comments,
 	r.OwnerEmail,
@@ -199,6 +204,7 @@ export class RequestServe {
 				requesterEmail: requestRow.owneremail,
 				isFulfilled: requestRow.fulfilledat != undefined,
 				fulfilledAt: requestRow.fulfilledat,
+				needBy: requestRow.needby,
 				quote:
 					requestRow.totalpriceincents != undefined
 						? {
@@ -232,6 +238,7 @@ export class RequestServe {
 		accountEmail: string
 	): Promise<RequestWithParts[]> {
 		const query = await db`SELECT r.Id,
+	r.NeedBy,
 	r.Name,
 	r.Comments,
 	r.OwnerEmail,
@@ -267,6 +274,7 @@ export class RequestServe {
 				fulfilledAt: requestRow.fulfilledat,
 				submitTime: requestRow.submittime,
 				requesterEmail: requestRow.owneremail,
+				needBy: requestRow.needby,
 				quote:
 					requestRow.totalpriceincents != undefined
 						? {

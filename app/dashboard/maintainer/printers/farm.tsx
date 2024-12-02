@@ -70,7 +70,7 @@ export default function Farm({
 			) : (
 				<>
 					<div className="flex gap-6">
-						<div className="w-full grid grid-cols-3 row-auto gap-4 gap-y-4 h-fit">
+						<div className="w-full grid lg:grid-cols-3 row-auto gap-4 gap-y-4 h-fit">
 							{machines.map((p) => (
 								<Machine
 									{...p}
