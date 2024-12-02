@@ -65,7 +65,7 @@ export async function createAccount(
 		throw new Error("Failed to add new user!");
 	}
 
-	await login(
+	return await login(
 		email,
 		permission as AccountPermission,
 		firstName,
@@ -123,7 +123,7 @@ export async function attemptLogin(email: string, password: string) {
 		throw new Error("We couldn't log you in. Please check your email and password and try again.");
 	}
 
-	await login(email, permission, firstname, lastname, isemailverified, isBanned);
+	return await login(email, permission, firstname, lastname, isemailverified, isBanned);
 }
 
 export async function checkIfPasswordCorrect(
@@ -173,13 +173,17 @@ export async function login(
 		expireDate
 	);
 
+	return token;
+}
+
+export function setSessionTokenCookie(token: string)
+{
 	//session cookie cannot be accessed via client-side javascript, making this safer than
 	//just returning the token via JSON response.
 	cookies().set(appConfig.sessionCookie, token, {
 		httpOnly: true, //cannot be accessed via client-side Javascript
 		sameSite: "lax", //can only be sent to same website
-		expires: expireDate || addMinutes(new Date(), 10080),
+		expires: addMinutes(new Date(), 10080),
 		secure: false //TODO: set to true once we have HTTPS connection
 	});
-	return token;
 }

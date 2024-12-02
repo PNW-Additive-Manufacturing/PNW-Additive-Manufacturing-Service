@@ -22,6 +22,7 @@ export async function middleware(request: NextRequest) {
 		nextUrl.startsWith("/robots.txt") ||
 		nextUrl.startsWith("/materials") ||
 		nextUrl.startsWith("/user/login") ||
+		nextUrl.startsWith("/api/login") ||
 		nextUrl.startsWith("/not-found") ||
 		nextUrl.startsWith("/user/create-account") ||
 		nextUrl.startsWith("/user/forgot-password") ||

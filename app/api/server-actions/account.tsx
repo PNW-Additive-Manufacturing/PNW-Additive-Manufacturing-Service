@@ -1,6 +1,6 @@
 "use server";
 
-import { attemptLogin, checkIfPasswordCorrect, createAccount, login, validatePassword } from "@/app/api/util/AccountHelper";
+import { attemptLogin, checkIfPasswordCorrect, createAccount, login, setSessionTokenCookie, validatePassword } from "@/app/api/util/AccountHelper";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getJwtPayload, retrieveSafeJWTPayload } from "@/app/api/util/JwtHelper";
@@ -21,10 +21,10 @@ const envConfig = getConfig();
 
 export async function tryLogin(prevState: string, formData: FormData) {
 	try {
-		await attemptLogin(
-			formData.get("email") as string,
-			formData.get("password") as string
-		);
+		const token = await attemptLogin(formData.get("email") as string, formData.get("password") as string);
+
+		setSessionTokenCookie(token);
+
 		revalidatePath("/");
 	} catch (e: any) {
 		//e must be any because Typescript is stupid when it comes to try catch
@@ -73,7 +73,7 @@ export async function tryCreateAccount(prevState: string, formData: FormData) {
 	}
 
 	try {
-		await createAccount(
+		const token = await createAccount(
 			parsedData.data.email,
 			parsedData.data.firstName,
 			parsedData.data.lastName,
@@ -81,6 +81,9 @@ export async function tryCreateAccount(prevState: string, formData: FormData) {
 			AccountPermission.User,
 			parsedData.data.yearOfStudy
 		);
+
+		setSessionTokenCookie(token);
+
 		revalidatePath("/");
 	} catch (e: any) {
 		//e must be any because Typescript is stupid when it comes to try catch
