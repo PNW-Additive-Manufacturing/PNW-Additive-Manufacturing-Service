@@ -1,6 +1,7 @@
 import getConfig from "@/app/getConfig";
 import { MachineData } from "../../components/Machine";
 import "server-only";
+import { resError, resOk } from "../APIResponse";
 
 const env = getConfig();
 
@@ -45,4 +46,20 @@ export async function findMachineWithFile(fileName: string): Promise<MachineData
 	if (machines == null) return undefined;
 
 	return machines.find(m => m.filename && m.filename.trim().toLowerCase() == fileName.trim().toLowerCase());
+}
+
+export async function controlMachine(identifier: string, action: "pause" | "stop" | "resume") {
+	try {
+		let actionRes = await (await fetch(`${env.farmAPIUrl}/printers/${identifier}/control/${action}`, { cache: "no-cache" })).json();
+
+		if (!actionRes.success as boolean) {
+			throw new Error("Machine action was not successful!");
+		}
+	}
+	catch (ex) {
+		console.error(ex);
+		return resError(ex as string);
+	}
+
+	return resOk();
 }
