@@ -39,6 +39,8 @@ export async function middleware(request: NextRequest) {
 	) {
 		return NextResponse.next();
 	}	
+
+	if (nextUrl.startsWith("/api/farm")) return farmMiddleware(request);
 	
 	//because this is the only way NextJS will allow me to delete cookies before
 	//a GET request to /logout is completed, the logout feature is here.
@@ -146,11 +148,6 @@ export async function middleware(request: NextRequest) {
 			envConfig.joinHostURL(`/dashboard/${permission}`)
 		);
 	}
-
-	if (nextUrl.startsWith("/download/model"))
-		return modelDownloadMiddleware(request);
-
-	if (nextUrl.startsWith("/api/farm")) return farmMiddleware(request);
 
 	return NextResponse.next();
 }
