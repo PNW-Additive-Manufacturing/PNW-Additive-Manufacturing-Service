@@ -27,8 +27,7 @@ export async function findMachinesWithFilament(
 	try {
 		printerData = await (
 			await fetch(
-				`${env.farmAPIUrl
-				}/find-available?material=${material.toUpperCase()}&color=${colorHex}`,
+				`${env.farmAPIUrl}/find-available?material=${material.toUpperCase()}&color=${colorHex}`,
 				{ cache: "no-cache" }
 			)
 		).json();
@@ -50,7 +49,7 @@ export async function findMachineWithFile(fileName: string): Promise<MachineData
 
 export async function controlMachine(identifier: string, action: "pause" | "stop" | "resume") {
 	try {
-		let actionRes = await (await fetch(`${env.farmAPIUrl}/printers/${identifier}/control/${action}`, { cache: "no-cache" })).json();
+		let actionRes = await (await fetch(`${env.farmAPIUrl}/printers/${identifier}/control/${action}`, { cache: "no-cache", method: "POST" })).json();
 
 		if (!actionRes.success as boolean) {
 			throw new Error("Machine action was not successful!");
@@ -60,6 +59,5 @@ export async function controlMachine(identifier: string, action: "pause" | "stop
 		console.error(ex);
 		return resError(ex as string);
 	}
-
 	return resOk();
 }
