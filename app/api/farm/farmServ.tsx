@@ -47,6 +47,21 @@ export async function findMachineWithFile(fileName: string): Promise<MachineData
 	return machines.find(m => m.filename && m.filename.trim().toLowerCase() == fileName.trim().toLowerCase());
 }
 
+export async function printOnMachine(identifier: string, filename: string) {
+	try {
+		let actionRes = await (await fetch(`${env.farmAPIUrl}/printers/${identifier}/control/start?fileToUse=${filename}`, { cache: "no-cache", method: "POST" })).json();
+
+		if (!actionRes.success as boolean) {
+			throw new Error("Machine start print was not successful!");
+		}
+	}
+	catch (ex) {
+		console.error(ex);
+		return resError(ex as string);
+	}
+	return resOk();
+}
+
 export async function controlMachine(identifier: string, action: "pause" | "stop" | "resume") {
 	try {
 		let actionRes = await (await fetch(`${env.farmAPIUrl}/printers/${identifier}/control/${action}`, { cache: "no-cache", method: "POST" })).json();
