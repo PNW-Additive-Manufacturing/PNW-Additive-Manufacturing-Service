@@ -52,7 +52,7 @@ export async function printOnMachine(identifier: string, filename: string) {
 		let actionRes = await (await fetch(`${env.farmAPIUrl}/printers/${identifier}/control/start?fileToUse=${filename}`, { cache: "no-cache", method: "POST" })).json();
 
 		if (!actionRes.success as boolean) {
-			throw new Error("Machine start print was not successful!");
+			throw new Error(actionRes.message as string);
 		}
 	}
 	catch (ex) {
@@ -67,7 +67,7 @@ export async function controlMachine(identifier: string, action: "pause" | "stop
 		let actionRes = await (await fetch(`${env.farmAPIUrl}/printers/${identifier}/control/${action}`, { cache: "no-cache", method: "POST" })).json();
 
 		if (!actionRes.success as boolean) {
-			throw new Error("Machine action was not successful!");
+			throw new Error(actionRes.message as string);
 		}
 	}
 	catch (ex) {
