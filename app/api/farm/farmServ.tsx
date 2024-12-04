@@ -56,8 +56,8 @@ export async function printOnMachine(identifier: string, filename: string) {
 		}
 	}
 	catch (ex) {
-		console.error(ex);
-		return resError(ex as string);
+		console.error((ex as object).toString());
+		return resError((ex as object).toString());
 	}
 	return resOk();
 }
@@ -71,8 +71,8 @@ export async function controlMachine(identifier: string, action: "pause" | "stop
 		}
 	}
 	catch (ex) {
-		console.error(ex);
-		return resError(ex as string);
+		console.error((ex as object).toString());
+		return resError((ex as object).toString());
 	}
 	return resOk();
 }
