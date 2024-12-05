@@ -382,7 +382,7 @@ export function RequestPartForm({
 
 														console.log(maxValue);
 
-														if (maxValue < 10 || (p.Geometry.boundingBox!.max.z - p.Geometry.boundingBox!.min.z <= 3)) {
+														if (maxValue < 10 || (p.Geometry.boundingBox!.max.z - p.Geometry.boundingBox!.min.z <= 0.8)) {
 															setTooSmallPromptCount(tooSmallPromptCount + 1);
 															toast.error(<span>The model {p.ModelName} is too small. Ensure you have exported the model using Millimeters!<br />Refer to <Link target="_blank" href={"https://youtu.be/dYo6kzmtLw0?si=kGcNq7dc2Hynqad_&t=375"} className="underline">Export STL in Millimeters using Onshape</Link></span>);
 															return false;

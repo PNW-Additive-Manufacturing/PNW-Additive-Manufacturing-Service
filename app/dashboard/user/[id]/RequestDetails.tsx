@@ -352,7 +352,7 @@ export default function RequestDetails({
 									</div>
 								</div>
 
-								<button className="text-sm font-light text-left " onClick={() => handlePrint()}>Download Invoice<FaRegFilePdf className="fill-white ml-2 mb-0.5 inline"></FaRegFilePdf></button>
+								{!isPaid && <button className="text-sm font-light text-left w-full" onClick={() => handlePrint()}>Download Invoice<FaRegFilePdf className="fill-white ml-2 mb-0.5 inline"></FaRegFilePdf></button>}
 
 								<form action={payFormAction}>
 									<input

@@ -233,10 +233,10 @@ export default async function Home() {
 							</div>
 						</div>
 						<hr style={{ marginBottom: "0px" }} />
-						<div className="grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-5 gap-8 mt-6">
+						<div className="grid 2xl:grid-cols-5 gap-8 mt-6">
 							<div className="out p-4 w-full rounded-md shadow-sm">
 								<div className="w-full text-sm">
-									<Image src="/assets/bambu_x1e_with_ams.png" alt="Bambu Lab A1 3D Printer" width={720} height={720} className="rounded-md mb-4 w-full h-48 object-cover object-bottom" />
+									<Image src="/assets/bambu_x1e_with_ams.png" alt="Bambu Lab A1 3D Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom px-6" style={{ aspectRatio: "auto 3/4" }} />
 									<h2 className="text-lg text-pnw-gold font-semibold">FDM Bambu Lab</h2>
 									<p className="mt-2">Perfect for prototyping medium-strength parts, offering a cost-effective solution for functional prototypes and design testing.</p>
 								</div>
@@ -244,7 +244,7 @@ export default async function Home() {
 
 							<div className="bg-background p-4 w-full rounded-md">
 								<div className="w-full opacity-75 text-sm">
-									<Image src="/assets/mars4ultra.png" alt="Mars 4 Ultra Printer" width={720} height={720} className="rounded-md mb-4 w-full h-48 object-cover object-bottom" />
+									<Image src="/assets/mars4ultra.png" alt="Mars 4 Ultra Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom px-6" style={{ aspectRatio: "auto 3/4" }} />
 									<h2 className="text-lg font-semibold">Resin 3D Printing</h2>
 									<p className="mt-2">Coming Spring 2025</p>
 									<p className="mt-2">Optimal for creating detailed and smooth-surfaced models, ideal for small intricate parts.</p>
@@ -253,7 +253,7 @@ export default async function Home() {
 
 							<div className="bg-background p-4 w-full rounded-md">
 								<div className="w-full opacity-75 text-sm">
-									<Image src="/assets/metalx.png" alt="Metal X Printer" width={720} height={720} className="rounded-md mb-4 w-full h-48 object-cover object-bottom" />
+									<Image src="/assets/metalx.png" alt="Metal X Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom px-6" style={{ aspectRatio: "auto 3/4" }} />
 									<h2 className="text-lg font-semibold">Metal FFF Metal X</h2>
 									{/* <p className="mt-2 flex text-nowrap gap-2">Provided by <Image className="inline w-full h-fit opacity-75" src={"/assets/logos/markforged.png"} alt={"Markforged"} width={120} height={120} /></p> */}
 									<p className="mt-2">Coming Spring 2025</p>
@@ -261,11 +261,9 @@ export default async function Home() {
 								</div>
 							</div>
 
-							{/* <div className="bg-background p-4 w-full rounded-md"></div> */}
-
 							{/* <div className="bg-background p-4 w-full rounded-md">
 								<div className="w-full opacity-75 text-sm">
-									<Image src="/assets/fuse_1_store_thumb_2x_1.webp" alt="FormLabs Fuse 1+ 30W" width={720} height={720} className="rounded-md mb-4 w-full h-48 object-cover" />
+									<Image src="/assets/fuse_1_store_thumb_2x_1.png" alt="FormLabs Fuse 1+ 30W" width={720} height={720} className="rounded-md mb-4 object-cover px-4" style={{ aspectRatio: "auto 3/4" }} />
 									<h2 className="text-lg font-semibold">SLS Fuse 1+ 30W</h2>
 									<p className="mt-2">Looking for Funding</p>
 									<p className="mt-2">Designed for industrial-quality production with a range of high-performance nylon powders.</p>
