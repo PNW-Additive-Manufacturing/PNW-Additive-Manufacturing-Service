@@ -44,7 +44,7 @@ export async function createAccount(
 		res = await db.begin(async (db) => {
 			const accountRow =
 				await db`insert into account (email, firstname, lastname, password, yearOfStudy, department, permission)
-      			values (${email}, ${firstName}, ${lastName}, ${hash}, ${yearOfStudy}, ${department}, ${permission})`;
+      			values (${email}, ${firstName}, ${lastName}, ${hash}, ${yearOfStudy}, ${department!}, ${permission})`;
 
 			const verificationCode = crypto.randomBytes(16).toString("hex");
 			await db`insert into accountverificationcode (accountemail, code) VALUES (${email}, ${verificationCode})`;
