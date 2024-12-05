@@ -29,6 +29,7 @@ export default interface Account {
 	balanceInDollars: number;
 	isTwoStepAuthVerified: boolean;
 	yearOfStudy: string;
+	department?: string;
 	isBanned: boolean;
 }
 

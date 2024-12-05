@@ -6,12 +6,15 @@ import { tryCreateAccount } from "@/app/api/server-actions/account";
 import HorizontalWrap from "@/app/components/HorizontalWrap";
 import Image from "next/image";
 import { ProgressBar } from "@/app/components/ProgressBar";
+import { RiCoupon2Fill } from "react-icons/ri";
+import { useEffect, useRef, useState } from "react";
+import Confetti from "@/app/components/Confetti";
 
 function SubmitButton() {
 	const { pending } = useFormStatus();
 	return (
 		<input
-			className="mb-0"
+			className="mb-0 text-left"
 			type="submit"
 			value={pending ? "Creating Account..." : "Create Account"}
 		/>
@@ -81,7 +84,7 @@ export default function CreateAccount() {
 							/>
 						</div>
 						<label>Year of Study</label>
-						<select required id="year-of-study" name="year-of-study" className="w-full block">
+						<select title="Year of Study" required id="year-of-study" name="year-of-study" className="w-full block lg:text-sm">
 							<option value="Freshman" id="freshman">
 								Freshman
 							</option>
@@ -104,6 +107,27 @@ export default function CreateAccount() {
 								Professor
 							</option>
 						</select>
+
+						<label>Primary College</label>
+						<select title="Department" id="department" name="department" className="w-full block lg:text-sm">
+							<option>Select your College</option>
+							<option value="Engineering and Sciences" id="Engineering and Sciences">
+								Engineering and Sciences
+							</option>
+							<option value="Technology" id="Technology">
+								Technology
+							</option>
+							<option value="Business" id="Business">
+								Business
+							</option>
+							<option value="Nursing" id="Nursing">
+								Nursing
+							</option>
+							<option value="Humanities, Education and Social Sciences" id="Humanities, Education and Social Sciences">
+								Humanities, Education and Social Sciences
+							</option>
+						</select>
+
 						<Input
 							required={true}
 							label="Password"
@@ -124,6 +148,7 @@ export default function CreateAccount() {
 							name="confirm-password"
 							placeholder="Confirm your Password"
 						/>
+
 						<SubmitButton />
 						<p className="text-sm text-red-500">{error}</p>
 					</form>

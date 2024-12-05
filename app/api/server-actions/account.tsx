@@ -52,7 +52,8 @@ const createAccountSchema = z.object({
 	firstName: z.string(),
 	lastName: z.string(),
 	password: z.string(),
-	yearOfStudy: z.string()
+	yearOfStudy: z.string(),
+	department: z.string().optional()
 });
 export async function tryCreateAccount(prevState: string, formData: FormData) {
 	const parsedData = createAccountSchema.safeParse({
@@ -60,7 +61,8 @@ export async function tryCreateAccount(prevState: string, formData: FormData) {
 		firstName: formData.get("firstname"),
 		lastName: formData.get("lastname"),
 		password: formData.get("password"),
-		yearOfStudy: formData.get("year-of-study")
+		yearOfStudy: formData.get("year-of-study"),
+		department: formData.get("department")
 	});
 	if (!parsedData.success) return `Schema Failed: ${parsedData.error}`;
 
@@ -79,7 +81,8 @@ export async function tryCreateAccount(prevState: string, formData: FormData) {
 			parsedData.data.lastName,
 			parsedData.data.password,
 			AccountPermission.User,
-			parsedData.data.yearOfStudy
+			parsedData.data.yearOfStudy,
+			parsedData.data.department
 		);
 
 		setSessionTokenCookie(token);
@@ -226,6 +229,7 @@ export async function sendPasswordResetEmail(
 	if (!parsedEmail.success) return resError(parsedEmail.error.toString());
 
 	try {
+		// TODO: Don't throw SQL error when account does not exist.
 		return resOkData(await AccountServe.sendPasswordReset(parsedEmail.data));
 	} catch (error) {
 		console.error(error);

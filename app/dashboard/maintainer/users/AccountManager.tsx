@@ -48,7 +48,8 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
         if (content) {
             newFilteredAccounts = accounts.filter(a =>
                 `${a.firstName} ${a.lastName}`.toLowerCase().includes(content.toLowerCase())
-                || a.email.toLowerCase().includes(content.toLowerCase()));
+                || a.email.toLowerCase().includes(content.toLowerCase())
+                || (a.department && a.department.toLowerCase().includes(content.toLowerCase())));
         }
 
         if (permission) {
@@ -79,7 +80,7 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
 
                 {/* <label>Search</label> */}
                 <div className="lg:flex gap-4">
-                    <input type="text" className="p-2 text-sm rounded-sm px-3" placeholder="Search name or Email" onChange={(ev) => applyFilters(ev.currentTarget.value)}></input>
+                    <input type="text" className="p-2 text-sm rounded-sm px-3" placeholder="Search name, email or department" onChange={(ev) => applyFilters(ev.currentTarget.value)}></input>
                     <select title="Permission" ref={permissionFilterElemRef as any} className="w-fit text-sm" defaultValue={"everyone"} onChange={(ev) => applyFilters(undefined, ev.currentTarget.value as any)}>
                         <option value="everyone">Everyone</option>
                         <option value={AccountPermission.Admin}>Admin</option>
@@ -104,26 +105,25 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
 
                 {selectedAccount ? <>
 
-                    <h2 className="lg:flex gap-2 justify-between text-xl font-normal mb-2">
-                        {selectedAccount.firstName} {selectedAccount.lastName} ({selectedAccount.yearOfStudy})
+                    <h2 className="lg:flex gap-2 justify-between text-xl font-normal mb-2 text-pnw-gold">{selectedAccount.firstName} {selectedAccount.lastName}</h2>
 
-                        <span>
-                            Balance ${selectedAccount.balanceInDollars.toFixed(2)}
-                        </span>
+                    {/* <form className="inline text-sm">
+                        <input type="hidden" name="user-email" value={selectedAccount.email} />
+                        <select className="outline-none inline w-fit mb-0" name="permission-admin" defaultValue={selectedAccount.permission}>
+                            <option key={AccountPermission.Admin} value={AccountPermission.Admin}>Administrator</option>
+                            <option value={AccountPermission.Maintainer}>Maintainer</option>
+                            <option value={AccountPermission.User}>User</option>
+                        </select>
+                    </form> */}
 
-                        {/* <form className="inline text-sm">
-                            <input type="hidden" name="user-email" value={selectedAccount.email} />
-                            <select className="outline-none inline w-fit mb-0" name="permission-admin" defaultValue={selectedAccount.permission}>
-                                <option key={AccountPermission.Admin} value={AccountPermission.Admin}>Administrator</option>
-                                <option value={AccountPermission.Maintainer}>Maintainer</option>
-                                <option value={AccountPermission.User}>User</option>
-                            </select>
-                        </form> */}
+                    <label>Account Details</label>
+                    <ul>
+                        {selectedAccount.yearOfStudy && <li><p className="text-sm">Joined as {selectedAccount.yearOfStudy}</p></li>}
+                        {selectedAccount.department && <li><p className="text-sm">College of {selectedAccount.department}</p></li>}
+                        <li><p><a className="underline text-sm" href={`mailto:${selectedAccount.email}`}>Contact at {selectedAccount.email}</a></p></li>
+                    </ul>
 
-                    </h2>
-                    <p><a className="block text-pnw-gold text-sm" href={`mailto:${selectedAccount.email}`}>Contact at {selectedAccount.email}</a></p>
-
-                    <DropdownSection className="text-sm px-0 mt-2" name={`Manage Wallet`}>
+                    <DropdownSection className="text-sm px-0 mt-2" hidden={true} name={`${selectedAccount.firstName} ${selectedAccount.lastName} has \$${selectedAccount.balanceInDollars.toFixed(2)}`}>
 
                         <form action={addFundsAction}>
                             <div className="lg:flex gap-2">
@@ -139,7 +139,7 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
                                 </div>
                             </div>
                             <div className="flex items-center gap-2 px-0.5 py-3 text-sm">
-                                <input id="send-email" name="send-email" className="mb-0 outline-none w-3.5 h-3" type="checkbox" defaultChecked={true} />
+                                <input title="Send Email" id="send-email" name="send-email" className="mb-0 outline-none w-3.5 h-3" type="checkbox" defaultChecked={true} />
                                 <p>Send an email to {selectedAccount.firstName} with the receipt attached.</p>
                             </div>
                         </form>

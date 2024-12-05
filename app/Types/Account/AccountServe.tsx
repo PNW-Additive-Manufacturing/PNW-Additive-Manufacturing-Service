@@ -44,7 +44,8 @@ export default class AccountServe {
 				joinedAt: accountRow.joinedat,
 				isTwoStepAuthVerified: accountRow.istwostepauthverified,
 				yearOfStudy: accountRow.yearofstudy,
-				isBanned: accountRow.isbanned
+				isBanned: accountRow.isbanned,
+				department: accountRow.department
 			}
 		});
 	}
@@ -68,7 +69,8 @@ export default class AccountServe {
 				joinedAt: accountRow.joinedat,
 				isTwoStepAuthVerified: accountRow.istwostepauthverified,
 				yearOfStudy: accountRow.yearofstudy,
-				isBanned: accountRow.isbanned
+				isBanned: accountRow.isbanned,
+				department: accountRow.department
 			} as AccountWithTransactions;
 		}));
 	}
@@ -90,7 +92,8 @@ export default class AccountServe {
 			joinedAt: accountRow.joinedat,
 			isTwoStepAuthVerified: accountRow.istwostepauthverified,
 			yearOfStudy: accountRow.yearofstudy,
-			isBanned: accountRow.isbanned
+			isBanned: accountRow.isbanned,
+			department: accountRow.department
 		};
 	}
 
