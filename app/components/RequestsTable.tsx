@@ -1,8 +1,8 @@
 "use client";
 
-import { getRequestStatus, getRequestStatusColor, hasQuote, RequestWithParts } from "@/app/Types/Request/Request";
+import { getRequestStatus, getRequestStatusColor, hasQuote, isPrintingOnMachines, RequestWithParts } from "@/app/Types/Request/Request";
 import Table from "@/app/components/Table";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { APIData } from "@/app/api/APIResponse";
 import { InputCheckbox } from "@/app/components/Input";
 import Link from "next/link";
@@ -10,6 +10,11 @@ import ControlButton from "./ControlButton";
 import { AiOutlineReload } from "react-icons/ai";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import StatusPill from "./StatusPill";
+import usePrinters from "../hooks/usePrinters";
+import { AccountContext } from "../ContextProviders";
+import { MachineData } from "./Machine";
+import { AccountPermission } from "../Types/Account/Account";
+import { FiActivity } from "react-icons/fi";
 
 const requestsPerPage = 10;
 
@@ -20,6 +25,14 @@ export default function RequestsTable({ accountEmail }: { accountEmail?: string 
     const [pageNum, setPageNum] = useState(1);
     const [requests, setRequests] = useState<RequestWithParts[]>();
     const [selectedRequest, setSelectedRequest] = useState<number>();
+
+    const authContext = useContext(AccountContext);
+
+    let machines: MachineData[] | undefined = undefined;
+    if (authContext.isSingedIn && authContext.account!.permission != AccountPermission.User) {
+        const printersHook = usePrinters(false);
+        machines = printersHook.machines;
+    }
 
     function fetchRequests() {
         setIsFetchingRequests(true);
@@ -82,7 +95,9 @@ export default function RequestsTable({ accountEmail }: { accountEmail?: string 
                                             borderLeftColor:
                                                 getRequestStatusColor(r)
                                         }}>
-                                        <td className="w-fit max-lg:hidden" style={{ paddingRight: "0px" }}><Link href={rowLink}>{i + 1}</Link></td>
+                                        <td className="w-fit max-lg:hidden" style={{ paddingRight: "0px" }}>
+                                            <Link href={rowLink}>{i + 1}</Link>
+                                        </td>
                                         <td className="max-lg:hidden">
                                             <Link href={rowLink}>
                                                 {r.submitTime.toLocaleDateString(
@@ -99,7 +114,9 @@ export default function RequestsTable({ accountEmail }: { accountEmail?: string 
                                         {accountEmail == null && <td className="max-lg:hidden"><Link href={rowLink}>{r.firstName} {r.lastName}</Link></td>}
                                         <td><Link href={rowLink}>{r.name}</Link></td>
                                         <td>
-                                            <Link href={rowLink}><StatusPill context={getRequestStatus(r)} statusColor={getRequestStatusColor(r)}></StatusPill></Link>
+                                            <Link className="flex items-center gap-4" href={rowLink}>
+                                                <StatusPill context={getRequestStatus(r)} statusColor={getRequestStatusColor(r)}></StatusPill>
+                                            </Link>
                                         </td>
                                         <td>
                                             <Link href={rowLink}> {hasQuote(r) ?
@@ -108,6 +125,9 @@ export default function RequestsTable({ accountEmail }: { accountEmail?: string 
                                                     100
                                                 ).toFixed(2)}` : "Unquoted"}</Link>
                                         </td>
+                                        {machines && machines.length > 0 && isPrintingOnMachines(r, machines) &&
+                                            <td className="bg-pnw-gold-light">{<span className="font-light"><FiActivity className="inline stroke-pnw-gold" style={{ marginBottom: "3px" }} /> Printing on Machine</span>}</td>}
+
                                         {/* <td>
                                             <div className="ml-auto w-fit">
                                                 <Link

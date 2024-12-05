@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { Swatch } from "./Swatch";
 import FilamentSpoolIcon from "./icons/FilamentSpoolIcon";
@@ -28,6 +30,9 @@ export interface MachineData {
 	timeRemaining: string;
 }
 
+export function isBusy(machine: MachineData) {
+	return machine && (machine.status == "Printing" || machine.status == "Preparing" || machine.status == "Unknown" || machine.status == "Paused");
+}
 
 export function getMachineImageURL(model: string): string {
 	switch (model) {

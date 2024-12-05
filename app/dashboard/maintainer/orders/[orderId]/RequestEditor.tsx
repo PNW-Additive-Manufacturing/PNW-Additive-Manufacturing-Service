@@ -63,8 +63,6 @@ export default function RequestEditor({
 	const [fulfillState, fulfillAction] = useFormState(fulfillRequest, "");
 	const [deleteRequestError, deleteRequestAction] = useFormState(deleteRequest, "");
 
-	console.log(fulfillState);
-
 	const machineData = usePrinters(true, 60);
 
 	let printingMachines: string[] = [];

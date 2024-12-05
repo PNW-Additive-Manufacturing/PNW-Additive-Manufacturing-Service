@@ -73,7 +73,7 @@ export function AccountDetails({
 					{accountDetails.isSingedIn ? (
 						<>
 							<span className="text-nowrap">
-								${accountDetails.account!.balanceInDollars}{" "}
+								${accountDetails.account!.balanceInDollars.toFixed(2)}{" "}
 								{accountDetails.account!.firstName}{" "}
 								{accountDetails.account!.lastName}
 							</span>

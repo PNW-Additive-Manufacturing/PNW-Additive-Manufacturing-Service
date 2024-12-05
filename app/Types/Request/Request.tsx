@@ -7,6 +7,7 @@ import Part, {
 	PartStatus,
 	PartWithModel
 } from "../Part/Part";
+import { isBusy, MachineData } from "@/app/components/Machine";
 
 export type RequestWithParts = Request & { parts: PartWithModel[] };
 
@@ -161,4 +162,13 @@ export function getRequestLeadTimeInDays(request: RequestWithParts) {
 
 export function getLeadTimeDate(currentDate: Date, leadTimes: number[]): Date {
 	return leadTimes.length > 0 ? addDays(currentDate, getLeadTimeInDays(leadTimes)!) : currentDate;
+}
+
+export function isPrintingOnMachines(request: RequestWithParts, machines: MachineData[]): boolean {
+	for (var part of request.parts) {
+		if (machines.find(m => isBusy(m) && m.filename && m.filename.toLowerCase().includes(part.model.name.toLowerCase()))) {
+			return true;
+		}
+	}
+	return false;
 }
