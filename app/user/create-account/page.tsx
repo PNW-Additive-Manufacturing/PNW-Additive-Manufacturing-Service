@@ -8,7 +8,6 @@ import Image from "next/image";
 import { ProgressBar } from "@/app/components/ProgressBar";
 import { RiCoupon2Fill } from "react-icons/ri";
 import { useEffect, useRef, useState } from "react";
-import Confetti from "@/app/components/Confetti";
 
 function SubmitButton() {
 	const { pending } = useFormStatus();
