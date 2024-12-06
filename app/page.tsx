@@ -75,36 +75,33 @@ export default async function Home() {
 								<li>Utilize rapid prototyping to create custom connectors and mounts.</li>
 								<li>Produce creative models, prosthetics, and more with 3D Printing solutions.</li>
 								<li>Guidance in designing or optimizing models for 3D Printing using CAD.</li>
-								{/* <ul>
-									<li>Rapid-prototyping</li>
-									<li>Connectors / Mounts</li>
-									<li>Prosthetics</li>
-								</ul> */}
-
 							</ul>
 
 
 							<div className="pt-6">
-								<div className="flex items-center gap-2">
+								<div className="flex flex-wrap items-center gap-4">
 									<Link href={"/request-part"}>
-										<button className="w-fit px-4 py-3 mb-0 text-sm bg-white outline-2 text-pnw-gold fill-pnw-gold outline outline-pnw-gold tracking-wider font-bold uppercase rounded-md shadow-sm">
+										<button className="w-fit px-3.5 py-2.5 mb-0 text-sm bg-white outline-2 text-pnw-gold fill-pnw-gold outline outline-pnw-gold tracking-wider font-bold uppercase shadow-sm">
 											Get Started
 											<RegularArrowRight className="inline ml-2 mb-0.5" />
 										</button>
 									</Link>
-									<div className="flex gap-5 ml-4">
-										<Link
-											href="/team"
-											className="max-lg:hidden w-fit tracking-wider font-light text-sm">
-											Meet our Team
-										</Link>
-										<a
-											href="https://mypnwlife.pnw.edu/AMC/club_signup"
-											target="_blank"
-											className="block w-fit tracking-wider font-light text-sm">
-											Join MyPNW Life
-										</a>
-									</div>
+									<Link href={"/project-spotlight"}>
+										<button className="w-fit px-3.5 py-2.5 mb-0 font-medium tracking-wide text-sm shadow-sm">
+											Project Spotlight
+										</button>
+									</Link>
+									<Link
+										href="/team"
+										className="w-fit tracking-wider font-light text-sm">
+										Meet our Team
+									</Link>
+									<a
+										href="https://mypnwlife.pnw.edu/AMC/club_signup"
+										target="_blank"
+										className="block w-fit tracking-wider font-light text-sm">
+										Join MyPNW Life
+									</a>
 								</div>
 
 								<div className="my-4 mb-8">
@@ -113,7 +110,7 @@ export default async function Home() {
 							</div>
 						</div>
 						<div className="">
-							<video src={"/assets/Timeline 1.mov"} className="max-xl:hidden rounded-md ml-auto" style={{ maxHeight: "18.5rem" }} autoPlay={true} muted={true} loop={true} preload={"none"} playsInline={true} poster="/assets/lab_setup_1.jpg"></video>
+							<video src={"/assets/Timeline 1.mov"} className="max-2xl:hidden rounded-md ml-auto" style={{ maxHeight: "18.5rem" }} autoPlay={true} muted={true} loop={true} preload={"none"} playsInline={true} poster="/assets/lab_setup_1.jpg"></video>
 							{/* <Gallery
 								buttonStyle="sphere"
 								autoplay={false}
@@ -214,6 +211,33 @@ export default async function Home() {
 					</HorizontalWrap>
 				</div> */}
 
+				{/* <div className="bg-white py-8">
+					<HorizontalWrap>
+						<h2 className="text-center font-medium text-xl">Project Spotlights</h2>
+						<br />
+						<br />
+
+						<div className="grid grid-cols-2">
+							<div>
+								<Image className="rounded-md lg:w-1/2 shadow-md mx-auto" style={{ aspectRatio: "auto 4/3" }} src={"/assets/car_thing.jpg"} alt={""} width={720} height={720}></Image>
+								<div className="mt-4">
+									<h2>Reiving the Spotify Car Thing</h2>
+									<p>This project used 3D Printing to create a high-strength mount which attaches to your monitor using the DeskThing Firmware.</p>
+								</div>
+							</div>
+							<div>
+								<Image className="rounded-md lg:w-1/2 shadow-md mx-auto" style={{ aspectRatio: "auto 4/3" }} src={"/assets/car_thing.jpg"} alt={""} width={720} height={720}></Image>
+								<div className="mt-4">
+									<h2>Reiving the Spotify Car Thing</h2>
+									<p>This project used 3D Printing to create a high-strength mount which attaches to your monitor using the DeskThing Firmware.</p>
+								</div>
+							</div>
+						</div>
+
+					</HorizontalWrap>
+				</div> */}
+
+
 				<div className="bg-white py-8">
 					<HorizontalWrap>
 						<div id="services">
@@ -233,7 +257,7 @@ export default async function Home() {
 							</div>
 						</div>
 						<hr style={{ marginBottom: "0px" }} />
-						<div className="grid 2xl:grid-cols-5 gap-8 mt-6">
+						<div className="grid xl:grid-cols-5 gap-8 mt-6">
 							<div className="out p-4 w-full rounded-md shadow-sm">
 								<div className="w-full text-sm">
 									<Image src="/assets/bambu_x1e_with_ams.png" alt="Bambu Lab A1 3D Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom px-6" style={{ aspectRatio: "auto 3/4" }} />
@@ -270,7 +294,7 @@ export default async function Home() {
 								</div>
 							</div> */}
 
-							<div className="col-span-1 md:col-span-3 2xl:col-span-2">
+							<div className="col-span-1 md:col-span-3 xl:col-span-2">
 								<Link className="w-full" href="/materials">
 									<button className="h-fit w-full text-sm flex gap-2 items-center justify-between text-right mb-2 font-medium bg-background text-cool-black fill-cool-black out">
 										View our Inventory
@@ -282,6 +306,7 @@ export default async function Home() {
 						</div>
 					</HorizontalWrap>
 				</div>
+
 				{/* <div className="py-10">
 					<HorizontalWrap>
 

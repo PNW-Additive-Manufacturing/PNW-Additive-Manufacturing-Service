@@ -3,9 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --background-rgb: 248, 248, 248;
+  --background-rgb: 245, 245, 245;
   --foreground-rgb: 0, 0, 0;
-  --background2-rgb: 245, 245, 250;
   --ascent-rgb: #e4af0b;
 
   /* PNW Branding Stuff */
