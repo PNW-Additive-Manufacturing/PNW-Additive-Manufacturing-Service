@@ -74,9 +74,8 @@ export default async function Home() {
 							<ul style={{ maxWidth: "600px" }}>
 								<li>Utilize rapid prototyping to create custom connectors and mounts.</li>
 								<li>Produce creative models, prosthetics, and more with 3D Printing solutions.</li>
-								<li>Guidance in designing or optimizing models for 3D Printing using CAD.</li>
+								<li>Guidance in designing or optimizing models for 3D Printing using <Link className="underline" target="_blank" href={"https://www.onshape.com/en/"}>Onshape</Link>.</li>
 							</ul>
-
 
 							<div className="pt-6">
 								<div className="flex flex-wrap items-center gap-4">
@@ -260,15 +259,19 @@ export default async function Home() {
 						<div className="grid xl:grid-cols-5 gap-8 mt-6">
 							<div className="out p-4 w-full rounded-md shadow-sm">
 								<div className="w-full text-sm">
-									<Image src="/assets/bambu_x1e_with_ams.png" alt="Bambu Lab A1 3D Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom px-6" style={{ aspectRatio: "auto 3/4" }} />
-									<h2 className="text-lg text-pnw-gold font-semibold">FDM Bambu Lab</h2>
+									<div className="px-6">
+										<Image src="/assets/bambu_x1e_with_ams.png" alt="Bambu Lab A1 3D Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom" style={{ aspectRatio: "3/4" }} />
+									</div>
+									<h2 className="text-lg text-pnw-gold font-semibold">FDM 3D Printing</h2>
 									<p className="mt-2">Perfect for prototyping medium-strength parts, offering a cost-effective solution for functional prototypes and design testing.</p>
 								</div>
 							</div>
 
 							<div className="bg-background p-4 w-full rounded-md">
 								<div className="w-full opacity-75 text-sm">
-									<Image src="/assets/mars4ultra.png" alt="Mars 4 Ultra Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom px-6" style={{ aspectRatio: "auto 3/4" }} />
+									<div className="px-6">
+										<Image src="/assets/mars4ultra.png" alt="Mars 4 Ultra Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom" style={{ aspectRatio: "3/4" }} />
+									</div>
 									<h2 className="text-lg font-semibold">Resin 3D Printing</h2>
 									<p className="mt-2">Coming Spring 2025</p>
 									<p className="mt-2">Optimal for creating detailed and smooth-surfaced models, ideal for small intricate parts.</p>
@@ -277,8 +280,10 @@ export default async function Home() {
 
 							<div className="bg-background p-4 w-full rounded-md">
 								<div className="w-full opacity-75 text-sm">
-									<Image src="/assets/metalx.png" alt="Metal X Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom px-6" style={{ aspectRatio: "auto 3/4" }} />
-									<h2 className="text-lg font-semibold">Metal FFF Metal X</h2>
+									<div className="px-6">
+										<Image src="/assets/metalx.png" alt="Metal X Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom" style={{ aspectRatio: "3/4" }} />
+									</div>
+									<h2 className="text-lg font-semibold">Metal 3D Printing</h2>
 									{/* <p className="mt-2 flex text-nowrap gap-2">Provided by <Image className="inline w-full h-fit opacity-75" src={"/assets/logos/markforged.png"} alt={"Markforged"} width={120} height={120} /></p> */}
 									<p className="mt-2">Coming Spring 2025</p>
 									<p className="mt-2">The Markforged Metal X produces extremely strong custom metal parts designed for high-stress applications.</p>
@@ -287,7 +292,10 @@ export default async function Home() {
 
 							{/* <div className="bg-background p-4 w-full rounded-md">
 								<div className="w-full opacity-75 text-sm">
-									<Image src="/assets/fuse_1_store_thumb_2x_1.png" alt="FormLabs Fuse 1+ 30W" width={720} height={720} className="rounded-md mb-4 object-cover px-4" style={{ aspectRatio: "auto 3/4" }} />
+									<div className="px-4 relative">
+										<Image src="/assets/fuse_1_store_thumb_2x_1.png" alt="FormLabs Fuse 1+ 30W" width={720} height={720} className="rounded-md mb-4 object-cover" style={{ aspectRatio: "3/4" }} />
+										<div className="absolute top-0 left-0 w-full h-full bg-black opacity-50"></div>
+									</div>
 									<h2 className="text-lg font-semibold">SLS Fuse 1+ 30W</h2>
 									<p className="mt-2">Looking for Funding</p>
 									<p className="mt-2">Designed for industrial-quality production with a range of high-performance nylon powders.</p>
