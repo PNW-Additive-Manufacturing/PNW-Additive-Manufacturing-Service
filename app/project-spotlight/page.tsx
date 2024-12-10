@@ -18,11 +18,11 @@ export default async function Page() {
 
         <HorizontalWrap>
             <h1 className="w-fit text-2xl font-normal mb-2">
-                <RegularMagnifier className="inline mb-1 p-0.5 fill-pnw-gold" />
-                {" "}Project Spotlight
+                {/* <RegularMagnifier className="inline mb-1 p-0.5 fill-pnw-gold" />{" "} */}
+                Project Spotlight
             </h1>
-            <p className="mb-6">
-                Wondering what 3D Printing could be used for? Learn about the projects our members have done!
+            <p className="mb-4">
+                Curious about the possibilities of 3D printing? Discover the projects our club members have created!
             </p>
         </HorizontalWrap>
         <HorizontalWrap>
