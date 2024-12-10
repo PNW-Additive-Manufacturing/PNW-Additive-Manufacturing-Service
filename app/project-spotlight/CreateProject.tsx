@@ -1,7 +1,7 @@
 "use client";
 
 import { RegularCirclePlus } from "lineicons-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Input } from "../components/Input";
 import Image from "next/image";
 import HiddenInput from "../components/HiddenInput";
@@ -15,11 +15,6 @@ export function CreateProject() {
     const [isEditing, setEditing] = useState(false);
     const [inputImage, setInputImage] = useState<string | undefined>(undefined);
     let [res, formInvoke] = useFormState<ReturnType<typeof postProjectShowcase>, FormData>(postProjectShowcase, null as any);
-
-    if (res && res.success) {
-        res = undefined!;
-        setEditing(false);
-    }
 
     // Editing mode is essentially a form version of the Project component.
     return <div className={`bg-white out shadow-sm rounded-md font-light ${!isEditing && "opacity-50 hover:opacity-100"} hover:cursor-pointer`} onClick={() => setEditing(true)} style={{ minHeight: "10rem" }}>

@@ -46,6 +46,7 @@ export function FilamentForm() {
 
 			{colorType == "mono" ? (
 				<input
+					title="Color"
 					type="color"
 					name="filament-mono-color"
 					id="filament-mono-color"
@@ -53,11 +54,13 @@ export function FilamentForm() {
 			) : (
 				<>
 					<input
+						title="ColorA"
 						type="color"
 						name="filament-di-colorA"
 						id="filament-di-colorA"
 					/>
 					<input
+						title="ColorB"
 						type="color"
 						name="filament-di-colorB"
 						id="filament-di-colorB"

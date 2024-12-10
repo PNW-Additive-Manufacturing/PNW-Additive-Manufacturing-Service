@@ -25,17 +25,17 @@ export function ProjectCard(projectData: ProjectSpotlight) {
 
     const editFormRef = useRef<HTMLFormElement | undefined>(undefined);
 
-    function ProjectDownloadableContent({ content }: { content: ProjectSpotlightContent }) {
-        const downloadURL = `/api/download/project-showcase-models/${projectData.id}/${content.fileName}`;
+    // function ProjectDownloadableContent({ content }: { content: ProjectSpotlightContent }) {
+    //     const downloadURL = `/api/download/project-showcase-models/${projectData.id}/${content.fileName}`;
 
-        return <tr className="opacity-75 hover:opacity-100 bg-background">
-            <td className="text-sm text-cool-black fill-cool-black">
-                <RegularFiles className="inline mr-1.5"></RegularFiles>
-                {content.fileName}
-            </td>
-            <td className="text-sm">{content.downloads} Saves</td>
-        </tr>
-    }
+    //     return <tr className="opacity-75 hover:opacity-100 bg-background">
+    //         <td className="text-sm text-cool-black fill-cool-black">
+    //             <RegularFiles className="inline mr-1.5"></RegularFiles>
+    //             {content.fileName}
+    //         </td>
+    //         <td className="text-sm">{content.downloads} Saves</td>
+    //     </tr>
+    // }
 
     return <div className="bg-white out shadow-sm rounded-md relative" key={projectData.id}>
 
@@ -74,6 +74,7 @@ export function ProjectCard(projectData: ProjectSpotlight) {
 
                     <h2 className="font-medium text-lg flex items-center justify-between gap-4">
                         <input
+                            title="Title"
                             className="text-sm mb-0"
                             type="text"
                             name="title"
@@ -89,12 +90,14 @@ export function ProjectCard(projectData: ProjectSpotlight) {
                     </h2>
 
                     <input
+                        title="Author"
                         className="text-sm mt-4"
                         type="text"
                         name="author"
                         defaultValue={projectData.author}
                     />
                     <textarea
+                        title="Description"
                         className="text-sm mt-4"
                         defaultValue={projectData.description}
                         name="description"
@@ -128,18 +131,18 @@ export function ProjectCard(projectData: ProjectSpotlight) {
                         </p>
                     )}
 
-                    <p className="text-sm">{projectData.description}</p>
+                    <p className="text-base">{projectData.description}</p>
                 </>
             )}
 
-            <DropdownSection name={"2 Downloadable Files"} className="p-0 py-0 px-0 text-sm font-light mt-4" hidden={true}>
+            {/* <DropdownSection name={"2 Downloadable Files"} className="p-0 py-0 px-0 text-sm font-light mt-4" hidden={true}>
                 <table className="w-full rounded-md mt-2">
                     <tbody>
                         <ProjectDownloadableContent content={{ fileName: "Car Thing Mount 15 DEG.STL", downloads: 12 }} />
                         <ProjectDownloadableContent content={{ fileName: "Car Thing Mount 25 DEG.STL", downloads: 30 }} />
                     </tbody>
                 </table>
-            </DropdownSection>
+            </DropdownSection> */}
 
             {/* <label className="mt-2">Downloadable Content</label> */}
 
