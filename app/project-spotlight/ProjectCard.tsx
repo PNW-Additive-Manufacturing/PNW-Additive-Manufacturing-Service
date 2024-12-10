@@ -113,7 +113,7 @@ export function ProjectCard(projectData: ProjectSpotlight) {
                 </form>
             ) : (
                 <>
-                    <h2 className="font-medium text-lg flex items-center justify-between gap-4">
+                    <h2 className="font-semibold text-lg flex items-center justify-between gap-4">
                         <>{projectData.title}</>
                         {accountContext.isSingedIn &&
                             accountContext.account!.permission !== "user" && (
@@ -125,13 +125,15 @@ export function ProjectCard(projectData: ProjectSpotlight) {
                     </h2>
 
                     {projectData.author && (
-                        <p className="text-sm italic mt-1 mb-4 font-light">
+                        <p className="text-sm mt-1 mb-4">
                             Published by {projectData.author} on{" "}
                             {formateDate(projectData.createdAt)}.
                         </p>
                     )}
 
-                    <p className="text-base">{projectData.description}</p>
+                    <hr className="pb-0 mb-4" />
+
+                    <p className="text-base text-cool-black">{projectData.description}</p>
                 </>
             )}
 
