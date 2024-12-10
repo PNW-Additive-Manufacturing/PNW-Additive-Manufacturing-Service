@@ -109,7 +109,7 @@ export default async function Home() {
 							</div>
 						</div>
 						<div className="">
-							<video src={"/assets/Timeline 1.mov"} className="max-2xl:hidden rounded-md ml-auto" style={{ maxHeight: "18.5rem" }} autoPlay={true} muted={true} loop={true} preload={"none"} playsInline={true} poster="/assets/lab_setup_1.jpg"></video>
+							<video src={"/assets/Timeline 1.mp4"} className="max-2xl:hidden rounded-md ml-auto" style={{ maxHeight: "18.5rem" }} controls muted={true} loop={true} preload={"none"} playsInline={true} poster="/assets/lab_setup_1.jpg"></video>
 							{/* <Gallery
 								buttonStyle="sphere"
 								autoplay={false}
