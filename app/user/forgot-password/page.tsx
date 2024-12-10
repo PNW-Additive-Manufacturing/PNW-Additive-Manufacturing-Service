@@ -30,7 +30,6 @@ export default function ForgotPassword() {
 							label="Purdue Northwest Email"
 							type="text"
 							id="email"
-							name="email"
 							required={true}
 							placeholder="leo@pnw.edu"
 						/>

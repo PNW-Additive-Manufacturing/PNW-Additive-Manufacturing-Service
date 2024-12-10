@@ -68,7 +68,6 @@ export default function EditPage({
 					label="First Name"
 					type="text"
 					id="firstname"
-					name="firstname"
 					placeholder="First Name"
 					defaultValue={userInfo.firstname}
 				/>
@@ -76,7 +75,6 @@ export default function EditPage({
 					label="Last Name"
 					type="text"
 					id="lastname"
-					name="lastname"
 					placeholder="Last Name"
 					defaultValue={userInfo.lastname}
 				/>

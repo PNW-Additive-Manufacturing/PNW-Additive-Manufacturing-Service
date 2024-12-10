@@ -29,15 +29,16 @@ export default function DropdownSection({
 	return (
 		<>
 			<div
-				className={`flex justify-between gap-2 w-full p-2 hover:cursor-pointer fill-gray-400 hover:fill-cool-black ${className}`}
+				className={`hover:text-black flex items-center justify-between gap-2 w-full p-2 hover:cursor-pointer fill-gray-400 hover:fill-cool-black ${className}`}
 				onClick={() => setHidden(!isHidden)}>
 				<div>
 					{name}
 					{icon}
 				</div>
 				<RegularChevronDown
-					className={`w-6 h-6 p-0.5 fill-inherit ${isHidden ? "rotate-180" : ""
+					className={`w-6 h-6 fill-inherit ${isHidden ? "rotate-180" : ""
 						} hover:cursor-pointer transition-all`}
+					style={{ padding: "3.5px" }}
 				/>
 			</div>
 			<div className={isHidden ? "hidden" : ""}>{children}</div>

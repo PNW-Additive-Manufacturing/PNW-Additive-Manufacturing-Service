@@ -60,8 +60,7 @@ export default function CreateAccount() {
 							required={true}
 							label="Purdue Northwest Email"
 							type="text"
-							id="user"
-							name="email"
+							id="email"
 							placeholder="leo@pnw.edu"
 						/>
 						<div className="lg:flex gap-4">
@@ -69,16 +68,14 @@ export default function CreateAccount() {
 								required={true}
 								label="First Name"
 								type="text"
-								id="name1"
-								name="firstname"
+								id="firstname"
 								placeholder="Leo"
 							/>
 							<Input
 								required={true}
 								label="Last Name"
 								type="text"
-								id="name2"
-								name="lastname"
+								id="lastname"
 								placeholder="Lion"
 							/>
 						</div>
@@ -131,8 +128,7 @@ export default function CreateAccount() {
 							required={true}
 							label="Password"
 							type="password"
-							id="pass1"
-							name="password"
+							id="password"
 							placeholder="Choose your Password"
 						/>
 						<p className="text-sm mb-2">
@@ -143,8 +139,7 @@ export default function CreateAccount() {
 							required={true}
 							label="Confirm Password"
 							type="password"
-							id="pass2"
-							name="confirm-password"
+							id="confirm-password"
 							placeholder="Confirm your Password"
 						/>
 

@@ -67,7 +67,6 @@ export function FilamentForm() {
 
 			<Input
 				type="text"
-				name="filament-material"
 				id="filament-material"
 				label="Filament Material"
 				placeholder="PLA, PETG, & More"
@@ -79,7 +78,6 @@ export function FilamentForm() {
 			/>
 			<Input
 				type="text"
-				name="filament-colorName"
 				id="filament-colorName"
 				label="Filament Color Name"
 				placeholder="White, Black, Red & More"
@@ -100,14 +98,12 @@ export function FilamentForm() {
 
 			<Input
 				type="number"
-				name="filament-lead-time-in-days"
 				id="filament-lead-time-in-days"
 				label="Lead Time in Days"
 				placeholder="1" />
 
 			<Input
 				type="text"
-				name="filament-technology"
 				id="filament-technology"
 				label="Technology"
 				placeholder="FDM, Resin, Metal FFF"

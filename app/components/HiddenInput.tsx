@@ -9,36 +9,24 @@ import {
 } from "react";
 
 export default function HiddenInput(
-	attributes: Omit<
-		DetailedHTMLProps<
-			InputHTMLAttributes<HTMLInputElement>,
-			HTMLInputElement
-		>,
-		"onChange"
-	> & {
-		onChange: (file: File) => void;
-		children: ReactNode;
-	}
-) {
-	var inputRef = useRef<LegacyRef<HTMLInputElement> | undefined>();
+	attributes: Omit<DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, "onChange" | "className" | "style">
+		& { onChange: (file: File) => void; children: ReactNode; }) {
+
+	const inputRef = useRef<LegacyRef<HTMLInputElement> | undefined>();
 
 	return (
-		<div className={`inline ${attributes.className} hover:cursor-pointer`}>
+		<div className={`inline hover:cursor-pointer`}>
 			<input
 				{...{
 					...attributes,
-					children: undefined,
 					ref: inputRef as any,
+					children: undefined,
 					className: "hidden",
-					onChange: (ev) => {
-						ev.preventDefault();
-						attributes.onChange(ev.target.files?.item(0)!);
-						ev.currentTarget.value = "";
-					}
+
+					onChange: (ev) => attributes.onChange(ev.target.files?.item(0)!)
 				}}
 			/>
 			<div
-				className="inline"
 				onClick={(ev) => {
 					ev.preventDefault();
 					(inputRef.current?.valueOf() as HTMLInputElement).click();

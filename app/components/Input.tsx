@@ -12,7 +12,6 @@ export function Input({
 	label,
 	type,
 	id,
-	name,
 	placeholder,
 	defaultValue,
 	onChange,
@@ -23,7 +22,6 @@ export function Input({
 	label: string;
 	type: HTMLInputTypeAttribute;
 	id: string;
-	name?: string;
 	required?: boolean;
 	placeholder?: string;
 	defaultValue?: string;
@@ -40,7 +38,7 @@ export function Input({
 				required={required}
 				className="lg:text-sm w-full"
 				id={id}
-				name={name}
+				name={id}
 				type={type}
 				size={50}
 				placeholder={placeholder}

@@ -115,8 +115,6 @@ export function RequestPartForm({
 		setNeedBy(addMinutes(leadTimeDate, 30));
 	}
 
-	console.log("Re-rendered");
-
 	return (
 		<>
 			<Dialog
@@ -407,8 +405,7 @@ export function RequestPartForm({
 							<Input
 								label="Request Name"
 								type="text"
-								id="name"
-								name="requestname"
+								id="requestname"
 								placeholder={requestNamePlaceholder}
 							/>
 

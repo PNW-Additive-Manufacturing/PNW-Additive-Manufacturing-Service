@@ -19,3 +19,8 @@ export function getModelPath(accountEmail: string, modelId: string) {
 		accountEmail.indexOf("@")
 	)}${path.sep}${modelId}.stl`;
 }
+
+export function getProjectShowcaseImagePath(projectId: string)
+{
+	return `${envConfig.uploadProjectShowcaseImageDir}${path.sep}${projectId}.jpg`;
+}

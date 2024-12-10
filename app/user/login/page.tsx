@@ -33,7 +33,6 @@ export default function Login() {
 							label="Purdue Northwest Email"
 							type="text"
 							id="email"
-							name="email"
 							required={true}
 							placeholder="leo@pnw.edu"
 						/>
@@ -41,7 +40,6 @@ export default function Login() {
 							label="Password"
 							type="password"
 							id="password"
-							name="password"
 							required={true}
 							placeholder="Enter your Password"
 						/>

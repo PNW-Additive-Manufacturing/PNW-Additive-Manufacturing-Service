@@ -448,7 +448,6 @@ function PartDetails({ part, index, count }: { part: PartWithModel; index: numbe
 									<div className="text-red-500 w-fit">
 										<HiddenInput
 											required
-											className="inline"
 											type="file"
 											id="revision-model"
 											name="revision-model"

@@ -49,7 +49,6 @@ export function ChangePasswordForm({
 				label="Current Password"
 				type="password"
 				id="password"
-				name="password"
 				placeholder="Current Password"
 				onChange={(e) => setCurrentPassword(e.currentTarget.value)}
 				value={currentPassword}
@@ -59,7 +58,6 @@ export function ChangePasswordForm({
 					label="New Password"
 					type="password"
 					id="new_password"
-					name="new_password"
 					placeholder="New Password"
 					onChange={(e) => setNewPassword(e.currentTarget.value)}
 					value={newPassword}
@@ -68,7 +66,6 @@ export function ChangePasswordForm({
 					label="Confirm New Password"
 					type="password"
 					id="confirm_new_password"
-					name="confirm_new_password"
 					placeholder="Confirm New Password"
 					onChange={(e) =>
 						setConfirmNewPassword(e.currentTarget.value)

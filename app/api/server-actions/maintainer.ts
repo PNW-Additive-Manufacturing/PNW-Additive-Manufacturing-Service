@@ -30,6 +30,10 @@ import {
 	sendEmail,
 	sendRequestEmail
 } from "../util/Mail";
+import { APIData, resError, resOk, resUnauthorized } from "../APIResponse";
+import { ProjectSpotlight } from "@/app/Types/ProjectSpotlight/ProjectSpotlight";
+import ProjectSpotlightServe from "@/app/Types/ProjectSpotlight/ProjectSpotlightServe";
+import { retrieveSafeJWTPayload } from "../util/JwtHelper";
 
 const setPartPriceSchema = z.object({
 	requestId: z.coerce.number().int(),
@@ -413,4 +417,94 @@ export async function deleteFilament(prevState: string, data: FormData) {
 	var color = (data.get("filament-color") as string).toLowerCase();
 
 	await FilamentServe.delete(material, color);
+}
+
+const postProjectShowcaseSchema = z.object({
+	title: z.string(),
+	description: z.string(),
+	author: z.string(),
+});
+export async function postProjectShowcase(prevState: APIData<{}>, data: FormData)
+{
+	const jwtPayload = await retrieveSafeJWTPayload();
+	if (jwtPayload == undefined || jwtPayload.permission == "user") return resUnauthorized();
+
+	const parsedData = postProjectShowcaseSchema.safeParse({
+		title: data.get("title"),
+		description: data.get("description"),
+		author: data.get("author")
+	});
+	if (!parsedData.success) return resError(parsedData.error.message);
+
+	const image = data.get("image") as File;
+
+	try
+	{
+		await ProjectSpotlightServe.insertProjectShowcase(parsedData.data, image);
+	}
+	catch (ex)
+	{
+		return resError((ex as Error).message);
+	}
+	revalidatePath("/project-spotlight");
+	return resOk();
+}
+
+export async function deleteProjectShowcase(prevState: APIData<{}>, data: FormData)
+{
+	const jwtPayload = await retrieveSafeJWTPayload();
+	if (jwtPayload == undefined || jwtPayload.permission == "user") return resUnauthorized();
+
+	const parsedData = z.string().safeParse(data.get("projectId"));
+
+	if (!parsedData.success) return resError(parsedData.error.message);
+
+	try
+	{
+		await ProjectSpotlightServe.deleteProjectShowcase(parsedData.data);
+	}
+	catch (ex)
+	{
+		console.error(ex);
+		return resError((ex as Error).message);
+	}
+	revalidatePath("/project-spotlight");
+	return resOk();
+}
+
+const editProjectShowcaseSchema = postProjectShowcaseSchema.partial().and(z.object({ id: z.string() }));
+export async function editProjectShowcase(prevState: APIData<{}>, data: FormData)
+{
+	const jwtPayload = await retrieveSafeJWTPayload();
+	if (jwtPayload == undefined || jwtPayload.permission == "user") return resUnauthorized();
+
+	console.log(data);
+
+	const parsedData = editProjectShowcaseSchema.safeParse({
+		title: data.get("title"),
+		description: data.get("description"),
+		author: data.get("author"),
+		id: data.get("projectId")
+	});
+	if (!parsedData.success) return resError(parsedData.error.message);
+
+	let dataToUpdated: Omit<Partial<ProjectSpotlight>, "id" | "hasImage"> & { id: ProjectSpotlight["id"] } = {
+		id: parsedData.data!.id
+	};
+
+	if (parsedData.data?.author != undefined) dataToUpdated.author = parsedData.data.author;
+	if (parsedData.data?.description != undefined) dataToUpdated.description = parsedData.data.description;
+	if (parsedData.data?.title != undefined) dataToUpdated.title = parsedData.data.title;
+
+	try
+	{
+		await ProjectSpotlightServe.editProjectShowcase(dataToUpdated);
+	}
+	catch (ex)
+	{
+		console.error(ex);
+		return resError((ex as Error).message);
+	}
+	revalidatePath("/project-spotlight");
+	return resOk();
 }

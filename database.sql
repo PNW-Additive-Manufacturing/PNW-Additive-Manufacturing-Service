@@ -202,3 +202,12 @@ CREATE TRIGGER prevent_price_change_trigger
 BEFORE UPDATE OF PriceCents ON Part
 FOR EACH ROW
 EXECUTE FUNCTION prevent_price_change();
+
+CREATE TABLE ProjectSpotlight (
+  Id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  CreatedAt timestamp with time zone NOT NULL DEFAULT NOW(), 
+  Title VARCHAR(64) NOT NULL,
+  Description VARCHAR(2048) NOT NULL,
+  Author VARCHAR(128),
+  HasImage BOOLEAN NOT NULL DEFAULT FALSE
+);

@@ -40,7 +40,6 @@ export default function ResetPassword({ resetCode }: { resetCode: string }) {
                                     label="Password"
                                     type="password"
                                     id="new-password"
-                                    name="new-password"
                                     required={true}
                                     placeholder="Enter your Password"
                                 />

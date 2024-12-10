@@ -30,6 +30,8 @@ export async function middleware(request: NextRequest) {
 		nextUrl.startsWith("/user/verify-email") ||
 		nextUrl.startsWith("/user/reset-password") ||
 		nextUrl.startsWith("/user/email-verified") ||
+		nextUrl.startsWith("/project-spotlight/") ||
+		nextUrl.startsWith("/api/download/project-showcase-image") ||
 		nextUrl.startsWith("/schedule") ||
 		nextUrl.startsWith("/team") ||
 		nextUrl.startsWith("/user/current") ||

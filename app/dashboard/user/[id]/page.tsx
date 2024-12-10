@@ -7,10 +7,7 @@ import getConfig from "@/app/getConfig";
 
 const appConfig = getConfig();
 
-export default async function Page({
-	params,
-	searchParams
-}: {
+export default async function Page({ params, searchParams }: {
 	params: { id: number | string },
 	searchParams: { [key: string]: string | string[] | undefined }
 }) {
