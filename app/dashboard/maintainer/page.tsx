@@ -35,23 +35,19 @@ export default async function Maintainer() {
 			</h1>
 
 			{/* Maintainer Screens */}
-			<a
-				href="/dashboard/maintainer/orders"
-				className="sm:max-w-sm block">
+			<a href="/dashboard/maintainer/orders" className="sm:max-w-sm block">
 				<button className="flex items-center w-full text-base font-normal">
 					<RegularCart className="inline-block w-12 h-12 mr-auto fill-gray-300"></RegularCart>
 					<span>View {orderCount.count} Requests</span>
 				</button>
 			</a>
-			<a href="/dashboard/maintainer/printers" className="w-96 block">
-				<button className="flex items-center text-lg font-normal">
+			<a href="/dashboard/maintainer/printers" className="sm:max-w-sm block">
+				<button className="flex items-center w-full text-base font-normal">
 					<GenericPrinterIcon className="inline-block w-12 h-12 mr-auto fill-gray-100"></GenericPrinterIcon>
 					<span>View Printers</span>
 				</button>
 			</a>
-			<a
-				href="/dashboard/maintainer/filaments"
-				className="sm:max-w-sm block">
+			<a href="/dashboard/maintainer/filaments" className="sm:max-w-sm block">
 				<button className="flex items-center w-full text-base font-normal">
 					<FilamentSpoolIcon className="inline-block w-12 h-12 mr-auto fill-gray-300"></FilamentSpoolIcon>
 					<span>Manage Filament</span>
