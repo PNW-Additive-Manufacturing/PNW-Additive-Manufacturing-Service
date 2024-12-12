@@ -59,6 +59,11 @@ export default function Team() {
 						phone="630-862-5509"
 						avatar="https://cdn.discordapp.com/avatars/1206320920323563551/90761d25f0e7d0c43a147378f5d22e9b.png?size=640" />
 					<Card
+						name="David Holleman"
+						role="Former Officer and Developer"
+						email="dhollema@pnw.edu"
+						avatar="/assets/david.jpg" />
+					<Card
 						name="Ben Cole"
 						role="Vice President"
 						email="cole289@pnw.edu"
