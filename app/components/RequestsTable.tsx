@@ -71,82 +71,80 @@ export default function RequestsTable({ accountEmail }: { accountEmail?: string 
             ) : requests.length == 0 ? (
                 <div className="w-full bg-gray-100 min-h-28 rounded-md mb-4"></div>
             ) : (
-                <>
-                    <Table className="spaced">
-                        <thead>
-                            <tr>
-                                <th className="w-fit max-lg:hidden" style={{ paddingRight: "0px" }}>#</th>
-                                <th className="max-lg:hidden">Requested On</th>
-                                {accountEmail == null && <th className="max-lg:hidden">Requester</th>}
-                                <th>Request Name</th>
-                                <th>Status</th>
-                                <th>Cost</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {requests.map((r, i) => {
-                                const rowLink = accountEmail == null ? `/dashboard/maintainer/orders/${r.id}` : `/dashboard/user/${r.id}`;
+                <Table className="spaced">
+                    <thead>
+                        <tr>
+                            <th className="w-fit max-lg:hidden" style={{ paddingRight: "0px" }}>#</th>
+                            <th className="max-lg:hidden">Requested On</th>
+                            {accountEmail == null && <th className="max-lg:hidden">Requester</th>}
+                            <th>Request Name</th>
+                            <th>Status</th>
+                            <th>Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {requests.map((r, i) => {
+                            const rowLink = accountEmail == null ? `/dashboard/maintainer/orders/${r.id}` : `/dashboard/user/${r.id}`;
 
-                                return <>
-                                    <tr
-                                        onClick={() => setSelectedRequest(r.id)}
-                                        className={`w-full border-l-4 out bg-white`}
-                                        style={{
-                                            borderLeftColor:
-                                                getRequestStatusColor(r)
-                                        }}>
-                                        <td className="w-fit max-lg:hidden" style={{ paddingRight: "0px" }}>
-                                            <Link href={rowLink}>{i + 1}</Link>
-                                        </td>
-                                        <td className="max-lg:hidden">
-                                            <Link href={rowLink}>
-                                                {r.submitTime.toLocaleDateString(
-                                                    "en-us",
-                                                    {
-                                                        weekday: "long",
-                                                        month: "short",
-                                                        day: "numeric",
-                                                        year: "numeric"
-                                                    }
-                                                )}
-                                            </Link>
-                                        </td>
-                                        {accountEmail == null && <td className="max-lg:hidden"><Link href={rowLink}>{r.firstName} {r.lastName}</Link></td>}
-                                        <td><Link href={rowLink}>{r.name}</Link></td>
-                                        <td>
-                                            <Link className="flex items-center gap-4" href={rowLink}>
-                                                <StatusPill context={getRequestStatus(r)} statusColor={getRequestStatusColor(r)}></StatusPill>
-                                            </Link>
-                                        </td>
-                                        <td>
-                                            <Link href={rowLink}> {hasQuote(r) ?
-                                                `$${(
-                                                    r.quote!.totalPriceInCents /
-                                                    100
-                                                ).toFixed(2)}` : "Unquoted"}</Link>
-                                        </td>
-                                        {machines && machines.length > 0 && isPrintingOnMachines(r, machines) &&
-                                            <td className="bg-pnw-gold-light">{<span className="font-light"><FiActivity className="inline stroke-pnw-gold" style={{ marginBottom: "3px" }} /> Printing on Machine</span>}</td>}
+                            return <>
+                                <tr
+                                    onClick={() => setSelectedRequest(r.id)}
+                                    className={`w-full border-l-4 out bg-white`}
+                                    style={{
+                                        borderLeftColor:
+                                            getRequestStatusColor(r)
+                                    }}>
+                                    <td className="w-fit max-lg:hidden" style={{ paddingRight: "0px" }}>
+                                        <Link href={rowLink}>{i + 1}</Link>
+                                    </td>
+                                    <td className="max-lg:hidden">
+                                        <Link href={rowLink}>
+                                            {r.submitTime.toLocaleDateString(
+                                                "en-us",
+                                                {
+                                                    weekday: "long",
+                                                    month: "short",
+                                                    day: "numeric",
+                                                    year: "numeric"
+                                                }
+                                            )}
+                                        </Link>
+                                    </td>
+                                    {accountEmail == null && <td className="max-lg:hidden"><Link href={rowLink}>{r.firstName} {r.lastName}</Link></td>}
+                                    <td><Link href={rowLink}>{r.name}</Link></td>
+                                    <td>
+                                        <Link className="flex items-center gap-4" href={rowLink}>
+                                            <StatusPill context={getRequestStatus(r)} statusColor={getRequestStatusColor(r)}></StatusPill>
+                                        </Link>
+                                    </td>
+                                    <td>
+                                        <Link href={rowLink}> {hasQuote(r) ?
+                                            `$${(
+                                                r.quote!.totalPriceInCents /
+                                                100
+                                            ).toFixed(2)}` : "Unquoted"}</Link>
+                                    </td>
+                                    {machines && machines.length > 0 && isPrintingOnMachines(r, machines) &&
+                                        <td className="bg-pnw-gold-light">{<span className="font-light"><FiActivity className="inline stroke-pnw-gold" style={{ marginBottom: "3px" }} /> Printing on Machine</span>}</td>}
 
-                                        {/* <td>
-                                            <div className="ml-auto w-fit">
-                                                <Link
-                                                    href={accountEmail == null ? `/dashboard/maintainer/orders/${r.id}` : `/dashboard/user/${r.id}`}>
-                                                    <button className="shadow-sm w-fit mb-0 outline outline-1 outline-gray-300 bg-white text-black fill-black flex flex-row gap-2 justify-end items-center px-3 py-2">
-                                                        <span className="text-sm">
-                                                            {accountEmail == null ? "Manage Request" : "View Request"}
-                                                        </span>
-                                                        <RegularMagnifier></RegularMagnifier>
-                                                    </button>
-                                                </Link>
-                                            </div>
-                                        </td> */}
-                                    </tr>
-                                </>
-                            })}
-                        </tbody>
-                    </Table>
-                </>
+                                    {/* <td>
+                                        <div className="ml-auto w-fit">
+                                            <Link
+                                                href={accountEmail == null ? `/dashboard/maintainer/orders/${r.id}` : `/dashboard/user/${r.id}`}>
+                                                <button className="shadow-sm w-fit mb-0 outline outline-1 outline-gray-300 bg-white text-black fill-black flex flex-row gap-2 justify-end items-center px-3 py-2">
+                                                    <span className="text-sm">
+                                                        {accountEmail == null ? "Manage Request" : "View Request"}
+                                                    </span>
+                                                    <RegularMagnifier></RegularMagnifier>
+                                                </button>
+                                            </Link>
+                                        </div>
+                                    </td> */}
+                                </tr>
+                            </>
+                        })}
+                    </tbody>
+                </Table>
             )}
 
             {/* Controls */}

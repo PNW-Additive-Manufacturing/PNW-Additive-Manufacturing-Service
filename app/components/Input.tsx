@@ -95,6 +95,7 @@ export function InputBig({
 	placeholder,
 	className,
 	style,
+	required,
 	max
 }: {
 	label?: string;
@@ -103,20 +104,26 @@ export function InputBig({
 	placeholder: string;
 	className?: string;
 	style?: CSSProperties;
+	required?: boolean;
 	max?: number;
 }): JSX.Element {
+	required = required ?? false;
+	label = label ?? "";
+
 	return (
 		<div
 			className={`font-semibold ${className == null ? "" : className}`}
 			style={style}>
-			{label && <p className="uppercase br-2">{label}</p>}
+			<Label content={label}></Label>
 			<textarea
-				className="lg:text-sm box-border resize-y w-full mb-0"
+				required={required}
+				className="lg:text-sm box-border resize-y w-full"
 				id={id}
 				name={name}
 				rows={5}
 				maxLength={max}
-				placeholder={placeholder}></textarea>
+				placeholder={placeholder}>
+			</textarea>
 		</div>
 	);
 }

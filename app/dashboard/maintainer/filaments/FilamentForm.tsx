@@ -1,7 +1,7 @@
 "use client";
 
 import GenericFormServerAction from "@/app/components/GenericFormServerAction";
-import { Input } from "@/app/components/Input";
+import { Input, InputBig } from "@/app/components/Input";
 import { addFilament } from "@/app/api/server-actions/maintainer";
 import { useState } from "react";
 import { SwatchConfiguration } from "@/app/components/Swatch";
@@ -45,27 +45,27 @@ export function FilamentForm() {
 			</div>
 
 			{colorType == "mono" ? (
-				<input
+				<input className="p-0 w-10"
 					title="Color"
 					type="color"
 					name="filament-mono-color"
 					id="filament-mono-color"
 				/>
 			) : (
-				<>
-					<input
+				<div className="flex gap-4">
+					<input className="p-0 w-10"
 						title="ColorA"
 						type="color"
 						name="filament-di-colorA"
 						id="filament-di-colorA"
 					/>
-					<input
+					<input className="p-0 w-10"
 						title="ColorB"
 						type="color"
 						name="filament-di-colorB"
 						id="filament-di-colorB"
 					/>
-				</>
+				</div>
 			)}
 
 			<Input
@@ -103,7 +103,8 @@ export function FilamentForm() {
 				type="number"
 				id="filament-lead-time-in-days"
 				label="Lead Time in Days"
-				placeholder="1" />
+				placeholder="1"
+				required={true} />
 
 			<Input
 				type="text"
@@ -112,12 +113,12 @@ export function FilamentForm() {
 				placeholder="FDM, Resin, Metal FFF"
 				required={true} />
 
-			<label>Details</label>
-			<textarea
+			<InputBig
 				id="filament-details"
+				label="Details"
 				name="filament-details"
-				required
-				placeholder="Rigid, UV-Resistant, Flexible"></textarea>
+				placeholder="Rigid, UV-Resistant, Flexible"
+				required={true} />
 		</GenericFormServerAction>
 	);
 }
