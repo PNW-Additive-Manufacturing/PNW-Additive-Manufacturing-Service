@@ -9,7 +9,7 @@ export default function Table(
 	return (
 		<div
 			{...props}
-			className={`w-full overflow-x-scroll ${props.className}`}>
+			className={`w-full overflow-x-auto ${props.className}`}>
 			<table className={`w-full ${props.className}`}>{props.children}</table>
 		</div>
 	);
