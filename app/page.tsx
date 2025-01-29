@@ -259,7 +259,7 @@ export default async function Home() {
 						<div className="grid xl:grid-cols-5 gap-8 mt-6">
 							<div className="out p-4 w-full rounded-md shadow-sm">
 								<div className="w-full text-sm">
-									<div className="px-6">
+									<div className="px-6 max-md:hidden">
 										<Image priority src="/assets/bambu_x1e_with_ams.png" alt="Bambu Lab A1 3D Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom" style={{ aspectRatio: "3/4" }} />
 									</div>
 									<h2 className="text-lg text-pnw-gold font-semibold">FDM 3D Printing</h2>
@@ -269,7 +269,7 @@ export default async function Home() {
 
 							<div className="bg-background p-4 w-full rounded-md">
 								<div className="w-full opacity-75 text-sm">
-									<div className="px-6">
+									<div className="px-6 max-md:hidden">
 										<Image priority src="/assets/mars4ultra.png" alt="Mars 4 Ultra Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom" style={{ aspectRatio: "3/4" }} />
 									</div>
 									<h2 className="text-lg font-semibold">Resin 3D Printing</h2>
@@ -280,7 +280,7 @@ export default async function Home() {
 
 							<div className="bg-background p-4 w-full rounded-md">
 								<div className="w-full opacity-75 text-sm">
-									<div className="px-6">
+									<div className="px-6 max-md:hidden">
 										<Image priority src="/assets/metalx.png" alt="Metal X Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom" style={{ aspectRatio: "3/4" }} />
 									</div>
 									<h2 className="text-lg font-semibold">Metal 3D Printing</h2>

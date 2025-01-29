@@ -1,4 +1,6 @@
+import classNames from "classnames";
 import { RegularCheckmark } from "lineicons-react";
+import { FaCheck } from "react-icons/fa";
 
 export interface TimelineOptionData {
 	title: string;
@@ -24,24 +26,24 @@ export default function Timeline({
 				const isLast = index == options.length - 1;
 
 				return (
-					<div className={`flex gap-4`}>
+					<div className={classNames("flex gap-4")}>
 						<div className="flex flex-col">
 							<div
-								className={`border-4 border-pnw-gold ${!option.disabled && "bg-pnw-gold"
-									} w-7 h-7 rounded-full flex justify-center items-center`}>
-								<RegularCheckmark className="w-full h-full p-1 fill-white"></RegularCheckmark>
+								className={`border-pnw-gold ${!option.disabled && "bg-pnw-gold"} w-6 h-6 rounded-full flex justify-center items-center`}
+								style={{ borderWidth: "3px" }}>
+								<FaCheck className="w-full h-full fill-background" style={{ padding: "2.75px" }} />
 							</div>
 							{!isLast && (
-								<div className="w-1 flex-1 mx-auto bg-pnw-gold min-h-6" />
+								<div className="flex-1 mx-auto bg-pnw-gold min-h-8" style={{ width: "5px" }} />
 							)}
 						</div>
-						<div className={`pt-0.5 ${!isLast ? "mb-2" : ""}`}>
-							<p className="text-base">{option.title}</p>
+						<div className={classNames("pt-0.5", { "mb-2": !isLast })}>
+							<p className={classNames("mt-0 text-inherit mb-0.5", { "text-pnw-gold font-semibold": index == firstDisabledOptionIndex - 1 || (isLast && !option.disabled) })} style={{ fontSize: "15px" }}>{option.title}</p>
 							{option.description && !option.disabled && (
-								<p className="text-sm">{option.description}</p>
+								<p className="text-sm font-light text-inherit">{option.description}</p>
 							)}
 						</div>
-					</div>
+					</div >
 				);
 			})}
 		</>

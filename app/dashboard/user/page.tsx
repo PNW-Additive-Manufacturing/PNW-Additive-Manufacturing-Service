@@ -23,9 +23,8 @@ import {
 import { isAllComplete, isAllPending } from "@/app/Types/Part/Part";
 import { formateDate } from "@/app/api/util/Constants";
 import Timeline from "@/app/components/Timeline";
-import ModelViewer from "@/app/components/ModelViewer";
+import ThreeModelViewer from "@/app/components/ThreeModelViewer";
 import Link from "next/link";
-import RequestPricing from "@/app/components/Request/Pricing";
 import FormLoadingSpinner from "@/app/components/FormLoadingSpinner";
 import { redirect } from "next/navigation";
 import RequestsTable from "@/app/components/RequestsTable";

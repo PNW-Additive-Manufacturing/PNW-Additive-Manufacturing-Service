@@ -23,6 +23,7 @@ export default interface Request {
 	quote?: {
 		isPaid: boolean;
 		paidAt: Date;
+		feesInCents: number;
 		totalPriceInCents: number;
 		estimatedCompletionDate: Date,
 	};
@@ -126,11 +127,14 @@ export function isPaid(request: Request) {
 	return hasQuote(request) && request.quote!.isPaid;
 }
 
-export function getTotalCost(request: RequestWithParts): {
+export type RequestCosts = {
 	totalCost: number;
 	totalRefunded: number;
+	subTotal: number;
 	fees: number;
-} {
+};
+
+export function calculateTotalCost(request: RequestWithParts, fees: number): RequestCosts {
 	let totalCost = 0;
 	let totalRefunded = 0;
 	for (let part of request.parts) {
@@ -144,11 +148,21 @@ export function getTotalCost(request: RequestWithParts): {
 			totalRefunded += part.refund!.quantity * part.priceInDollars;
 		}
 	}
-	// TODO: Fees & Taxes
+
 	return {
-		fees: 0,
-		totalCost: totalCost - totalRefunded,
+		fees,
+		subTotal: totalCost,
+		totalCost: totalCost - totalRefunded + fees,
 		totalRefunded
+	};
+}
+
+export function getCosts(request: NonNullable<Request["quote"]>): RequestCosts {
+	return {
+		fees: request.feesInCents / 100,
+		subTotal: (request.totalPriceInCents - request.feesInCents) / 100,
+		totalCost: request.totalPriceInCents / 100,
+		totalRefunded: NaN
 	};
 }
 

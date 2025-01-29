@@ -1,6 +1,7 @@
 import "server-only";
 import path from "path";
 import getConfig from "./getConfig";
+import { ProjectSpotlightAttachment } from "./Types/ProjectSpotlight/ProjectSpotlight";
 
 const envConfig = getConfig();
 
@@ -23,4 +24,9 @@ export function getModelPath(accountEmail: string, modelId: string) {
 export function getProjectShowcaseImagePath(projectId: string)
 {
 	return `${envConfig.uploadProjectShowcaseImageDir}${path.sep}${projectId}.jpg`;
+}
+
+export function getProjectShowcaseAttachmentPath(attachmentId: string)
+{
+	return `${envConfig.uploadProjectShowcaseAttachmentsDir}${path.sep}${attachmentId}`;
 }

@@ -11,7 +11,7 @@ import { useReactToPrint } from "react-to-print";
 import Image from "next/image";
 import Account from "../Types/Account/Account";
 import { PDFViewer } from "@react-pdf/renderer";
-import { WalletTransactionReceiptPDF } from "../PDFs/Receipt";
+import { WalletTransactionReceiptPDF } from "../PDFs/WalletReceipt";
 
 export default function TransactionDetails({ transaction }: { transaction: WalletTransaction & Account }) {
     return <>
@@ -116,7 +116,7 @@ export default function TransactionDetails({ transaction }: { transaction: Walle
                 ${(transaction.amountInCents / 100).toFixed(2)}
             </div>
             <div className="flex gap-4 items-center">
-                {transaction.paymentMethod != WalletTransactionPaymentMethod.Gift && <a href={`/api/download/receipt?transactionId=${transaction.id}`} target="_blank" className="text-sm bg-gray-50 rounded-lg px-3 py-1 fill-black hover:text-pnw-gold hover:fill-pnw-gold hover:cursor-pointer">
+                {transaction.paymentMethod != WalletTransactionPaymentMethod.Gift && <a href={`/api/download/wallet-receipt?transactionId=${transaction.id}`} target="_blank" className="text-sm bg-gray-50 rounded-lg px-3 py-1 fill-black hover:text-pnw-gold hover:fill-pnw-gold hover:cursor-pointer">
                     Download Receipt<FaRegFilePdf className="fill-inherit ml-2 inline"></FaRegFilePdf>
                 </a>}
                 <div className="text-sm">

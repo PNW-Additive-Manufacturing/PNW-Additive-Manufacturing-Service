@@ -23,6 +23,7 @@ export default interface Part {
 	modelId: string;
 	filament?: Filament;
 	supplementedFilament?: Filament;
+	reasonForSupplementedFilament?: string;
 	notes?: string;
 	priceInDollars?: number;
 	deniedReason?: string;
@@ -47,7 +48,7 @@ export function getStatusColor(partStatus: PartStatus) {
 			selectedStatusColor = "rgb(239, 68, 68)";
 			break;
 		case PartStatus.Denied:
-			selectedStatusColor = "rgb(251, 146, 60)";
+			selectedStatusColor = "#ef4444";
 			break;
 		case PartStatus.Pending:
 			selectedStatusColor = "rgb(251, 146, 60)";

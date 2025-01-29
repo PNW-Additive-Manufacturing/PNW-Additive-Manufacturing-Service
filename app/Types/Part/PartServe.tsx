@@ -39,6 +39,7 @@ export default class PartServe {
 					: await FilamentServe.queryById(
 						partRow.supplementedfilamentid
 					),
+			reasonForSupplementedFilament: partRow.supplementedreason,
 			status: partRow.status,
 			deniedReason: partRow.revokedreason,
 			notes: partRow.notes,
@@ -129,6 +130,7 @@ export default class PartServe {
 						: await FilamentServe.queryById(
 							partRow.supplementedfilamentid
 						),
+				reasonForSupplementedFilament: partRow.supplementedreason,
 				filament:
 					filamentRow == undefined
 						? undefined

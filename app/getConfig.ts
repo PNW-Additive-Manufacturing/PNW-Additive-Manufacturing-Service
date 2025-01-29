@@ -20,6 +20,7 @@ export default function getConfig() {
 	const uploadDir = getProcessEnvironmentVariable("UPLOAD_DIR");
 	const uploadModelDir = `${uploadDir}/models`;
 	const uploadProjectShowcaseImageDir = `${uploadDir}/project-showcase-images`;
+	const uploadProjectShowcaseAttachmentsDir = `${uploadDir}/project-showcase-attachments`;
 	const dbConnectionString = getProcessEnvironmentVariable("DB_CONNECTION");
 	const jwtSecret = getProcessEnvironmentVariable("JWT_SECRET");
 	const parsedEnvironment = environmentSchema.safeParse(
@@ -47,6 +48,7 @@ export default function getConfig() {
 		},
 		uploadModelDir,
 		uploadProjectShowcaseImageDir,
+		uploadProjectShowcaseAttachmentsDir,
 		farmAPIUrl,
 		environment: parsedEnvironment.data,
 		email: {

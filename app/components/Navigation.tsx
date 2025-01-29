@@ -32,6 +32,7 @@ import HorizontalWrap from "./HorizontalWrap";
 import { AccountContext } from "../ContextProviders";
 import { CurrencySpan } from "./Spans";
 import { CgProfile } from "react-icons/cg";
+import { TbCube3dSphere } from "react-icons/tb";
 
 function NavbarLink({
 	name,
@@ -46,7 +47,7 @@ function NavbarLink({
 		<Link
 			onClick={onClick}
 			href={path}
-			className="rounded-md whitespace-nowrap xl:rounded-none w-full p-4 xl:p-0 bg-gray-100 sm:bg-transparent xl:w-fit border-b-4 border-b-black border-opacity-5 hover:text-pnw-gold hover:border-b-pnw-gold hover:border-opacity-100 active:text-pnw-gold">
+			className="rounded-md whitespace-nowrap xl:rounded-none text-base w-full p-4 xl:p-0 bg-gray-100 sm:bg-transparent xl:w-fit border-b-4 offset border-b-black border-opacity-5 hover:text-pnw-gold hover:border-b-pnw-gold hover:border-opacity-100 active:text-pnw-gold">
 			{name}
 		</Link>
 	);
@@ -69,7 +70,7 @@ export function AccountDetails({
 			<Link href={"/user/profile"}>
 				<div
 					onClick={() => setExpanded(() => !expanded)}
-					className={`bg-gray-100 h-10 rounded-md hover:cursor-pointer hover:text-pnw-gold hover:fill-pnw-gold flex flex-row items-center gap-2 px-3`}>
+					className={`bg-gray-100 text-sm h-full rounded-md hover:cursor-pointer hover:text-pnw-gold hover:fill-pnw-gold flex flex-row items-center gap-2 px-3 py-0`}>
 					{accountDetails.isSingedIn ? (
 						<>
 							<span className="text-nowrap">
@@ -108,8 +109,10 @@ export function ColorfulRequestPrintButton() {
 	return (
 		<a
 			href="/request-part/"
-			className="bg-gradient-linear-pnw-mystic text-center tracking-wider whitespace-nowrap font-semibold uppercase rounded-md bottom-0 h-fit bg-gray-100 flex flex-col gap-4 p-2 px-2.5">
-			<RegularCart className="inline w-6 h-6 p-1 fill-cool-black" />
+			className="bg-gradient-linear-pnw-mystic text-center tracking-wide text-sm whitespace-nowrap font-medium rounded-md bottom-0 h-fit bg-gray-100 flex items-center gap-2 py-1.5 px-3">
+			{/* <RegularCart className="inline w-5 h-5 fill-cool-black" /> */}
+			Upload Models
+			<TbCube3dSphere className="fill-cool-black" style={{ width: "21px", height: "21px" }} />
 		</a>
 	);
 }
@@ -157,7 +160,7 @@ export function Navbar({
 							<div className="hidden xl:flex items-end justify-end tracking-wider gap-4 overflow-x-hidden">
 								<Link
 									href="/">
-									<Image className="w-11" style={{ height: "29.5px" }} src={"/assets/am_cropped.png"} alt={"Additive Manufacturing"} width={480} height={480}></Image>
+									<Image className="w-10" src={"/assets/am_cropped.png"} alt={"Additive Manufacturing"} width={480} height={480}></Image>
 									{/* <div className="text-nowrap text-xl tracking-wide flex-fit">
 										<span className="text-pnw-gold">PNW </span>
 										<span>Additive Manufacturing</span>

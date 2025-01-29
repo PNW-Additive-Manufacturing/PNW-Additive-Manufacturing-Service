@@ -37,21 +37,21 @@ export default function PopupFilamentSelector({
 	const isAnyAvailable = materials.length > 0;
 
 	const { register, watch, trigger, setValue } = useForm<{
-		material: string;
-		colorName: string;
+		"filament-selector-material": string;
+		"filament-selector-color": string;
 		colorHex: string;
 	}>({
 		defaultValues: {
-			colorName: defaultFilament?.colorName,
-			material: defaultFilament?.material
+			"filament-selector-material": defaultFilament?.colorName,
+			"filament-selector-color": defaultFilament?.material
 		}
 	});
 
-	const selectedMaterial = watch("material");
+	const selectedMaterial = watch("filament-selector-material");
 	const filamentsMatchingMaterial = filaments.filter(
 		(filament) => filament.material == selectedMaterial && filament.inStock
 	);
-	const selectedColorName = watch("colorName");
+	const selectedColorName = watch("filament-selector-color");
 	const selectedFilament = filaments.find(
 		(filament) =>
 			filament.material == selectedMaterial &&
@@ -67,10 +67,10 @@ export default function PopupFilamentSelector({
 		);
 
 		if (material != null) {
-			setValue("material", material);
+			setValue("filament-selector-material", material);
 		}
 		if (colorName != null) {
-			setValue("colorName", colorName);
+			setValue("filament-selector-color", colorName);
 		}
 
 		// if (selectedFilament && onChange) {
@@ -102,7 +102,7 @@ export default function PopupFilamentSelector({
 					<div className="w-full">
 						<label>Material</label>
 						<select
-							{...register("material")}
+							{...register("filament-selector-material")}
 							required
 							onChange={(m) =>
 								changeFilament(m.target.value, undefined)
@@ -118,7 +118,7 @@ export default function PopupFilamentSelector({
 					<div className="w-full">
 						<label>Colors</label>
 						<select
-							{...register("colorName")}
+							{...register("filament-selector-color")}
 							defaultValue={"No Selection"}
 							required
 							onChange={(s) =>

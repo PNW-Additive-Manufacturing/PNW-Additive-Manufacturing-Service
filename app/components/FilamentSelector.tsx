@@ -1,147 +1,107 @@
-"use client";
-
-import { ChangeEvent, useState, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Filament from "../Types/Filament/Filament";
-import { SwatchConfiguration, Swatch } from "./Swatch";
-import { RegularArrowRight } from "lineicons-react";
-import { UseFormRegisterReturn } from "react-hook-form";
+import { toast } from "react-toastify";
+import FilamentBlock from "../experiments/FilamentBlock";
+import { RegularEye } from "lineicons-react";
+import { NamedSwatch } from "./Swatch";
 
-export function FilamentSelector({
-	filaments,
-	defaultMaterial,
-	defaultColor,
-	nameTransform,
-	onChange,
-	includeSwatchVisual
-}: {
-	filaments: Filament[];
-	defaultMaterial?: string;
-	defaultColor?: SwatchConfiguration;
-	nameTransform?: (name: string) => string;
-	onChange?: (material: string, colorName: string) => void;
-	includeSwatchVisual?: boolean;
-}) {
-	includeSwatchVisual = includeSwatchVisual ?? true;
+type FilamentSelectorProps = {
+	filaments: Filament[],
+	defaultFilament?: Filament;
+	canSelectOutOfStock: boolean,
+	materialInputID?: string;
+	colorNameInputID?: string;
+	displayFilamentInsight: boolean;
+	onChange?: (chosenFilament: Filament) => void
+};
 
-	if (filaments.length == 0) {
-		return (
-			<>
-				<p id="filament-client-error" className="text-sm text-red-500">
-					No filament is in stock! Use Comments.
-				</p>
-				<input type="hidden" name="material" value="" />
-				<input type="hidden" name="color" value="" />
-			</>
-		);
-	}
+export default function FilamentSelector({ filaments, materialInputID, colorNameInputID, onChange, canSelectOutOfStock, displayFilamentInsight, defaultFilament }: FilamentSelectorProps) {
 
-	let [error, setError] = useState("");
+	materialInputID ||= "filament-selector-material";
+	colorNameInputID ||= "filament-selector-color";
 
-	//get list of all unique colors and materials
-	let colorSet = new Set<SwatchConfiguration>();
-	let materialSet = new Set<string>();
+	if (filaments.length == 0) return <>Contact an Admin, there are no available Filaments!</>;
 
-	for (let filament of filaments) {
-		colorSet.add(filament.color);
-		materialSet.add(filament.material);
-	}
+	const availableMaterials = useMemo(() => {
+		// We need a unique list of the materials!
+		const uniqueMaterials = new Set<string>();
+		for (let material of filaments.map(f => f.material)) {
+			uniqueMaterials.add(material);
+		}
+		return Array.from(uniqueMaterials);
 
-	//convert sets to arrays so that we can call Array.map
-	let colors = Array.from(colorSet);
-	let materials = Array.from(materialSet);
+	}, [filaments]);
 
-	let [selectedMaterial, setSelectedMaterial] = useState<string>(
-		defaultMaterial ?? filaments[0].material
-	);
-	let [selectedColor, setSelectedColor] = useState<SwatchConfiguration>(
-		defaultColor ?? filaments[0].color
-	);
+	const defaultMaterial = useMemo(() => {
+		const PLAIndex = availableMaterials.findIndex(m => m.toUpperCase() == "PLA");
+		const hasPLA = PLAIndex > 0;
 
-	//useEffect is called after each React render call when one of the variables from useState in the dependency
-	//list (2nd parameter) are changed.
+		// If PLA exists, use it as a default or use the first material available
+		return hasPLA ? availableMaterials[PLAIndex] : availableMaterials.at(0)!;
+	}, [availableMaterials]);
+
+	const [selectedMaterial, setSelectedMaterial] = useState<string>(defaultMaterial);
+	const availableColors = useMemo(() => filaments.filter(f => f.material == selectedMaterial && (canSelectOutOfStock ? true : f.inStock)).map(f => f.color), [selectedMaterial])
+
+	const [selectedFilament, setSelectedFilament] = useState<Filament | undefined>(defaultFilament);
+
 	useEffect(() => {
-		if (!selectedColor || !selectedMaterial) {
-			setError("");
-		} else if (
-			!filaments.find(
-				(f) =>
-					f.color.name.toLocaleUpperCase() ==
-						selectedColor.name.toUpperCase() &&
-					f.material.toUpperCase() == selectedMaterial.toUpperCase()
-			)
-		) {
-			setError(`Filament is out of stock!`);
-		} else {
-			setError("");
+		// Material was switched, use the first available color matching the given material.
+		setSelectedFilament(availableColors.map(c => filaments.find(f => f.color.name == c.name)!).find(f => f.material == selectedMaterial && (canSelectOutOfStock ? true : f.inStock)));
+
+	}, [selectedMaterial, availableColors, filaments]);
+
+
+	const chooseColor = useCallback((colorName: string) => {
+		console.log(selectedMaterial, colorName);
+		const newSelectedFilament = filaments.find(f => f.material == selectedMaterial && f.color.name == colorName);
+
+		if (newSelectedFilament == undefined) {
+			toast.error("Contact an Admin, selected filament does not exist!");
+			return;
 		}
+		setSelectedFilament(newSelectedFilament);
+		if (onChange) onChange(newSelectedFilament);
 
-		//when any variables in this list are changed, the useEffect callback will be called
-	}, [filaments, selectedColor, selectedMaterial]);
+	}, [selectedMaterial, filaments]);
 
-	let onChangeMaterial = function (e: ChangeEvent<HTMLSelectElement>) {
-		//will call callback in useEffect function
-		setSelectedMaterial(e.target.value);
-		if (onChange != undefined) {
-			onChange(selectedMaterial.toUpperCase(), selectedColor.name);
-		}
-	};
+	return <>
 
-	let onChangeColor = function (e: ChangeEvent<HTMLSelectElement>) {
-		//will call callback in useEffect function
-		setSelectedColor(
-			Array.from(colorSet.values()).find(
-				(color, index) =>
-					color.name.toLowerCase() == e.target.value.toLowerCase()
-			)!
-		);
+		<select
+			title="Filament Material"
+			className="mb-0"
+			name={materialInputID} id={materialInputID}
+			defaultValue={selectedFilament?.material}
+			onChange={(ev) => setSelectedMaterial(ev.currentTarget.value)}>
 
-		if (onChange != undefined) {
-			onChange(selectedMaterial.toUpperCase(), e.target.value);
-		}
-	};
+			<option disabled={true}>Choose a variant of {selectedMaterial}</option>
 
-	console.log(selectedColor);
+			{availableMaterials.map(m => <option key={m} value={m}>{m.toUpperCase()}</option>)}
+		</select>
 
-	console.log("Default Mat: ", defaultMaterial);
-	console.log("Default Col: ", defaultColor);
+		<select
+			title="Filament Color"
+			className="mb-0"
+			name={colorNameInputID} id={colorNameInputID}
+			defaultValue={selectedFilament?.color.name}
+			onChange={(ev) => chooseColor(ev.currentTarget.value)}>
 
-	return (
-		<div className="lg:flex gap-2 w-fit p-0 items-center">
-			<select
-				className="bg-transparent uppercase m-0 p-0 text-base"
-				id="filament-material"
-				name={nameTransform ? nameTransform("material") : "material"}
-				onChange={onChangeMaterial}
-				defaultValue={selectedMaterial}>
-				{materials.map((m, index) => (
-					<option key={m} value={m}>
-						{m.toUpperCase()}
-					</option>
-				))}
-			</select>
-			<select
-				className="bg-transparent w-fit m-0 p-0 text-base"
-				id="filament-color"
-				name={nameTransform ? nameTransform("color") : "color"}
-				onChange={onChangeColor}
-				defaultValue={selectedColor?.name}>
-				{colors.map((c, index) => (
-					<option key={c.name} value={c.name}>
-						{c.name}
-					</option>
-				))}
-				<option value="">Any</option>
-			</select>
-			<div className="w-fit">
-				{includeSwatchVisual && selectedColor == undefined ? (
-					<></>
-				) : (
-					<Swatch swatch={selectedColor}></Swatch>
-				)}
-			</div>
-			<p id="filament-client-error" className="text-sm text-red-500">
-				{error}
-			</p>
-		</div>
-	);
+			{availableColors.length > 0
+				? <option disabled={true}>Choose a variant of {selectedMaterial}</option>
+				: <option disabled={true}>{selectedMaterial} does not have any available colors!</option>}
+
+			{availableColors.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
+		</select>
+
+		{displayFilamentInsight && selectedFilament != null && <p className="text-xs"><FilamentInsight selectedFilament={selectedFilament} /></p>}
+	</>
+
+}
+
+export function FilamentInsight({ selectedFilament }: { selectedFilament: Filament }) {
+	return <a target="_blank" className="w-fit mt-0 button" href={`/materials#${selectedFilament.technology.toLowerCase()}-${selectedFilament.material.replaceAll(" ", "-").toLowerCase()}`}>
+		{/* <RegularEye className="inline mb-0.5 mr-2" /> */}
+		View properties of {`${selectedFilament.material.toUpperCase()} `}
+		<NamedSwatch swatch={selectedFilament.color} style="long" />
+	</a>
 }

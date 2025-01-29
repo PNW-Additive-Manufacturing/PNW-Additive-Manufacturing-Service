@@ -1,5 +1,5 @@
 import db from "@/app/api/Database";
-import Request, { hasQuote, RequestEmail, RequestWithParts } from "./Request";
+import Request, { hasQuote, RequestCosts, RequestEmail, RequestWithParts } from "./Request";
 import PartServe from "../Part/PartServe";
 import postgres from "postgres";
 import { WalletTransactionStatus } from "../Account/Wallet";
@@ -30,6 +30,7 @@ export class RequestServe {
 		r.TotalPriceInCents,
 		r.PaidAt,
 		r.EstimatedCompletionDate,
+		r.FeesInCents,
 		COUNT(p.Quantity) AS NumberOfParts
 		FROM Request r
 		LEFT JOIN Part p ON r.Id = p.RequestId
@@ -44,7 +45,7 @@ export class RequestServe {
 				? db`AND r.SubmitTime >= ${query.requestedAfter}`
 				: db``
 			}
-		GROUP BY r.Id, r.Name, r.Comments, r.OwnerEmail, a.FirstName, a.LastName, r.SubmitTime, r.FulfilledAt, r.TotalPriceInCents, r.PaidAt, r.EstimatedCompletionDate
+		GROUP BY r.Id, r.Name, r.Comments, r.OwnerEmail, a.FirstName, a.LastName, r.SubmitTime, r.FulfilledAt, r.TotalPriceInCents, r.PaidAt, r.FeesInCents, r.EstimatedCompletionDate
 		ORDER BY r.SubmitTime DESC
 		LIMIT ${query.requestsPerPage} OFFSET ${(query.page - 1) * query.requestsPerPage
 			}; `;
@@ -72,6 +73,7 @@ export class RequestServe {
 						? {
 							isPaid: requestRow.paidat != undefined,
 							paidAt: requestRow.paidat,
+							feesInCents: Number.parseInt(requestRow.feesincents),
 							totalPriceInCents: Number.parseInt(
 								requestRow.totalpriceincents
 							),
@@ -113,12 +115,13 @@ export class RequestServe {
 	r.TotalPriceInCents,
 	r.PaidAt,
 	r.EstimatedCompletionDate,
+	r.FeesInCents,
 	COUNT(p.Quantity) AS NumberOfParts
 		FROM Request r
 		LEFT JOIN Part p ON r.Id = p.RequestId
 		JOIN Account a ON r.OwnerEmail = a.Email
 		WHERE r.Id = ${id}
-		GROUP BY r.Id, r.Name, r.Comments, r.OwnerEmail, a.FirstName, a.LastName, r.SubmitTime, r.FulfilledAt, r.TotalPriceInCents, r.PaidAt, r.EstimatedCompletionDate
+		GROUP BY r.Id, r.Name, r.Comments, r.OwnerEmail, a.FirstName, a.LastName, r.SubmitTime, r.FulfilledAt, r.TotalPriceInCents, r.PaidAt, r.FeesInCents, r.EstimatedCompletionDate
 		ORDER BY r.SubmitTime DESC; `;
 
 		if (query.length == 0) return undefined;
@@ -144,6 +147,7 @@ export class RequestServe {
 					? {
 						isPaid: requestRow.paidat != undefined,
 						paidAt: requestRow.paidat,
+						feesInCents: Number.parseInt(requestRow.feesincents),
 						totalPriceInCents: Number.parseInt(
 							requestRow.totalpriceincents
 						),
@@ -180,11 +184,12 @@ export class RequestServe {
 	r.TotalPriceInCents,
 	r.PaidAt,
 	r.EstimatedCompletionDate,
+	r.FeesInCents,
 	COUNT(p.Quantity) AS NumberOfParts
 		FROM Request r
 		LEFT JOIN Part p ON r.Id = p.RequestId
 		JOIN Account a ON r.OwnerEmail = a.Email
-		GROUP BY r.Id, r.Name, r.Comments, r.OwnerEmail, a.FirstName, a.LastName, r.SubmitTime, r.FulfilledAt, r.TotalPriceInCents, r.PaidAt, r.EstimatedCompletionDate
+		GROUP BY r.Id, r.Name, r.Comments, r.OwnerEmail, a.FirstName, a.LastName, r.SubmitTime, r.FulfilledAt, r.TotalPriceInCents, r.PaidAt, r.FeesInCents, r.EstimatedCompletionDate
 		ORDER BY r.SubmitTime DESC; `;
 
 		if (query.length == 0) return [];
@@ -210,6 +215,7 @@ export class RequestServe {
 						? {
 							isPaid: requestRow.paidat != undefined,
 							paidAt: requestRow.paidat,
+							feesInCents: Number.parseInt(requestRow.feesincents),
 							totalPriceInCents: Number.parseInt(
 								requestRow.totalpriceincents
 							),
@@ -249,12 +255,13 @@ export class RequestServe {
 	r.TotalPriceInCents,
 	r.PaidAt,
 	r.EstimatedCompletionDate,
+	r.FeesInCents,
 	COUNT(p.Quantity) AS NumberOfParts
 		FROM Request r
 		LEFT JOIN Part p ON r.Id = p.RequestId
 		JOIN Account a ON r.OwnerEmail = a.Email
 		WHERE a.Email = ${accountEmail}
-		GROUP BY r.Id, r.Name, r.Comments, r.OwnerEmail, a.FirstName, a.LastName, r.SubmitTime, r.FulfilledAt, r.TotalPriceInCents, r.PaidAt, r.EstimatedCompletionDate
+		GROUP BY r.Id, r.Name, r.Comments, r.OwnerEmail, a.FirstName, a.LastName, r.SubmitTime, r.FulfilledAt, r.TotalPriceInCents, r.PaidAt, r.FeesInCents, r.EstimatedCompletionDate
 		ORDER BY r.SubmitTime DESC; `;
 
 		if (query.length == 0) return [];
@@ -280,6 +287,7 @@ export class RequestServe {
 						? {
 							isPaid: requestRow.paidat != undefined,
 							paidAt: requestRow.paidat,
+							feesInCents: Number.parseInt(requestRow.feesincents),
 							totalPriceInCents: Number.parseInt(
 								requestRow.totalpriceincents
 							),
@@ -306,13 +314,17 @@ export class RequestServe {
 		return requests;
 	}
 
-	public static async setQuote(requestId: number, amountInCents: number, estimatedCompletion: Date) {
+	public static async setQuote(requestId: number, costs: RequestCosts, estimatedCompletion: Date) {
 		const request = await RequestServe.fetchByIDWithAll(requestId);
 		if (request == undefined) throw new Error("Request does not exist!");
 		if (hasQuote(request) && request.quote!.isPaid) {
 			throw new Error("Quote cannot be modified after payment!");
 		}
-		await db`UPDATE Request SET TotalPriceInCents = ${amountInCents}, EstimatedCompletionDate = ${estimatedCompletion} WHERE Id = ${requestId} `;
+
+		const amountInCents = Math.round(costs.totalCost * 100);
+		const feesInCents = Math.round(costs.fees * 100);
+
+		await db`UPDATE Request SET TotalPriceInCents = ${amountInCents}, FeesInCents = ${feesInCents}, EstimatedCompletionDate = ${estimatedCompletion} WHERE Id = ${requestId} `;
 	}
 
 	public static async setAsPaid(

@@ -5,6 +5,9 @@ import { getModelPath, getProjectShowcaseImagePath } from "@/app/files";
 import { retrieveSafeJWTPayload } from "../../util/JwtHelper";
 import { AccountPermission } from "@/app/Types/Account/Account";
 import ModelServe from "@/app/Types/Model/ModelServe";
+import getConfig from "@/app/getConfig";
+
+const envConfig = getConfig();
 
 const projectShowcaseImageDownloadSchema = z.object({
 	projectId: z.string().uuid()
@@ -15,20 +18,25 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 	});
 	if (!parsedData.success) return new NextResponse(null, { status: 400 });
 
-	const modelPath = getProjectShowcaseImagePath(parsedData.data.projectId);
+	const modelPath = await fs.promises.realpath(getProjectShowcaseImagePath(parsedData.data.projectId));
+ 	if (!modelPath.startsWith(envConfig.uploadProjectShowcaseImageDir))
+	{
+		return new NextResponse(null, { status: 404 });
+	}
 
-	console.log(
-		`Downloading showcase ${parsedData.data.projectId} from ${modelPath}`
-	);
+	try
+	{
+		const bufferedData = fs.readFileSync(modelPath);
 
-	if (!fs.existsSync(modelPath)) return new NextResponse("Not Found", { status: 404 });
-
-	const bufferedData = fs.readFileSync(modelPath);
-
-	return new NextResponse(bufferedData, {
-		headers: {
-			"content-type": "image/jpg",
-            "cache-control": "max-age=3600" 
-		}
-	});
+		return new NextResponse(bufferedData, {
+			headers: {
+				"content-type": "image/jpg",
+				"cache-control": "max-age=3600" 
+			}
+		});
+	}
+	catch (ex)
+	{
+		return new NextResponse(null, { status: 404 });
+	}
 }

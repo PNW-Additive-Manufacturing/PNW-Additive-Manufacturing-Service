@@ -2,18 +2,17 @@
 
 import Image from "next/image";
 import { useContext, useRef, useState } from "react";
-import { ProjectSpotlight, ProjectSpotlightContent } from "../Types/ProjectSpotlight/ProjectSpotlight";
+import { ProjectSpotlight, ProjectSpotlightAttachment } from "../Types/ProjectSpotlight/ProjectSpotlight";
 import { AccountContext } from "../ContextProviders";
-import Link from "next/link";
-import { RegularCheckmark, RegularCloudDownload, RegularFiles, RegularPencil, RegularStarFill } from "lineicons-react";
+import { RegularCheckmark, RegularCloudDownload, RegularFiles, RegularPencil } from "lineicons-react";
 import FormSubmitButton from "../components/FormSubmitButton";
 import { formateDate } from "../api/util/Constants";
 import { useFormState } from "react-dom";
 import { deleteProjectShowcase, editProjectShowcase } from "../api/server-actions/maintainer";
-import { revalidatePath } from "next/cache";
 import { toast } from "react-toastify";
 import DropdownSection from "../components/DropdownSection";
 
+// export function ProjectCard(projectData: ProjectSpotlightWithAttachments) {
 export function ProjectCard(projectData: ProjectSpotlight) {
     const [isEditing, setIsEditing] = useState(false);
 
@@ -25,17 +24,22 @@ export function ProjectCard(projectData: ProjectSpotlight) {
 
     const editFormRef = useRef<HTMLFormElement | undefined>(undefined);
 
-    // function ProjectDownloadableContent({ content }: { content: ProjectSpotlightContent }) {
-    //     const downloadURL = `/api/download/project-showcase-models/${projectData.id}/${content.fileName}`;
+    function ProjectDownloadableContent({ content }: { content: ProjectSpotlightAttachment }) {
 
-    //     return <tr className="opacity-75 hover:opacity-100 bg-background">
-    //         <td className="text-sm text-cool-black fill-cool-black">
-    //             <RegularFiles className="inline mr-1.5"></RegularFiles>
-    //             {content.fileName}
-    //         </td>
-    //         <td className="text-sm">{content.downloads} Saves</td>
-    //     </tr>
-    // }
+        return <tr className="opacity-75 hover:opacity-100 bg-background">
+            <td className="text-sm">
+                {/* <RegularFiles className="inline mr-1.5"></RegularFiles> */}
+                {content.fileName}
+            </td>
+            <td className="text-sm text-right">
+                <a href={`/api/download/project-showcase-attachments?attachmentId=${content.id}`} target="_blank" download>
+                    {content.downloadCount} Saves
+
+                    <RegularCloudDownload className="inline ml-2 "></RegularCloudDownload>
+                </a>
+            </td>
+        </tr>
+    }
 
     return <div className="bg-white out shadow-sm rounded-md relative" key={projectData.id}>
 
@@ -137,14 +141,13 @@ export function ProjectCard(projectData: ProjectSpotlight) {
                 </>
             )}
 
-            {/* <DropdownSection name={"2 Downloadable Files"} className="p-0 py-0 px-0 text-sm font-light mt-4" hidden={true}>
-                <table className="w-full rounded-md mt-2">
+            {/* {projectData.attachments.length > 0 && <DropdownSection name={`${projectData.attachments.length} Attachment${projectData.attachments.length > 1 ? "s" : ""}`} className="p-0 py-0 px-0 text-sm font-light mt-4" hidden={true}>
+                <table className="w-full mt-2 rounded-md">
                     <tbody>
-                        <ProjectDownloadableContent content={{ fileName: "Car Thing Mount 15 DEG.STL", downloads: 12 }} />
-                        <ProjectDownloadableContent content={{ fileName: "Car Thing Mount 25 DEG.STL", downloads: 30 }} />
+                        {projectData.attachments.map(a => <ProjectDownloadableContent content={a} />)}
                     </tbody>
                 </table>
-            </DropdownSection> */}
+            </DropdownSection>} */}
 
             {/* <label className="mt-2">Downloadable Content</label> */}
 

@@ -99,7 +99,7 @@ export function EngineeringCamera({
 		</>
 	);
 }
-export default function ModelViewer({
+export default function ThreeModelViewer({
 	swatch,
 	modelURL,
 	modelFile,

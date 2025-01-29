@@ -10,3 +10,12 @@ export default interface Filament {
 	details: string;
 	leadTimeInDays: number;
 }
+
+export function getMaterials(filaments: Filament[]): string[] {
+    const uniqueMaterials = new Set<string>();
+    
+    for (const filament of filaments) {
+        uniqueMaterials.add(filament.material);
+    }
+    return Array.from(uniqueMaterials);
+}

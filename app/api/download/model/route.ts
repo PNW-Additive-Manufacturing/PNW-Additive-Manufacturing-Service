@@ -38,12 +38,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 		`Downloading model ${parsedData.data.modelId} by ${model.ownerEmail} from ${modelPath}`
 	);
 
-	if (!fs.existsSync(modelPath)) {
-		// redirect("/404");
-		return new NextResponse("Not Found", { status: 404 });
-	}
+	// if (!fs.promises.access(modelPath, fs.promises.constants.F_OK)) {
+	// 	return new NextResponse("Not Found", { status: 404 });
+	// }
 
-	const bufferedData = fs.readFileSync(modelPath);
+	const bufferedData = await fs.promises.readFile(modelPath);
 
 	return new NextResponse(bufferedData, {
 		headers: {

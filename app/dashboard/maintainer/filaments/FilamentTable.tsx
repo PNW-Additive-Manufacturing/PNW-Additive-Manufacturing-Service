@@ -109,7 +109,7 @@ export function FilamentList({
 						{filaments.map((f: Filament) => (
 							<tr className="w-full border-l-4 out bg-white" key={f.material + f.color.name}>
 								<td>{f.material.toUpperCase()}</td>
-								<td><NamedSwatch swatch={f.color}></NamedSwatch></td>
+								<td><NamedSwatch swatch={f.color} style="long"></NamedSwatch></td>
 								<td>${(f.costPerGramInCents / 100).toFixed(2)}</td>
 								<td>
 									<select

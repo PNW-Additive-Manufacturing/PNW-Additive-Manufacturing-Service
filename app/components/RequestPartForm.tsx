@@ -10,7 +10,7 @@ import { Dialog } from "@headlessui/react";
 import Model from "../Types/Model/Model";
 import Filament from "../Types/Filament/Filament";
 import PopupFilamentSelector from "./PopupFilamentSelector";
-import ModelViewer from "./ModelViewer";
+import ThreeModelViewer from "./ThreeModelViewer";
 import { Swatch, SwatchConfiguration } from "./Swatch";
 import { BufferGeometry } from "three";
 import { Label } from "./Inputs";
@@ -20,6 +20,7 @@ import Link from "next/link";
 import { addDays, addMinutes, fixInputDate, formatDateForHTMLInput, formatTimeForHTMLInput, withDate, withTime } from "../utils/TimeUtils";
 import { formateDateWithTime } from "../api/util/Constants";
 import { getLeadTimeDate, getLeadTimeInDays } from "../Types/Request/Request";
+import FilamentSelector, { FilamentInsight } from "./FilamentSelector";
 
 function AddPartButton({
 	onChange
@@ -64,6 +65,7 @@ interface PartData {
 	Quantity: number;
 	Material: string;
 	LeadTimeInDays: number;
+	Filament: Filament;
 	Color: SwatchConfiguration;
 	Geometry: BufferGeometry;
 	IsUserOriented: boolean;
@@ -117,14 +119,16 @@ export function RequestPartForm({
 
 	return (
 		<>
-			<Dialog
+
+
+			{modifyingPart != undefined && <Dialog
 				open={modifyingPart != null}
 				onClose={() => setModifyingPart(undefined)}
 				className="relative z-50">
 				<div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 
 				<div className="fixed inset-0 flex w-screen items-center justify-center shadow-lg">
-					<Dialog.Panel className="rounded-md bg-white p-8 max-lg:w-full max-lg:mx-4 out">
+					<Dialog.Panel className="rounded-md bg-white p-8 max-lg:w-full max-lg:mx-4">
 						<Dialog.Title className="mb-4 flex max-lg:flex-col lg:justify-between lg:items-center gap-4">
 							<div className="flex font-light text-xl items-center gap-2">
 								<RegularEmptyFile className="inline fill-pnw-gold"></RegularEmptyFile>
@@ -158,7 +162,7 @@ export function RequestPartForm({
 								<label>View Model</label>
 								{modifyingPart?.File && (
 									<div className="w-full h-full shadow-sm out">
-										<ModelViewer
+										<ThreeModelViewer
 											showOrientation={
 												!modifyingPart!
 													.IsUserOriented
@@ -175,7 +179,7 @@ export function RequestPartForm({
 											}}
 											modelFile={
 												modifyingPart.File
-											}></ModelViewer>
+											}></ThreeModelViewer>
 									</div>
 								)}
 							</div>
@@ -197,7 +201,7 @@ export function RequestPartForm({
 
 								<label>Process / Material</label>
 								<p className="mb-4 text-sm">Review each <Link className="underline" target="_blank" href={"/materials"}>process and material</Link> before submission.</p>
-								<select defaultValue="FDM">
+								{/* <select defaultValue="FDM">
 									<option value="FDM`">
 										FDM
 									</option>
@@ -207,10 +211,10 @@ export function RequestPartForm({
 									<option disabled value="Metal FFF">
 										Metal Printing
 									</option>
-								</select>
+								</select> */}
 
 								{/* <label>Filament Preference</label> */}
-								<PopupFilamentSelector
+								{/* <PopupFilamentSelector
 									filaments={filaments}
 									defaultFilament={{
 										colorName: modifyingPart?.Color.name,
@@ -236,12 +240,38 @@ export function RequestPartForm({
 										}
 									}}>
 
-								</PopupFilamentSelector>
+								</PopupFilamentSelector> */}
+
+								<div className="flex gap-4">
+									<FilamentSelector filaments={filaments} defaultFilament={modifyingPart.Filament} canSelectOutOfStock={false} displayFilamentInsight={false} onChange={(filament) => {
+										if (modifyingPart) {
+											// Update the modifyingPart properties
+											modifyingPart.Material = filament.material;
+											modifyingPart.Color = filament.color;
+											modifyingPart.LeadTimeInDays = filament.leadTimeInDays;
+											modifyingPart.Filament = filament;
+
+											// Replace the modified part in the parts array
+											const updatedParts = parts.map((part) =>
+												part === modifyingPart ? { ...modifyingPart } : part
+											);
+
+											// Trigger state update to refresh the component
+											setParts(updatedParts);
+
+											// Optionally log or notify the user
+											// toast.info(`Filament updated for ${modifyingPart.ModelName}. Lead time: ${filament.leadTimeInDays} days.`);
+										}
+									}}></FilamentSelector>
+								</div>
+								<div className="mt-2">
+									<FilamentInsight selectedFilament={modifyingPart.Filament}></FilamentInsight>
+								</div>
 							</div>
 						</div>
 					</Dialog.Panel>
 				</div>
-			</Dialog>
+			</Dialog>}
 
 			<form
 				action={(formData) => {
@@ -305,7 +335,7 @@ export function RequestPartForm({
 															<td className="max-lg:hidden text-sm">3D Printing (FDM)</td>
 															<td className="text-sm">
 																<span className="mr-2">{part.Material}</span>
-																<Swatch swatch={part.Color}></Swatch>
+																<Swatch swatch={part.Color} style="long"></Swatch>
 															</td>
 															<td className="max-lg:hidden text-sm">
 																x{part.Quantity}
@@ -339,6 +369,7 @@ export function RequestPartForm({
 													Geometry: parsedSTLGeometry,
 													ModelName: file.name.substring(0, file.name.lastIndexOf(".")),
 													Material: "PLA",
+													Filament: filaments.at(0),
 													LeadTimeInDays: 1,
 													Color: filaments.at(0)!.color,
 													IsUserOriented: false

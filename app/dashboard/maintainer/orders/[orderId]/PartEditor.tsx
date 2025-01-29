@@ -1,9 +1,9 @@
-import { modifyPart, revokePart } from "@/app/api/server-actions/maintainer";
-import { FilamentSelector } from "@/app/components/FilamentSelector";
+import { revokePart } from "@/app/api/server-actions/maintainer";
+import FilamentSelector from "@/app/components/FilamentSelector";
 import FormLoadingSpinner from "@/app/components/FormLoadingSpinner";
 import { CurrencyInput } from "@/app/components/Inputs";
 import Machine, { getMachineImageURL, MachineData, MachineIndicator } from "@/app/components/Machine";
-import ModelViewer from "@/app/components/ModelViewer";
+import ThreeModelViewer from "@/app/components/ThreeModelViewer";
 import RefundMessage from "@/app/components/Part/RefundMessage";
 import { SelectorStatusPill } from "@/app/components/StatusPill";
 import { getSingleColor, NamedSwatch } from "@/app/components/Swatch";
@@ -35,9 +35,12 @@ import {
 import {
 	RegularAlarm,
 	RegularAlarmClock,
+	RegularArrowRight,
 	RegularCloudDownload,
+	RegularConstructionHammer,
 	RegularCrossCircle,
 	RegularDownload,
+	RegularFlag,
 	RegularMoneyProtection,
 	RegularPlus,
 	RegularReload,
@@ -48,12 +51,20 @@ import {
 	RegularUpload,
 	RegularWeight
 } from "lineicons-react";
-import { ChangeEvent, ChangeEventHandler, Suspense, useState } from "react";
+import React, { ChangeEvent, ChangeEventHandler, Suspense, useContext, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { useForm } from "react-hook-form";
 import { Color } from "three";
 import { string } from "zod";
 import { toast } from "react-toastify";
+import RevokeInput from "@/app/components/RevokeInput";
+import { confirmationForm, FloatingFormContainer, FloatingFormContext, FloatingFormQuestion } from "@/app/components/FloatingForm";
+import { LabelWithIcon } from "@/app/components/LabelWithIcon";
+import { APIData } from "@/app/api/APIResponse";
+import { makeStringNotEmpty } from "@/app/utils/StringUtils";
+import usePartModifier from "@/app/hooks/usePartState";
+import useClipboard from "@/app/hooks/useClipboard";
+import { Figure } from "@/app/components/Figures";
 
 function PartRevokeForm({
 	part,
@@ -111,6 +122,16 @@ function PartRevokeForm({
 	);
 }
 
+type PartEditorProps = {
+	request: RequestWithParts;
+	part: PartWithModel;
+	index: number;
+	isQuoted: boolean;
+	filaments: Filament[];
+	count: number;
+	processingMachine?: MachineData | null;
+};
+
 export default function PartEditor({
 	request,
 	part,
@@ -119,15 +140,7 @@ export default function PartEditor({
 	filaments,
 	count,
 	processingMachine
-}: {
-	request: RequestWithParts;
-	part: PartWithModel;
-	index: number;
-	isQuoted: boolean;
-	filaments: Filament[];
-	count: number;
-	processingMachine?: MachineData | null;
-}) {
+}: PartEditorProps) {
 	const { register, watch, setValue, getValues } = useForm<{
 		costInDollars: number;
 		status: string;
@@ -136,12 +149,8 @@ export default function PartEditor({
 		refundQuantity: number;
 		supplementedFilamentMaterial: string;
 		supplementedFilamentColorName: string;
-	}>({
-		defaultValues:
-		{
-			costInDollars: part.priceInDollars
-		}
-	});
+		supplementReason: string;
+	}>();
 
 	const isEditingFilament =
 		watch(
@@ -153,48 +162,37 @@ export default function PartEditor({
 			part.supplementedFilament?.material
 		) != part.supplementedFilament?.material;
 	const isStatusChanged = watch("status", part.status) != part.status;
-	const isCostChanged =
+	const isCostChanged = makeStringNotEmpty(watch("costInDollars") as any) != undefined &&
 		(watch("costInDollars") ?? part.priceInDollars) != part.priceInDollars;
 	const isChanged = isEditingFilament || isStatusChanged || isCostChanged;
-
-	const [showFilamentSupplement, setShowFilamentSupplement] = useState(false);
-	const [showPartModified, setShowPartModified] = useState(false);
-	const [showRevoke, setShowRevoke] = useState(false);
-	const [revokeError, revokeFormAction] = useFormState<any, FormData>(
-		revokePart,
-		""
-	);
-
-	let [error, formAction] = useFormState<any, FormData>(
-		async (prevState, data) => {
-			if (!isStatusChanged) data.delete("status");
-			if (!isCostChanged) data.delete("costInDollars");
-			if (!isEditingFilament) {
-				data.delete("material");
-				data.delete("color");
-			}
-
-			const action = await modifyPart(prevState, data);
-			if (action == undefined || action!.length == 0) toast.success(`Part ${part.model.name} has been successfully modified!`);
-			return action;
-		},
-		""
-	);
-
 	const selectedStatusColor = getStatusColor(
 		watch("status", part.status) as PartStatus
 	);
 
+	const { copyToClipboard } = useClipboard();
+	const { result, updatePart } = usePartModifier();
+	const { addForm } = useContext(FloatingFormContext);
+
 	return (
 		<div key={part.id} className="h-full">
-			<PartRevokeForm
-				part={part}
-				showRevoke={showRevoke}
-				setShowRevoke={(show) => {
-					setShowRevoke(show);
-					setValue("status", PartStatus.Pending);
-				}}></PartRevokeForm>
-			<form action={formAction} className="h-full">
+			<form action={(data) => {
+
+				let modifiedData: NonNullable<Parameters<typeof updatePart>[1]> = {};
+
+				if (isStatusChanged) modifiedData.status = data.get("status") as PartStatus;
+				if (isEditingFilament) {
+					// TODO: Make action take in data from react-form lib.
+					modifiedData.supplementedFilamentName = watch("supplementedFilamentColorName") as string;
+					modifiedData.supplementedFilamentMaterial = watch("supplementedFilamentMaterial") as string;
+					modifiedData.supplementReason = watch("supplementReason") as string;
+				}
+				if (isCostChanged) modifiedData.priceInDollars = data.get("costInDollars") as any;
+
+				console.log(modifiedData);
+
+				updatePart(part, modifiedData);
+
+			}} className="h-full">
 				<input
 					readOnly={true}
 					hidden
@@ -202,12 +200,87 @@ export default function PartEditor({
 					name="partId"
 					id="partId"></input>
 
-				<div className="flex gap-4 w-full h-full">
-					<div
-						className={`shadow-sm rounded-sm p-4 lg:p-6 w-full bg-white outline outline-2 outline-gray-200`} style={{ borderTopLeftRadius: "0px", borderTopRightRadius: "0px" }}>
+				<div className="flex gap-4 h-full">
+					<div className={`shadow-sm out w-full bg-white p-4 lg:p-6`}>
+						<div className="flex items-center gap-4 mb-2">
+							<p className="w-full truncate hover:fill-pnw-gold hover:text-pnw-gold hover:cursor-pointer font-medium" onClick={() => {
+								copyToClipboard(part.model.name).then(() => toast.success(`Part name copied to clipboard!`, { autoClose: 1000 }));
+							}}>
+								{part.model.name}
+							</p>
+
+							<div className="flex text-sm bg-white gap-x-4 gap-y-2 items-center">
+								{isChanged && <button
+									className={`w-fit text-[length:inherit] px-0 py-0 text-cool-black hover:text-cool-black mb-0 bg-transparent hover:bg-transparent hover:fill-black enabled:fill-pnw-gold enabled:text-pnw-gold`}
+									disabled={!isChanged || request.isFulfilled}>
+									<RegularUpload className="w-4 h-4 mb-0.5 inline mr-2"></RegularUpload>
+									Save
+								</button>}
+
+								<SelectorStatusPill
+									register={register("status")}
+									statusColor={selectedStatusColor}
+									defaultValue={part.status}>
+									{part.status !=
+										PartStatus.Denied && !request.isFulfilled && (
+											<option
+												value={PartStatus.Pending}
+												key={PartStatus.Pending}>
+												Pending
+											</option>
+										)}
+									{!request.isFulfilled && !isPriced(part) && (
+										<option
+											value={PartStatus.Denied}
+											key={PartStatus.Denied}>
+											Denied
+										</option>
+									)}
+									{request.isFulfilled && <option
+										value={
+											PartStatus.Printed
+										}
+										key={
+											PartStatus.Printed
+										}>
+										Printed
+									</option>}
+									{!request.isFulfilled && isPaid(request) && (
+										<>
+											<option
+												value={
+													PartStatus.Printing
+												}
+												key={
+													PartStatus.Printing
+												}>
+												Printing
+											</option>
+											<option
+												value={
+													PartStatus.Printed
+												}
+												key={
+													PartStatus.Printed
+												}>
+												Printed
+											</option>
+											<option
+												value={
+													PartStatus.Failed
+												}
+												key={PartStatus.Failed}>
+												Failed
+											</option>
+										</>
+									)}
+								</SelectorStatusPill>
+							</div>
+						</div>
+
 						<div className={`lg:flex gap-4`}>
 							<div className="w-full">
-								{isRefunded(part) ? (
+								{/* {isRefunded(part) ? (
 									<></>
 								) : (
 									isPaid(request) &&
@@ -239,6 +312,7 @@ export default function PartEditor({
 														max={part.quantity}></input>
 
 													<input
+														title="Refund Quantity"
 														className="min-w-12 p-0 min w-fit text-center mb-0 bg-transparent"
 														type="number"
 														required={false}
@@ -268,289 +342,237 @@ export default function PartEditor({
 											</div>
 										</div>
 									)
-								)}
+								)} */}
 
-								<div className={count < 3 ? "flex max-lg:flex-col-reverse gap-4" : "w-full flex gap-4 flex-col-reverse"}>
-									<div className={`flex items-start gap-4 ${count > 2 ? "w-full" : "lg:w-1/3"}`}>
-										<div className="w-full h-full out">
-											<div className="w-full h-36 out bg-gray-50 rounded-sm">
-												<ModelViewer
-													isAvailable={!part.model.isPurged}
-													modelSize={part.model?.fileSizeInBytes}
-													// swatch={
-													// 	part.supplementedFilament
-													// 		?.color ??
-													// 	part.filament?.color
-													// }
-													modelURL={`/api/download/model?modelId=${part.modelId}`}></ModelViewer>
-											</div>
-											<div>
-												<div className="bg-background text-gray-500 w-full p-3 text-xs rounded-b-sm">
-													<div className="flex gap-2 flex-wrap justify-between items-center">
+								<div className={"w-full flex gap-4 flex-col-reverse"}>
+									<div className="w-full h-full out relative ">
+										{/* Display if multiple revisions */}
+										{/* <div className="absolute top-0 right-0 text-xs bg-white out rounded-none rounded-bl-md text-subtle px-2 py-1.5 z-10 pl-3" style={{ borderRadius: "0px 3px 0px 12px" }}>
+											Revision #2
+										</div> */}
+										<div className="w-full h-36 out bg-gray-50 rounded-sm">
+											<ThreeModelViewer
+												isAvailable={!part.model.isPurged}
+												modelSize={part.model?.fileSizeInBytes}
+												modelURL={`/api/download/model?modelId=${part.modelId}`}></ThreeModelViewer>
+										</div>
+										<div>
+											<div className="bg-background text-subtle w-full p-3 text-xs rounded-b-sm">
+												<div className="flex gap-2 flex-wrap justify-between items-start">
+													<div>
+
 														{part.model.analysisResults
 															? <>
-																<div className="w-fit gap-2 fill-gray-500">
-																	<span className="mr-2">Analysis</span><RegularAlarmClock className="inline mb-0.5" /> {part.model.analysisResults.estimatedDuration}<RegularWeight className="ml-2 inline mb-0.5" /> {part.model.analysisResults.estimatedFilamentUsedInGrams} Grams
+																<div className="w-fit gap-2 fill-subtle">
+																	<span className="mr-2">Model Analysis</span><RegularAlarmClock className="inline mb-0.5" /> {part.model.analysisResults.estimatedDuration} min<RegularWeight className="ml-2 inline mb-0.5" /> {part.model.analysisResults.estimatedFilamentUsedInGrams} g
 																</div>
 															</>
 															: part.model.analysisFailedReason
 																? <>
-																	<p className="text-red-600 fill-red-600">{part.model.analysisFailedReason}</p>
+																	<p className="text-warning fill-warning">{part.model.analysisFailedReason}</p>
 																</>
-																: <p className="text-gray-500">Queued for Analysis</p>}
+																: <p className="text-subtle">Queued for Analysis</p>}
+													</div>
 
-														{!part.model.isPurged && <a className={`text-gray-500 fill-gray-500 hover:text-black hover:fill-black text-nowrap`}
+													<div className="shrink">
+														{/* This needs to go to user-facing dashboard */}
+														{/* {isRevoked(part) && <a className={`text-warning fill-warning mb-0.5 text-right block`}
+															href={part.model.isPurged ? undefined : `/api/download/model?modelId=${part.modelId}`}
+															download={`${part.model.name}.stl`}
+															target="_blank">
+															Upload Revision
+															<RegularUpload className="ml-2 inline mb-0.5 fill-inherit" />
+														</a>} */}
+														{!part.model.isPurged && <a className={`text-gray-500 fill-gray-500 hover:text-black text-right hover:fill-black text-nowrap block`}
 															href={part.model.isPurged ? undefined : `/api/download/model?modelId=${part.modelId}`}
 															download={`${part.model.name}.stl`}
 															target="_blank">
 															Download
-															<RegularDownload className="ml-2 inline mb-0.5 fill-inherit"></RegularDownload>
+															<RegularDownload className="ml-2 inline mb-0.5 fill-inherit" />
 														</a>}
-
 													</div>
-													{part.status == PartStatus.Printing && processingMachine && <div className="flex items-end gap-2 w-full mt-2 text-xs text-gray-500">
-														<div className="flex gap-2 items-center w-full" style={{ borderBottomRightRadius: "0px", borderBottomLeftRadius: "0px" }}>
-															<span className="xl:text-nowrap">Printing on {processingMachine.identifier} ({processingMachine.model})</span>
-															<span className="max-xl:hidden">{processingMachine.progress}%</span>
-															<progress className="colored max-xl:hidden h-2 opacity-75" value={processingMachine.progress} max={100}></progress>
+
+												</div>
+
+												{isRevoked(part) &&
+													<div className="mt-2 flex flex-wrap gap-x-2">
+														<div className="text-warning">
+															<RegularFlag className="fill-warning inline mb-1 mr-1"></RegularFlag>
+															{part.deniedReason}
+															<p className={`text-warning fill-warning button mb-0.5 text-right block`}
+																onClick={() => {
+																	addForm(confirmationForm({
+																		description: `Are you sure you would like to remove the issue from ${part.model.name}?`,
+																		onSubmit: async (data) => {
+																			data.set("partId", part.id as any);
+																			data.set("revokePartReason", null as any);
+																			try {
+																				const res = await revokePart(data);
+																				return res.success ? null : res.errorMessage ?? "Unknown exception";
+																			}
+																			catch (ex) {
+																				console.error(ex);
+																				return "Could not send request to AMS!";
+																			}
+																		},
+																		submitName: "Remove Flag"
+																	}));
+																}} >
+																<RegularCrossCircle className="inline hover:cursor-pointer mb-0.5" />
+															</p>
 														</div>
 													</div>}
-													{/* <div className="flex items-end gap-2 w-full mt-2 text-xs text-gray-500">
-														<div className="flex gap-2 items-center w-full" style={{ borderBottomRightRadius: "0px", borderBottomLeftRadius: "0px" }}>
-															<span className="xl:text-nowrap">Printing on Sam (X1C)</span>
-															<span className="max-xl:hidden">75%</span>
-															<progress className="colored max-xl:hidden h-2 opacity-75" value={75} max={100}></progress>
-														</div>
-													</div> */}
-												</div>
+
+
+												{part.status == PartStatus.Printing && processingMachine && <div className="flex items-end gap-2 w-full mt-2 text-xs text-gray-500">
+													<div className="flex gap-2 items-center w-full" style={{ borderBottomRightRadius: "0px", borderBottomLeftRadius: "0px" }}>
+														<span className="xl:text-nowrap">Printing on {processingMachine.identifier} ({processingMachine.model})</span>
+														<span className="max-xl:hidden">{processingMachine.progress}%</span>
+														<progress className="colored max-xl:hidden h-2 opacity-75" value={processingMachine.progress} max={100}></progress>
+													</div>
+												</div>}
 											</div>
 										</div>
 									</div>
 									<div>
-										<div className="flex flex-wrap gap-x-2 gap-y-2 items-center mb-2 ">
-											<SelectorStatusPill
-												className={count >= 3 ? "will-change-auto w-auto" : ""}
-												register={register("status", {
-													onChange: (
-														ev: ChangeEvent<HTMLSelectElement>
-													) => {
-														if (
-															ev.currentTarget
-																.value ==
-															PartStatus.Denied
-														) {
-															setShowRevoke(true);
-														}
-													}
-												})}
-												statusColor={selectedStatusColor}
-												defaultValue={part.status}>
-												{part.status !=
-													PartStatus.Denied && !request.isFulfilled && (
-														<option
-															value={PartStatus.Pending}
-															key={PartStatus.Pending}>
-															Pending
-														</option>
-													)}
-												{!request.isFulfilled && !isPriced(part) && (
-													<option
-														value={PartStatus.Denied}
-														key={PartStatus.Denied}>
-														Denied
-													</option>
-												)}
-												{request.isFulfilled && <option
-													value={
-														PartStatus.Printed
-													}
-													key={
-														PartStatus.Printed
-													}>
-													Printed
-												</option>}
-												{!request.isFulfilled && isPaid(request) && (
-													<>
-														<option
-															value={
-																PartStatus.Printing
-															}
-															key={
-																PartStatus.Printing
-															}>
-															Printing
-														</option>
-														<option
-															value={
-																PartStatus.Printed
-															}
-															key={
-																PartStatus.Printed
-															}>
-															Printed
-														</option>
-														<option
-															value={
-																PartStatus.Failed
-															}
-															key={PartStatus.Failed}>
-															Failed
-														</option>
-													</>
-												)}
-											</SelectorStatusPill>
-											<div className="text-lg text-wrap hover:fill-pnw-gold hover:text-pnw-gold hover:cursor-pointer" onClick={() => {
-												navigator.clipboard
-													.writeText(part.model.name)
-													.then(() => toast.success(`Part name copied to clipboard!`, { autoClose: 1000 }));
-											}}>
-												{part.model.name}
-												{/* <FaRegCopy className="inline fill-inherit mb-1" style={{ padding: "3px" }}></FaRegCopy> */}
-											</div>
-											{isChanged && <button
-												className={`w-fit text-xs px-0 py-0 text-cool-black hover:text-cool-black mb-0 bg-transparent hover:bg-transparent hover:fill-black enabled:fill-pnw-gold enabled:text-pnw-gold enabled:animate-pulse`}
-												disabled={!isChanged || request.isFulfilled}>
-												<RegularUpload className="p-0.5 w-5 h-5 inline"></RegularUpload>
-												<span className="ml-2 text-inherit">
-													Save
-												</span>
-											</button>}
-										</div>
-										<div className="text-sm">
-											<p className="my-0.5">
-												<span className="font-light">
-													{"Manufacturing Process: "}
-												</span>
-												{part.filament?.technology}
-											</p>
+										<div className="text-sm flex flex-col gap-0.5">
 
-											<div className="my-0.5">
-												{part.supplementedFilament !=
-													undefined ? (
+											<Figure name={"Manufacturing Process:"} amount={part.supplementedFilament?.technology ?? part.filament?.technology} style={"inline"} />
+
+											<Figure name="Filament:" style="inline" amount={<>
+
+												{part.supplementedFilament != undefined && (
 													<>
-														<span className="font-light mr-1">
-															{
-																"Supplemented Filament:"
-															}
-														</span>
 														{`${part.filament!.material.toUpperCase()} `}
-														<NamedSwatch
-															swatch={
-																part.filament!.color
-															}></NamedSwatch>
-														<span>{" with"}</span>
-														{` ${part.supplementedFilament.material.toUpperCase()} `}
-														<NamedSwatch
-															swatch={
-																part
-																	.supplementedFilament
-																	.color
-															}></NamedSwatch>
-													</>
-												) : showFilamentSupplement ? (
-													<div className="flex">
-														<div className="font-light mr-1">
-															{
-																"Supplementing Filament:"
-															}
-														</div>
-														<FilamentSelector
-															defaultColor={
-																part.filament?.color
-															}
-															defaultMaterial={
-																part.filament
-																	?.material
-															}
-															onChange={(
-																material,
-																colorName
-															) => {
-																setValue(
-																	"supplementedFilamentMaterial",
-																	material
-																);
-																setValue(
-																	"supplementedFilamentColorName",
-																	colorName
-																);
-															}}
-															includeSwatchVisual={
-																false
-															}
-															filaments={
-																filaments
-															}></FilamentSelector>
-													</div>
-												) : (
-													<>
-														<span className="font-light">
-															{"Filament: "}
-														</span>
-														{part.filament ==
-															undefined ? (
-															<>No longer Available</>
-														) : (
-															<>
-																{`${part.filament.material.toUpperCase()} `}
-																<NamedSwatch swatch={part.filament.color} />
-															</>
-														)}
-														{/* {watch(
-														"status",
-														part.status
-													) == PartStatus.Pending && (
-														<span
-															className="text-pnw-gold hover:cursor-pointer text-sm ml-2"
-															onClick={() =>
-																setShowFilamentSupplement(
-																	true
-																)
-															}>
-															{
-																"Supplement Filament"
-															}
-														</span>
-													)} */}
+														<NamedSwatch swatch={part.filament!.color} style="compact" />
+														<RegularArrowRight className="inline mx-2 fill-gray-500" style={{ marginBottom: "3px" }}></RegularArrowRight>
+														{`${part.supplementedFilament.material.toUpperCase()} `}
+														<NamedSwatch swatch={part.supplementedFilament.color} style="compact" />
 													</>
 												)}
-											</div>
 
-											<div className="my-0.5">
-												<span className="font-light">
-													{"Quantity: "}
-												</span>
-												x{part.quantity}
-											</div>
+												{part.supplementedFilament == null && (
+													<>
+														{`${part.filament!.material.toUpperCase()} `}
+														<NamedSwatch swatch={part.filament!.color} style="compact" />
 
-											<div className="my-0.5">
-												<span className="font-light">
-													{"Cost per-unit: "}
-												</span>
-												<span className={(getValues("costInDollars") == undefined || getValues("costInDollars").toString() == "") ? "opacity-50" : ""}>$</span>
+														{/* Display the supplement filament button */}
+														{!hasQuote(request) && <span className="ml-2 button" onClick={() => addForm({
+
+															title: `Supplement ${part.filament?.material?.toUpperCase()} ${part.filament?.color.name}`,
+															description: `${request.firstName} will receive a notification that their intended filament has been changed.`,
+															submitName: `Confirm Supplementation`,
+															onSubmit: async (data) => {
+																const colorName = data.get("supplementedFilamentColorName") as string;
+																const material = data.get("supplementedFilamentMaterial") as string;
+																console.log(part.filament?.color.name, colorName, part.filament?.material, material);
+																if (part.filament?.color.name == colorName && part.filament.material == material) {
+																	return "You must selected a different filament than the one already selected!";
+																}
+
+																setValue("supplementReason", data.get("supplement-reason") as any);
+																setValue("supplementedFilamentColorName", colorName);
+																setValue("supplementedFilamentMaterial", material)
+																return null;
+															},
+															questions: [
+																{
+																	name: "Supplemented Material",
+																	required: true,
+																	element: <div className="flex flex-col gap-4">
+																		<FilamentSelector
+																			canSelectOutOfStock={true}
+																			displayFilamentInsight={true}
+																			colorNameInputID="supplementedFilamentColorName"
+																			materialInputID="supplementedFilamentMaterial"
+																			filaments={filaments} />
+																	</div>
+																},
+																{
+																	type: "textarea",
+																	name: "Reason for Supplementing",
+																	id: "supplement-reason",
+																	required: true,
+																	placeholder: "Please specify the reason for changing the filament. For example: \"Insufficient material for the project\" or \"Customer approved the change.\""
+																}
+															]
+
+														})}>Supplement</span>}
+													</>
+												)}
+											</>} />
+
+											{(part.supplementedFilament != null || watch("supplementReason") != null) && <Figure name={"Supplemented Reason:"} amount={watch("supplementReason") || part.reasonForSupplementedFilament || "None was provided!"} style={"inline"} />}
+
+											<Figure name={"Quantity:"} amount={`x${part.quantity}`} style={"inline"} />
+
+											<Figure name={"Cost per-unit:"} style={"inline"} amount={<>
+
+												<span className={!isQuoted && (getValues("costInDollars") == undefined || getValues("costInDollars").toString() == "") ? "opacity-50" : ""}>$</span>
 												<input required className="inline w-fit p-0 mb-0 bg-transparent outline-none min-w-fit focus:outline-none"
-													disabled={isQuoted}
+													disabled={isQuoted || part.status == PartStatus.Denied}
 													{...register("costInDollars", {
 														min: 0
 													})}
 													placeholder={(part.model.analysisResults ? `${((part.model.analysisResults!.estimatedFilamentUsedInGrams * part.filament!.costPerGramInCents) / 100).toFixed(2)} (Recommended)` : (0).toFixed(2))}
-													defaultValue={part.priceInDollars} />
+													defaultValue={part.priceInDollars?.toFixed(2)} />
+
+											</>} />
+
+											<div className="my-2 mb-0">
+												{isRevoked(part)
+													? <></>
+													: <div onClick={() => addForm({
+														title: <>Flagging Model: <span className="font-semibold">{part.model.name}</span></>,
+														icon: <RegularFlag className="fill-pnw-gold" />,
+														description: `Flagging this model will put the request on pause until replaced. An email will be sent to ${request.firstName} asking to email an officer/maintainer.`,
+														cancelName: "Cancel",
+														submitName: `Flag ${part.model.name}`,
+														questions: [
+															{
+																name: "What issue does the model have?",
+																id: "reasonForRevoke",
+																type: "textarea",
+																placeholder: "e.g., does not meet FDM rules, size exceeds limits, low-inventory, etc.",
+																required: true
+															}
+														],
+														onSubmit: async (data) => {
+															data.set("partId", part.id.toString());
+
+															addForm(confirmationForm({
+																onSubmit: async (_) => {
+																	// Handle sending the request.
+																	try {
+																		const res = await revokePart(data);
+																		return res.success ? null : res.errorMessage ?? "Unknown exception";
+																	}
+																	catch (ex) {
+																		console.error(ex);
+																		return "Could not send request to AMS!";
+																	}
+																},
+																onCancel: () => console.warn("Confirmation cancelled"),
+																description: `You will be revoking ${part.model.name}, this action cannot be undone!`
+															}));
+
+															return null;
+														},
+													})}>
+														<LabelWithIcon classname="button" icon={<RegularFlag />}>Flag Model</LabelWithIcon>
+													</div>}
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-
-						{isRevoked(part) && (
-							<Alert severity="warning">
-								Request Revoked {part.deniedReason}
-							</Alert>
-						)}
 					</div>
 				</div>
-				{error && <p className="text-red-500 px-2">{error}</p>}
+				{result && !result.success && <p className="text-red-500 px-2">{result.errorMessage}</p>}
 			</form>
 		</div>
 	);
 }
+
+

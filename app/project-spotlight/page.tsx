@@ -13,6 +13,7 @@ export default async function Page() {
 
     const JWTPayload = await retrieveSafeJWTPayload();
     const showcases = await ProjectSpotlightServe.queryAllProjectShowcases();
+    await ProjectSpotlightServe.withManyAttachments(showcases);
 
     return <>
 

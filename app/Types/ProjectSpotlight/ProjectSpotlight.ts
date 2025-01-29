@@ -8,8 +8,12 @@ export interface ProjectSpotlight
     hasImage: boolean;
 }
 
-export interface ProjectSpotlightContent
+export interface ProjectSpotlightAttachment
 {
+    id: string;
+    projectId: string;
     fileName: string;
-    downloads: number;
+    downloadCount: number;
 }
+
+export type ProjectSpotlightWithAttachments = ProjectSpotlight & { attachments: ProjectSpotlightAttachment[] };

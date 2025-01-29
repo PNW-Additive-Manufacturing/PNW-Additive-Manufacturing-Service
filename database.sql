@@ -103,11 +103,11 @@ CREATE TABLE Request (
   PaidAt timestamp with time zone,
   FulfilledAt timestamp with time zone,
   TotalPriceInCents BIGINT,
-  FeesInCents BIGINT NOT NULL DEFAULT 0,
+  FeesInCents BIGINT NOT NULL,
   NeedBy TIMESTAMP WITH TIME ZONE,
   EstimatedCompletionDate timestamp with time zone,
   CONSTRAINT PAID_CHK CHECK (
-  	(PaidAt IS NOT NULL AND TotalPriceInCents IS NOT NULL AND EstimatedCompletionDate IS NOT NULL) OR
+  	(PaidAt IS NOT NULL AND TotalPriceInCents IS NOT NULL AND FeesInCents IS NOT NULL AND EstimatedCompletionDate IS NOT NULL) OR
     (PaidAt IS NULL)
   )
 );
@@ -138,11 +138,17 @@ DROP TABLE IF EXISTS Model CASCADE;
 CREATE TABLE Model (
   Id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   UploadedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  FlaggedIssues VARCHAR(500),
+  FlaggedAt TIMESTAMP WITH TIME ZONE NOT NULL,
   Name varchar(256) NOT NULL,
   FileSizeInBytes BIGINT NOT NULL,
   Favorite BOOLEAN NOT NULL DEFAULT FALSE,
   IsPurged BOOLEAN NOT NULL DEFAULT FALSE,
-  OwnerEmail varchar(254) REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE
+  OwnerEmail varchar(254) REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FLAGGED_CHK CHECK (
+    (FlaggedIssues IS NOT NULL AND FlaggedAt IS NOT NULL) OR
+    (FlaggedAt IS NULL AND FlaggedIssues IS NULL)
+  );
 );
 
 DROP TABLE IF EXISTS ModelAnalysis CASCADE;
@@ -170,11 +176,12 @@ CREATE TABLE Part (
   RequestId SERIAL REFERENCES Request(Id) ON DELETE CASCADE ON UPDATE CASCADE,
   ModelId UUID REFERENCES Model(Id) ON DELETE CASCADE ON UPDATE CASCADE,
   Quantity int NOT NULL CHECK (Quantity > 0 and Quantity <= 1000),
-  Note VARCHAR(500)  CHECK (LENGTH(Note) > 0),
+  Note VARCHAR(500) CHECK (LENGTH(Note) > 0),
   Status PartStatus NOT NULL DEFAULT 'pending',
   AssignedPrinterName varchar(120) DEFAULT NULL REFERENCES Printer(Name) ON DELETE SET NULL,
   AssignedFilamentId SMALLINT REFERENCES Filament(Id) ON DELETE SET NULL ON UPDATE CASCADE,
   SupplementedFilamentId SMALLINT REFERENCES Filament(Id) ON DELETE SET NULL ON UPDATE CASCADE,
+  SupplementedReason VARCHAR(500),
   PriceCents BIGINT DEFAULT NULL,
   RefundReason VARCHAR(500),
   RefundQuantity INT,
@@ -182,10 +189,10 @@ CREATE TABLE Part (
   CONSTRAINT REVOKE_DATA_CHK CHECK (
     (Status = 'denied' AND RevokedReason IS NOT NULL AND PriceCents IS NULL) OR
     (Status != 'denied' AND RevokedReason IS NULL)),
+
   CONSTRAINT REFUND_DATA_CHK CHECK (
 	(RefundQuantity IS NOT NULL AND RefundReason IS NOT NULL) OR
-	(RefundQuantity IS NULL AND RefundReason IS NULL)
-  )
+	(RefundQuantity IS NULL AND RefundReason IS NULL))
 );
 
 CREATE OR REPLACE FUNCTION prevent_price_change()
@@ -210,4 +217,12 @@ CREATE TABLE ProjectSpotlight (
   Description VARCHAR(2048) NOT NULL,
   Author VARCHAR(128),
   HasImage BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+CREATE TABLE ProjectSpotlightAttachment (
+  Id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  ProjectId UUID REFERENCES ProjectSpotlight(Id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FileName VARCHAR(256) NOT NULL,
+  DownloadCount INT NOT NULL DEFAULT 0,
+  UploadedAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW() 
 );

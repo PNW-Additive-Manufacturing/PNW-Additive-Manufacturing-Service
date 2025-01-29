@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef } from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
 
 export default function StatusPill({
@@ -12,14 +13,10 @@ export default function StatusPill({
 	className = className ?? "";
 
 	return (
-		<div className={`inline-block ${className} text-nowrap`}>
-			<div
-				className={`bg-gray-50 w-fit rounded-lg p-1.5 flex items-center font-normal select-none uppercase`}>
-				<div
-					className={`rounded-full h-5 mr-2 aspect-square`}
-					style={{ backgroundColor: statusColor }} />
-				<span className="my-auto mr-1 text-sm">{context}</span>
-			</div>
+		<div
+			className={`${className} w-fit rounded-md flex select-none uppercase text-nowrap`}>
+			<div className={`rounded-full my-auto h-3 w-3 mr-2`} style={{ backgroundColor: statusColor }} />
+			<span className="my-auto mr-1 text-sm">{context}</span>
 		</div>
 	);
 }
@@ -39,17 +36,33 @@ export function SelectorStatusPill({
 }) {
 	className = className ?? "";
 
+	const statusCircleRef = useRef<HTMLElement>();
+
+	useLayoutEffect(() => {
+
+		if (statusCircleRef.current?.clientHeight) {
+			const size = statusCircleRef.current.clientHeight! - 2;
+
+			statusCircleRef.current.style.width = `${size}px`;
+			statusCircleRef.current.style.height = `${size}px`;
+			statusCircleRef.current.style.marginTop = "auto";
+			statusCircleRef.current.style.marginBottom = "auto";
+		}
+
+	}, [statusCircleRef]);
+
 	return (
 		<div
-			className={`${className} bg-background w-fit text-xs rounded-md p-2 flex select-none uppercase text-nowrap`}>
+			className={`${className} w-fit rounded-md flex select-none uppercase text-nowrap`}>
 			<div
-				className={`rounded-full h-3.5 mr-2 aspect-square`}
+				ref={statusCircleRef as any}
+				className={`inline rounded-full mr-2 aspect-square`}
 				style={{ backgroundColor: statusColor }} />
 			<select
 				id="status"
 				name="status"
 				defaultValue={defaultValue}
-				className="my-auto mr-1 p-0 uppercase outline-none"
+				className="my-auto w-fit p-0 uppercase outline-none bg-transparent"
 				{...register}>
 				{children}
 			</select>

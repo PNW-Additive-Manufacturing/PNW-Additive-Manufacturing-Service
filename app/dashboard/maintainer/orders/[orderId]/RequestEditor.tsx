@@ -4,37 +4,48 @@ import {
 	deleteRequest,
 	fulfillRequest
 } from "@/app/api/server-actions/request";
+import classnames from "classnames";
 import Account, { AccountPermission } from "@/app/Types/Account/Account";
 import { isAllComplete, PartStatus } from "@/app/Types/Part/Part";
 import Request, {
-	getTotalCost,
+	getLeadTimeInDays,
+	calculateTotalCost,
 	hasQuote,
 	isAllPriced,
 	isPaid,
+	RequestCosts,
 	RequestWithEmails,
-	RequestWithParts
+	RequestWithParts,
+	getCosts
 } from "@/app/Types/Request/Request";
 import {
 	RegularCheckBox,
+	RegularCheckmark,
+	RegularCheckmarkCircle,
+	RegularCirclePlus,
 	RegularCog,
+	RegularCrossCircle,
 	RegularExit,
 	RegularEye,
 	RegularPagination,
+	RegularPause,
 	RegularPlay,
 	RegularPlayStoreFill,
 	RegularReload,
 	RegularSearchAlt,
 	RegularStarFill,
+	RegularTimer,
 	RegularTrashCan,
+	RegularWallet,
 } from "lineicons-react";
 import { FiActivity } from "react-icons/fi";
-import { useContext, useState } from "react";
+import { useCallback, useContext, useMemo, useState } from "react";
 import { useFormState } from "react-dom";
 import { setQuote } from "@/app/api/server-actions/maintainer";
 import PartEditor from "./PartEditor";
 import Filament from "@/app/Types/Filament/Filament";
 import DropdownSection from "@/app/components/DropdownSection";
-import RequestPricing from "@/app/components/Request/Pricing";
+import { DownloadItemizedReceipt, ItemizedPartTable, RequestTotals } from "@/app/components/Request/Pricing";
 import { RequestOverview } from "@/app/components/RequestOverview";
 import { formateDate, formateDateWithTime } from "@/app/api/util/Constants";
 import FormLoadingSpinner from "@/app/components/FormLoadingSpinner";
@@ -43,6 +54,14 @@ import { AccountContext } from "@/app/ContextProviders";
 import { addMinutes } from "@/app/utils/TimeUtils";
 import usePrinters from "@/app/hooks/usePrinters";
 import Link from "next/link";
+import RevokeInput from "@/app/components/RevokeInput";
+import useAPIFormState from "@/app/hooks/useAPIFormState";
+import { FloatingFormContext } from "@/app/components/FloatingForm";
+import { LabelWithIcon } from "@/app/components/LabelWithIcon";
+import classNames from "classnames";
+import { Figure } from "@/app/components/Figures";
+import ContainerNotification from "@/app/components/ContainerNotification";
+import { FaCheck } from "react-icons/fa";
 
 export default function RequestEditor({
 	request,
@@ -59,48 +78,60 @@ export default function RequestEditor({
 
 	const [showActions, setShowActions] = useState(false);
 	const [showRevoke, setShowRevoke] = useState(false);
-	const [quoteState, setQuoteFormAction] = useFormState(setQuote, "");
 	const [fulfillState, fulfillAction] = useFormState(fulfillRequest, "");
 	const [deleteRequestError, deleteRequestAction] = useFormState(deleteRequest, "");
 
 	const machineData = usePrinters(true, 60);
 
-	let printingMachines: string[] = [];
-	let totalGrams = 0;
-	let maxLeadTime = 0;
-	let totalPriceInCents = 0;
-	let isAllAnalyzed = true;
-	let allAnalysisMachines: string[] = [];
-	for (const part of request.parts) {
-		if (part.filament && part.filament.leadTimeInDays > maxLeadTime) {
-			maxLeadTime = part.filament.leadTimeInDays;
-		}
-
-		if (part.model && part.model.analysisResults) {
-			totalGrams += part.model!.analysisResults!.estimatedFilamentUsedInGrams;
-
-
-			if (part.filament) {
-				totalPriceInCents += part.model!.analysisResults.estimatedFilamentUsedInGrams * part.quantity * part.filament.costPerGramInCents;
+	const analysisData = useMemo(() => {
+		let printingMachines: string[] = [];
+		let totalGrams = 0;
+		let maxLeadTime = 0;
+		let totalPriceInCents = 0;
+		let isAllAnalyzed = true;
+		let allAnalysisMachines: string[] = [];
+		for (const part of request.parts) {
+			if (part.filament && part.filament.leadTimeInDays > maxLeadTime) {
+				maxLeadTime = part.filament.leadTimeInDays;
 			}
 
-			if (allAnalysisMachines.indexOf(part.model.analysisResults.machineModel) == -1) {
-				allAnalysisMachines.push(part.model.analysisResults.machineModel);
-			}
-		}
-		else if (isAllAnalyzed) {
-			isAllAnalyzed = false;
-		}
+			// part.model.analysisResults = {
+			// 	estimatedDuration: "20",
+			// 	estimatedFilamentUsedInGrams: 20,
+			// 	machineManufacturer: "Bambu Lab",
+			// 	machineModel: "X1C"
+			// };
 
-		if (machineData.machines) {
-			for (let currentMachine of machineData.machines) {
-				if (currentMachine.filename?.toLowerCase()?.includes(part.model.name.toLowerCase()) && !(currentMachine.identifier in printingMachines)) {
-					printingMachines.push(currentMachine.identifier);
-					break;
+			if (part.model && part.model.analysisResults) {
+				totalGrams += part.model!.analysisResults!.estimatedFilamentUsedInGrams;
+
+
+				if (part.filament) {
+					totalPriceInCents += part.model!.analysisResults.estimatedFilamentUsedInGrams * part.quantity * part.filament.costPerGramInCents;
+				}
+
+				if (allAnalysisMachines.indexOf(part.model.analysisResults.machineModel) == -1) {
+					allAnalysisMachines.push(part.model.analysisResults.machineModel);
+				}
+			}
+			else if (isAllAnalyzed) {
+				isAllAnalyzed = false;
+			}
+
+			if (machineData.machines) {
+				for (let currentMachine of machineData.machines) {
+					if (currentMachine.filename?.toLowerCase()?.includes(part.model.name.toLowerCase()) && !(currentMachine.identifier in printingMachines)) {
+						printingMachines.push(currentMachine.identifier);
+						break;
+					}
 				}
 			}
 		}
-	}
+
+		// printingMachines = ["Kachow", "Cinder Block"];
+
+		return { printingMachines, totalGrams, maxLeadTime, totalPriceInCents, isAllAnalyzed, allAnalysisMachines };
+	}, [machineData]);
 
 	return (
 		<>
@@ -110,11 +141,8 @@ export default function RequestEditor({
 						Manage {request.name}
 					</h1>
 					<p className="max-lg:block mt-2 max-lg:mb-6 text-sm">
-						{`${request.firstName} ${request.lastName} placed this request on ${formateDateWithTime(request.submitTime)}${request.needBy ? `, requested by ${formateDateWithTime(request.needBy)}` : ''}.`}
+						{`${request.firstName} ${request.lastName} placed this request on ${formateDateWithTime(request.submitTime)}`}.
 					</p>
-
-					{/* <p className="text-xs"><RegularSearchAlt className="inline"></RegularSearchAlt> Copy printing name to Clipboard</p> */}
-					{/* <p className="mt-2 opacity-50 text-sm">{request.firstName} {request.lastName} - {request.parts.map(p => p.model.name).join(", ")}</p> */}
 				</div>
 
 				<div className="items-end flex w-full">
@@ -168,162 +196,91 @@ export default function RequestEditor({
 				</div>
 			</div>
 
+			<div className="out p-4 my-4 bg-white text-xs flex flex-col sm:flex-row gap-2 md:gap-x-6 md:gap-y-4">
+
+				<Figure name={"Needed By"} style={"small"} icon={<RegularTimer style={{ marginBottom: "4px" }} />} iconPosition="start" amount={formateDateWithTime(request.needBy)} />
+
+				<div className="rounded-lg" style={{ borderLeftWidth: "2px", borderColor: "#e5e7eb" }} />
+
+				<Figure
+					name={"Automatic Analysis"} style={"small"}
+					labelClassName={classNames({ "text-pnw-gold fill-pnw-gold": analysisData.isAllAnalyzed })}
+					icon={<RegularStarFill className="opacity-60" style={{ marginBottom: "4px" }} />}
+					iconPosition="start" amount={analysisData.allAnalysisMachines.length > 0 ? <>
+
+						${(analysisData.totalPriceInCents / 100).toFixed(2)} consuming {Math.round(analysisData.totalGrams)} Grams
+						{!analysisData.isAllAnalyzed && <> (Incomplete)</>}
+
+					</> : <span>Waiting for Analysis</span>} />
+
+				{analysisData.printingMachines.length > 0 && <>
+					<div className="rounded-lg" style={{ borderLeftWidth: "2px", borderColor: "#e5e7eb" }} />
+
+					<Figure
+						name={"Printing Status"} style={"small"}
+						labelClassName="text-pnw-gold"
+						icon={<RegularReload className="inline animate-spin fill-pnw-gold" style={{ marginBottom: "4px", animationDuration: "3s" }} />}
+						iconPosition="start" amount={<>
+							Printing on {analysisData.printingMachines.join(", ")}
+						</>} />
+				</>}
+
+			</div>
+
 			<hr className="my-4 lg:my-4" />
 
 			<div className="lg:flex gap-6">
 				<div className="lg:grow">
 					<div className="flex flex-col gap-2 mb-3">
-						{request.isFulfilled && (
-							<RequestOverview
-								title="Request Fulfilled"
-								description={`Request was fulfilled on ${formateDate(
-									request.fulfilledAt!
-								)}.`}
-							/>
-						)}
 
-						{request.comments != null && <div>
-							<div className="w-full py-2 pl-1 text-nowrap">Request Specifications</div>
-							<div className="shadow-sm p-4 lg:p-6 rounded-sm bg-white out">
-								<p>Comments from {request.firstName} {request.lastName}: {request.comments}</p>
+						{(request.isFulfilled || request.comments != null) && <div>
+							<div className="text-sm py-2 px-1 text-nowrap">Messages</div>
+
+							<div className="flex flex-col gap-2">
+								{request.isFulfilled && <ContainerNotification title={"Request is Fulfilled"}
+									description={`${requester.firstName} picked up this request on ${formateDate(request.fulfilledAt!)}`}
+									icon={<FaCheck className="fill-pnw-gold inline mr-2 w-3 h-3 mb-0.5" />} />}
+
+								{request.comments != null && <ContainerNotification title={`Comments from ${request.firstName}`} description={request.comments} />}
 							</div>
+
 						</div>}
 
 						<div>
-							<div className="flex flex-wrap gap-4 justify-between items-center py-2 px-1 w-full">
+							<div className="text-sm py-2 px-1 w-full">
 								<span>Manage {request.parts.length} {request.parts.length > 1 ? "Parts" : "Part"}</span>
-								<div className="flex flex-wrap gap-y-4 gap-x-2 text-sm">
-
-									{printingMachines.length > 0 && <span className="font-light">
-										{/* <RegularReload className="inline fill-pnw-gold opacity-80 animate-spin" style={{ marginBottom: "3px" }} />  */}
-										<FiActivity className="inline stroke-pnw-gold" style={{ marginBottom: "3px" }} /> Printing on <span className="font-medium">{printingMachines.join(", ")}</span>
-									</span>}
-
-									{(totalGrams > 0 || totalPriceInCents > 0) && <div className="bg-background xl:px-1 rounded-md">
-										<RegularStarFill className="inline fill-pnw-gold opacity-75" style={{ marginBottom: "3px" }} />
-										<span className="font-light "> Analysis using {allAnalysisMachines.join(", ")} </span>
-										<span className="font-medium">
-											${(totalPriceInCents / 100).toFixed(2)} consuming {Math.round(totalGrams)} Grams
-											{!isAllAnalyzed && <> (Incomplete)</>}
-										</span>
-									</div>}
-								</div>
 							</div>
 
-							<div className={`grid ${request.parts.length > 2 && "2xl:grid-cols-2"} gap-4`}>
+							<div className={`grid 2xl:grid-cols-2 gap-4`}>
 								{request.parts.map((part, index) => {
 									const printStatus = machineData?.machines == null ? null : machineData.machines!.find(m => {
 										return m.filename == null ? false : m.filename.toLowerCase().includes(part.model.name.toLowerCase());
 									});
 
-									return <PartEditor
-										request={request}
-										part={part}
-										index={index}
-										isQuoted={_hasQuote}
-										filaments={availableFilaments}
-										count={request.parts.length}
-										processingMachine={printStatus} />
+									return <div className="h-fit">
+										<PartEditor
+											request={request}
+											part={part}
+											index={index}
+											isQuoted={_hasQuote}
+											filaments={availableFilaments}
+											count={request.parts.length}
+											processingMachine={printStatus} />
+									</div>
 								})}
+								{request.parts.length == 1 && <div className="bg-white out opacity-50 h-full max-2xl:hidden"></div>}
 							</div>
 						</div>
 					</div>
-
-					{/* {useContext(AccountContext).account?.permission == AccountPermission.Admin && <DropdownSection
-						name="Developer Information"
-						icon={
-							<RegularPagination className="inline-block w-auto h-6 pb-0.5 ml-2 fill-pnw-gold" />
-						}
-						collapsible={true}
-						hidden={true}>
-						<div className="shadow-md rounded-md p-4 lg:p-6 bg-white mb-4 outline outline-1 outline-gray-300 hover:outline-gray-400 transition-all duration-75">
-							<div className="max-h-60 w-full text-sm overflow-scroll">
-								{JSON.stringify(
-									{
-										...request,
-										parts: request.parts.map((part) => {
-											return {
-												...part,
-												// Remove nested request for clarity.
-												request: undefined
-											};
-										})
-									},
-									null,
-									4
-								)}
-							</div>
-						</div>
-					</DropdownSection>} */}
 				</div>
 				<div className="w-full lg:w-1/3 xl:w-2/6" >
-					<div className="py-2 pt-2 px-1 w-full">Invoice</div>
-					<div className="p-4 lg:p-6 rounded-t-sm shadow-sm bg-white font-light outline outline-2 outline-gray-200">
-						{isAllPriced(request) ? (
-							<>
-								<RequestPricing request={request} />
-
-								<div className="gap-4 mt-4">
-
-									{isQuotePaid ? (
-										<>
-											<AlreadyQuoteButton
-												request={request}></AlreadyQuoteButton>
-										</>
-									) : hasQuote(request) ? (
-										<button
-											disabled={true}
-											className="mb-0 py-4 shadow-md text-left w-full"
-											type="button">
-											<div>Waiting for Payment</div>
-											<p className="text-white font-light text-sm mt-1">
-												{`${requester.firstName} ${requester.lastName} has been notified.`}
-											</p>
-										</button>
-									) : (
-										isAllPriced(request) && (
-											<>
-												<form action={setQuoteFormAction} className="w-full">
-													<input
-														hidden
-														type="number"
-														name="requestId"
-														readOnly
-														value={request.id}></input>
-													<input className="py-2" type="date" name="estimated-completion-date" id="estimated-completion-date" min={new Date().toLocaleDateString('en-us')} required></input>
-													<button
-														className="py-4 shadow-md text-left text-sm flex justify-between w-full mb-0"
-														disabled={!partsAllPriced}>
-														<div>
-															Submit Quote for $
-															{getTotalCost(
-																request
-															).totalCost.toFixed(2)}
-															<p className="text-white font-light text-sm pt-1">
-																{`${requester.firstName} ${requester.lastName} will receive the quote.`}
-																<FormLoadingSpinner className="fill-white ml-2" />
-															</p>
-														</div>
-													</button>
-												</form>
-												{quoteState && <p className="text-red-500 text-base mt-2">
-													{quoteState}
-												</p>}
-											</>
-										)
-									)}
-								</div>
-							</>
-						) : (
-							<>
-								<p>Request has not been Quoted.</p>
-								<span className="text-sm mt-2">All parts must be priced before submission.</span>
-							</>
-						)}
+					<div className="text-sm py-2 pt-2 px-1 w-full">{isPaid(request) ? "Receipt" : "Invoice"}</div>
+					<div className="bg-white out p-6">
+						<MaintainerQuote request={request} requester={requester} />
 					</div>
 
-					<div className="py-2 pt-4 px-1 w-full">
-						Requester Information
+					<div className="text-sm py-2 pt-4 px-1 w-full">
+						User Information
 					</div>
 					<div className="p-4 lg:p-6 rounded-sm shadow-sm bg-white font-light outline outline-2 outline-gray-200">
 						<p className="text-xl">
@@ -342,9 +299,10 @@ export default function RequestEditor({
 							day: "numeric"
 						})}.</p>
 
+						<p className="text-sm my-2">Account Balance: ${requester.balanceInDollars.toFixed(2)}</p>
 
-						<DropdownSection name={"Email Performance"} className="px-0 text-sm mt-2">
-							<table className="bg-background px-1 py-2 w-full mt-1 out">
+						<DropdownSection name={"Email Performance"} className="px-0 text-sm mt-4" hidden={true}>
+							<table className="bg-background px-1 py-2 w-full mt-3 out">
 								<thead>
 									<tr>
 										<th className="pt-3 text-xs">Message</th>
@@ -374,13 +332,65 @@ export default function RequestEditor({
 	);
 }
 
-function AlreadyQuoteButton({ request }: { request: Request }) {
+function MaintainerQuote({ request, requester }: { request: RequestWithParts, requester: Account }) {
+	const [fees, setFees] = useState(0);
+
+	const calculatedData = useMemo(() => {
+		const costs = hasQuote(request) ? getCosts(request.quote!) : isAllPriced(request) ? calculateTotalCost(request, fees) : undefined;
+		const leadTime = getLeadTimeInDays(request.parts.map(p => p.filament!.leadTimeInDays));
+		const hasEnoughBalance = costs != null ? requester.balanceInDollars >= costs.totalCost : undefined;
+
+		return { costs, leadTime, hasEnoughBalance };
+	}, [request, requester, fees]);
+
+	return <>
+
+		{/* Display the totals and buttons to manage the invoice/quote */}
+		<div>
+			{/* <hr className="my-4 mt-6" /> */}
+			{isAllPriced(request) && <>
+
+				<div className="flex justify-between gap-5">
+					<RequestTotals costs={calculatedData.costs!} onFeesUpdate={(amount) => setFees(amount)} />
+				</div>
+
+				<hr className="mb-4" />
+
+				{!isPaid(request) && <p className="my-2 font-light text-sm mb-4">
+					<RegularWallet className="inline mr-1 mb-0.5"></RegularWallet>
+					{requester.firstName} {calculatedData.hasEnoughBalance ? "has" : "does not have"} enough balance in their account.
+				</p>}
+
+				<DropdownSection className="text-sm font-light" name={`Itemized ${isPaid(request) ? "Receipt" : "Invoice"}`} hidden={true}>
+					{/* Show the itemized costs of each part even if not priced yet */}
+					<ItemizedPartTable parts={request.parts} />
+
+					{hasQuote(request) && <div className="mt-4">
+						<DownloadItemizedReceipt request={request} />
+					</div>}
+
+				</DropdownSection>
+
+			</>}
+
+
+			{isAllPriced(request) && !hasQuote(request) && <>
+				<RequestSubmitQuoteForm request={request} costs={calculatedData.costs!} />
+			</>}
+			{!isAllPriced(request) && <button disabled={true} className="text-sm text-left mb-0">
+				Not all parts have not been assigned a cost!
+			</button>}
+
+			{hasQuote(request) && (isPaid(request) ? <AlreadyPaidButton request={request} /> : <WaitingForPaymentButton request={request} />)}
+		</div>
+	</>
+}
+
+function AlreadyPaidButton({ request }: { request: Request }) {
 	return (
-		<button
-			className="mb-0 shadow-md text-left text-sm w-full"
-			disabled>
+		<button className="shadow-sm text-left text-sm w-full mb-0" disabled>
 			Quote Processed
-			<p className="text-white font-light text-sm">
+			<p className="text-white font-light text-xs mt-1">
 				Paid on{" "}
 				{request.quote!.paidAt!.toLocaleDateString("en-us", {
 					weekday: "long",
@@ -391,4 +401,57 @@ function AlreadyQuoteButton({ request }: { request: Request }) {
 			</p>
 		</button>
 	);
+}
+
+function WaitingForPaymentButton({ request }: { request: Request }) {
+	return (
+		<button
+			className="mb-0 shadow-md text-left text-sm w-full"
+			disabled>
+			<RegularTimer className="fill-white inline mb-1 mr-1" />
+			Waiting for Payment
+			<p className="text-white font-light text-sm">
+				{`${request.firstName} needs to accept this invoice.`}
+			</p>
+		</button>
+	);
+}
+
+function RequestSubmitQuoteForm({ request, costs }: { request: RequestWithParts, costs: ReturnType<typeof calculateTotalCost> }) {
+
+	const { addForm } = useContext(FloatingFormContext);
+
+	const onSubmit = useCallback(() => {
+		addForm({
+			title: `Submit Quote for \$${costs.totalCost.toFixed(2)}`,
+			description: "This quote wil lbe sent to the person and they will need to accept it!",
+			submitName: "Submit Quote",
+			questions: [
+				{
+					type: "date",
+					id: "estimated-completion-date",
+					name: "Estimated Completion Date",
+					required: true
+				}
+			],
+			onSubmit: async (data) => {
+				data.set("requestId", request.id as any);
+				data.set("cost_fees", costs.fees as any);
+				const result = await setQuote(undefined, data);
+				if (!result.success) return result.errorMessage!;
+
+				return null;
+			}
+		});
+	}, [request, costs]);
+
+	return <>
+		<button className="text-sm text-left mb-0" onClick={() => onSubmit()}>
+			Submit Quote for ${costs.totalCost.toFixed(2)}
+			<p className="text-white font-light text-xs pt-1">
+				{`${request.firstName} ${request.lastName} will receive the quote via Email.`}
+				<FormLoadingSpinner className="fill-white ml-2" />
+			</p>
+		</button>
+	</>
 }

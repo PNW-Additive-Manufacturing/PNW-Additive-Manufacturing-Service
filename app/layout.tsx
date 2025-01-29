@@ -17,6 +17,7 @@ import { cookies, headers } from "next/headers";
 import getConfig from "./getConfig";
 import { login } from "./api/util/AccountHelper";
 import { ToastContainer } from "react-toastify";
+import { FloatingFormContainer, FloatingFormContext } from "./components/FloatingForm";
 
 const inter = Inter({ subsets: ["latin"] });
 const envConfig = getConfig();
@@ -161,7 +162,9 @@ export default async function RootLayout({
 							className="w-full lg:mt-4 px-0 h-fit lg:pt-2"
 							style={{ minHeight: "95vh" }}>
 							<>
-								{children}
+								<FloatingFormContainer>
+									{children}
+								</FloatingFormContainer>
 								<ToastContainer
 									position="bottom-left"
 									autoClose={7500}

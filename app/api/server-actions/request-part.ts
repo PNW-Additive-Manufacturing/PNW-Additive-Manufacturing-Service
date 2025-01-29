@@ -102,9 +102,7 @@ export async function requestPart(prevState: string, formData: FormData) {
 	);
 
 	try {
-		if (!fs.existsSync(uploadDir)) {
-			fs.mkdirSync(uploadDir, { recursive: true });
-		}
+		fs.mkdirSync(uploadDir, { recursive: true });
 	} catch (e: any) {
 		return "Error, server cannot create uploads folder, try again later!";
 	}

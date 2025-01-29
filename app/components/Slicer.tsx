@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import ModelViewer from "./ModelViewer";
+import ThreeModelViewer from "./ThreeModelViewer";
 import Filament from "../Types/Filament/Filament";
 import PopupFilamentSelector from "./PopupFilamentSelector";
 import { useState } from "react";
@@ -62,9 +62,9 @@ export default function Slicer(
 						<div
 							className="mb-4 rounded-md relative"
 							style={{ width: "100%", height: "200px" }}>
-							<ModelViewer
+							<ThreeModelViewer
 								modelFile={options.modelFile}
-								swatch={filament?.color}></ModelViewer>
+								swatch={filament?.color}></ThreeModelViewer>
 							<div className="top-4 left-4 absolute">
 								<div className="gap-4 pb-6 text-lg flex justify-end items-center">
 									{/* <RegularFiles></RegularFiles> */}
@@ -75,7 +75,7 @@ export default function Slicer(
 						<div className="px-2">
 							<div
 								className="overflow-scroll w-full px-1"
-								// style={{ maxHeight: "400px" }}
+							// style={{ maxHeight: "400px" }}
 							>
 								<label className="mb-2">
 									Slicing {options.modelFile.name}
@@ -158,7 +158,7 @@ export default function Slicer(
 														Duration:{" "}
 														{Math.round(
 															sliceReq.durationAsSeconds! /
-																60
+															60
 														)}{" "}
 														minutes
 													</p>

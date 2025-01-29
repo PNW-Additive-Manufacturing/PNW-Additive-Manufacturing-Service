@@ -7,7 +7,7 @@ import { cookies, headers } from "next/headers";
 import { z } from "zod";
 import { RequestServe } from "@/app/Types/Request/RequestServe";
 import Request, {
-	getTotalCost,
+	calculateTotalCost,
 	hasQuote,
 	isPaid
 } from "@/app/Types/Request/Request";
@@ -30,7 +30,7 @@ import {
 	sendEmail,
 	sendRequestEmail
 } from "../util/Mail";
-import { APIData, resError, resOk, resUnauthorized } from "../APIResponse";
+import { APIData, resError, resOk, resOkData, resUnauthorized } from "../APIResponse";
 import { ProjectSpotlight } from "@/app/Types/ProjectSpotlight/ProjectSpotlight";
 import ProjectSpotlightServe from "@/app/Types/ProjectSpotlight/ProjectSpotlightServe";
 import { retrieveSafeJWTPayload } from "../util/JwtHelper";
@@ -59,40 +59,41 @@ export async function setPartPrice(
 	return "";
 }
 
-export async function setQuote(
-	prevState: string,
-	data: FormData
-): Promise<string> {
+export async function setQuote( prevState: undefined, data: FormData ): Promise<APIData<{}>> {
 	const requestId = data.has("requestId")
 		? Number.parseInt(data.get("requestId") as string)
 		: null;
-	if (requestId == null) return "Request ID not provided!";
+	if (requestId == null) return resError("Request ID not provided!");
 	let request = await RequestServe.fetchByIDWithAll(requestId!);
-	if (request == null) return "Request does not exist";
+	if (request == null) return resError("Request does not exist");
 
 	const estimatedCompletionDate = data.get("estimated-completion-date")?.valueOf() as Date | undefined;
 	if (estimatedCompletionDate == undefined)
 	{
-		return "Completion estimate required!";
+		return resError("Completion estimate required!");
 	}
 	
 	const requester = await AccountServe.queryByEmail(request.requesterEmail);
-	if (requester == undefined) return "Account no-longer exists!";
+	if (requester == undefined) return resError("Account no-longer exists!");
 
 	const parts = await PartServe.fetchOfRequest(request);
 
-	if (parts.length == 0) return "Request has zero parts";
+	if (parts.length == 0) return resError("Request has zero parts");
 
-	const priceInDollars = getTotalCost(request).totalCost;
-	const priceInCents = Math.round(priceInDollars * 100);
+
+	const costs = calculateTotalCost(request, Number.parseFloat(data.get("cost_fees") as string));
+	const priceInCents = Math.round(costs.totalCost * 100);
+
+	console.log(costs);
 
 	// if (priceInDollars > 100) return "Quote is exceeding maximum value of $100";
 
 	try {
-		await RequestServe.setQuote(requestId, priceInCents, estimatedCompletionDate);
+		await RequestServe.setQuote(requestId, costs, estimatedCompletionDate);
 		console.log("Updated quote! for ", requestId, priceInCents);
 	} catch (error) {
-		return "An exception occurred updating database.";
+		console.error(error);
+		return resError("An exception occurred updating database.");
 	}
 
 	// If the total-cost is zero, we are going to automatically assume it was "paid for"!
@@ -118,7 +119,7 @@ export async function setQuote(
 	}
 
 	revalidatePath("/dashboard/maintainer/orders/");
-	return "";
+	return resOk();
 }
 
 export async function getOrders(): Promise<Request[]> {
@@ -142,37 +143,24 @@ export async function setPartPrinter(
 
 const revokePartSchema = z.object({
 	partId: z.coerce.number().int(),
-	reasonForRevoke: z.string(),
-	dfm: z.array(z.string())
+	reasonForRevoke: z.string().nullable(),
 });
-export async function revokePart(
-	prevState: string,
-	data: FormData
-): Promise<string | undefined> {
+export async function revokePart(data: FormData): Promise<APIData<{ emailSent: boolean }>> {
+	console.log(data.get("reasonForRevoke"));
 	const parsedData = revokePartSchema.safeParse({
 		partId: data.get("partId"),
 		reasonForRevoke: data.get("reasonForRevoke"),
-		dfm: data.getAll("dfm")
 	});
-	if (!parsedData.success) return `Schema Failed: ${parsedData.error}`;
-
-	console.log(parsedData.data.dfm);
-
-	const message = parsedData.data.reasonForRevoke;
-	// const message = `${parsedData.data!.dfm.map((value) => `- ${value}\n`)}${
-	// 	parsedData.data!.reasonForRevoke
-	// }`;
+	if (!parsedData.success) return resError(`Schema Failed: ${parsedData.error}`);
 
 	try {
-		await db`UPDATE Part SET Status=${PartStatus.Denied
-			}, PriceCents=null, RevokedReason=${message} WHERE Id=${parsedData.data!.partId
-			}`;
+		await db`UPDATE Part SET Status=${parsedData.data.reasonForRevoke == null ? PartStatus.Pending : PartStatus.Denied}, RevokedReason=${parsedData.data.reasonForRevoke} WHERE Id=${parsedData.data!.partId}`;
 	} catch (error) {
 		console.log(error);
-		return "An error occurred revoking part!";
+		return resError("Failed to update Database!");
 	}
 	revalidatePath("/dashboard/maintainer/orders");
-	return;
+	return resOkData({ emailSent: true });
 }
 
 const modifyPartSchema = z.object({
@@ -182,12 +170,11 @@ const modifyPartSchema = z.object({
 	reasonForRefund: z.string().optional().nullable(),
 	refundQuantity: z.coerce.number().int().optional().nullable(),
 	supplementedMaterial: z.string().optional().nullable(),
-	supplementedColor: z.string().optional().nullable()
+	supplementedColor: z.string().optional().nullable(),
+	supplementReason: z.string().optional().nullable()
 });
-export async function modifyPart(
-	prevState: string,
-	data: FormData
-): Promise<string | undefined> {
+export async function modifyPart(prevState: undefined, data: FormData): Promise<APIData<{}>> {
+	console.log(data);
 	const parsedData = modifyPartSchema.safeParse({
 		partId: data.get("partId"),
 		status: data.get("status"),
@@ -195,34 +182,36 @@ export async function modifyPart(
 		reasonForRefund: data.get("reasonForRefund"),
 		refundQuantity: data.get("refundQuantity"),
 		supplementedMaterial: data.get("material"),
-		supplementedColor: data.get("color")
+		supplementedColor: data.get("color"),
+		supplementReason: data.get("supplement-reason")
 	});
 
-	if (!parsedData.success) return `Schema Failed: ${parsedData.error}`;
+	if (!parsedData.success) return resError(`Schema Failed: ${parsedData.error}`);
 
 	const previousPart = await PartServe.queryById(parsedData.data.partId);
-	if (previousPart == undefined) return "Part does not exist!";
+	if (previousPart == undefined) return resError("Part does not exist!");
 
 	const partRequest = await RequestServe.fetchByIDWithAll(
 		previousPart.requestId
 	);
-	if (partRequest == undefined) return "Request does not exist!";
+	if (partRequest == undefined) return resError("Request does not exist!");
 
 	// https://zod.dev/?id=discriminated-unions
 
 	const newValues: Record<string, any> = {};
 
-	const includesSupplementFilament =
-		parsedData.data!.supplementedColor != undefined &&
-		parsedData.data!.supplementedMaterial != undefined;
-	if (includesSupplementFilament) {
+	if (parsedData.data!.supplementedColor != undefined && parsedData.data!.supplementedMaterial != undefined) {
 		const filament = await FilamentServe.queryIdByNameAndMaterial(
 			parsedData.data!.supplementedColor!,
 			parsedData.data!.supplementedMaterial!
 		);
 		if (filament == undefined)
-			return "Supplemented filament does not exist!";
+			return resError("Supplemented filament does not exist!");
 
+		if (parsedData.data.supplementReason != null)
+		{
+			newValues["SupplementedReason".toLowerCase()] = parsedData.data.supplementReason;
+		}
 		newValues["SupplementedFilamentId".toLowerCase()] = filament?.id;
 	}
 
@@ -245,19 +234,11 @@ export async function modifyPart(
 		parsedData.data.refundQuantity != undefined;
 
 	return db.begin(async (dbContext) => {
-		if (
-			parsedData.data!.status != PartStatus.Denied &&
-			previousPart.status == PartStatus.Denied
-		) {
-			// Part is no longer denied.
-			newValues["revokedreason"] = undefined;
-		}
-
 		if (includesRefund) {
 			if (isRefunded(previousPart)) {
-				return "Schema Error: Part cannot be modified once refunded!";
+				return resError("Schema Error: Part cannot be modified once refunded!");
 			} else if (!isPaid(partRequest)) {
-				return "Schema Error: Part cannot be refunded without request being paid!";
+				return resError("Schema Error: Part cannot be refunded without request being paid!");
 			}
 
 			const refundTotalInDollars =
@@ -277,7 +258,7 @@ export async function modifyPart(
 		);
 
 		const hasValuesToUpdate = Object.keys(newValues).length != 0;
-		if (!hasValuesToUpdate) return;
+		if (!hasValuesToUpdate) return resOk();
 
 		try {
 			await dbContext`UPDATE Part SET ${db(
@@ -286,7 +267,7 @@ export async function modifyPart(
 			)} WHERE Id=${parsedData.data.partId}`;
 		} catch (error) {
 			console.error(`Failed to modify Part!`, error as Error);
-			return "An internal error occurred modifying the part!";
+			return resError("An internal error occurred modifying the part!");
 		}
 
 		if (isAllComplete(partRequest.parts))
@@ -295,6 +276,8 @@ export async function modifyPart(
 		}
 
 		revalidatePath("/dashboard/maintainer/orders");
+
+		return resOk();
 	});
 }
 

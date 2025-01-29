@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Filament from "../Types/Filament/Filament";
+import classNames from "classnames";
 
 export type SwatchConfiguration = {
 	name: string;
@@ -49,24 +50,28 @@ export function isGradient(swatch: SwatchConfiguration): boolean {
 	);
 }
 
-export function NamedSwatch({ swatch }: { swatch: SwatchConfiguration }) {
+export function NamedSwatch({ swatch, style }: { swatch: SwatchConfiguration, style: "compact" | "long" }) {
 	validateColors(swatch);
 
 	return (
-		<span className="bg-transparent ">
+		<span className="bg-transparent">
 			<span className="text-inherit mr-2">{swatch.name}</span>
-			<Swatch swatch={swatch}></Swatch>
+			<Swatch swatch={swatch} style={style}></Swatch>
 		</span>
 	);
 }
 
-export function Swatch({ swatch }: { swatch: SwatchConfiguration }) {
+export function Swatch({ swatch, style }: { swatch: SwatchConfiguration, style: "compact" | "long" }) {
 	validateColors(swatch);
 
 	return (
 		<span
-			className="inline-block h-2.5 w-14 shadow-sm rounded-lg px-9 outline outline-2 lg:outline-4 outline-gray-200"
+			className={classNames("inline-block h-2.5 shadow-sm rounded-md outline outline-gray-200", {
+				"w-2.5": style == "compact",
+				"w-12": style == "long"
+			})}
 			style={{
+				outlineWidth: "3px",
 				backgroundColor: swatch.monoColor,
 				backgroundImage:
 					swatch.diColor != undefined
@@ -88,33 +93,3 @@ export function SwatchColorBlock({ swatch }: { swatch: SwatchConfiguration }) {
 		<span className="text-sm px-1 text-nowrap">{swatch.name}</span>
 	</div>
 }
-
-// export function SwatchSelector({
-// 	availableFilaments
-// }: {
-// 	availableFilaments: Filament[];
-// }) {
-// 	const [selectedColor, setSelectedColor] = useState<Filament | undefined>(
-// 		availableFilaments.at(0)
-// 	);
-
-// 	return (
-// 		<>
-// 			<input
-// 				name="filament-colorName"
-// 				id="filament-colorName"
-// 				value={selectedColor?.color.name}
-// 				hidden
-// 				className="hidden"></input>
-// 			<div className="py-2 px-2 bg-white">
-// 				{availableFilaments.map((filament) => (
-// 					<div
-// 						className="w-40"
-// 						onClick={() => setSelectedColor(filament)}>
-// 						<Swatch swatch={filament.color}></Swatch>
-// 					</div>
-// 				))}
-// 			</div>
-// 		</>
-// 	);
-// }

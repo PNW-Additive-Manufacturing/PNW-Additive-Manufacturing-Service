@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import db from "@/app/api/Database";
-import { ProjectSpotlight } from "./ProjectSpotlight";
+import { ProjectSpotlight, ProjectSpotlightAttachment, ProjectSpotlightWithAttachments } from "./ProjectSpotlight";
 import postgres from "postgres";
 import DOMPurify from "isomorphic-dompurify";
 import fs from "fs";
@@ -23,6 +23,16 @@ export default class ProjectSpotlightServe
         };  
     }
 
+    private static projectAttachmentFromSQL(row: postgres.Row): ProjectSpotlightAttachment
+    {
+        return {
+            id: row.id,
+            projectId: row.projectid,
+            downloadCount: row.downloadcount,
+            fileName: row.filename
+        }
+    }
+
     public static async queryAllProjectShowcases(): Promise<ProjectSpotlight[]>
     {
         const showcases = await db`SELECT * FROM ProjectSpotlight ORDER BY CreatedAt DESC`;
@@ -35,6 +45,23 @@ export default class ProjectSpotlightServe
         const showcase = await db`SELECT * FROM ProjectSpotlight WHERE title=${title}`;
 
         return showcase.length > 0 ? ProjectSpotlightServe.projectShowcaseFromSQL(showcase[0]) : null;
+    }
+
+    public static async withAttachments(project: ProjectSpotlight): Promise<ProjectSpotlightWithAttachments>
+    {
+        const attachmentsQuery = await db`SELECT * FROM ProjectSpotlightAttachment WHERE ProjectId=${project.id}`;
+
+        const attachments = attachmentsQuery.map(r => ProjectSpotlightServe.projectAttachmentFromSQL(r));
+
+        return Object.assign(project, { attachments: attachments }) as ProjectSpotlightWithAttachments;
+    }
+
+    public static async withManyAttachments(projects: ProjectSpotlight[])
+    {
+        for (let project of projects)
+        {
+            await ProjectSpotlightServe.withAttachments(project);
+        }
     }
 
     public static async insertProjectShowcase(data: Omit<ProjectSpotlight, "id" | "hasImage" | "createdAt">, image: File)
