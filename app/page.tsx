@@ -215,7 +215,7 @@ export default async function Home() {
 				</div> */}
 
 
-				<div className="bg-white py-8 lg:py-12 lg:pt-6">
+				<div className="bg-white py-8 lg:py-12 lg:pt-0">
 					<HorizontalWrap>
 
 						<h2 className="font-medium text-2xl pb-2 w-full text-center">See what <span className="font-bold">Students Created</span></h2>
@@ -223,9 +223,14 @@ export default async function Home() {
 
 						<div className="flex flex-col gap-4 mt-8">
 
-							<div className="grid grid-rows-7 lg:grid-cols-10 lg:grid-rows-1 gap-4">
+							<div className="grid grid-rows-1 max-md:grid-rows-12 md:grid-cols-5 lg:grid-cols-10 gap-4">
 
-								{showcases.slice(0, Math.min(showcases.length, 3)).map(s => <div className="rounded-md bg-background row-span-2 lg:col-span-3">
+								{showcases.slice(0, Math.min(showcases.length, 3)).map((s, i) => <div key={s.id} className={`
+									rounded-md bg-background row-span-4 md:col-span-2 lg:col-span-3
+									${i >= 3 ? 'hidden' : ''}
+									md:${i >= 2 ? 'hidden' : ''}
+									lg:inline
+									`}>
 
 									<ProjectCard projectData={s} editable={false} key={s.id} style={"normal"} />
 
@@ -274,7 +279,7 @@ export default async function Home() {
 					</HorizontalWrap>
 				</div>
 
-				<div className="bg-white py-8 lg:py-12">
+				<div className="bg-white pt-0 lg:py-12">
 					<HorizontalWrap>
 						<div id="services">
 							<div>
@@ -294,12 +299,12 @@ export default async function Home() {
 						</div>
 						{/* <hr style={{ marginBottom: "0px" }} /> */}
 						<br />
-						<div className="flex justify-between gap-8">
-							<div className="grid xl:grid-cols-5 gap-6">
+						<div className="flex justify-between gap-4 lg:gap-6">
+							<div className="grid xl:grid-cols-5 gap-4 lg:gap-6">
 
 								<div className="bg-background p-4 w-full rounded-md">
 									<div className="w-full text-sm">
-										<div className="px-10 max-md:hidden">
+										<div className="px-10 max-lg:hidden">
 											<Image priority src="/assets/bambu_x1e_with_ams.png" alt="Bambu Lab A1 3D Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom" style={{ aspectRatio: "3/4" }} />
 										</div>
 										<h2 className="text-lg font-semibold">Classical FDM Printing</h2>
@@ -309,7 +314,7 @@ export default async function Home() {
 
 								<div className="bg-background p-4 w-full rounded-md">
 									<div className="w-full text-sm">
-										<div className="px-10 max-md:hidden">
+										<div className="px-10 max-lg:hidden">
 											<Image priority src="/assets/mars4ultra.png" alt="Mars 4 Ultra Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom" style={{ aspectRatio: "3/4" }} />
 										</div>
 										<h2 className="text-lg font-semibold">Precise Resin Printing</h2>
@@ -319,7 +324,7 @@ export default async function Home() {
 
 								<div className="bg-background p-4 w-full rounded-md">
 									<div className="w-full text-sm">
-										<div className="px-10 max-md:hidden">
+										<div className="px-10 max-lg:hidden">
 											<Image priority src="/assets/metalx.png" alt="Metal X Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom" style={{ aspectRatio: "3/4" }} />
 										</div>
 										<h2 className="text-lg font-semibold">Markforged Metal X</h2>
@@ -331,7 +336,7 @@ export default async function Home() {
 
 								<div className="bg-background p-4 w-full rounded-md">
 									<div className="w-full text-sm">
-										<div className="px-10 max-md:hidden">
+										<div className="px-10 max-lg:hidden">
 											<Image priority src="/assets/fuse_1_store_thumb_2x_1.png" alt="FormLabs Fuse 1+ 30W" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom" style={{ aspectRatio: "3/4" }} />
 										</div>
 										<h2 className="text-lg font-semibold">SLS Fuse 1+ 30W</h2>
@@ -342,7 +347,7 @@ export default async function Home() {
 
 							</div>
 						</div>
-						<div className="w-1/3 mt-4">
+						<div className="w-full lg:w-1/3 mt-4">
 							<Link className="w-full" href="/materials">
 								<button className="text-left flex justify-between" type="button">
 									View our Materials and Processes

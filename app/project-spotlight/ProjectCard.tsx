@@ -43,7 +43,7 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
 
     return <div className="rounded-md relative" key={projectData.id}>
 
-        {imageSrc && <Image className="bg-background shadow-sm rounded-b-none rounded-t-sm" style={{ aspectRatio: "2/0.75" }} src={imageSrc} alt={"Image"} width={720} height={720}></Image>}
+        {imageSrc && <Image className="bg-background shadow-sm rounded-b-none rounded-t-sm max-lg:w-full" style={{ aspectRatio: "2/0.75" }} src={imageSrc} alt={"Image"} width={720} height={720}></Image>}
 
         <div className="p-6">
             {isEditing ? (

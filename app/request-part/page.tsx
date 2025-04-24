@@ -31,7 +31,7 @@ export default async function Request() {
 			</HorizontalWrap>
 
 			<div className="bg-white min-h-screen">
-				<HorizontalWrap className="py-12">
+				<HorizontalWrap className="py-8">
 					<RequestPartForm
 						filaments={filaments}
 						previousUploadedModels={previousModels}></RequestPartForm>

@@ -40,7 +40,7 @@ export default function Profile({ account, transactions }: { account: Account, t
 				</a>
 
 			</HorizontalWrap>
-			<div className="bg-white">
+			<div className="bg-white min-h-screen">
 				<HorizontalWrap>
 					<div className="py-8">
 						<h2 id="wallet" className="w-fit text-xl font-normal mb-1">Wallet</h2>

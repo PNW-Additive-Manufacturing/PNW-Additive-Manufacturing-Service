@@ -79,7 +79,7 @@ export default async function Materials() {
         </HorizontalWrap>
         <div className="bg-white">
             <HorizontalWrap>
-                <div className="mt-6">
+                <div className="py-8">
                     {uniqueTechnology.map(t => {
                         const uniqueMaterials = filaments.filter((f, index) => filaments.findIndex(b => b.material == f.material) == index && f.technology == t.technology);
 
