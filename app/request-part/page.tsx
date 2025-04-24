@@ -17,7 +17,7 @@ export default async function Request() {
 
 	return (
 		<>
-			<HorizontalWrap className="mb-12">
+			<HorizontalWrap className="">
 				<div className="mb-6">
 					<h1 className="w-fit text-2xl font-normal mb-2">
 						Fill out a Request
@@ -28,10 +28,15 @@ export default async function Request() {
 						an outstanding result of your models. You can view our <Link className="underline" target="_blank" href={"/materials"}>materials we have on hand</Link> to choose the right process and material for your parts.
 					</p>
 				</div>
-				<RequestPartForm
-					filaments={filaments}
-					previousUploadedModels={previousModels}></RequestPartForm>
 			</HorizontalWrap>
+
+			<div className="bg-white min-h-screen">
+				<HorizontalWrap className="py-12">
+					<RequestPartForm
+						filaments={filaments}
+						previousUploadedModels={previousModels}></RequestPartForm>
+				</HorizontalWrap>
+			</div>
 		</>
 	);
 }

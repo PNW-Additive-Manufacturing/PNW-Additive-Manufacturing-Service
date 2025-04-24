@@ -88,7 +88,7 @@ export function EngineeringCamera({
 				makeDefault={true}
 				frames={15}
 				position={new Vector3(200, 200, 200 / 2)}
-				zoom={focusedGeometry.boundingSphere!.radius / 35}>
+				zoom={focusedGeometry.boundingSphere!.radius}>
 				<spotLight
 					castShadow={false}
 					position={[0, 0, 0]}
@@ -107,22 +107,28 @@ export default function ThreeModelViewer({
 	modelRotation,
 	moveable,
 	isAvailable,
-	showOrientation
+	showOrientation,
+	loadOnPrompt,
+	style
 }: {
 	swatch?: SwatchConfiguration;
 	modelURL?: string;
+	loadOnPrompt?: boolean;
 	modelFile?: File;
 	modelSize?: number;
 	modelRotation?: Euler;
 	moveable?: boolean;
 	isAvailable?: boolean;
 	showOrientation?: boolean;
+	style?: string;
 
 	onClickOrientation?: (rotation: Euler) => void;
 }) {
 	showOrientation = showOrientation ?? false;
 	moveable = moveable ?? true;
 	swatch = swatch ?? templatePNW();
+	loadOnPrompt = loadOnPrompt ?? false;
+	style = style ?? "bed";
 
 	isAvailable ??= true;
 
@@ -145,9 +151,9 @@ export default function ThreeModelViewer({
 		setSTLLoading(true);
 		try {
 			let modelArrayBuffer: ArrayBuffer;
-			if (modelFile != undefined) {
+			if (modelFile !== undefined) {
 				modelArrayBuffer = await modelFile.arrayBuffer();
-			} else if (modelURL != undefined) {
+			} else if (modelURL !== undefined) {
 				const request = await fetch(modelURL, { cache: "force-cache" });
 
 				if (!request.ok) {
@@ -168,18 +174,20 @@ export default function ThreeModelViewer({
 			parsedSTLGeometry.computeBoundingBox();
 
 			const geometryOffsetFromOrigin =
+				// biome-ignore lint/style/noNonNullAssertion: <explanation>
 				parsedSTLGeometry.boundingSphere!.center;
 			parsedSTLGeometry.translate(
 				-geometryOffsetFromOrigin.x,
 				-geometryOffsetFromOrigin.y,
 				-parsedSTLGeometry.boundingBox!.min.z
-				// -geometryOffsetFromOrigin.z
 			);
 
 			parsedSTLGeometry.computeBoundingSphere();
-			parsedSTLGeometry.computeBoundingBox();
+			if (parsedSTLGeometry.boundingSphere !== null) {
+				parsedSTLGeometry.boundingSphere.radius *= 1.1;
+			}
 
-			parsedSTLGeometry.boundingSphere!.radius += parsedSTLGeometry.boundingSphere!.radius * 0.075;
+			// biome-ignore lint/style/noNonNullAssertion: <explanation>
 
 			setSTLModel(parsedSTLGeometry);
 		} catch (error) {
@@ -198,6 +206,7 @@ export default function ThreeModelViewer({
 
 	// Uncomment to load instantly.
 	useEffectOnce(() => {
+		// biome-ignore lint/style/noNonNullAssertion: <explanation>
 		const divBounds = divRef.current!.getBoundingClientRect();
 		const isVisible = (divRef.current?.checkVisibility() ?? true)
 			&& divBounds.top >= 0
@@ -206,7 +215,7 @@ export default function ThreeModelViewer({
 			&& divBounds.right <= (window.innerWidth || document.documentElement.clientWidth);
 
 		// if (STLModel == undefined && !isSTLLoading && isVisible && loadedCount <= 1) {
-		if (STLModel == undefined && !isSTLLoading && isVisible && isAvailable) {
+		if (!loadOnPrompt && STLModel === undefined && !isSTLLoading && isVisible && isAvailable) {
 			// loadedCount += 1;
 			loadModelSTL();
 		}
@@ -216,10 +225,10 @@ export default function ThreeModelViewer({
 
 	return (
 		<div className="w-full h-full" ref={divRef}>
-			{STLModel == undefined ? (
+			{STLModel === undefined ? (
 				isSTLLoading ? (
 					<div className="flex justify-center align-middle items-center h-full w-full">
-						<div className="animate-ping w-8 h-8 bg-pnw-gold "></div>
+						<div className="animate-ping w-8 h-8 bg-pnw-gold" />
 					</div>
 				) : loadingError ? <div className="flex justify-center align-middle items-center h-full w-full">
 					<button
@@ -247,31 +256,32 @@ export default function ThreeModelViewer({
 				</div>
 			) : (
 				<Canvas
-					className="rounded-lg bg-background block w-full h-full"
+					className="block w-full h-full"
 					frameloop="demand"
 					shadows>
-					<EngineeringCamera
-						focusedGeometry={STLModel}></EngineeringCamera>
 
-					<ambientLight></ambientLight>
+					<EngineeringCamera focusedGeometry={STLModel} />
 
-					<group>
+					<ambientLight />
+
+					{style.includes("bed") && <group>
 						<mesh
 							receiveShadow
 							material={
 								new MeshStandardMaterial({ color: "#efefef" })
 							}
+							// biome-ignore lint/style/noNonNullAssertion: <explanation>
 							position={new Vector3(0, 0, STLModel.boundingBox!.max.x > 2 ? -0.01 : -0.0001)}>
 
-							<planeGeometry args={[256, 256]}></planeGeometry>
+							<planeGeometry args={[256, 256]} />
 						</mesh>
 
 						<mesh>
 							<gridHelper
 								args={[256, 10, "#b1810b", "#a6a6a6"]}
-								rotation={new Euler(Math.PI / 2)}></gridHelper>
+								rotation={new Euler(Math.PI / 2)} />
 						</mesh>
-					</group>
+					</group>}
 
 					<mesh
 						castShadow={true}
@@ -285,7 +295,7 @@ export default function ThreeModelViewer({
 							color={
 								// new Color("#b1810b")
 								new Color(getSingleColor(swatch))
-							}></meshStandardMaterial>
+							} />
 						{/* <meshLambertMaterial
 								reflectivity={1}
 								flatShading={false}

@@ -13,7 +13,7 @@ import { toast } from "react-toastify";
 import DropdownSection from "../components/DropdownSection";
 
 // export function ProjectCard(projectData: ProjectSpotlightWithAttachments) {
-export function ProjectCard(projectData: ProjectSpotlight) {
+export function ProjectCard({ projectData, editable, style }: { projectData: ProjectSpotlight, editable: boolean, style: "normal" | "compact" }) {
     const [isEditing, setIsEditing] = useState(false);
 
     const imageSrc = `/api/download/project-showcase-image/?projectId=${projectData.id as string}`;
@@ -41,7 +41,7 @@ export function ProjectCard(projectData: ProjectSpotlight) {
         </tr>
     }
 
-    return <div className="bg-white out shadow-sm rounded-md relative" key={projectData.id}>
+    return <div className="rounded-md relative" key={projectData.id}>
 
         {imageSrc && <Image className="bg-background shadow-sm rounded-b-none rounded-t-sm" style={{ aspectRatio: "2/0.75" }} src={imageSrc} alt={"Image"} width={720} height={720}></Image>}
 
@@ -117,27 +117,27 @@ export function ProjectCard(projectData: ProjectSpotlight) {
                 </form>
             ) : (
                 <>
-                    <h2 className="font-semibold text-lg flex items-center justify-between gap-4">
+                    <span className="font-semibold text-lg flex items-center justify-between gap-4">
                         <>{projectData.title}</>
-                        {accountContext.isSingedIn &&
+                        {editable && accountContext.isSingedIn &&
                             accountContext.account!.permission !== "user" && (
                                 <RegularPencil
                                     className="inline opacity-25 hover:opacity-100 hover:cursor-pointer p-0.5"
                                     onClick={() => setIsEditing(true)}
                                 />
                             )}
-                    </h2>
-
-                    {projectData.author && (
+                    </span>
+                    {/* 
+                    {projectData.author && style === "normal" && (
                         <p className="text-sm mt-1 mb-4">
                             Published by {projectData.author} on{" "}
                             {formateDate(projectData.createdAt)}.
                         </p>
                     )}
 
-                    <hr className="pb-0 mb-4" />
+                    {style === "normal" && <hr className="pb-0 mb-4" />} */}
 
-                    <p className="text-base text-cool-black">{projectData.description}</p>
+                    <span className="text-base text-cool-black">{projectData.description}</span>
                 </>
             )}
 

@@ -79,6 +79,48 @@ import { Figure } from "@/app/components/Figures";
 import classNames from "classnames";
 import ContainerNotification from "@/app/components/ContainerNotification";
 
+export function createRequestTimelineOptions(request: RequestWithParts) {
+	console.log(request);
+	return [
+		{
+			title: "Requested",
+			description: (
+				<>
+					Submitted on{" "}
+					{formateDate(request.submitTime)}.
+				</>
+			),
+			disabled: false
+		},
+		{
+			title: "Quoted",
+			description: (
+				<>
+					Hello
+					{/* {request.quote?.paidAt === undefined ? "Waiting for payment from you." : `Paid on ${formateDate(request.quote?.paidAt)}.`} */}
+				</>
+			),
+			disabled: !hasQuote(request)
+		},
+		{
+			title: "Models Printing",
+			description: <>
+				Estimated to be completed by {request.quote && formateDate(request.quote.estimatedCompletionDate)}.
+			</>,
+			disabled: isAllPending(request.parts)
+		},
+		{
+			title: "Available for Pickup",
+			description: <>{isOpen ? "Pickup at the PNW Design Studio." : "Pickup currently not Available."}</>,
+			disabled: !isAllComplete(request.parts)
+		},
+		{
+			title: "Fulfilled",
+			disabled: !request.isFulfilled
+		}
+	];
+}
+
 export default function RequestDetails({
 	request
 }: {
@@ -239,51 +281,7 @@ export default function RequestDetails({
 				<div className="w-full lg:w-1/3 xl:w-2/6" >
 					<div className="text-sm py-2 pl-1 w-full">Status Tracking</div>
 					<div className="shadow-sm p-4 lg:p-6 rounded-sm bg-white out">
-						<Timeline
-							options={[
-								{
-									title: "Requested",
-									description: (
-										<>
-											Submitted on{" "}
-											{formateDate(request.submitTime)}.
-										</>
-									),
-									disabled: false
-								},
-								{
-									title: "Quoted",
-									description: (
-										<>
-											{request.quote?.paidAt == undefined
-												? `Waiting for payment from you.`
-												: `Paid on ${formateDate(request.quote?.paidAt)}.`}
-										</>
-									),
-									disabled: !hasQuote(request)
-								},
-								{
-									title: "Models Printing",
-									description: <>
-										Estimated to be completed by {request.quote && formateDate(request.quote.estimatedCompletionDate)}.
-									</>,
-									disabled: isAllPending(request.parts)
-								},
-								{
-									title: "Available for Pickup",
-									description: <>{isOpen ? "Pickup at the PNW Design Studio." : "Pickup currently not Available."}</>,
-									disabled: !isAllComplete(request.parts)
-								},
-								{
-									title: "Fulfilled",
-									// description: `On ${formateDate(
-									// 	request.fulfilledAt!
-									// )}`,
-									disabled: !request.isFulfilled
-								}
-							]}
-						/>
-
+						<Timeline options={createRequestTimelineOptions(request)} />
 					</div>
 
 					<div className="text-sm py-2 mt-2 px-1 text-nowrap" id="payment_details">{isPaid(request) ? "Receipt" : "Invoice"}</div>
@@ -426,7 +424,7 @@ function PartDetails({ part, index, count }: { part: PartWithModel; index: numbe
 						{/* <div className="absolute top-2 left-2 p-2 stroke-cool-black hover:stroke-pnw-gold opacity-25 hover:cursor-pointer hover:opacity-100 fill-transparent hover:fill-pnw-gold z-20 flex items-center justify-center" style={{ borderRadius: "100%" }}>
 							<RegularStarFill className="stroke-inherit fill-inherit opacity-100 w-4 h-4" style={{ strokeWidth: "6px" }} />
 						</div> */}
-						<div className="h-36 out bg-gray-50 rounded-sm w-full">
+						<div className="h-36 bg-gray-50 rounded-sm w-full">
 							<ThreeModelViewer
 								isAvailable={!part.model.isPurged}
 								modelSize={part.model?.fileSizeInBytes}

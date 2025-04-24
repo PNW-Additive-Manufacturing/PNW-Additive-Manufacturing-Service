@@ -14,9 +14,9 @@ export default function StatusPill({
 
 	return (
 		<div
-			className={`${className} w-fit rounded-md flex select-none uppercase text-nowrap`}>
+			className={`${className} w-fit rounded-md flex select-none text-nowrap`}>
 			<div className={`rounded-full my-auto h-3 w-3 mr-2`} style={{ backgroundColor: statusColor }} />
-			<span className="my-auto mr-1 text-sm">{context}</span>
+			<span className="my-auto mr-1">{context}</span>
 		</div>
 	);
 }
@@ -53,7 +53,7 @@ export function SelectorStatusPill({
 
 	return (
 		<div
-			className={`${className} w-fit rounded-md flex select-none uppercase text-nowrap`}>
+			className={`${className} w-fit rounded-md flex select-none text-nowrap`}>
 			<div
 				ref={statusCircleRef as any}
 				className={`inline rounded-full mr-2 aspect-square`}
@@ -62,7 +62,7 @@ export function SelectorStatusPill({
 				id="status"
 				name="status"
 				defaultValue={defaultValue}
-				className="my-auto w-fit p-0 uppercase outline-none bg-transparent"
+				className="my-auto w-fit p-0 outline-none bg-transparent"
 				{...register}>
 				{children}
 			</select>

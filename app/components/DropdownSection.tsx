@@ -11,9 +11,11 @@ export default function DropdownSection({
 	hidden,
 	collapsible,
 	children,
-	className
+	className,
+	nameClassname
 }: {
 	name: string;
+	nameClassname?: string;
 	icon?: JSX.Element;
 	hidden?: boolean;
 	collapsible?: boolean;
@@ -32,9 +34,9 @@ export default function DropdownSection({
 			<div
 				className={classNames("hover:text-black flex items-center justify-between gap-2 p-0 w-full hover:cursor-pointer fill-gray-400 hover:fill-cool-black mb-3", className)}
 				onClick={() => setHidden(!isHidden)}>
-				<div>
-					{name}
+				<div className={classNames("flex items-center gap-1.5 flex-wrap", nameClassname)}>
 					{icon}
+					{name}
 				</div>
 				<RegularChevronDown
 					className={`w-5 h-5 fill-inherit ${isHidden ? "rotate-180" : ""

@@ -6,6 +6,10 @@ import Gallery from "./components/Gallery";
 import Link from "next/link";
 import { AvailabilityText } from "./components/LocalSchedule";
 import { RegularArrowRight, RegularDiamondAlt, RegularDiamondShape, RegularPackage, RegularPointerRight } from "lineicons-react";
+import ProjectSpotlightServe from "./Types/ProjectSpotlight/ProjectSpotlightServe";
+import { ProjectCard } from "./project-spotlight/ProjectCard";
+import { MdOutlineExplore } from "react-icons/md";
+import { FaArrowRightLong, FaChevronRight } from "react-icons/fa6";
 
 // function DiscordServer() {
 // 	return (
@@ -41,15 +45,39 @@ import { RegularArrowRight, RegularDiamondAlt, RegularDiamondShape, RegularPacka
 // 	);
 // }
 
+
+const MapEmbed = () => {
+	return (
+		<div className="w-full h-[450px]">
+			<iframe
+				src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d595.9940031434936!2d-87.47228416193505!3d41.587223515169036!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8811de119bd6a485%3A0x1cb62e96c575a358!2sUniversity%20Services%2C%202233%20171st%20St%2C%20Hammond%2C%20IN%2046323!5e0!3m2!1sen!2sus!4v1745448045531!5m2!1sen!2sus"
+				width="100%"
+				height="100%"
+				style={{ border: 0 }}
+				allowFullScreen
+				loading="lazy"
+				referrerPolicy="no-referrer-when-downgrade"
+				title="Design Studio Location"
+			></iframe>
+		</div>
+	);
+};
+
+
 export default async function Home() {
+
+	const showcases = await ProjectSpotlightServe.queryAllProjectShowcases();
+	await ProjectSpotlightServe.withManyAttachments(showcases);
+
 	return (
 		<>
 			<div>
-				<HorizontalWrap>
+
+				<HorizontalWrap className="my-8">
 					<div className="xl:flex justify-between gap-10 lg:m-0">
 						<div className="w-fit mb-2">
-							<h1 className="w-fit mb-4 text-2xl font-normal">
-								<span>Welcome to the</span>
+							<h1 className="w-fit mb-4 text-3xl font-normal">
+								{/* <span>Welcome to the</span> */}
 								<span className="font-bold">
 									<span className="text-pnw-gold"> PNW </span>
 									Additive Manufacturing Service
@@ -85,11 +113,11 @@ export default async function Home() {
 											<RegularArrowRight className="inline ml-2 mb-0.5" />
 										</button>
 									</Link>
-									<Link href={"/project-spotlight"}>
+									{/* <Link href={"/project-spotlight"}>
 										<button className="w-fit px-3.5 py-2.5 mb-0 font-medium tracking-wide text-sm shadow-sm">
 											Project Spotlight
 										</button>
-									</Link>
+									</Link> */}
 									<Link
 										href="/team"
 										className="w-fit tracking-wider font-light text-sm">
@@ -103,100 +131,50 @@ export default async function Home() {
 									</a>
 								</div>
 
-								<div className="my-4 mb-8">
+								{/* <div className="my-4 mb-8">
 									<AvailabilityText />
-								</div>
+								</div> */}
 							</div>
 						</div>
-						<div className="">
-							<video src={"/assets/Timeline 1.mp4"} className="max-2xl:hidden rounded-md ml-auto" style={{ maxHeight: "18.5rem" }} controls muted={true} loop={true} preload={"none"} playsInline={true} poster="/assets/lab_setup_1.jpg"></video>
-							{/* <Gallery
-								buttonStyle="sphere"
-								autoplay={false}
-								slides={[
-									<>
-									</>,
-									<>
-										<div className="bg-gray-100 rounded-md shadow-sm w-full h-64">
-											<Image
-												src={"/assets/lab_setup_1.jpg"}
-												width={760}
-												height={760}
-												alt=""
-												className="pt-0 w-full h-full bg-black rounded-md"></Image>
-										</div>
-										<p className="text-sm px-2 lg:text-center w-full font-light mt-2">
-											We use top-of-the-line consumer 3D
-											Printers from{" "}
-											<a
-												href="https://bambulab.com/en/about-us"
-												target="_blank"
-												className="underline">
-												Bambu Lab
-											</a>
-											.
-										</p>
-									</>,
-									<>
-										<div className="bg-gray-100 rounded-md shadow-sm w-full h-64">
-											<Image
-												src="/assets/am_simple_logos.jpg"
-												width={760}
-												height={760}
-												alt=""
-												className="pt-0 w-full h-full bg-black rounded-md"></Image>
-										</div>
-										<p className="text-sm px-2 lg:text-center w-full font-light mt-2">
-											Handouts in the form of a keychain
-											for an event can be a fun and
-											effective way to promote your event.
-										</p>
-									</>,
-									<>
-										<div className="bg-gray-100 rounded-md shadow-sm w-full h-64">
-											<Image
-												src="/assets/lion.jpg"
-												width={760}
-												height={760}
-												alt=""
-												className="pt-0 w-full h-full bg-black rounded-md"></Image>
-										</div>
-										<p className="text-sm px-2 lg:text-center w-full font-light mt-2">
-											Create multi-part art pieces at a
-											large scale.
-										</p>
-									</>,
-									<>
-										<Image
-											src="/assets/flower_print.jpg"
-											width={760}
-											height={760}
-											alt=""
-											className="pt-0 w-full bg-black rounded-md h-64"></Image>
-										<p className="text-sm px-2 lg:text-center w-full font-light mt-2">
-											Express your creativity by designing
-											and requesting artistic models.
-										</p>
-									</>,
-									<>
-										<div className="bg-gray-100 rounded-md shadow-sm w-full h-64">
-											<Image
-												src="/assets/luke_moreno_battle_bot_2.jpg"
-												width={760}
-												height={760}
-												alt=""
-												className="pt-0 w-full h-full bg-black rounded-md"></Image>
-										</div>
-										<p className="text-sm px-2 lg:text-center w-full font-light mt-2">
-											Luke Moreno utilizes ABS filament to
-											securely encase the electronics for
-											three-pound Battle Bots.
-										</p>
-									</>
-								]}></Gallery> */}
+						<div className="mb-6">
+							<video src={"/assets/Timeline 1.mp4"} className="max-2xl:hidden rounded-md ml-auto" style={{ maxHeight: "17.5rem" }} controls muted={true} loop={true} preload={"none"} playsInline={true} poster="/assets/lab_setup_1.jpg" />
 						</div>
 					</div>
 				</HorizontalWrap>
+				{/* 
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 54" preserveAspectRatio="xMidYMid slice">
+					<g>
+						<path d="M0 2 L1440 2" stroke="#b1810b" opacity={0.5} stroke-width="2" fill="none" />
+						<path d="M0 12 L1440 12" stroke="#c3932b" opacity={0.5} stroke-width="2" fill="none" />
+						<path d="M0 22 L1440 22" stroke="#d5a64c" opacity={0.5} stroke-width="2" fill="none" />
+						<path d="M0 32 L1440 32" stroke="#e6b96d" opacity={0.5} stroke-width="2" fill="none" />
+						<path d="M0 42 L1440 42" stroke="#f0cd8e" opacity={0.5} stroke-width="2" fill="none" />
+						<path d="M0 52 L1440 52" stroke="#fae1af" opacity={0.5} stroke-width="2" fill="none" />
+					</g>
+				</svg> */}
+
+				{/* <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -3 1440 60" opacity={0.65} preserveAspectRatio="xMidYMid slice">
+					<g>
+						<path d="M0 0 L1440 0" stroke="#b1810b" stroke-width="3" fill="none" />
+						<path d="M0 8 L1440 8" stroke="#c3932b" stroke-width="3" fill="none" />
+						<path d="M0 16 L1440 16" stroke="#d5a64c" stroke-width="3" fill="none" />
+						<path d="M0 24 L1440 24" stroke="#e6b96d" stroke-width="3" fill="none" />
+						<path d="M0 32 L1440 32" stroke="#f0cd8e" stroke-width="4" fill="none" />
+						<path d="M0 40 L1440 40" stroke="#fae1af" stroke-width="4.5" fill="none" />
+						<path d="M0 48 L1440 48" stroke="#fceac9" stroke-width="5" fill="none" />
+						<path d="M0 56 L1440 56" stroke="white" stroke-width="7" fill="none" />
+					</g>
+				</svg> */}
+
+				<svg className="bg-white hidden lg:block" viewBox="0 40 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+					<path className="fill-background" d="
+						M0,80 
+						C360,40 1080,40 1440,80 
+						L1440,0 
+						L0,0 
+						Z" />
+				</svg>
+
 
 				{/* <div className="bg-white py-8">
 					<HorizontalWrap>
@@ -237,12 +215,69 @@ export default async function Home() {
 				</div> */}
 
 
-				<div className="bg-white py-8">
+				<div className="bg-white py-8 lg:py-12 lg:pt-6">
+					<HorizontalWrap>
+
+						<h2 className="font-medium text-2xl pb-2 w-full text-center">See what <span className="font-bold">Students Created</span></h2>
+						<p className="text-cool-black text-center">Students and faculty members craft using Additive Manufacturing Techniques.</p>
+
+						<div className="flex flex-col gap-4 mt-8">
+
+							<div className="grid grid-rows-7 lg:grid-cols-10 lg:grid-rows-1 gap-4">
+
+								{showcases.slice(0, Math.min(showcases.length, 3)).map(s => <div className="rounded-md bg-background row-span-2 lg:col-span-3">
+
+									<ProjectCard projectData={s} editable={false} key={s.id} style={"normal"} />
+
+								</div>)}
+
+								<div className="flex justify-center items-center mt-2">
+									<button className="bg-background rounded-full p-3 text-2xl w-fit h-fit mb-0 fill-cool-black hover:fill-white" type="button">
+										<FaChevronRight className="fill-inherit" style={{ width: "1em", height: "1em" }} />
+									</button>
+								</div>
+
+								{/* <a href="/project-spotlight" className="col-start-5 col-span-2">
+									<button className="flex py-4 items-center justify-between text-cool-black bg-background" type="button">
+										View Posts
+										<FaChevronRight style={{ width: "1em", height: "1em" }} />
+
+									</button>
+								</a> */}
+
+							</div>
+
+						</div>
+					</HorizontalWrap>
+				</div>
+
+				<div className="bg-white">
+					<HorizontalWrap>
+						<svg className="opacity-50 hidden lg:block" viewBox="0 0 1440 50" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+							<defs>
+								<linearGradient id="pnwGoldOnlyWave" x1="0%" y1="0%" x2="100%" y2="0%">
+									<stop offset="0%" stopColor="#b1810b" />         {/* PNW Gold */}
+									<stop offset="40%" stopColor="#e6b10e" />        {/* PNW Gold Logo */}
+									<stop offset="100%" stopColor="#f1e8d3" />       {/* PNW Gold Light */}
+								</linearGradient>
+							</defs>
+							<path
+								d="M16 25 C 360 0, 1080 50, 1424 25"
+								stroke="url(#pnwGoldOnlyWave)"
+								strokeWidth="10"  // Increased for more pronounced roundness
+								fill="none"
+								strokeLinecap="round"  // Ensures rounded edges
+							/>
+						</svg>
+					</HorizontalWrap>
+				</div>
+
+				<div className="bg-white py-8 lg:py-12">
 					<HorizontalWrap>
 						<div id="services">
 							<div>
-								<h2 className="w-fit font-medium text-xl pb-2">Our Manufacturing Services</h2>
-								<div className="w-fit">
+								<h2 className="font-medium text-2xl pb-2 w-full"><span className="font-bold">Additive Manufacturing Machines</span> in Hammond (Design Studio)</h2>
+								<div className="text-cool-black">
 									Each production method offers different
 									benefits and drawbacks. We recommend taking
 									a look at an excellent guide by{" "}
@@ -255,62 +290,64 @@ export default async function Home() {
 								</div>
 							</div>
 						</div>
-						<hr style={{ marginBottom: "0px" }} />
-						<div className="grid xl:grid-cols-5 gap-8 mt-6">
-							<div className="out p-4 w-full rounded-md shadow-sm">
-								<div className="w-full text-sm">
-									<div className="px-6 max-md:hidden">
-										<Image priority src="/assets/bambu_x1e_with_ams.png" alt="Bambu Lab A1 3D Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom" style={{ aspectRatio: "3/4" }} />
-									</div>
-									<h2 className="text-lg text-pnw-gold font-semibold">FDM 3D Printing</h2>
-									<p className="mt-2">Perfect for prototyping medium-strength parts, offering a cost-effective solution for functional prototypes and design testing.</p>
-								</div>
-							</div>
+						{/* <hr style={{ marginBottom: "0px" }} /> */}
+						<br />
+						<div className="flex justify-between gap-8">
+							<div className="grid xl:grid-cols-5 gap-6">
 
-							<div className="bg-background p-4 w-full rounded-md">
-								<div className="w-full opacity-75 text-sm">
-									<div className="px-6 max-md:hidden">
-										<Image priority src="/assets/mars4ultra.png" alt="Mars 4 Ultra Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom" style={{ aspectRatio: "3/4" }} />
+								<div className="bg-background p-4 w-full rounded-md">
+									<div className="w-full text-sm">
+										<div className="px-10 max-md:hidden">
+											<Image priority src="/assets/bambu_x1e_with_ams.png" alt="Bambu Lab A1 3D Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom" style={{ aspectRatio: "3/4" }} />
+										</div>
+										<h2 className="text-lg font-semibold">Classical FDM Printing</h2>
+										<p className="mt-2">Perfect for prototyping medium-strength parts, offering a cost-effective solution for functional prototypes and design testing.</p>
 									</div>
-									<h2 className="text-lg font-semibold">Resin 3D Printing</h2>
-									<p className="mt-2">Coming Spring 2025</p>
-									<p className="mt-2">Optimal for creating detailed and smooth-surfaced models, ideal for small intricate parts.</p>
 								</div>
-							</div>
 
-							<div className="bg-background p-4 w-full rounded-md">
-								<div className="w-full opacity-75 text-sm">
-									<div className="px-6 max-md:hidden">
-										<Image priority src="/assets/metalx.png" alt="Metal X Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom" style={{ aspectRatio: "3/4" }} />
+								<div className="bg-background p-4 w-full rounded-md">
+									<div className="w-full text-sm">
+										<div className="px-10 max-md:hidden">
+											<Image priority src="/assets/mars4ultra.png" alt="Mars 4 Ultra Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom" style={{ aspectRatio: "3/4" }} />
+										</div>
+										<h2 className="text-lg font-semibold">Precise Resin Printing</h2>
+										<p className="mt-2">Optimal for creating detailed and smooth-surfaced models, ideal for small intricate parts.</p>
 									</div>
-									<h2 className="text-lg font-semibold">Metal 3D Printing</h2>
-									{/* <p className="mt-2 flex text-nowrap gap-2">Provided by <Image className="inline w-full h-fit opacity-75" src={"/assets/logos/markforged.png"} alt={"Markforged"} width={120} height={120} /></p> */}
-									<p className="mt-2">Coming Spring 2025</p>
-									<p className="mt-2">The Markforged Metal X produces extremely strong custom metal parts designed for high-stress applications.</p>
 								</div>
-							</div>
 
-							{/* <div className="bg-background p-4 w-full rounded-md">
-								<div className="w-full opacity-75 text-sm">
-									<div className="px-4 relative">
-										<Image src="/assets/fuse_1_store_thumb_2x_1.png" alt="FormLabs Fuse 1+ 30W" width={720} height={720} className="rounded-md mb-4 object-cover" style={{ aspectRatio: "3/4" }} />
-										<div className="absolute top-0 left-0 w-full h-full bg-black opacity-50"></div>
+								<div className="bg-background p-4 w-full rounded-md">
+									<div className="w-full text-sm">
+										<div className="px-10 max-md:hidden">
+											<Image priority src="/assets/metalx.png" alt="Metal X Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom" style={{ aspectRatio: "3/4" }} />
+										</div>
+										<h2 className="text-lg font-semibold">Markforged Metal X</h2>
+										<p className="mt-2">Looking for Funding</p>
+										<p className="mt-2">The Markforged Metal X produces extremely strong custom metal parts.</p>
 									</div>
-									<h2 className="text-lg font-semibold">SLS Fuse 1+ 30W</h2>
-									<p className="mt-2">Looking for Funding</p>
-									<p className="mt-2">Designed for industrial-quality production with a range of high-performance nylon powders.</p>
 								</div>
-							</div> */}
 
-							<div className="col-span-1 md:col-span-3 xl:col-span-2">
-								<Link className="w-full" href="/materials">
-									<button className="h-fit w-full text-sm flex gap-2 items-center justify-between text-right mb-2 font-medium bg-background text-cool-black fill-cool-black out">
-										View our Inventory
-										<RegularDiamondAlt className="inline mr-2 fill-inherit mb-0.5" />
-									</button>
-								</Link>
-								<p className="text-cool-black text-sm">Browse our full inventory of 3D printers, materials, and processes, including lead times and costs.</p>
+
+								<div className="bg-background p-4 w-full rounded-md">
+									<div className="w-full text-sm">
+										<div className="px-10 max-md:hidden">
+											<Image priority src="/assets/fuse_1_store_thumb_2x_1.png" alt="FormLabs Fuse 1+ 30W" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom" style={{ aspectRatio: "3/4" }} />
+										</div>
+										<h2 className="text-lg font-semibold">SLS Fuse 1+ 30W</h2>
+										<p className="mt-2">Looking for Funding</p>
+										<p className="mt-2">Designed for industrial-quality production using nylon powders</p>
+									</div>
+								</div>
+
 							</div>
+						</div>
+						<div className="w-1/3 mt-4">
+							<Link className="w-full" href="/materials">
+								<button className="text-left flex justify-between" type="button">
+									View our Materials and Processes
+									<RegularDiamondAlt className="inline fill-white ml-2 mt-0.5" />
+								</button>
+							</Link>
+							{/* <p className="text-cool-black text-sm">Browse our full inventory of materials, and processes, including lead times and costs.</p> */}
 						</div>
 					</HorizontalWrap>
 				</div>

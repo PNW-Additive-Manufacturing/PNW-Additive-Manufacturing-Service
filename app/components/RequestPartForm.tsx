@@ -3,16 +3,16 @@
 import { useFormState, useFormStatus } from "react-dom";
 import { Input, InputBig } from "@/app/components/Input";
 import { requestPart } from "@/app/api/server-actions/request-part";
-import { ChangeEventHandler, LegacyRef, useRef, useState } from "react";
+import { type ChangeEventHandler, LegacyRef, useRef, useState } from "react";
 import { RegularEmptyFile, RegularArrowRight, RegularCrossCircle, RegularSpinnerSolid, RegularWarning, RegularMoneyLocation, RegularMoneyProtection } from "lineicons-react";
 import Table from "./Table";
 import { Dialog } from "@headlessui/react";
-import Model from "../Types/Model/Model";
-import Filament from "../Types/Filament/Filament";
+import type Model from "../Types/Model/Model";
+import type Filament from "../Types/Filament/Filament";
 import PopupFilamentSelector from "./PopupFilamentSelector";
 import ThreeModelViewer from "./ThreeModelViewer";
-import { Swatch, SwatchConfiguration } from "./Swatch";
-import { BufferGeometry } from "three";
+import { Swatch, type SwatchConfiguration } from "./Swatch";
+import type { BufferGeometry } from "three";
 import { Label } from "./Inputs";
 import { toast } from 'react-toastify';
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
@@ -21,18 +21,23 @@ import { addDays, addMinutes, fixInputDate, formatDateForHTMLInput, formatTimeFo
 import { formateDateWithTime } from "../api/util/Constants";
 import { getLeadTimeDate, getLeadTimeInDays } from "../Types/Request/Request";
 import FilamentSelector, { FilamentInsight } from "./FilamentSelector";
+import DropdownSection from "./DropdownSection";
+import { TiStarFullOutline } from "react-icons/ti";
+import { IoFolderOpen } from "react-icons/io5";
+import { TbFileUpload } from "react-icons/tb";
 
 function AddPartButton({
 	onChange
 }: {
 	onChange: ChangeEventHandler<HTMLInputElement>;
 }) {
-	var inputRef = useRef<HTMLInputElement>();
+	const inputRef = useRef<HTMLInputElement>();
 
 	return (
-		<div className="hover:cursor-pointer opacity-70 hover:opacity-100">
+		<div className="hover:cursor-pointer opacity-80 hover:opacity-100">
 			<input
 				className="hidden"
+				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 				ref={inputRef as any}
 				hidden
 				type="file"
@@ -44,15 +49,19 @@ function AddPartButton({
 					ev.currentTarget.value = "";
 				}}
 			/>
+			{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
 			<div
 				onClick={(ev) => {
 					ev.preventDefault();
 					inputRef.current!.click();
 				}}
-				className="rounded-md border-dashed border-2 px-4 border-pnw-gold w-full h-full bg-pnw-gold-light flex gap-4 max-lg:justify-center max-lg:text-center items-center" style={{ minHeight: "5.5rem" }}>
+				className="rounded-md border-dashed border-2 px-6 border-pnw-gold w-full h-full bg-pnw-gold-light flex gap-4 justify-between max-lg:text-center items-center" style={{ minHeight: "5.5rem" }}>
 				<div>
 					<h2>Select to upload Models</h2>
 					<p className="text-xs mt-2">Models must be in <span className="font-bold">Millimeters</span> and <span className="font-bold text-nowrap">{"<"} 20 MB</span></p>
+				</div>
+				<div>
+					<TbFileUpload className="w-8 h-8" />
 				</div>
 			</div>
 		</div>
@@ -77,11 +86,11 @@ function RequestPartFormSubmit({ parts }: { parts: PartData[] }) {
 	return (
 		<button
 			type="submit"
-			disabled={pending || parts.length == 0}
+			disabled={pending || parts.length === 0}
 			className="w-full h-fit mb-0 text-white text-left text-sm">
 			{pending ? "Processing Request" : "Submit Request"}
 			{pending && <RegularSpinnerSolid
-				className={`inline-block ml-2 fill-white h-auto w-auto animate-spin`}
+				className={"inline-block ml-2 fill-white h-auto w-auto animate-spin"}
 			/>}
 		</button>
 	);
@@ -95,12 +104,13 @@ export function RequestPartForm({
 }: {
 	filaments: Filament[];
 	previousUploadedModels: Model[];
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	children?: any;
 }): JSX.Element {
-	let [error, formAction] = useFormState<string, FormData>(requestPart, "");
-	let [parts, setParts] = useState<PartData[]>([]);
-	let [modifyingPart, setModifyingPart] = useState<PartData>();
-	let [tooSmallPromptCount, setTooSmallPromptCount] = useState(0);
+	const [error, formAction] = useFormState<string, FormData>(requestPart, "");
+	const [parts, setParts] = useState<PartData[]>([]);
+	const [modifyingPart, setModifyingPart] = useState<PartData>();
+	const [tooSmallPromptCount, setTooSmallPromptCount] = useState(0);
 
 	const checkboxElem = useRef<HTMLInputElement>();
 
@@ -121,7 +131,7 @@ export function RequestPartForm({
 		<>
 
 
-			{modifyingPart != undefined && <Dialog
+			{modifyingPart !== undefined && <Dialog
 				open={modifyingPart != null}
 				onClose={() => setModifyingPart(undefined)}
 				className="relative z-50">
@@ -161,7 +171,7 @@ export function RequestPartForm({
 							<div className="max-lg:hidden flex flex-col max-w-96 h-auto">
 								<label>View Model</label>
 								{modifyingPart?.File && (
-									<div className="w-full h-full shadow-sm out">
+									<div className="w-full h-full shadow-sm">
 										<ThreeModelViewer
 											showOrientation={
 												!modifyingPart!
@@ -292,60 +302,44 @@ export function RequestPartForm({
 					formAction(formData);
 				}}>
 
-				<div className="bg-white rounded-sm w-full p-6 out">
+				<div className="bg-white rounded-sm w-full">
 					<div className={"gap-6 lg:flex"}>
 						<div
 							className="w-full max-lg:mb-4"
 							style={{ minWidth: "300px" }}>
-							<Label content={"3D Models (.STL) Click to Modify"} />
+							<Label content={"3D Models (.STL)"} />
 							<div
 								className="w-full lg:min-w-96">
 								{parts.length > 0 && (
-									<>
-										<Table className="mb-2 overflow-hidden">
-											{/* <thead>
-												<tr>
-													<th>
-														<RegularEmptyFile className="inline fill-gray-500 mr-1 mb-1"></RegularEmptyFile>
-														Model
-													</th>
-													<th className="max-lg:hidden">
-														Filament
-													</th>
-													<th className="max-lg:hidden">
-														Quantity
-													</th>
-												</tr>
-											</thead> */}
-											<tbody>
-												{parts.map((part) => (
-													<>
-														<tr
-															className="hover:cursor-pointer"
-															key={part.ModelName}
-															onClick={() =>
-																setModifyingPart(
-																	part
-																)
-															}>
-															<td
-																className="text-sm bg-transparent w-fit outline-none border-0 block hover:cursor-pointer">
-																{part.File.name}
-															</td>
-															<td className="max-lg:hidden text-sm">3D Printing (FDM)</td>
-															<td className="text-sm">
-																<span className="mr-2">{part.Material}</span>
-																<Swatch swatch={part.Color} style="long"></Swatch>
-															</td>
-															<td className="max-lg:hidden text-sm">
-																x{part.Quantity}
-															</td>
-														</tr>
-													</>
-												))}
-											</tbody>
-										</Table>
-									</>)}
+									<Table className="mb-2 overflow-hidden">
+										<tbody>
+											{parts.map((part) => (
+												<>
+													<tr
+														className="hover:cursor-pointer"
+														key={part.ModelName}
+														onClick={() =>
+															setModifyingPart(
+																part
+															)
+														}>
+														<td
+															className="text-sm bg-transparent w-fit outline-none border-0 block hover:cursor-pointer">
+															{part.File.name}
+														</td>
+														<td className="max-lg:hidden text-sm">3D Printing (FDM)</td>
+														<td className="text-sm">
+															<span className="mr-2">{part.Material}</span>
+															<Swatch swatch={part.Color} style="long"></Swatch>
+														</td>
+														<td className="max-lg:hidden text-sm">
+															x{part.Quantity}
+														</td>
+													</tr>
+												</>
+											))}
+										</tbody>
+									</Table>)}
 								<div>
 									<AddPartButton
 										onChange={async (ev) => {
@@ -428,6 +422,39 @@ export function RequestPartForm({
 
 											setParts([...parts, ...partsToBeAdded]);
 										}} />
+
+
+									{/* <DropdownSection nameClassname="text-sm" hidden={true} icon={<IoFolderOpen className="fill-pnw-gold" />} name={"Model Library"} className="mt-6">
+
+										<p className="text-cool-black text-sm mb-2">View models you have requested in the past</p>
+
+										<div>
+
+											<div className="grid grid-cols-8 gap-2">
+												{previousUploadedModels.slice(0, Math.min(6, previousUploadedModels.length)).map(m => <div className="border-opacity-25 overflow-hidden relative rounded-md bg-gray-50 group hover:bg-pnw-gold-light hover:cursor-pointer" key={m.id}>
+													<div className="w-full aspect-square p-4">
+														<ThreeModelViewer
+															key={m.id}
+															style=""
+															moveable={false}
+															loadOnPrompt={false}
+															isAvailable={!m.isPurged}
+															modelSize={m.fileSizeInBytes}
+															modelURL={`/api/download/model?modelId=${m.id}`} />
+													</div>
+
+													<div className="px-2 pb-4 text-wrap text-cool-black text-xs text-center text-ellipsis">
+														{m.name}
+													</div>
+													{/* 
+													<div className="grid grid-cols-2">
+
+												</div>)}
+											</div>
+
+										</div>
+
+									</DropdownSection> */}
 								</div>
 							</div>
 						</div>

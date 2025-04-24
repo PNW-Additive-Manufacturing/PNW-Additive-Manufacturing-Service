@@ -350,7 +350,7 @@ export default function PartEditor({
 										{/* <div className="absolute top-0 right-0 text-xs bg-white out rounded-none rounded-bl-md text-subtle px-2 py-1.5 z-10 pl-3" style={{ borderRadius: "0px 3px 0px 12px" }}>
 											Revision #2
 										</div> */}
-										<div className="w-full h-36 out bg-gray-50 rounded-sm">
+										<div className="w-full h-36 bg-gray-50 rounded-sm">
 											<ThreeModelViewer
 												isAvailable={!part.model.isPurged}
 												modelSize={part.model?.fileSizeInBytes}

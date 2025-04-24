@@ -152,7 +152,7 @@ export function Navbar({
 
 	return (
 		<div className="top-0 sticky shadow-md z-10 max-lg:mb-2">
-			<div className="w-full h-fit bg-white">
+			<div className="w-full h-fit bg-white py-3">
 				<HorizontalWrap>
 					{/* <div className="w-full px-6 py-3"> */}
 					<nav className="h-full max-xl:flex overflow-x-clip w-full items-center align-middle">

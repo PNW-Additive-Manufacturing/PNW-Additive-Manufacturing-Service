@@ -20,8 +20,8 @@ const requestQuerySchema = z.object({
 	page: z.number().int().default(1)
 });
 export async function POST(request: NextRequest): Promise<NextResponse> {
-	let JWT = await retrieveSafeJWTPayload();
-	if (JWT == undefined) throw new Error("JWT not found");
+	const JWT = await retrieveSafeJWTPayload();
+	if (JWT === null) throw new Error("JWT not found");
 
 	const queryData = requestQuerySchema.safeParse(await request.json());
 	if (!queryData.success)
@@ -35,8 +35,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 		);
 
 	if (
-		queryData.data.accountEmail != JWT.email &&
-		JWT.permission == AccountPermission.User
+		queryData.data.accountEmail !== JWT.email &&
+		JWT.permission === AccountPermission.User
 	) {
 		// A regular user cannot access requests other than theirs!
 		return new NextResponse(JSON.stringify(APIResponse.resUnauthorized()), {

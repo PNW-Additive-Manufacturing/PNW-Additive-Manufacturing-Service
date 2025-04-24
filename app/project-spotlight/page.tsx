@@ -29,9 +29,9 @@ export default async function Page() {
         <HorizontalWrap>
             <div className="grid lg:grid-cols-2 2xl:grid-cols-3 gap-8 pb-8">
 
-                {showcases.map(s => <ProjectCard {...s} />)}
+                {showcases.map(s => <div key={s.id} className="bg-white rounded-md"><ProjectCard style="normal" editable={true} projectData={s} /></div>)}
 
-                {JWTPayload && JWTPayload.permission != "user" && <CreateProject />}
+                {JWTPayload && JWTPayload.permission !== "user" && <CreateProject />}
             </div>
 
         </HorizontalWrap>

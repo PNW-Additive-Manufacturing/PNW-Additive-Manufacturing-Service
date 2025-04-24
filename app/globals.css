@@ -11,7 +11,7 @@
   --pnw-gold-logo: #e6b10e;
   --pnw-gold: #b1810b;
   --pnw-blue: #7ca6c0;
-  --pnw-gold-light: #f7f2e6;
+  --pnw-gold-light: #f1e8d3;
   --pnw-black: #000000;
 
   --nav-height: 4rem;
@@ -308,6 +308,6 @@ div.Toastify__toast-icon
 } */
 .out
 {
-  border: solid 2px #e5e7eb;
+  border: solid 2.5px #e5e7eb;
   border-radius: 0.32rem;
 }
