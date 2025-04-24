@@ -232,9 +232,11 @@ export default async function Home() {
 								</div>)}
 
 								<div className="flex justify-center items-center mt-2">
-									<button className="bg-background rounded-full p-3 text-2xl w-fit h-fit mb-0 fill-cool-black hover:fill-white" type="button">
-										<FaChevronRight className="fill-inherit" style={{ width: "1em", height: "1em" }} />
-									</button>
+									<a href="/project-spotlight">
+										<button className="bg-background rounded-full p-3 text-2xl w-fit h-fit mb-0 fill-cool-black hover:fill-white" type="button">
+											<FaChevronRight className="fill-inherit" style={{ width: "1em", height: "1em" }} />
+										</button>
+									</a>
 								</div>
 
 								{/* <a href="/project-spotlight" className="col-start-5 col-span-2">
