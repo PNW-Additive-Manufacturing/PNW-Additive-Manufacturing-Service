@@ -103,8 +103,8 @@ export class RequestServe {
 
 	public static async queryOwnerEmail(requestId: string | number): Promise<string | null> {
 		const query = await db`SELECT OwnerEmail FROM Request WHERE Id=${requestId}`;
-		if (query !== null && query.length > 0) {
-			return query.at(1)?.owneremail;
+		if (query != null && query.length > 0) {
+			return query.at(0)?.owneremail;
 		}
 		return null;
 	}
