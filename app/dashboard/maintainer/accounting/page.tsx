@@ -1,6 +1,7 @@
 import HorizontalWrap from "@/app/components/HorizontalWrap";
 import { Suspense } from "react";
 import SemesterFinancialReport from "./SemesterFinancialReport";
+import FinancialReport from "./FinancialReport";
 
 export default async function Accounting() {
     return <>
@@ -24,21 +25,12 @@ export default async function Accounting() {
             </div>
         </HorizontalWrap>
 
-        <div className="bg-white min-h-screen py-6">
+        <div className="bg-white min-h-screen py-8">
             <HorizontalWrap>
 
-                <div>
-                    <h1 className="text-2xl">
-                        Semester Financial Reportings
-                    </h1>
-
-                    <br />
-
-                    <Suspense fallback={"Querying statistics"}>
-                        <SemesterFinancialReport />
-                    </Suspense>
-
-                </div>
+                <Suspense fallback={<>Querying financial information...</>}>
+                    <FinancialReport />
+                </Suspense>
 
             </HorizontalWrap>
         </div>

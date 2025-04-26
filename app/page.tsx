@@ -219,7 +219,7 @@ export default async function Home() {
 					<HorizontalWrap>
 
 						<h2 className="font-medium text-2xl pb-2 w-full text-center">See what <span className="font-bold">Students Created</span></h2>
-						<p className="text-cool-black text-center">Students and faculty members craft using Additive Manufacturing Techniques.</p>
+						<p className="text-cool-black text-center">Students, faculty and professors bring ideas to reality using Additive Manufacturing.</p>
 
 						<div className="flex flex-col gap-4 mt-8">
 
