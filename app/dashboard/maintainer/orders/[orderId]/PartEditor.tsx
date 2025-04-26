@@ -355,7 +355,7 @@ export default function PartEditor({
 											<ThreeModelViewer
 												isAvailable={!part.model.isPurged}
 												modelSize={part.model?.fileSizeInBytes}
-												modelURL={`/api/download/model?modelId=${part.modelId}`}></ThreeModelViewer>
+												modelURL={`/api/download/model?modelId=${part.modelId}`} />
 										</div>
 										<div>
 											<div className="bg-background text-subtle w-full p-3 text-xs rounded-b-sm">
@@ -569,7 +569,7 @@ export default function PartEditor({
 																	}
 																},
 																onCancel: () => console.warn("Confirmation cancelled"),
-																description: `You will be revoking ${part.model.name}, this action cannot be undone!`
+																description: `You will be revoking ${part.model.name}, you can undo at anytime!`
 															}));
 
 															return null;

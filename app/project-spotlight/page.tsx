@@ -17,24 +17,27 @@ export default async function Page() {
 
     return <>
 
-        <HorizontalWrap>
+        <HorizontalWrap className="py-8">
             <h1 className="w-fit text-2xl font-normal mb-2">
                 {/* <RegularMagnifier className="inline mb-1 p-0.5 fill-pnw-gold" />{" "} */}
                 Project Spotlight
             </h1>
-            <p className="mb-4">
+            <p className="">
                 Curious about the possibilities of 3D printing? Discover the projects our club members have created!
             </p>
         </HorizontalWrap>
-        <HorizontalWrap>
-            <div className="grid lg:grid-cols-2 2xl:grid-cols-3 gap-8 pb-8">
+        <div className="bg-white min-h-screen">
+            <HorizontalWrap className="py-8">
+                <div className="grid lg:grid-cols-2 2xl:grid-cols-3 gap-8 pb-8">
 
-                {showcases.map(s => <div key={s.id} className="bg-white rounded-md"><ProjectCard style="normal" editable={true} projectData={s} /></div>)}
+                    {showcases.map(s => <div key={s.id} className="bg-background rounded-md"><ProjectCard style="normal" editable={true} projectData={s} /></div>)}
 
-                {JWTPayload && JWTPayload.permission !== "user" && <CreateProject />}
-            </div>
+                    {JWTPayload && JWTPayload.permission !== "user" && <CreateProject />}
+                </div>
 
-        </HorizontalWrap>
+            </HorizontalWrap>
+        </div>
+
 
     </>;
 }

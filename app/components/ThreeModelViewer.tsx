@@ -30,6 +30,7 @@ import {
 } from "./Swatch";
 import { detach } from "@react-three/fiber/dist/declarations/src/core/utils";
 import { RegularReload } from "lineicons-react";
+import classNames from "classnames";
 
 function UtilitySphere({
 	radius,
@@ -45,19 +46,15 @@ function UtilitySphere({
 
 	return (
 		<mesh position={position}>
-			<sphereGeometry args={[radius]}></sphereGeometry>
-			<meshStandardMaterial color={color}></meshStandardMaterial>
+			<sphereGeometry args={[radius]} />
+			<meshStandardMaterial color={color} />
 		</mesh>
 	);
 }
 
 // let loadedCount = 0;
 
-export function EngineeringCamera({
-	focusedGeometry
-}: {
-	focusedGeometry: BufferGeometry;
-}) {
+export function EngineeringCamera({ focusedGeometry, onPositioned }: { focusedGeometry: BufferGeometry, onPositioned: () => void }) {
 	const cameraRef = useRef<CameraControls>();
 
 	// useFrame((_, delta) => {
@@ -82,11 +79,21 @@ export function EngineeringCamera({
 		}
 	});
 
+
+	useEffect(() => {
+
+		if (zoomed) {
+			onPositioned();
+		}
+
+	}, [zoomed, onPositioned]);
+
 	return (
 		<>
 			<OrthographicCamera
 				makeDefault={true}
-				frames={15}
+				frames={10}
+				resolution={0.1}
 				position={new Vector3(200, 200, 200 / 2)}
 				zoom={focusedGeometry.boundingSphere!.radius}>
 				<spotLight
@@ -146,6 +153,7 @@ export default function ThreeModelViewer({
 		undefined
 	);
 	const [isSTLLoading, setSTLLoading] = useState(false);
+	const [isPositioned, setPositioned] = useState(false);
 
 	async function loadModelSTL() {
 		setSTLLoading(true);
@@ -184,10 +192,8 @@ export default function ThreeModelViewer({
 
 			parsedSTLGeometry.computeBoundingSphere();
 			if (parsedSTLGeometry.boundingSphere !== null) {
-				parsedSTLGeometry.boundingSphere.radius *= 1.1;
+				// parsedSTLGeometry.boundingSphere.radius *= 1.1;
 			}
-
-			// biome-ignore lint/style/noNonNullAssertion: <explanation>
 
 			setSTLModel(parsedSTLGeometry);
 		} catch (error) {
@@ -228,7 +234,7 @@ export default function ThreeModelViewer({
 			{STLModel === undefined ? (
 				isSTLLoading ? (
 					<div className="flex justify-center align-middle items-center h-full w-full">
-						<div className="animate-ping w-8 h-8 bg-pnw-gold" />
+						<div className="animate-ping bg-pnw-gold" style={{ width: "20%", height: "20%", backgroundColor: getSingleColor(swatch) }} />
 					</div>
 				) : loadingError ? <div className="flex justify-center align-middle items-center h-full w-full">
 					<button
@@ -255,62 +261,68 @@ export default function ThreeModelViewer({
 					</button>
 				</div>
 			) : (
-				<Canvas
-					className="block w-full h-full"
-					frameloop="demand"
-					shadows>
 
-					<EngineeringCamera focusedGeometry={STLModel} />
+				<>
 
-					<ambientLight />
+					<Canvas
+						className={classNames("block w-full h-full", { "invisible": !isPositioned })}
+						frameloop="demand"
+						shadows>
 
-					{style.includes("bed") && <group>
+						<EngineeringCamera focusedGeometry={STLModel} onPositioned={() => setPositioned(true)} />
+
+						<ambientLight />
+
+						{style.includes("bed") && <group>
+							<mesh
+								receiveShadow
+								material={
+									new MeshStandardMaterial({ color: "#efefef" })
+								}
+								// biome-ignore lint/style/noNonNullAssertion: <explanation>
+								position={new Vector3(0, 0, STLModel.boundingBox!.max.x > 2 ? -0.01 : -0.0001)}>
+
+								<planeGeometry args={[256, 256]} />
+							</mesh>
+
+							<mesh>
+								<gridHelper
+									args={[256, 10, "#b1810b", "#a6a6a6"]}
+									rotation={new Euler(Math.PI / 2)} />
+							</mesh>
+						</group>}
+
 						<mesh
-							receiveShadow
-							material={
-								new MeshStandardMaterial({ color: "#efefef" })
-							}
-							// biome-ignore lint/style/noNonNullAssertion: <explanation>
-							position={new Vector3(0, 0, STLModel.boundingBox!.max.x > 2 ? -0.01 : -0.0001)}>
-
-							<planeGeometry args={[256, 256]} />
-						</mesh>
-
-						<mesh>
-							<gridHelper
-								args={[256, 10, "#b1810b", "#a6a6a6"]}
-								rotation={new Euler(Math.PI / 2)} />
-						</mesh>
-					</group>}
-
-					<mesh
-						castShadow={true}
-						receiveShadow={true}
-						geometry={STLModel}
-						scale={1}
-						position={new Vector3(0, 0, 0)}>
-						{/* <UtilitySphere radius={0.001}></UtilitySphere> */}
-						<meshStandardMaterial
-							metalness={0.5}
-							color={
-								// new Color("#b1810b")
-								new Color(getSingleColor(swatch))
-							} />
-						{/* <meshLambertMaterial
+							castShadow={true}
+							receiveShadow={true}
+							geometry={STLModel}
+							scale={1}
+							position={new Vector3(0, 0, 0)}>
+							{/* <UtilitySphere radius={0.001}></UtilitySphere> */}
+							<meshStandardMaterial
+								metalness={0.5}
+								color={
+									// new Color("#b1810b")
+									new Color(getSingleColor(swatch))
+								} />
+							{/* <meshLambertMaterial
 								reflectivity={1}
 								flatShading={false}
 								color={new Color(getSingleColor(swatch))}
 							/> */}
 
-						<spotLight
-							onUpdate={(me) => me.lookAt(new Vector3())}
-							position={[-128, -128, 128 * 2]}
-							decay={0.05}
-							castShadow
-							intensity={Math.PI * 2}>
-						</spotLight>
-					</mesh>
-				</Canvas>
+							<spotLight
+								onUpdate={(me) => me.lookAt(new Vector3())}
+								position={[-128, -128, 128 * 2]}
+								decay={0.05}
+								castShadow
+								intensity={Math.PI * 2}>
+							</spotLight>
+						</mesh>
+					</Canvas>
+
+				</>
+
 			)}
 		</div>
 	);

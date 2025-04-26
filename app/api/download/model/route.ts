@@ -47,7 +47,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 	return new NextResponse(bufferedData, {
 		headers: {
 			"Content-Disposition": `attachment; filename="${model.name}.stl"`,
-			"content-type": "application/octet-stream"
+			"content-type": "application/octet-stream",
+			"Cache-Control": "public, max-age=2592000, immutable"
 		}
 	});
 }

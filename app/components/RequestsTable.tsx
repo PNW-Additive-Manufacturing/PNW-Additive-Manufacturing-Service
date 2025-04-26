@@ -15,8 +15,9 @@ import { AccountContext } from "../ContextProviders";
 import { MachineData } from "./Machine";
 import { AccountPermission } from "../Types/Account/Account";
 import { FiActivity } from "react-icons/fi";
+import ThreeModelViewer from "./ThreeModelViewer";
 
-const requestsPerPage = 12;
+const requestsPerPage = 6;
 
 export default function RequestsTable({ accountEmail }: { accountEmail?: string }) {
 
@@ -75,12 +76,14 @@ export default function RequestsTable({ accountEmail }: { accountEmail?: string 
                     <Table>
                         <thead>
                             <tr>
-                                <th className="w-fit max-lg:hidden" style={{ paddingRight: "0px" }}>#</th>
-                                <th className="max-lg:hidden">Requested On</th>
-                                {accountEmail == null && <th className="max-lg:hidden">Requester</th>}
+                                {/* <th className="w-fit max-lg:hidden" style={{ paddingRight: "0px" }}>#</th> */}
+                                <th className="w-fit max-lg:hidden max-md:hidden" style={{ paddingRight: "0px" }}>Prview</th>
                                 <th>Request Name</th>
+                                <th>Parts</th>
                                 <th>Status</th>
-                                <th>Cost</th>
+                                <th>Quote</th>
+                                {accountEmail == null && <th className="max-lg:hidden">Requester</th>}
+                                <th className="max-lg:hidden">Requested On</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -92,14 +95,44 @@ export default function RequestsTable({ accountEmail }: { accountEmail?: string 
                                     <tr
                                         key={r.id}
                                         onClick={() => setSelectedRequest(r.id)}
-                                        className={"w-full border-l-4 out bg-white"}
+                                        className={"w-full out bg-white"}
                                         style={{
-                                            borderLeftColor:
-                                                getRequestStatusColor(r)
+                                            // borderLeftWidth: 4,
+                                            // borderLeftColor:
+                                            //     getRequestStatusColor(r)
                                         }}>
-                                        <td className="w-fit max-lg:hidden" style={{ paddingRight: "0px" }}>
-                                            <Link href={rowLink}>{i + 1}</Link>
+                                        <td className="p-0 max-md:hidden">
+                                            <div className="max-w-14 w-14 h-14 max-h-14 mr-auto overflow-hidden rounded-md p-0">
+                                                <ThreeModelViewer
+                                                    swatch={{
+                                                        name: "Cool Black",
+                                                        monoColor: "#4a4a4a"
+                                                    }}
+                                                    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+                                                    isAvailable={!r.parts.at(0)!.model.isPurged}
+                                                    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+                                                    modelSize={r.parts.at(0)!.model.fileSizeInBytes}
+                                                    loadOnPrompt={false}
+                                                    moveable={false}
+                                                    style=""
+                                                    modelURL={`/api/download/model?modelId=${r.parts.at(0)!.modelId}`} />
+                                            </div>
                                         </td>
+                                        <td><Link href={rowLink}>{r.name}</Link></td>
+                                        <td><Link href={rowLink}>{r.parts.length}</Link></td>
+                                        <td>
+                                            <Link className="flex items-center gap-4" href={rowLink}>
+                                                <StatusPill context={getRequestStatus(r)} statusColor={getRequestStatusColor(r)} />
+                                            </Link>
+                                        </td>
+                                        <td>
+                                            <Link href={rowLink}> {hasQuote(r) ?
+                                                `$${(
+                                                    r.quote!.totalPriceInCents /
+                                                    100
+                                                ).toFixed(2)}` : "Unquoted"}</Link>
+                                        </td>
+                                        {accountEmail == null && <td className="max-lg:hidden"><Link href={rowLink}>{r.firstName} {r.lastName}</Link></td>}
                                         <td className="max-lg:hidden">
                                             <Link href={rowLink}>
                                                 {r.submitTime.toLocaleDateString(
@@ -113,36 +146,6 @@ export default function RequestsTable({ accountEmail }: { accountEmail?: string 
                                                 )}
                                             </Link>
                                         </td>
-                                        {accountEmail == null && <td className="max-lg:hidden"><Link href={rowLink}>{r.firstName} {r.lastName}</Link></td>}
-                                        <td><Link href={rowLink}>{r.name}</Link></td>
-                                        <td>
-                                            <Link className="flex items-center gap-4" href={rowLink}>
-                                                <StatusPill context={getRequestStatus(r)} statusColor={getRequestStatusColor(r)}></StatusPill>
-                                            </Link>
-                                        </td>
-                                        <td>
-                                            <Link href={rowLink}> {hasQuote(r) ?
-                                                `$${(
-                                                    r.quote!.totalPriceInCents /
-                                                    100
-                                                ).toFixed(2)}` : "Unquoted"}</Link>
-                                        </td>
-                                        {machines && machines.length > 0 && isPrintingOnMachines(r, machines) &&
-                                            <td className="bg-pnw-gold-light">{<span className="font-light"><FiActivity className="inline stroke-pnw-gold" style={{ marginBottom: "3px" }} /> Printing on Machine</span>}</td>}
-
-                                        {/* <td>
-                                            <div className="ml-auto w-fit">
-                                                <Link
-                                                    href={accountEmail == null ? `/dashboard/maintainer/orders/${r.id}` : `/dashboard/user/${r.id}`}>
-                                                    <button className="shadow-sm w-fit mb-0 outline outline-1 outline-gray-300 bg-white text-black fill-black flex flex-row gap-2 justify-end items-center px-3 py-2">
-                                                        <span className="text-sm">
-                                                            {accountEmail == null ? "Manage Request" : "View Request"}
-                                                        </span>
-                                                        <RegularMagnifier></RegularMagnifier>
-                                                    </button>
-                                                </Link>
-                                            </div>
-                                        </td> */}
                                     </tr>
                                 </>
                             })}
@@ -154,10 +157,10 @@ export default function RequestsTable({ accountEmail }: { accountEmail?: string 
             {/* Controls */}
             <div className="flex flex-wrap max-lg:gap-4 max-lg:flex-col justify-between mt-4">
                 <div className="flex flex-wrap items-center gap-4">
-                    <ControlButton className={`max-lg:hidden flex gap-2 items-center mb-0`} disabled={isFetchingRequests} onClick={() => fetchRequests()}>
+                    {/* <ControlButton className={`max-lg:hidden flex gap-2 items-center mb-0`} disabled={isFetchingRequests} onClick={() => fetchRequests()}>
                         <span>Refresh</span>
                         <AiOutlineReload className={`${isFetchingRequests && "animate-spin"} font-bold inline-block fill-white`}></AiOutlineReload>
-                    </ControlButton>
+                    </ControlButton> */}
 
                     {(requests != null && requests.length != 0) ? <div className="flex max-lg:mt-4 max-lg:flex-col gap-4 lg:items-center">
                         <div className="flex items-center justify-between gap-2 fill-white">
@@ -165,7 +168,7 @@ export default function RequestsTable({ accountEmail }: { accountEmail?: string 
                                 <FaArrowLeft />
                                 Previous
                             </ControlButton>
-                            <ControlButton disabled={isFetchingRequests || requests!.length < requestsPerPage} onClick={() => setPageNum(pageNum + 1)} className="flex gap-2 items-center">
+                            <ControlButton disabled={isFetchingRequests || requests!.length <= requestsPerPage} onClick={() => setPageNum(pageNum + 1)} className="flex gap-2 items-center">
                                 Next
                                 <FaArrowRight />
                             </ControlButton>
