@@ -17,9 +17,7 @@ import { AccountPermission } from "../Types/Account/Account";
 import { FiActivity } from "react-icons/fi";
 import ThreeModelViewer from "./ThreeModelViewer";
 
-const requestsPerPage = 6;
-
-export default function RequestsTable({ accountEmail }: { accountEmail?: string }) {
+export default function RequestsTable({ accountEmail, requestsPerPage }: { accountEmail?: string, requestsPerPage: number }) {
 
     const [isFetchingRequests, setIsFetchingRequests] = useState(false);
     const [includeFulfilled, setIncludeFulfilled] = useState(false);
@@ -45,7 +43,7 @@ export default function RequestsTable({ accountEmail }: { accountEmail?: string 
                 accountEmail: accountEmail,
                 requestedAfter: undefined,
                 includeFulfilled: includeFulfilled,
-                requestsPerPage: requestsPerPage,
+                requestsPerPage: requestsPerPage + 1,
                 page: pageNum
             })
         })
@@ -162,13 +160,13 @@ export default function RequestsTable({ accountEmail }: { accountEmail?: string 
                         <AiOutlineReload className={`${isFetchingRequests && "animate-spin"} font-bold inline-block fill-white`}></AiOutlineReload>
                     </ControlButton> */}
 
-                    {(requests != null && requests.length != 0) ? <div className="flex max-lg:mt-4 max-lg:flex-col gap-4 lg:items-center">
+                    {(requests != null && (requests.length !== 0 || pageNum > 0)) ? <div className="flex max-lg:mt-4 max-lg:flex-col gap-4 lg:items-center">
                         <div className="flex items-center justify-between gap-2 fill-white">
                             <ControlButton disabled={isFetchingRequests || pageNum < 2} onClick={() => setPageNum(pageNum - 1)} className="m-0 p-0 flex gap-2 items-center">
                                 <FaArrowLeft />
                                 Previous
                             </ControlButton>
-                            <ControlButton disabled={isFetchingRequests || requests!.length <= requestsPerPage} onClick={() => setPageNum(pageNum + 1)} className="flex gap-2 items-center">
+                            <ControlButton disabled={isFetchingRequests || requests!.length <= requestsPerPage + 1} onClick={() => setPageNum(pageNum + 1)} className="flex gap-2 items-center">
                                 Next
                                 <FaArrowRight />
                             </ControlButton>

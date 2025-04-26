@@ -15,7 +15,7 @@ export default async function Maintainer({ params }: { params: any }) {
 			<div className="bg-white min-h-screen">
 				<HorizontalWrap className="py-8">
 
-					<RequestsTable />
+					<RequestsTable requestsPerPage={11} />
 
 				</HorizontalWrap>
 

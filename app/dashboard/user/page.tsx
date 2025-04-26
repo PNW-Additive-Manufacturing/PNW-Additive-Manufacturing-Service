@@ -50,7 +50,7 @@ export default function Page() {
 			<div className="bg-white min-h-screen">
 				<HorizontalWrap className="py-8">
 
-					<RequestsTable accountEmail={account.account!.email} />
+					<RequestsTable accountEmail={account.account!.email} requestsPerPage={5} />
 
 
 				</HorizontalWrap>
