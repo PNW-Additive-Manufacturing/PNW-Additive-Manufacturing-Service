@@ -112,6 +112,7 @@ export default function RequestsTable({ accountEmail, requestsPerPage }: { accou
                                                     modelSize={r.parts.at(0)!.model.fileSizeInBytes}
                                                     loadOnPrompt={false}
                                                     moveable={false}
+                                                    showPrompts={false}
                                                     style=""
                                                     modelURL={`/api/download/model?modelId=${r.parts.at(0)!.modelId}`} />
                                             </div>
@@ -136,7 +137,6 @@ export default function RequestsTable({ accountEmail, requestsPerPage }: { accou
                                                 {r.submitTime.toLocaleDateString(
                                                     "en-us",
                                                     {
-                                                        weekday: "long",
                                                         month: "short",
                                                         day: "numeric",
                                                         year: "numeric"
@@ -166,7 +166,7 @@ export default function RequestsTable({ accountEmail, requestsPerPage }: { accou
                                 <FaArrowLeft />
                                 Previous
                             </ControlButton>
-                            <ControlButton disabled={isFetchingRequests || requests!.length <= requestsPerPage + 1} onClick={() => setPageNum(pageNum + 1)} className="flex gap-2 items-center">
+                            <ControlButton disabled={isFetchingRequests || requests!.length - 1 < requestsPerPage} onClick={() => setPageNum(pageNum + 1)} className="flex gap-2 items-center">
                                 Next
                                 <FaArrowRight />
                             </ControlButton>

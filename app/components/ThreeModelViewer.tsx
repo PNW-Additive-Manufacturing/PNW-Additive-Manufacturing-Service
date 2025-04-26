@@ -116,6 +116,7 @@ export default function ThreeModelViewer({
 	isAvailable,
 	showOrientation,
 	loadOnPrompt,
+	showPrompts,
 	style
 }: {
 	swatch?: SwatchConfiguration;
@@ -126,11 +127,13 @@ export default function ThreeModelViewer({
 	modelRotation?: Euler;
 	moveable?: boolean;
 	isAvailable?: boolean;
+	showPrompts?: boolean;
 	showOrientation?: boolean;
 	style?: string;
 
 	onClickOrientation?: (rotation: Euler) => void;
 }) {
+	showPrompts ??= true;
 	showOrientation = showOrientation ?? false;
 	moveable = moveable ?? true;
 	swatch = swatch ?? templatePNW();
@@ -232,18 +235,18 @@ export default function ThreeModelViewer({
 	return (
 		<div className="w-full h-full" ref={divRef}>
 			{STLModel === undefined ? (
-				isSTLLoading ? (
+				(isSTLLoading && showPrompts) ? (
 					<div className="flex justify-center align-middle items-center h-full w-full">
 						<div className="animate-ping bg-pnw-gold" style={{ width: "20%", height: "20%", backgroundColor: getSingleColor(swatch) }} />
 					</div>
-				) : loadingError ? <div className="flex justify-center align-middle items-center h-full w-full">
+				) : (loadingError && showPrompts) ? <div className="flex justify-center align-middle items-center h-full w-full">
 					<button
 						className="px-4 py-2 text-sm font-normal rounded-sm w-fit m-0 bg-red-400"
 						type="button"
 						onClick={loadModelSTL}>
 						Encountered an Issue<RegularReload className="ml-2 inline fill-white" />
 					</button>
-				</div> : isAvailable ? (
+				</div> : (isAvailable && showPrompts) ? (
 					<div className="flex justify-center align-middle items-center h-full w-full">
 						<button
 							className="px-4 py-2 text-xs font-normal rounded-sm w-fit m-0"
@@ -252,14 +255,14 @@ export default function ThreeModelViewer({
 							View Model {modelSize && <span className="max-lg:hidden">({Math.round(modelSize / 1000)} kB)</span>}
 						</button>
 					</div>
-				) : <div className="flex justify-center align-middle items-center h-full w-full">
+				) : showPrompts ? <div className="flex justify-center align-middle items-center h-full w-full">
 					<button
 						className="px-4 py-2 text-sm font-normal rounded-sm w-fit m-0"
 						disabled={true}
 						type="button">
 						Not Available
 					</button>
-				</div>
+				</div> : <></>
 			) : (
 
 				<>
