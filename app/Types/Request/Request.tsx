@@ -76,7 +76,7 @@ export function getRequestStatus(request: RequestWithParts): string {
 		} else return "Processing";
 	}
 	if (hasQuote(request)) return "Waiting for Payment";
-	if (isAnyPartDenied(request)) return "Action Required";
+	if (isAnyPartDenied(request)) return "Issues Found";
 	return "Waiting for Quote";
 }
 
@@ -92,7 +92,7 @@ export function getRequestStatusColor(request: RequestWithParts) {
 			return "rgb(59 130 246)";
 		case "Waiting for Payment":
 			return "rgb(162, 165, 171)";
-		case "Action Required":
+		case "Issues Found":
 			return "rgb(251 146 60)";
 		default:
 			return "rgb(162, 165, 171)";

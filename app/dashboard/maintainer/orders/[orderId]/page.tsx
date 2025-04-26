@@ -6,6 +6,7 @@ import AccountServe from "@/app/Types/Account/AccountServe";
 import FilamentServe from "@/app/Types/Filament/FilamentServe";
 import ErrorPrompt from "@/app/components/ErrorPrompt";
 import { RequestWithEmails, RequestWithParts } from "@/app/Types/Request/Request";
+import HorizontalWrap from "@/app/components/HorizontalWrap";
 
 export default async function Page(req: { params: { orderId: string } }) {
 	let request = await RequestServe.fetchByIDWithAll(req.params.orderId);
@@ -18,10 +19,12 @@ export default async function Page(req: { params: { orderId: string } }) {
 
 	return (
 		<>
-			<RequestEditor
-				request={request as RequestWithParts & RequestWithEmails}
-				requester={account}
-				availableFilaments={availableFilaments}></RequestEditor>
+			<HorizontalWrap className="py-8">
+				<RequestEditor
+					request={request as RequestWithParts & RequestWithEmails}
+					requester={account}
+					availableFilaments={availableFilaments} />
+			</HorizontalWrap>
 		</>
 	);
 }

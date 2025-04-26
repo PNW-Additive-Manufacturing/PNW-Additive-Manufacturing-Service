@@ -36,6 +36,7 @@ import {
 	RegularAlarm,
 	RegularAlarmClock,
 	RegularArrowRight,
+	RegularCheckmark,
 	RegularCloudDownload,
 	RegularConstructionHammer,
 	RegularCrossCircle,
@@ -395,11 +396,11 @@ export default function PartEditor({
 												</div>
 
 												{isRevoked(part) &&
-													<div className="mt-2 flex flex-wrap gap-x-2">
+													<div className="mt-2">
 														<div className="text-warning">
-															<RegularFlag className="fill-warning inline mb-1 mr-1"></RegularFlag>
 															{part.deniedReason}
-															<p className={`text-warning fill-warning button mb-0.5 text-right block`}
+															{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+															<span className={"fill-warning ml-2"}
 																onClick={() => {
 																	addForm(confirmationForm({
 																		description: `Are you sure you would like to remove the issue from ${part.model.name}?`,
@@ -408,10 +409,18 @@ export default function PartEditor({
 																			data.set("revokePartReason", null as any);
 																			try {
 																				const res = await revokePart(data);
+																				if (res.success) {
+																					part.status = PartStatus.Pending;
+																					if (res.emailSent) {
+																						toast.success("Successfully sent Email");
+																					}
+																					else toast.error(`Could not send email to ${request.firstName}`);
+																				}
 																				return res.success ? null : res.errorMessage ?? "Unknown exception";
 																			}
 																			catch (ex) {
 																				console.error(ex);
+																				toast.error(`Could not send email to ${request.firstName}`);
 																				return "Could not send request to AMS!";
 																			}
 																		},
@@ -419,7 +428,7 @@ export default function PartEditor({
 																	}));
 																}} >
 																<RegularCrossCircle className="inline hover:cursor-pointer mb-0.5" />
-															</p>
+															</span>
 														</div>
 													</div>}
 
@@ -522,6 +531,7 @@ export default function PartEditor({
 											<div className="my-2 mb-0">
 												{isRevoked(part)
 													? <></>
+													// biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
 													: <div onClick={() => addForm({
 														title: <>Flagging Model: <span className="font-semibold">{part.model.name}</span></>,
 														icon: <RegularFlag className="fill-pnw-gold" />,
@@ -545,6 +555,12 @@ export default function PartEditor({
 																	// Handle sending the request.
 																	try {
 																		const res = await revokePart(data);
+																		if (res.success) {
+																			if (res.emailSent) {
+																				toast.success("Successfully sent warning Email");
+																			}
+																			else toast.error(`Could not send email to ${request.firstName}`);
+																		}
 																		return res.success ? null : res.errorMessage ?? "Unknown exception";
 																	}
 																	catch (ex) {

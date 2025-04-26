@@ -1,7 +1,7 @@
 "use server";
 
 import "server-only";
-import { RequestEmail, RequestWithParts } from "@/app/Types/Request/Request";
+import Request, { RequestEmail, RequestWithParts } from "@/app/Types/Request/Request";
 import nodemailer from "nodemailer";
 import DOMPurify from "isomorphic-dompurify";
 import getConfig from "@/app/getConfig";
@@ -12,6 +12,7 @@ import { randomUUID } from "crypto";
 import { WalletTransaction } from "@/app/Types/Account/Wallet";
 import Account from "@/app/Types/Account/Account";
 import Mail from "nodemailer/lib/mailer";
+import Part from "@/app/Types/Part/Part";
 
 DOMPurify.setConfig({ USE_PROFILES: { html: false } });
 
@@ -34,15 +35,15 @@ export async function sendRequestEmail(emailKind: RequestEmail["kind"], request:
 
 		let trackingId = randomUUID();
 
-		if (emailKind == "approved") {
+		if (emailKind === "approved") {
 			emailSubject = `Request for ${request.name} Approved`;
 			emailHTML = await requestQuotedFreeHTML(request, trackingId);
 		}
-		else if (emailKind == "completed") {
+		else if (emailKind === "completed") {
 			emailSubject = `Request for ${request.name} Completed`;
 			emailHTML = await requestCompletedHTML(request, trackingId);
 		}
-		else if (emailKind == "quoted") {
+		else if (emailKind === "quoted") {
 			emailSubject = `Request for ${request.name} Quoted`;
 			emailHTML = await requestQuotedHTML(request, trackingId);
 		}
@@ -199,5 +200,31 @@ export async function maintainerRequestReceived(request: RequestWithParts) {
 		</p>
 		<a href=${`${envConfig.hostURL}/dashboard/maintainer/orders/${request.id}`} target="_blank" style="font-family: inherit; text-decoration:none; height: fit-content; width: fit-content; display: block;">
 			<button style="font-family: inherit; text-decoration: none; border-radius: 5px; padding: 1rem 1.2rem 1rem 1.2rem; padding-top: 12px; padding-bottom: 12px; display: block; margin-bottom: 0px; outline: none; border: none; background-color: #2b2b2b; color: white; font-size: large; font-weight: 500; text-wrap: nowrap; width: auto; font-size: small;">Manage Request</button>
+		</a>`);
+}
+
+export async function formatPartFlagged(requestId: number, message: string) {
+	return emailTemplate(`
+		<p style="font-family: inherit; color: rgb(64, 64, 64); font-size: medium;">
+			A PNW3D staff member has identified an issue with your model.
+		</p>
+		<p style="font-family: inherit; color: rgb(64, 64, 64); font-size: medium;">
+			Message from PNW3D Staff: ${message}
+		</p>
+		<a href=${`${envConfig.hostURL}/dashboard/user/${requestId}`} target="_blank" style="font-family: inherit; text-decoration:none; height: fit-content; width: fit-content; display: block;">
+			<button style="font-family: inherit; text-decoration: none; border-radius: 5px; padding: 1rem 1.2rem 1rem 1.2rem; padding-top: 12px; padding-bottom: 12px; display: block; margin-bottom: 0px; outline: none; border: none; background-color: #2b2b2b; color: white; font-size: large; font-weight: 500; text-wrap: nowrap; width: auto; font-size: small;">View Issues</button>
+		</a>`);
+}
+
+export async function formatPartUnFlagged(requestId: number) {
+	return emailTemplate(`
+		<p style="font-family: inherit; color: rgb(64, 64, 64); font-size: medium;">
+			A PNW3D staff has removed an issue from your model.
+		</p>
+		<p style="font-family: inherit; color: rgb(64, 64, 64); font-size: medium;">
+			A PNW3D staff member has reviewed your model and removed the issue flag. You can expect progress updates as your request continues through the process.
+		</p>
+		<a href=${`${envConfig.hostURL}/dashboard/user/${requestId}`} target="_blank" style="font-family: inherit; text-decoration:none; height: fit-content; width: fit-content; display: block;">
+			<button style="font-family: inherit; text-decoration: none; border-radius: 5px; padding: 1rem 1.2rem 1rem 1.2rem; padding-top: 12px; padding-bottom: 12px; display: block; margin-bottom: 0px; outline: none; border: none; background-color: #2b2b2b; color: white; font-size: large; font-weight: 500; text-wrap: nowrap; width: auto; font-size: small;">View Request</button>
 		</a>`);
 }

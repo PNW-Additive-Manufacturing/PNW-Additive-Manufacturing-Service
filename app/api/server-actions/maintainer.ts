@@ -24,6 +24,8 @@ import {
 import {
 	emailTemplate,
 	emailTemplateDearUser,
+	formatPartFlagged,
+	formatPartUnFlagged,
 	requestCompletedHTML,
 	requestQuotedFreeHTML,
 	requestQuotedHTML,
@@ -143,24 +145,54 @@ export async function setPartPrinter(
 
 const revokePartSchema = z.object({
 	partId: z.coerce.number().int(),
-	reasonForRevoke: z.string().nullable(),
+	reasonForRevoke: z.string().nullable()
 });
 export async function revokePart(data: FormData): Promise<APIData<{ emailSent: boolean }>> {
-	console.log(data.get("reasonForRevoke"));
 	const parsedData = revokePartSchema.safeParse({
 		partId: data.get("partId"),
-		reasonForRevoke: data.get("reasonForRevoke"),
+		reasonForRevoke: data.get("reasonForRevoke")
 	});
 	if (!parsedData.success) return resError(`Schema Failed: ${parsedData.error}`);
 
-	try {
-		await db`UPDATE Part SET Status=${parsedData.data.reasonForRevoke == null ? PartStatus.Pending : PartStatus.Denied}, RevokedReason=${parsedData.data.reasonForRevoke} WHERE Id=${parsedData.data!.partId}`;
-	} catch (error) {
+	const queriedPart = await PartServe.queryById(parsedData.data.partId);
+
+	if (queriedPart == null) return resError("Requested part does not exist!");
+	
+	// biome-ignore lint/style/noNonNullAssertion: <explanation>
+	const partOwnerEmail = (await RequestServe.queryOwnerEmail(queriedPart.requestId))!;
+	console.log(partOwnerEmail);
+
+	if (queriedPart.deniedReason !== null && parsedData.data.reasonForRevoke !== null) return resError("Request part has already been denied!");
+
+	try 
+	{
+		// biome-ignore lint/style/noNonNullAssertion: <explanation>
+		await db`UPDATE Part SET Status=${parsedData.data.reasonForRevoke == null ? PartStatus.Pending : PartStatus.Denied}, RevokedReason=${parsedData.data.reasonForRevoke}, PriceCents=NULL WHERE Id=${parsedData.data!.partId}`;
+	} 
+	catch (error) 
+	{
 		console.log(error);
-		return resError("Failed to update Database!");
+		return resError("Please try again later!");
 	}
+
+	const isUnflagged = parsedData.data.reasonForRevoke == null;
+	const subject = isUnflagged ? "Model Issues Resolved" : "Model Issues Flagged";
+	const body = isUnflagged
+		? await formatPartUnFlagged(queriedPart.requestId)
+		// biome-ignore lint/style/noNonNullAssertion: <explanation>
+		: await formatPartFlagged(queriedPart.requestId, parsedData.data.reasonForRevoke!);
+	
+	let emailSent = false;
+	
+	try {
+		await sendEmail(partOwnerEmail, subject, body);
+		emailSent = true;
+	} catch (ex) {
+		console.error(ex);
+	}	
+
 	revalidatePath("/dashboard/maintainer/orders");
-	return resOkData({ emailSent: true });
+	return resOkData({ emailSent });
 }
 
 const modifyPartSchema = z.object({

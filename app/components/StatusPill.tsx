@@ -14,7 +14,7 @@ export default function StatusPill({
 
 	return (
 		<div
-			className={`${className} w-fit rounded-md flex select-none text-nowrap`}>
+			className={`${className} w-fit rounded-md flex select-none text-nowrap capitalize`}>
 			<div className={`rounded-full my-auto h-3 w-3 mr-2`} style={{ backgroundColor: statusColor }} />
 			<span className="my-auto mr-1">{context}</span>
 		</div>

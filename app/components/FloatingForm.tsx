@@ -1,7 +1,7 @@
 "use client";
 
 import classNames from "classnames";
-import React, { createContext, useCallback, useMemo, useState } from "react";
+import React, { createContext, useCallback, useMemo, useState, useTransition } from "react";
 import { toast } from "react-toastify";
 
 interface FloatingFormQuestionBase {
@@ -105,7 +105,10 @@ export const FloatingFormContainer: React.FC<React.PropsWithChildren> = ({
 };
 
 function FloatingForm({ form, onClose, submissionError }: { form: FloatingForm, onClose: (submitted: boolean, data?: FormData) => void; submissionError?: string }) {
-    return <form action={(data) => onClose(true, data)}>
+
+    const [isSubmitPending, startSubmit] = useTransition();
+
+    return <form action={(data) => startSubmit(async () => await onClose(true, data))}>
         <div className="flex items-center gap-1 mb-2">
             {form.icon}
             <h2 className="text-xl font-thin">
@@ -117,19 +120,19 @@ function FloatingForm({ form, onClose, submissionError }: { form: FloatingForm, 
         {form.questions.length > 0 ? <hr className="mb-4" /> : <br />}
 
         <div className="flex flex-col gap-6">
-            {form.questions.map(q => <div>
-                <FloatingFormQuestion question={q}></FloatingFormQuestion>
+            {form.questions.map(q => <div key={q.name}>
+                <FloatingFormQuestion question={q} />
             </div>)}
         </div>
 
         <div>
             {submissionError && <div className="p-3 bg-red-100 rounded-md text-sm mb-4">
-                <label>An issue occurred submitting this form.</label>
+                <p>An issue occurred submitting this form.</p>
                 <p className="text-xs">{submissionError}</p>
             </div>}
             <div className="flex max-md:flex-col gap-4">
                 <button type="button" className={classNames("mb-0 bg-background out text-black text-left text-sm", form.cancelClassnames)} onClick={() => onClose(false)}>{form.cancelName ?? "Cancel"}</button>
-                <button type="submit" className={classNames("mb-0 text-left text-sm", form.submitClassnames)}>{form.submitName ?? "Submit"}</button>
+                <button type="submit" disabled={isSubmitPending} className={classNames("mb-0 text-left text-sm", form.submitClassnames, { "animate-pulse": isSubmitPending })}>{form.submitName ?? "Submit"}</button>
             </div>
         </div>
 
@@ -138,6 +141,7 @@ function FloatingForm({ form, onClose, submissionError }: { form: FloatingForm, 
 
 function FloatingFormQuestion({ question }: { question: FloatingFormQuestion }) {
     return <>
+        {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
         <label className={classNames("", { "inline": (question as Partial<FloatingFormQuestionInput>).type == "radio" })}>
             {question.required && <span className="text-red-300">* </span>}
             {question.name}

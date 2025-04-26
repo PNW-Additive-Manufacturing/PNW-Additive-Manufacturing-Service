@@ -268,7 +268,7 @@ export default function RequestEditor({
 											processingMachine={printStatus} />
 									</div>
 								})}
-								{request.parts.length == 1 && <div className="bg-white out opacity-50 h-full max-2xl:hidden"></div>}
+								{request.parts.length === 1 && <div className="bg-white out opacity-50 h-full max-2xl:hidden"></div>}
 							</div>
 						</div>
 					</div>

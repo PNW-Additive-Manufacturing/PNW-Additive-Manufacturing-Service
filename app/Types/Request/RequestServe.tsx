@@ -14,6 +14,7 @@ export interface RequestQuery {
 }
 
 // export class RequestServe implements Servable<Request>
+// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class RequestServe {
 	public static async query(
 		query: RequestQuery
@@ -98,6 +99,14 @@ export class RequestServe {
 			});
 		}
 		return requests;
+	}
+
+	public static async queryOwnerEmail(requestId: string | number): Promise<string | null> {
+		const query = await db`SELECT OwnerEmail FROM Request WHERE Id=${requestId}`;
+		if (query !== null && query.length > 0) {
+			return query.at(1)?.owneremail;
+		}
+		return null;
 	}
 
 	public static async fetchByIDWithAll(

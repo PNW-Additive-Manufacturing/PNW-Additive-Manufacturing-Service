@@ -456,10 +456,7 @@ function PartDetails({ part, index, count }: { part: PartWithModel; index: numbe
 
 								{isRevoked(part) &&
 									<div className="mt-2 flex flex-wrap gap-x-2">
-										<div className="text-warning">
-											<RegularFlag className="fill-warning inline mb-1 mr-1"></RegularFlag>
-											{part.deniedReason}
-										</div>
+										<p className="text-warning">{part.deniedReason}</p>
 									</div>}
 							</div>
 						</div>
