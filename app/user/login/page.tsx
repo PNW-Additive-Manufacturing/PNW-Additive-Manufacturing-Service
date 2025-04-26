@@ -16,7 +16,7 @@ export default function Login() {
 	const redirect = searchParams.get("redirect");
 
 	return (
-		<HorizontalWrap>
+		<HorizontalWrap className="py-8">
 			<div className="w-full lg:w-1/3 lg:mx-auto shadow-mdk">
 				<div className="lg:mx-auto mb-4 w-fit">
 					<AMSIcon />

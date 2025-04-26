@@ -17,8 +17,8 @@ export default async function Request() {
 
 	return (
 		<>
-			<HorizontalWrap className="">
-				<div className="mb-6">
+			<HorizontalWrap>
+				<div className="py-8">
 					<h1 className="w-fit text-2xl font-normal mb-2">
 						Fill out a Request
 					</h1>
@@ -34,7 +34,7 @@ export default async function Request() {
 				<HorizontalWrap className="py-8">
 					<RequestPartForm
 						filaments={filaments}
-						previousUploadedModels={previousModels}></RequestPartForm>
+						previousUploadedModels={previousModels} />
 				</HorizontalWrap>
 			</div>
 		</>

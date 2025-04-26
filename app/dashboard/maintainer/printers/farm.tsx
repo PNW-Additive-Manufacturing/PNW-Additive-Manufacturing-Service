@@ -20,13 +20,10 @@ export default function Farm({
 	return (
 		<>
 			<div className="flex justify-between items-center">
-				<div className="flex items-center gap-2">
-					<h2 className="text-xl font-light my-4">Farm Management</h2>
-					<div className="flex items-center gap-1 pt-0.5">
-						<div
-							className={`w-3.5 h-3.5 border-2 border-gray-200 rounded-full ${isOutOfDate ? "bg-red-500" : "bg-pnw-gold"
-								}`}
-						/>
+				<div className="flex items-center gap-4">
+					<h2 className="text-xl font-light">Farm Management</h2>
+					<div className="flex items-center gap-1">
+						<div className={`w-3.5 h-3.5 border-2 border-gray-200 rounded-full ${isOutOfDate ? "bg-red-500" : "bg-pnw-gold"}`} />
 						<span
 							className={
 								isOutOfDate ? "text-red-500" : "text-pnw-gold"
@@ -41,7 +38,7 @@ export default function Farm({
 						<div>
 							{Math.round(
 								(machines.filter(
-									(m) => m.status == "Printing"
+									(m) => m.status === "Printing"
 								).length /
 									machines.length) *
 								100
@@ -64,6 +61,8 @@ export default function Farm({
 					</div>
 				</div>
 			</div>
+
+			<br />
 
 			{machines == null ? (
 				<>Not loaded!</>

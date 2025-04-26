@@ -237,7 +237,8 @@ export async function modifyPart(prevState: undefined, data: FormData): Promise<
 		if (includesRefund) {
 			if (isRefunded(previousPart)) {
 				return resError("Schema Error: Part cannot be modified once refunded!");
-			} else if (!isPaid(partRequest)) {
+			}
+			if (!isPaid(partRequest)) {
 				return resError("Schema Error: Part cannot be refunded without request being paid!");
 			}
 
@@ -248,8 +249,8 @@ export async function modifyPart(prevState: undefined, data: FormData): Promise<
 
 			console.log(`Refunding ${refundTotalInDollars.toFixed(2)}`);
 
-			newValues["refundreason"] = parsedData.data!.reasonForRefund!;
-			newValues["refundquantity"] = parsedData.data!.refundQuantity!;
+			newValues.refundreason = parsedData.data!.reasonForRefund!;
+			newValues.refundquantity = parsedData.data!.refundQuantity!;
 		}
 
 		console.log(
@@ -266,7 +267,7 @@ export async function modifyPart(prevState: undefined, data: FormData): Promise<
 				Object.keys(newValues)
 			)} WHERE Id=${parsedData.data.partId}`;
 		} catch (error) {
-			console.error(`Failed to modify Part!`, error as Error);
+			console.error("Failed to modify Part!", error as Error);
 			return resError("An internal error occurred modifying the part!");
 		}
 

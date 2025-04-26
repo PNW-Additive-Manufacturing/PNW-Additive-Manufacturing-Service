@@ -1,19 +1,24 @@
 "use server";
 
+import HorizontalWrap from "@/app/components/HorizontalWrap";
 import RequestsTable from "@/app/components/RequestsTable";
 
 export default async function Maintainer({ params }: { params: any }) {
 	return (
 		<>
-			<h1 className="text-2xl tracking-wide font-light">
-				Request Management
-			</h1>
+			<HorizontalWrap className="py-8 flex flex-col gap-4">
+				<h1 className="w-fit text-3xl font-normal">
+					Request Management
+				</h1>
+			</HorizontalWrap>
 
-			<br />
+			<div className="bg-white min-h-screen">
+				<HorizontalWrap className="py-8">
 
-			<div
-				className={`shadow-sm rounded-sm p-4 lg:p-6 bg-white out`}>
-				<RequestsTable></RequestsTable>
+					<RequestsTable />
+
+				</HorizontalWrap>
+
 			</div>
 		</>
 	);

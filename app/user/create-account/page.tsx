@@ -42,7 +42,7 @@ export default function CreateAccount() {
 	);
 
 	return (
-		<HorizontalWrap>
+		<HorizontalWrap className="py-8">
 			<div className="w-full lg:w-1/3 lg:mx-auto shadow-mdk">
 				<Image
 					src={"/assets/logo.svg"}

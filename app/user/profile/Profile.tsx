@@ -14,7 +14,7 @@ import { formateDate } from "@/app/api/util/Constants";
 export default function Profile({ account, transactions }: { account: Account, transactions: WalletTransaction[] }) {
 	return (
 		<>
-			<HorizontalWrap className="pb-10">
+			<HorizontalWrap className="py-8">
 				<h1 className="text-2xl tracking-wide font-light mb-2">Welcome, {account.firstName} {account.lastName}!</h1>
 				<hr />
 				<div className="grid gap-y-6 lg:grid-cols-2">
@@ -40,9 +40,9 @@ export default function Profile({ account, transactions }: { account: Account, t
 				</a>
 
 			</HorizontalWrap>
-			<div className="bg-white min-h-screen">
+			<div className="bg-white min-h-screen py-8">
 				<HorizontalWrap>
-					<div className="py-8">
+					<div>
 						<h2 id="wallet" className="w-fit text-xl font-normal mb-1">Wallet</h2>
 						<p>Wallet is a prepaid balance exclusively for ordering parts within our platform to reduce the cost of 3D Printing.</p>
 						<br />

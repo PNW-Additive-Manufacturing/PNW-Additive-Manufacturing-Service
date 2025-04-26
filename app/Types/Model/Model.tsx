@@ -3,6 +3,7 @@ export default interface Model {
 	name: string;
 	ownerEmail: string;
 	fileSizeInBytes: number;
+	md5Hash?: number;
 	analysisFailedReason?: string;
 	isPurged: boolean;
 	analysisResults?: {

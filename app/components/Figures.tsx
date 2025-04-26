@@ -10,26 +10,31 @@ type FigureProps = {
     prefix?: React.ReactElement | string,
     icon?: JSX.Element,
     iconPosition?: "start" | "end",
-    labelClassName?: string
+    labelClassName?: string,
+    useColors?: boolean
+    flipColors?: boolean;
 };
 
-export function Figure({ name, amount, prefix, style, icon, iconPosition, labelClassName }: FigureProps) {
+export function Figure({ name, amount, prefix, style, icon, iconPosition, labelClassName, useColors, flipColors }: FigureProps) {
 
+    useColors ??= false;
+    flipColors ??= false;
     iconPosition ??= "end";
 
     const fontStyle = classNames({
-        "font-light": style == "small",
-        "font-semibold": style == "large",
+        "font-light": style === "small",
+        "font-semibold": style === "large"
     });
 
     return <div>
-        <label className={classNames("mb-0.5", { "inline font-light ": style == "inline" }, labelClassName)}>
-            {icon && iconPosition == "start" && <span className="mr-1 [&>*]:inline">{icon}</span>}
+        {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
+        <label className={classNames("mb-0.5", { "inline font-light ": style === "inline" }, labelClassName)}>
+            {icon && iconPosition === "start" && <span className="mr-1 [&>*]:inline">{icon}</span>}
             {name}
         </label>
-        <p className={classNames(fontStyle, "text-nowrap", { "inline ": style == "inline" })}>
-            {style == "inline" && " "}{prefix && prefix}{typeof amount == "number" ? amount.toFixed(2) : amount}
-            {icon && iconPosition == "end" && <span className="ml-1 [&>*]:inline">{icon}</span>}
+        <p className={classNames(fontStyle, "text-nowrap", { "inline ": style === "inline", "text-warning": useColors && (flipColors ? amount > 0 : amount < 0), "text-lime-600": useColors && (flipColors ? amount <= 0 : amount >= 0) })}>
+            {style === "inline" && " "}{prefix && prefix}{typeof amount === "number" ? amount.toFixed(2) : amount}
+            {icon && iconPosition === "end" && <span className="ml-1 [&>*]:inline">{icon}</span>}
         </p>
     </div>;
 }

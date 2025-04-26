@@ -16,7 +16,7 @@ import { MachineData } from "./Machine";
 import { AccountPermission } from "../Types/Account/Account";
 import { FiActivity } from "react-icons/fi";
 
-const requestsPerPage = 10;
+const requestsPerPage = 12;
 
 export default function RequestsTable({ accountEmail }: { accountEmail?: string }) {
 
@@ -67,12 +67,12 @@ export default function RequestsTable({ accountEmail }: { accountEmail?: string 
     return (
         <>
             {requests == null ? (
-                <div className="w-full bg-gray-100 min-h-28 rounded-md mb-4"></div>
-            ) : requests.length == 0 ? (
-                <div className="w-full bg-gray-100 min-h-28 rounded-md mb-4"></div>
+                <div className="w-full bg-gray-100 min-h-28 rounded-md mb-4" />
+            ) : requests.length === 0 ? (
+                <div className="w-full bg-gray-100 min-h-28 rounded-md mb-4" />
             ) : (
                 <>
-                    <Table className="spaced">
+                    <Table>
                         <thead>
                             <tr>
                                 <th className="w-fit max-lg:hidden" style={{ paddingRight: "0px" }}>#</th>
@@ -88,9 +88,11 @@ export default function RequestsTable({ accountEmail }: { accountEmail?: string 
                                 const rowLink = accountEmail == null ? `/dashboard/maintainer/orders/${r.id}` : `/dashboard/user/${r.id}`;
 
                                 return <>
+                                    {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
                                     <tr
+                                        key={r.id}
                                         onClick={() => setSelectedRequest(r.id)}
-                                        className={`w-full border-l-4 out bg-white`}
+                                        className={"w-full border-l-4 out bg-white"}
                                         style={{
                                             borderLeftColor:
                                                 getRequestStatusColor(r)
@@ -150,7 +152,7 @@ export default function RequestsTable({ accountEmail }: { accountEmail?: string 
             )}
 
             {/* Controls */}
-            <div className="flex flex-wrap max-lg:gap-4 max-lg:flex-col justify-between">
+            <div className="flex flex-wrap max-lg:gap-4 max-lg:flex-col justify-between mt-4">
                 <div className="flex flex-wrap items-center gap-4">
                     <ControlButton className={`max-lg:hidden flex gap-2 items-center mb-0`} disabled={isFetchingRequests} onClick={() => fetchRequests()}>
                         <span>Refresh</span>

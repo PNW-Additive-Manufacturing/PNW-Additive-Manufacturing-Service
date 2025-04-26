@@ -19,5 +19,9 @@ export default async function Page() {
 	const account = (await AccountServe.queryByEmail(jwtPayload.email))!;
 	const transactions = await AccountServe.queryTransactionsFor(account.email);
 
-	return <Profile account={account} transactions={transactions}></Profile>;
+	return <>
+
+		<Profile account={account} transactions={transactions} />
+
+	</>
 }

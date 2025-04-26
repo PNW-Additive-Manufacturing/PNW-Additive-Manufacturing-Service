@@ -2,10 +2,10 @@
 
 import "server-only";
 import { NextResponse } from "next/server";
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 import getConfig from "./app/getConfig";
 import { AccountPermission } from "./app/Types/Account/Account";
-import { getJwtPayload, UserJWT } from "./app/api/util/JwtHelper";
+import { getJwtPayload, type UserJWT } from "./app/api/util/JwtHelper";
 import farmMiddleware from "./app/api/farm/middleware";
 import modelDownloadMiddleware from "./app/api/download/model/middleware";
 import { cookies, headers } from "next/headers";
@@ -48,7 +48,7 @@ export async function middleware(request: NextRequest) {
 	//a GET request to /logout is completed, the logout feature is here.
 	//I could use an API endpoint, but I would prefer to not have both /logout and /api/logout routes
 	if (nextUrl.startsWith("/user/logout")) {
-		let res = NextResponse.redirect(envConfig.hostURL);
+		const res = NextResponse.redirect(envConfig.hostURL);
 		// Delete session cookie from response.
 		res.cookies.delete(envConfig.sessionCookie);
 		
@@ -96,12 +96,12 @@ export async function middleware(request: NextRequest) {
 
 	if (
 		nextUrl.startsWith("/experiments") &&
-		jwtPayload.permission == AccountPermission.User
+		jwtPayload.permission === AccountPermission.User
 	) {
 		return NextResponse.redirect(envConfig.joinHostURL("/not-found"));
 	}
 
-	let permission = jwtPayload.permission as AccountPermission;
+	const permission = jwtPayload.permission as AccountPermission;
 
 	// const account = await AccountServe.queryByEmail(jwtPayload.email)!;
 	// if (account == undefined)
@@ -120,7 +120,7 @@ export async function middleware(request: NextRequest) {
 			// Allow these pages
 		} else {
 			return NextResponse.redirect(
-				envConfig.joinHostURL(`/user/not-verified`)
+				envConfig.joinHostURL("/user/not-verified")
 			);
 		}
 	} else if (
@@ -133,7 +133,7 @@ export async function middleware(request: NextRequest) {
 	//automatically force redirect to correct dashboard
 	if (
 		nextUrl.startsWith(`/dashboard/${AccountPermission.Maintainer}`) &&
-		permission == AccountPermission.User
+		permission === AccountPermission.User
 	) {
 		return NextResponse.redirect(
 			envConfig.joinHostURL(`/dashboard/${AccountPermission.User}`)
@@ -141,10 +141,10 @@ export async function middleware(request: NextRequest) {
 	}
 
 	//automatically force redirect to correct dashboard
-	if (
-		(nextUrl.startsWith(`/dashboard/maintainer/printers`) ||
-			nextUrl.startsWith(`/dashboard/maintainer/users`)) &&
-		permission !== AccountPermission.Admin
+	if ((nextUrl.startsWith("/dashboard/maintainer/printers") 
+		|| nextUrl.startsWith("/dashboard/maintainer/users")
+		|| nextUrl.startsWith("/dashboard/maintainer/accounting")) 
+		&& permission !== AccountPermission.Admin
 	) {
 		return NextResponse.redirect(
 			envConfig.joinHostURL(`/dashboard/${permission}`)

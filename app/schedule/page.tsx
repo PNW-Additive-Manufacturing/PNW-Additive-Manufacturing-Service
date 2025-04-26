@@ -13,7 +13,7 @@ export default function Schedule() {
 
 	return (
 		<>
-			<HorizontalWrap>
+			<HorizontalWrap className="py-8">
 				<h1 className="text-2xl tracking-wide font-light">Pickup Schedule</h1>
 				<p className="mt-2">The Additive Manufacturing Service is available throughout the <span className="font-semibold">Fall</span> and <span className="font-semibold">Spring</span> semesters and confines with the <a className="underline" href="https://www.pnw.edu/registrar/academic-schedule/">PNW Academic Calendar</a>.</p>
 				<hr />

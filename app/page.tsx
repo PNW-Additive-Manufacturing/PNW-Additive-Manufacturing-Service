@@ -166,7 +166,7 @@ export default async function Home() {
 					</g>
 				</svg> */}
 
-				<svg className="bg-white hidden lg:block" viewBox="0 40 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+				<svg className="bg-white hidden lg:block" viewBox="0 30 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
 					<path className="fill-background" d="
 						M0,80 
 						C360,40 1080,40 1440,80 

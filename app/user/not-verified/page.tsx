@@ -53,7 +53,7 @@ export default function Page() {
 	}
 
 	return (
-		<HorizontalWrap>
+		<HorizontalWrap className="py-8">
 			<div className="mx-auto w-fit">
 				{/* <AMSIcon /> */}
 				<h1 className="text-2xl mt-8">Validate PNW Email</h1>

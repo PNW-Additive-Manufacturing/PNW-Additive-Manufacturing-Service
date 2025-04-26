@@ -20,6 +20,8 @@ export default async function Page({ searchParams }: { searchParams?: { [key: st
         return <ErrorPrompt code="Expired" details="This password reset link has expired. Please request a new one to reset your password."></ErrorPrompt>
     }
 
-    return <ResetPassword resetCode={resetCode} />
+    return <HorizontalWrap className="py-8">
+        <ResetPassword resetCode={resetCode} />
+    </HorizontalWrap>
 
 }

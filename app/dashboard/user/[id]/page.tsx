@@ -4,6 +4,7 @@ import { RequestServe } from "@/app/Types/Request/RequestServe";
 import { redirect } from "next/navigation";
 import RequestDetails from "./RequestDetails";
 import getConfig from "@/app/getConfig";
+import HorizontalWrap from "@/app/components/HorizontalWrap";
 
 const appConfig = getConfig();
 
@@ -24,5 +25,11 @@ export default async function Page({ params, searchParams }: {
 		redirect(`${appConfig.hostURL}/dashboard/user/${params.id}`);
 	}
 
-	return <RequestDetails request={request}></RequestDetails>;
+	return <>
+
+		<HorizontalWrap className="py-8">
+			<RequestDetails request={request} />
+		</HorizontalWrap>
+
+	</>;
 }

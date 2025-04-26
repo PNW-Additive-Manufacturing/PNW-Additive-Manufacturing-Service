@@ -3,8 +3,8 @@ import Link from "next/link";
 
 export default function Page() {
 	return (
-		<HorizontalWrap className="text-center">
-			<h1 className="text-2xl font-light mt-8">
+		<HorizontalWrap className="text-center py-8">
+			<h1 className="text-2xl font-light">
 				PNW Email Successfully Verified
 			</h1>
 			<p className="text-base font-normal text-gray-700 mt-4">

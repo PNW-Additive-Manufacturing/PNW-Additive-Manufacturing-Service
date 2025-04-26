@@ -77,9 +77,9 @@ export function isPriced(part: Part) {
 }
 
 export function isAllComplete(parts: Part[]) {
-	return parts.every((part) => part.status == "printed");
+	return parts.every((part) => part.status === "printed");
 }
 
 export function isAllPending(parts: Part[]) {
-	return parts.findIndex((part) => part.status != "pending") == -1;
+	return parts.findIndex((part) => part.status !== "pending") == -1;
 }

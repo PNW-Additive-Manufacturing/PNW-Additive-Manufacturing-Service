@@ -2,7 +2,7 @@ import Link from "next/link";
 import HorizontalWrap from "../components/HorizontalWrap";
 
 export default function TermsAndConditions() {
-    return <HorizontalWrap>
+    return <HorizontalWrap className="py-8">
         <h1 className="w-fit text-2xl font-normal">
             Terms and Conditions for 3D Printing Services
         </h1>
