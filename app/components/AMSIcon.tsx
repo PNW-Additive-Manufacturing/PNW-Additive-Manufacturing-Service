@@ -7,6 +7,6 @@ export default function AMSIcon() {
 			width={720}
 			height={720}
 			alt="Logo"
-			className="w-28 mb-4"></Image>
+			className="w-28"></Image>
 	);
 }
