@@ -73,12 +73,12 @@ export default async function Home() {
 		<>
 			<div>
 
-				<HorizontalWrap className="my-8">
-					<div className="xl:flex justify-between gap-10 lg:m-0">
+				<HorizontalWrap className="my-14">
+					<div className="xl:flex justify-center gap-10 lg:m-0 lg:text-center">
 						<div className="w-fit mb-2">
-							<h1 className="w-fit mb-4 text-3xl font-normal">
+							<h1 className="w-fit mb-4 text-3xl font-normal lg:text-center mx-auto">
 								{/* <span>Welcome to the</span> */}
-								<span className="font-bold">
+								<span className="font-bold text-center">
 									<span className="text-pnw-gold"> PNW </span>
 									Additive Manufacturing Service
 								</span>
@@ -99,28 +99,23 @@ export default async function Home() {
 								.
 							</p>
 
-							<ul style={{ maxWidth: "600px" }}>
+							{/* <ul style={{ maxWidth: "600px" }}>
 								<li>Utilize rapid prototyping to create custom connectors and mounts.</li>
 								<li>Produce creative models, prosthetics, and more with 3D Printing solutions.</li>
 								<li>Guidance in designing or optimizing models for 3D Printing using <Link className="underline" target="_blank" href={"https://www.onshape.com/en/"}>Onshape</Link>.</li>
-							</ul>
+							</ul> */}
 
-							<div className="pt-6">
+							<div className="pt-2 lg:pt-6 lg:mx-auto w-fit">
 								<div className="flex flex-wrap items-center gap-4">
 									<Link href={"/request-part"}>
 										<button className="w-fit px-3.5 py-2.5 mb-0 text-sm bg-white outline-2 text-pnw-gold fill-pnw-gold outline outline-pnw-gold tracking-wider font-bold uppercase shadow-sm">
-											Get Started
+											Get Printing
 											<RegularArrowRight className="inline ml-2 mb-0.5" />
 										</button>
 									</Link>
-									{/* <Link href={"/project-spotlight"}>
-										<button className="w-fit px-3.5 py-2.5 mb-0 font-medium tracking-wide text-sm shadow-sm">
-											Project Spotlight
-										</button>
-									</Link> */}
 									<Link
 										href="/team"
-										className="w-fit tracking-wider font-light text-sm">
+										className="w-fit tracking-wider hidden lg:block font-light text-sm">
 										Meet our Team
 									</Link>
 									<a
@@ -131,14 +126,13 @@ export default async function Home() {
 									</a>
 								</div>
 
-								{/* <div className="my-4 mb-8">
-									<AvailabilityText />
-								</div> */}
+
 							</div>
 						</div>
-						<div className="mb-6">
+
+						{/* <div className="mb-6">
 							<video src={"/assets/Timeline 1.mp4"} className="max-2xl:hidden rounded-md ml-auto" style={{ maxHeight: "17.5rem" }} controls muted={true} loop={true} preload={"none"} playsInline={true} poster="/assets/lab_setup_1.jpg" />
-						</div>
+						</div> */}
 					</div>
 				</HorizontalWrap>
 				{/* 
