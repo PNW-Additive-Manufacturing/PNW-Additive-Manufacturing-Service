@@ -16,7 +16,7 @@ export default function DragInOnView({ children, animate, delaySec, direction }:
 
     return <>
 
-        <motion.div ref={ref} initial={{ y: initialY, x: initialX, opacity: 0.05 }} animate={hasViewed ? Object.assign(Object.assign({ y: 0, x: 0, opacity: 1 }, animate), delaySec === undefined ? {} : { transition: { delay: delaySec } }) : {}}>
+        <motion.div ref={ref} initial={{ y: initialY, x: initialX, opacity: 0 }} animate={hasViewed ? Object.assign(Object.assign({ y: 0, x: 0, opacity: 1 }, animate), delaySec === undefined ? {} : { transition: { delay: delaySec } }) : {}}>
 
             {children}
 
