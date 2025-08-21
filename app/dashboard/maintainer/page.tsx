@@ -9,6 +9,7 @@ import { AccountPermission } from "@/app/Types/Account/Account";
 import getConfig from "@/app/getConfig";
 import HorizontalWrap from "@/app/components/HorizontalWrap";
 import { FaRegMoneyBillAlt } from "react-icons/fa";
+import { MdOutlineWavingHand } from "react-icons/md";
 
 const envConfig = getConfig();
 
@@ -80,6 +81,15 @@ export default async function Maintainer() {
 										<button className="flex items-center w-full text-base font-normal">
 											<FaRegMoneyBillAlt className="inline-block w-12 h-12 mr-auto fill-gray-300" />
 											<span>Accounting</span>
+										</button>
+									</a>
+
+									<a
+										href="/dashboard/maintainer/reregistration"
+										className="w-full sm:max-w-sm block">
+										<button className="flex items-center w-full text-base font-normal">
+											<MdOutlineWavingHand className="inline-block w-12 h-12 mr-auto fill-gray-300" />
+											<span>Reregistration</span>
 										</button>
 									</a>
 

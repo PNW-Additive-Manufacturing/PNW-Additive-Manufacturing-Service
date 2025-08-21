@@ -8,6 +8,7 @@ import Image from "next/image";
 import { ProgressBar } from "@/app/components/ProgressBar";
 import { RiCoupon2Fill } from "react-icons/ri";
 import { useEffect, useRef, useState } from "react";
+import { YearsOfStudy } from "@/app/Types/Account/Account";
 
 function SubmitButton() {
 	const { pending } = useFormStatus();
@@ -81,27 +82,7 @@ export default function CreateAccount() {
 						</div>
 						<label>Year of Study</label>
 						<select title="Year of Study" required id="year-of-study" name="year-of-study" className="w-full block lg:text-sm">
-							<option value="Freshman" id="freshman">
-								Freshman
-							</option>
-							<option value="Sophomore" id="sophomore">
-								Sophomore
-							</option>
-							<option value="Junior" id="junior">
-								Junior
-							</option>
-							<option value="Senior" id="senior">
-								Senior
-							</option>
-							<option value="Graduate" id="graduate">
-								Graduate
-							</option>
-							<option value="Faculty" id="faculty">
-								Faculty
-							</option>
-							<option value="Professor" id="professor">
-								Professor
-							</option>
+							{YearsOfStudy.map(y => <option value={y} id={y}>{y}</option>)}
 						</select>
 
 						<label>Primary College</label>

@@ -61,7 +61,7 @@ export async function setPartPrice(
 	return "";
 }
 
-export async function setQuote( prevState: undefined, data: FormData ): Promise<APIData<{}>> {
+export async function setQuote(prevState: undefined, data: FormData): Promise<APIData<{}>> {
 	const requestId = data.has("requestId")
 		? Number.parseInt(data.get("requestId") as string)
 		: null;
@@ -70,11 +70,10 @@ export async function setQuote( prevState: undefined, data: FormData ): Promise<
 	if (request == null) return resError("Request does not exist");
 
 	const estimatedCompletionDate = data.get("estimated-completion-date")?.valueOf() as Date | undefined;
-	if (estimatedCompletionDate == undefined)
-	{
+	if (estimatedCompletionDate == undefined) {
 		return resError("Completion estimate required!");
 	}
-	
+
 	const requester = await AccountServe.queryByEmail(request.requesterEmail);
 	if (requester == undefined) return resError("Account no-longer exists!");
 
@@ -105,18 +104,15 @@ export async function setQuote( prevState: undefined, data: FormData ): Promise<
 	request = (await RequestServe.fetchByIDWithAll(requestId))!;
 
 	try {
-		if (priceInCents == 0)
-		{
+		if (priceInCents == 0) {
 			sendRequestEmail("approved", request);
 			// await sendEmail(request.requesterEmail, `Request approved for ${request.name}`, await requestQuotedFreeHTML(request));
 		}
-		else
-		{
+		else {
 			sendRequestEmail("quoted", request);
 			// await sendEmail(request.requesterEmail, `Request quoted for ${request.name}`, await requestQuotedHTML(request));
 		}
-	} catch (error) 
-	{
+	} catch (error) {
 		console.error("Failed to send Email!", error);
 	}
 
@@ -157,20 +153,18 @@ export async function revokePart(data: FormData): Promise<APIData<{ emailSent: b
 	const queriedPart = await PartServe.queryById(parsedData.data.partId);
 
 	if (queriedPart == null) return resError("Requested part does not exist!");
-	
+
 	// biome-ignore lint/style/noNonNullAssertion: <explanation>
 	const partOwnerEmail = (await RequestServe.queryOwnerEmail(queriedPart.requestId))!;
 	console.log(partOwnerEmail);
 
 	if (queriedPart.deniedReason !== null && parsedData.data.reasonForRevoke !== null) return resError("Request part has already been denied!");
 
-	try 
-	{
+	try {
 		// biome-ignore lint/style/noNonNullAssertion: <explanation>
 		await db`UPDATE Part SET Status=${parsedData.data.reasonForRevoke == null ? PartStatus.Pending : PartStatus.Denied}, RevokedReason=${parsedData.data.reasonForRevoke}, PriceCents=NULL WHERE Id=${parsedData.data!.partId}`;
-	} 
-	catch (error) 
-	{
+	}
+	catch (error) {
 		console.log(error);
 		return resError("Please try again later!");
 	}
@@ -181,15 +175,15 @@ export async function revokePart(data: FormData): Promise<APIData<{ emailSent: b
 		? await formatPartUnFlagged(queriedPart.requestId)
 		// biome-ignore lint/style/noNonNullAssertion: <explanation>
 		: await formatPartFlagged(queriedPart.requestId, parsedData.data.reasonForRevoke!);
-	
+
 	let emailSent = false;
-	
+
 	try {
 		await sendEmail(partOwnerEmail, subject, body);
 		emailSent = true;
 	} catch (ex) {
 		console.error(ex);
-	}	
+	}
 
 	revalidatePath("/dashboard/maintainer/orders");
 	return resOkData({ emailSent });
@@ -205,7 +199,7 @@ const modifyPartSchema = z.object({
 	supplementedColor: z.string().optional().nullable(),
 	supplementReason: z.string().optional().nullable()
 });
-export async function modifyPart(prevState: undefined, data: FormData): Promise<APIData<{}>> {
+export async function modifyPart(data: FormData): Promise<APIData<{}>> {
 	console.log(data);
 	const parsedData = modifyPartSchema.safeParse({
 		partId: data.get("partId"),
@@ -240,8 +234,7 @@ export async function modifyPart(prevState: undefined, data: FormData): Promise<
 		if (filament == undefined)
 			return resError("Supplemented filament does not exist!");
 
-		if (parsedData.data.supplementReason != null)
-		{
+		if (parsedData.data.supplementReason != null) {
 			newValues["SupplementedReason".toLowerCase()] = parsedData.data.supplementReason;
 		}
 		newValues["SupplementedFilamentId".toLowerCase()] = filament?.id;
@@ -251,8 +244,7 @@ export async function modifyPart(prevState: undefined, data: FormData): Promise<
 		parsedData.data!.status != undefined &&
 		previousPart.status != parsedData.data!.status;
 
-	if (includesStatus) 
-	{
+	if (includesStatus) {
 		newValues["status"] = parsedData.data!.status!;
 		partRequest.parts.find(p => parsedData.data.partId)!.status = parsedData.data!.status!;
 	}
@@ -303,9 +295,8 @@ export async function modifyPart(prevState: undefined, data: FormData): Promise<
 			return resError("An internal error occurred modifying the part!");
 		}
 
-		if (isAllComplete(partRequest.parts))
-		{
-			sendRequestEmail("completed", partRequest);	
+		if (isAllComplete(partRequest.parts)) {
+			sendRequestEmail("completed", partRequest);
 		}
 
 		revalidatePath("/dashboard/maintainer/orders");
@@ -440,8 +431,7 @@ const postProjectShowcaseSchema = z.object({
 	description: z.string(),
 	author: z.string(),
 });
-export async function postProjectShowcase(prevState: APIData<{}>, data: FormData)
-{
+export async function postProjectShowcase(prevState: APIData<{}>, data: FormData) {
 	const jwtPayload = await retrieveSafeJWTPayload();
 	if (jwtPayload == undefined || jwtPayload.permission == "user") return resUnauthorized();
 
@@ -454,20 +444,17 @@ export async function postProjectShowcase(prevState: APIData<{}>, data: FormData
 
 	const image = data.get("image") as File;
 
-	try
-	{
+	try {
 		await ProjectSpotlightServe.insertProjectShowcase(parsedData.data, image);
 	}
-	catch (ex)
-	{
+	catch (ex) {
 		return resError((ex as Error).message);
 	}
 	revalidatePath("/project-spotlight");
 	return resOk();
 }
 
-export async function deleteProjectShowcase(prevState: APIData<{}>, data: FormData)
-{
+export async function deleteProjectShowcase(prevState: APIData<{}>, data: FormData) {
 	const jwtPayload = await retrieveSafeJWTPayload();
 	if (jwtPayload == undefined || jwtPayload.permission == "user") return resUnauthorized();
 
@@ -475,12 +462,10 @@ export async function deleteProjectShowcase(prevState: APIData<{}>, data: FormDa
 
 	if (!parsedData.success) return resError(parsedData.error.message);
 
-	try
-	{
+	try {
 		await ProjectSpotlightServe.deleteProjectShowcase(parsedData.data);
 	}
-	catch (ex)
-	{
+	catch (ex) {
 		console.error(ex);
 		return resError((ex as Error).message);
 	}
@@ -489,8 +474,7 @@ export async function deleteProjectShowcase(prevState: APIData<{}>, data: FormDa
 }
 
 const editProjectShowcaseSchema = postProjectShowcaseSchema.partial().and(z.object({ id: z.string() }));
-export async function editProjectShowcase(prevState: APIData<{}>, data: FormData)
-{
+export async function editProjectShowcase(prevState: APIData<{}>, data: FormData) {
 	const jwtPayload = await retrieveSafeJWTPayload();
 	if (jwtPayload == undefined || jwtPayload.permission == "user") return resUnauthorized();
 
@@ -512,12 +496,10 @@ export async function editProjectShowcase(prevState: APIData<{}>, data: FormData
 	if (parsedData.data?.description != undefined) dataToUpdated.description = parsedData.data.description;
 	if (parsedData.data?.title != undefined) dataToUpdated.title = parsedData.data.title;
 
-	try
-	{
+	try {
 		await ProjectSpotlightServe.editProjectShowcase(dataToUpdated);
 	}
-	catch (ex)
-	{
+	catch (ex) {
 		console.error(ex);
 		return resError((ex as Error).message);
 	}

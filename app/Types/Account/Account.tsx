@@ -7,6 +7,9 @@ export enum AccountPermission {
 	Admin = "admin"
 }
 
+export const YearsOfStudy = ["Freshman", "Sophomore", "Junior", "Senior", "Graduate", "Faculty", "Professor"] as const;
+export const Departments = ["Engineering and Sciences", "Technology", "Business", "Nursing", "Humanities, Education or Social Sciences"];
+
 export type AccountWithTransactions = Account & { transactions: WalletTransaction[] }
 export type AccountWithPassword = Account & { hashedPassword: string };
 export type AccountWithTwoStepAuthentication = Account & {

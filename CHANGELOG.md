@@ -28,6 +28,40 @@ Insert any changes related to configuring the application's environment variable
 
  -->
 
+## August-06-2025 
+
+Introduced **reregistration**, a new system designed to monitor user activity by requiring them to re-register their accounts within defined academic periods *(e.g., Fall, Spring, Summer)*.
+
+### Release Highlight
+
+- Initial implementation of Reregistration.
+- Until future releases, this information is not displayed on Web.
+
+### Database Changes
+
+A new `ReregistrationSpan` table now defines registration periods, including their start and end dates, as well as descriptive names *(e.g., Summer of 2025, Fall of 2025)*.
+The `ReregistrationSpanEntry` table associates individual user accounts with specific spans.
+
+#### Migration Scripts
+
+```sql
+CREATE TABLE ReregistrationSpan (
+  Id VARCHAR(40) PRIMARY KEY NOT NULL,
+  BeginAt TIMESTAMP NOT NULL,
+  EndAt TIMESTAMP NOT NULL,
+  Name VARCHAR(256) NOT NULL
+);
+
+CREATE TABLE ReregistrationSpanEntry (
+  SpanId VARCHAR(40) REFERENCES ReregistrationSpan(Id) ON DELETE CASCADE ON UPDATE CASCADE,
+  SubmittedAt TIMESTAMP WITH TIME ZONE NOT NULL,
+  AccountEmail VARCHAR(254) REFERENCES Account(Email) ON DELETE CASCADE ON UPDATE CASCADE,
+  YearOfStudy VARCHAR(256) NOT NULL,
+  Department VARCHAR(256) NOT NULL,
+  PRIMARY KEY (SpanId, AccountEmail)
+);
+```
+
 ## January-29-2025
 
 This commit comes with MANY changes and improvements to this service.
