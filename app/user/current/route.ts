@@ -9,6 +9,8 @@ import { login } from "@/app/api/util/AccountHelper";
 import getConfig from "@/app/getConfig";
 import { cookies } from "next/headers";
 import { env } from "process";
+import { resOkData } from "@/app/api/APIResponse";
+import { queryInCompleteReregistration } from "@/app/Types/RegistrationSpan/RegistrationSpanServe";
 
 const envConfig = getConfig();
 
@@ -28,12 +30,17 @@ export async function GET(request: NextRequest)
         return new NextResponse(null, {status: 401});
     }
 
+    const reregistration = await queryInCompleteReregistration(new Date(), currentJWT.email);
+
     // Spot the differences between the JWT and the actual account!
     const isEmailVerificationChanged = currentJWT?.isemailverified != accountDetails?.isEmailVerified;
     const isPermissionChanged = currentJWT.permission != accountDetails?.permission;
     const isBannedChanged = currentJWT.isBanned != accountDetails.isBanned;
             
-    const res = NextResponse.json(accountDetails);
+    const res = NextResponse.json(resOkData({
+        account: accountDetails,
+        reregistration: reregistration?.id
+    }));
 
     if (isEmailVerificationChanged || isPermissionChanged || isBannedChanged)
     {

@@ -7,15 +7,17 @@ import { getJwtPayload, retrieveSafeJWTPayload } from "@/app/api/util/JwtHelper"
 import { cookies } from "next/headers";
 import db from "@/app/api/Database";
 import { hashAndSaltPassword } from "../util/PasswordHelper";
-import Account, { AccountPermission, emailVerificationExpirationDurationInDays } from "@/app/Types/Account/Account";
+import Account, { AccountPermission, emailVerificationExpirationDurationInDays, YearsOfStudy } from "@/app/Types/Account/Account";
 import ActionResponse, { ActionResponsePayload } from "./ActionResponse";
 import { z } from "zod";
 import AccountServe from "@/app/Types/Account/AccountServe";
 import { fundsAdded, sendEmail, verifyEmailTemplate } from "../util/Mail";
 import getConfig from "@/app/getConfig";
-import { APIData, resOkData, resError, resOk } from "../APIResponse";
+import { APIData, resOkData, resError, resOk, resUnauthorized, resAttemptAsync } from "../APIResponse";
 import { addMinutes } from "@/app/utils/TimeUtils";
 import { WalletTransaction, WalletTransactionPaymentMethod, WalletTransactionStatus } from "@/app/Types/Account/Wallet";
+import { RegistrationSpanIDSchema } from "@/app/Types/RegistrationSpan/RegistrationSpan";
+import { recordAccountInRegistrationSpan } from "@/app/Types/RegistrationSpan/RegistrationSpanServe";
 
 const envConfig = getConfig();
 
@@ -53,7 +55,7 @@ const createAccountSchema = z.object({
 	lastName: z.string(),
 	password: z.string(),
 	yearOfStudy: z.string(),
-	department: z.string().optional()
+	department: z.string()
 });
 export async function tryCreateAccount(prevState: string, formData: FormData) {
 	const parsedData = createAccountSchema.safeParse({

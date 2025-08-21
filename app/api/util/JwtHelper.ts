@@ -32,6 +32,7 @@ export const UserJWTSchema = z.object({
 	isemailverified: z.boolean(),
 	isbanned: z.boolean()
 });
+export type RefinedUserJWT = z.infer<typeof UserJWTSchema>;
 
 export async function makeJwt(
 	email: string,
@@ -115,6 +116,34 @@ export async function retrieveSafeJWTPayload(): Promise<UserJWT | null> {
 			//JWT stores their expiration dates in SECONDS, not milliseconds like Javascript Date
 			jwt_expire_date: new Date((jwt.payload.exp ?? 0) * 1000)
 		};
+	} catch (e: any) {
+		console.error(e);
+		return null;
+	}
+}
+
+// TODO: Replace with retrieveSafeJWTPayload to use new retrieveSafeRefinedJWTPayload
+export async function retrieveSafeRefinedJWTPayload(): Promise<RefinedUserJWT | null> {
+	let cookie = cookies().get(appConfig.sessionCookie);
+	if (!cookie) return null;
+
+	try {
+		let jwt = await jose.jwtVerify(
+			cookie.value,
+			new TextEncoder().encode(process.env.JWT_SECRET!)
+		);
+
+		const parsedPayload = UserJWTSchema.safeParse(jwt.payload);
+		if (!parsedPayload.success) {
+			console.error(
+				"JWT payload is invalid!",
+				parsedPayload.error.message
+			);
+			return null;
+		}
+
+		return parsedPayload.data;
+
 	} catch (e: any) {
 		console.error(e);
 		return null;

@@ -1,154 +1,155 @@
-"use server";
+// (Edge runtime)
 
-import "server-only";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import getConfig from "./app/getConfig";
 import { AccountPermission } from "./app/Types/Account/Account";
 import { getJwtPayload, type UserJWT } from "./app/api/util/JwtHelper";
 import farmMiddleware from "./app/api/farm/middleware";
-import modelDownloadMiddleware from "./app/api/download/model/middleware";
-import { cookies, headers } from "next/headers";
 
 const envConfig = getConfig();
 
-export async function middleware(request: NextRequest) {
-	const nextUrl = request.nextUrl.pathname;
-	
-	//allow non-logged in users to access login and create account screens
-	if (
-		nextUrl.startsWith("/api/hooks/stripe") ||
-		nextUrl.startsWith("/favicon.ico") ||
-		nextUrl.startsWith("/robots.txt") ||
-		nextUrl.startsWith("/materials") ||
-		nextUrl.startsWith("/user/login") ||
-		nextUrl.startsWith("/api/login") ||
-		nextUrl.startsWith("/not-found") ||
-		nextUrl.startsWith("/user/create-account") ||
-		nextUrl.startsWith("/user/forgot-password") ||
-		nextUrl.startsWith("/user/banned") ||
-		nextUrl.startsWith("/user/verify-email") ||
-		nextUrl.startsWith("/user/reset-password") ||
-		nextUrl.startsWith("/user/email-verified") ||
-		nextUrl.startsWith("/project-spotlight/") ||
-		nextUrl.startsWith("/api/download/project-showcase-image") ||
-		nextUrl.startsWith("/schedule") ||
-		nextUrl.startsWith("/team") ||
-		nextUrl.startsWith("/user/current") ||
-		nextUrl.startsWith("/assets") ||
-		nextUrl.startsWith("/_next") ||
-		nextUrl === "/"
-	) {
-		return NextResponse.next();
-	}	
+const PUBLIC_PREFIXES = [
+	"/api/hooks/stripe",
+	"/favicon.ico",
+	"/robots.txt",
+	"/materials",
+	"/user/login",
+	"/api/login",
+	"/not-found",
+	"/user/create-account",
+	"/user/forgot-password",
+	"/user/banned",
+	"/user/verify-email",
+	"/user/reset-password",
+	"/user/email-verified",
+	"/project-spotlight/",
+	"/api/download/project-showcase-image",
+	"/schedule",
+	"/team",
+	"/user/current",
+	"/assets",
+	"/_next",
+];
 
-	if (nextUrl.startsWith("/api/farm")) return farmMiddleware(request);
-	
-	//because this is the only way NextJS will allow me to delete cookies before
-	//a GET request to /logout is completed, the logout feature is here.
-	//I could use an API endpoint, but I would prefer to not have both /logout and /api/logout routes
-	if (nextUrl.startsWith("/user/logout")) {
+function isPublicPath(pathname: string) {
+	return pathname === "/" || PUBLIC_PREFIXES.some((p) => pathname.startsWith(p));
+}
+
+function isMaintainerAdminSection(pathname: string) {
+	return (
+		pathname.startsWith("/dashboard/maintainer/printers") ||
+		pathname.startsWith("/dashboard/maintainer/users") ||
+		pathname.startsWith("/dashboard/maintainer/accounting") ||
+		pathname.startsWith("/dashboard/maintainer/reregistration")
+	);
+}
+
+function redirectTo(url: string) {
+	return NextResponse.redirect(envConfig.joinHostURL(url));
+}
+
+export async function middleware(request: NextRequest) {
+	const pathname = request.nextUrl.pathname;
+
+	// Public paths
+	if (isPublicPath(pathname)) return NextResponse.next();
+
+	// Farm API delegates to its own middleware
+	if (pathname.startsWith("/api/farm")) return farmMiddleware(request);
+
+	// Logout: clear session then send home
+	if (pathname.startsWith("/user/logout")) {
 		const res = NextResponse.redirect(envConfig.hostURL);
-		// Delete session cookie from response.
 		res.cookies.delete(envConfig.sessionCookie);
-		
 		return res;
 	}
 
-	try
-	{
-		const sessionUpdate = (await fetch(envConfig.joinHostURL("/user/current"), { headers: headers(), method: "GET", cache: "no-cache" }))?.headers?.getSetCookie()?.at(0);
-	
-		if (sessionUpdate)
-		{	
-			console.log("Updated session token!");			
+	// Session sync and reregistration gate
+	try {
+		// Forward incoming cookies to the server so it can refresh session if needed
+		const cookieHeader = request.headers.get("cookie") ?? "";
+		const current = await fetch(envConfig.joinHostURL("/user/current"), {
+			headers: { cookie: cookieHeader },
+			method: "GET",
+			cache: "no-store",
+		});
 
-			// Redirect to the current page with new cookies to respect middleware.
-			const res = NextResponse.redirect(envConfig.joinHostURL(nextUrl));
-			res.headers.set("Set-Cookie", sessionUpdate);
+		if (current.status !== 200) {
+			throw new Error("Failed to refresh account/session state.");
+		}
+
+		// If server issued a new session cookie, replay the request with it
+		const setCookie = current.headers.getSetCookie()?.at(0);
+		if (setCookie) {
+			const res = NextResponse.redirect(envConfig.joinHostURL(pathname));
+			res.headers.set("Set-Cookie", setCookie);
 			return res;
 		}
-	}
-	catch (sessionUpdateError)
-	{
-		console.error("Failed to fetch new session information!", sessionUpdateError);
-	}
 
-	//check if JWT exists and is valid
-	let jwtPayload: UserJWT;
-	try 
-	{
-		jwtPayload = await getJwtPayload();
+		const json = await current.json();
 
-		if (jwtPayload == null) throw new Error("No JWT Exists");
-	} 
-	catch (e) 
-	{
-		return NextResponse.redirect(envConfig.joinHostURL("/user/login"));
+		// If server requires re-registration, hard-gate here
+		if (typeof json?.reregistration === "string" && !pathname.startsWith("/user/reregistration/")) {
+			return redirectTo(`/user/reregistration/${json.reregistration}`);
+		}
+
+	} catch (err) {
+		console.error(err);
+		const res = NextResponse.redirect(
+			envConfig.joinHostURL(`/user/login?redirect=${encodeURIComponent(envConfig.joinHostURL(pathname).toString())}&reason=Your session has been invalidated.`)
+		);
+		res.cookies.delete(envConfig.sessionCookie);
+		return res;
 	}
 
-	// if (jwtPayload.isBanned && !(nextUrl.startsWith("/user/profile") && request.method == "GET"))
-	if (jwtPayload.isBanned)
-	{
-		// User is not longer able to access the Additive Manufacturing Service.
-		return NextResponse.redirect(envConfig.joinHostURL("/user/banned"));
+	// AuthZ: require valid JWT
+	let jwt: UserJWT;
+	try {
+		jwt = await getJwtPayload();
+		if (!jwt) throw new Error("Missing JWT");
+	} catch {
+		return redirectTo("/user/login");
 	}
 
-	if (
-		nextUrl.startsWith("/experiments") &&
-		jwtPayload.permission === AccountPermission.User
-	) {
-		return NextResponse.redirect(envConfig.joinHostURL("/not-found"));
+	// Ban gate (no exceptions)
+	if (jwt.isBanned) {
+		return redirectTo("/user/banned");
 	}
 
-	const permission = jwtPayload.permission as AccountPermission;
+	// Experiments: only non-basic roles
+	if (pathname.startsWith("/experiments") && jwt.permission !== AccountPermission.Admin) {
+		return redirectTo("/not-found");
+	}
 
-	// const account = await AccountServe.queryByEmail(jwtPayload.email)!;
-	// if (account == undefined)
-	// {
-	// 	await logout();
-	// 	return NextResponse.redirect(new URL("", request.url));
-	// }
+	// Email verification gate (allow-list a few pages)
+	const isVerificationRoute =
+		pathname.startsWith("/user/verify-email") ||
+		pathname.startsWith("/user/not-verified") ||
+		pathname.startsWith("/user/profile");
 
-	// TODO: CHECK IF BLACKLISTED
-	if (!jwtPayload.isemailverified) {
-		if (
-			nextUrl.startsWith("/user/verify-email") ||
-			nextUrl.startsWith("/user/not-verified") ||
-			nextUrl.startsWith("/user/profile")
-		) {
-			// Allow these pages
-		} else {
-			return NextResponse.redirect(
-				envConfig.joinHostURL("/user/not-verified")
-			);
+	if (!jwt.isemailverified) {
+		if (!isVerificationRoute) {
+			return redirectTo("/user/not-verified");
 		}
 	} else if (
-		nextUrl.startsWith("/user/not-verified") ||
-		nextUrl.startsWith("/user/verify-email")
+		pathname.startsWith("/user/not-verified") ||
+		pathname.startsWith("/user/verify-email")
 	) {
 		return NextResponse.redirect(envConfig.hostURL);
 	}
 
-	//automatically force redirect to correct dashboard
+	// Normalize dashboard landing by role
 	if (
-		nextUrl.startsWith(`/dashboard/${AccountPermission.Maintainer}`) &&
-		permission === AccountPermission.User
+		pathname.startsWith(`/dashboard/${AccountPermission.Maintainer}`) &&
+		jwt.permission === AccountPermission.User
 	) {
-		return NextResponse.redirect(
-			envConfig.joinHostURL(`/dashboard/${AccountPermission.User}`)
-		);
+		return redirectTo(`/dashboard/${AccountPermission.User}`);
 	}
 
-	//automatically force redirect to correct dashboard
-	if ((nextUrl.startsWith("/dashboard/maintainer/printers") 
-		|| nextUrl.startsWith("/dashboard/maintainer/users")
-		|| nextUrl.startsWith("/dashboard/maintainer/accounting")) 
-		&& permission !== AccountPermission.Admin
-	) {
-		return NextResponse.redirect(
-			envConfig.joinHostURL(`/dashboard/${permission}`)
-		);
+	// Maintainer/Admin sections must not be accessed by plain users
+	if (isMaintainerAdminSection(pathname) && jwt.permission !== AccountPermission.Admin) {
+		return redirectTo(`/dashboard/${jwt.permission}`);
 	}
 
 	return NextResponse.next();
