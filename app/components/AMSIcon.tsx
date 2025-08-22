@@ -5,9 +5,8 @@ export default function AMSIcon() {
 		<Image
 			loading="eager"
 			src={"/assets/logo.svg"}
-			width={480}
-			height={480}
-			style={{ aspectRatio: "1 / 1" }}
+			width={320}
+			height={320}
 			alt="Logo"
 			className="w-28"></Image>
 	);

@@ -8,7 +8,7 @@ import Image from "next/image";
 import { ProgressBar } from "@/app/components/ProgressBar";
 import { RiCoupon2Fill } from "react-icons/ri";
 import { useEffect, useRef, useState } from "react";
-import { YearsOfStudy } from "@/app/Types/Account/Account";
+import { Departments, YearsOfStudy } from "@/app/Types/Account/Account";
 
 function SubmitButton() {
 	const { pending } = useFormStatus();
@@ -83,27 +83,14 @@ export default function CreateAccount() {
 						</div>
 						<label>Year of Study</label>
 						<select title="Year of Study" required id="year-of-study" name="year-of-study" className="w-full block lg:text-sm">
+							<option disabled>Select your Year of Study</option>
 							{YearsOfStudy.map(y => <option value={y} id={y}>{y}</option>)}
 						</select>
 
 						<label>Primary College</label>
 						<select title="Department" id="department" name="department" className="w-full block lg:text-sm">
-							<option>Select your College</option>
-							<option value="Engineering and Sciences" id="Engineering and Sciences">
-								Engineering and Sciences
-							</option>
-							<option value="Technology" id="Technology">
-								Technology
-							</option>
-							<option value="Business" id="Business">
-								Business
-							</option>
-							<option value="Nursing" id="Nursing">
-								Nursing
-							</option>
-							<option value="Humanities, Education and Social Sciences" id="Humanities, Education and Social Sciences">
-								Humanities, Education and Social Sciences
-							</option>
+							<option disabled>Select your College</option>
+							{Departments.map(d => <option key={d} value={d} id={d}>{d}</option>)}
 						</select>
 
 						<Input

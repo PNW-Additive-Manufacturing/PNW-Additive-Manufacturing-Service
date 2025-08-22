@@ -60,17 +60,17 @@ export async function queryAllRegistrationSpans() {
     return (await db`SELECT * FROM ReregistrationSpan ORDER BY EndAt DESC`).map(q => parseRegistrationSpanFromSQL(q));
 }
 
-export async function recordAccountInRegistrationSpan(spanID: RegistrationSpan["id"], accountEmail: string, yearOfStudy: string, department: string): Promise<boolean> {
+export async function recordAccountInRegistrationSpan(spanID: RegistrationSpan["id"], accountEmail: string, yearOfStudy: string, department: string): Promise<void> {
     try {
         await db`INSERT INTO ReregistrationSpanEntry (SpanId, AccountEmail, YearOfStudy, Department, SubmittedAt) 
                                               VALUES (${spanID}, ${accountEmail}, ${yearOfStudy}, ${department}, ${new Date()})`;
 
-        return true;
+        return;
     }
     catch (error) {
         // PostgreSQL error code for a duplicate key violation
         if ((error as PostgresError)?.code === "23505") {
-            return true;
+            return;
         }
         else {
             throw error;

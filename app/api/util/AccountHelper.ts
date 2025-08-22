@@ -11,6 +11,7 @@ import { AccountPermission } from "@/app/Types/Account/Account";
 import DOMPurify from "isomorphic-dompurify";
 import getConfig from "@/app/getConfig";
 import { addMinutes } from "@/app/utils/TimeUtils";
+import { queryAccountReregistration, queryInCompleteReregistration, recordAccountInRegistrationSpan } from "@/app/Types/RegistrationSpan/RegistrationSpanServe";
 
 const appConfig = getConfig();
 
@@ -21,7 +22,7 @@ export async function createAccount(
 	password: string,
 	permission: AccountPermission,
 	yearOfStudy: string,
-	department?: string
+	department: string
 ) {
 	firstName = DOMPurify.sanitize(firstName.trim());
 	lastName = DOMPurify.sanitize(lastName.trim());
@@ -44,7 +45,7 @@ export async function createAccount(
 		res = await db.begin(async (db) => {
 			const accountRow =
 				await db`insert into account (email, firstname, lastname, password, yearOfStudy, department, permission)
-      			values (${email}, ${firstName}, ${lastName}, ${hash}, ${yearOfStudy}, ${department!}, ${permission})`;
+      			values (${email}, ${firstName}, ${lastName}, ${hash}, ${yearOfStudy}, ${department}, ${permission})`;
 
 			const verificationCode = crypto.randomBytes(16).toString("hex");
 			await db`insert into accountverificationcode (accountemail, code) VALUES (${email}, ${verificationCode})`;
@@ -64,6 +65,22 @@ export async function createAccount(
 
 	if (res.count === 0) {
 		throw new Error("Failed to add new user!");
+	}
+
+	try
+	{
+		// Attempt to register them to any "Reregistration periods/span".
+		// This enhances UX as the website won't immediately ask them to provide the same information.
+		const reregistrationTodo = await queryInCompleteReregistration(new Date(), email);
+
+		if (reregistrationTodo)
+		{
+			await recordAccountInRegistrationSpan(reregistrationTodo.id, email, yearOfStudy, department);
+		}
+	}
+	catch (ex)
+	{
+		console.error(`Failed to reregister new account ${email}`, ex);
 	}
 
 	return await login(
