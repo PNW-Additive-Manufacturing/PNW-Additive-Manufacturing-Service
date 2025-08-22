@@ -160,7 +160,7 @@ export function Navbar({
 							<div className="hidden xl:flex items-end justify-end tracking-wider gap-4 overflow-x-hidden">
 								<Link
 									href="/">
-									<Image className="w-10" src={"/assets/am_cropped.png"} alt={"Additive Manufacturing"} width={194} height={130} priority={true}></Image>
+									<Image loading={"eager"} className="w-10" src={"/assets/am_cropped.png"} alt={"Additive Manufacturing"} style={{ aspectRatio: "194 / 130" }} width={194} height={130} priority={true}></Image>
 									{/* <div className="text-nowrap text-xl tracking-wide flex-fit">
 										<span className="text-pnw-gold">PNW </span>
 										<span>Additive Manufacturing</span>

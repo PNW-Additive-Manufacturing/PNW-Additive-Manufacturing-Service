@@ -3,6 +3,7 @@ import Image from "next/image";
 export default function AMSIcon() {
 	return (
 		<Image
+			loading="eager"
 			src={"/assets/logo.svg"}
 			width={480}
 			height={480}
