@@ -1,6 +1,7 @@
 import Image from "next/image";
 import HorizontalWrap from "../components/HorizontalWrap";
 import QRCode from "react-qr-code";
+import AMImage from "../components/AMImage";
 
 function Card({
 	name,
@@ -18,12 +19,7 @@ function Card({
 	return (
 		<div
 			className="bg-white rounded-md shadow-sm p-4 xl:flex gap-3 out">
-			<Image
-				className="rounded-md w-32 h-32 max-xl:mx-auto"
-				src={avatar}
-				width={640}
-				height={640}
-				alt="Profile Picture"></Image>
+			<AMImage src={avatar} width={480} height={480} alt="Profile Picture" className="rounded-md w-32 h-32" />
 			<br />
 			<div className="xl:pr-6 pb-4 py-2 max-xl:mx-auto w-fit">
 				<h2 className="text-xl text-wrap">{name}</h2>

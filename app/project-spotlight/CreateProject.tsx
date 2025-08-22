@@ -23,7 +23,7 @@ export function CreateProject() {
                 <HiddenInput onChange={(ev) => setInputImage(URL.createObjectURL(ev))} id="image" name="image" type="file" accept="image/jpeg" required>
                     {inputImage == undefined
                         ? <div className="bg-gray-200 rounded-b-none rounded-t-sm flex items-center justify-center h-40">Click to upload Image</div>
-                        : <Image className="bg-background shadow-sm rounded-b-none rounded-t-sm" style={{ aspectRatio: "2/0.75" }} src={inputImage} alt={"Image"} width={720} height={720}></Image>}
+                        : <Image className="bg-background shadow-sm rounded-b-none rounded-t-sm" style={{ aspectRatio: "72 / 35", objectFit: "cover" }} src={inputImage} alt={"Image"} width={720} height={350}></Image>}
                 </HiddenInput>
 
                 <div className="p-6">

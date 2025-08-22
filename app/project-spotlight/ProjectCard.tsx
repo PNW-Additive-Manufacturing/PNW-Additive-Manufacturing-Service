@@ -11,6 +11,7 @@ import { useFormState } from "react-dom";
 import { deleteProjectShowcase, editProjectShowcase } from "../api/server-actions/maintainer";
 import { toast } from "react-toastify";
 import DropdownSection from "../components/DropdownSection";
+import AMImage from "../components/AMImage";
 
 // export function ProjectCard(projectData: ProjectSpotlightWithAttachments) {
 export function ProjectCard({ projectData, editable, style }: { projectData: ProjectSpotlight, editable: boolean, style: "normal" | "compact" }) {
@@ -41,9 +42,9 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
         </tr>
     }
 
-    return <div className="rounded-md relative" key={projectData.id}>
+    return <div className="rounded-md" key={projectData.id}>
 
-        {imageSrc && <Image className="bg-background shadow-sm rounded-b-none rounded-t-md max-lg:w-full" style={{ aspectRatio: "2/0.75" }} src={imageSrc} alt={"Image"} width={720} height={720}></Image>}
+        {imageSrc && <AMImage src={imageSrc} alt={"Project Image"} className="shadow-sm rounded-b-none max-lg:w-full mt-0 pt-0" width={720} height={350} />}
 
         <div className="p-6">
             {isEditing ? (

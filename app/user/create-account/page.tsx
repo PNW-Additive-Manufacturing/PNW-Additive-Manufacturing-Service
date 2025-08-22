@@ -50,6 +50,7 @@ export default function CreateAccount() {
 					width={400}
 					height={400}
 					alt="Logo"
+					priority={true}
 					className="w-1/4 lg:mx-auto mb-4"></Image>
 				<h1 className="text-xl lg:mx-auto font-normal w-fit">
 					Sign up for Additive Manufacturing Service

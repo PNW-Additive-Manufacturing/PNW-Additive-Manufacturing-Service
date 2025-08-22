@@ -311,3 +311,8 @@ div.Toastify__toast-icon
   border: solid 1.5px #e5e7eb;
   border-radius: 0.32rem;
 }
+
+.react-loading-skeleton /* Fix for react-loading-skeleton  */
+{
+  top: -4px;
+}

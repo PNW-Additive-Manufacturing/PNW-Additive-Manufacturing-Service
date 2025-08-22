@@ -8,6 +8,7 @@ import FilamentServe from "../Types/Filament/FilamentServe";
 import Image from "next/image";
 import Filament from "../Types/Filament/Filament";
 import DropdownSection from "../components/DropdownSection";
+import AMImage from "../components/AMImage";
 
 const materialMapping: Record<string, { coverUrl?: string, hint?: string }> = {
     "17-4PH Stainless Steel":
@@ -94,7 +95,11 @@ export default async function Materials() {
                                         const filamentsOfMaterial = filaments.filter(f => f.material == m.material && f.inStock);
 
                                         return <div className="flex max-lg:flex-col gap-6 ">
-                                            {materialMapping[m.material]?.coverUrl != undefined && <Image className="max-lg:w-full w-40 h-auto rounded-md object-cover shadow-md" src={materialMapping[t.material]?.coverUrl as string} alt={t.technology} width={480} height={480} />}
+                                            {materialMapping[m.material]?.coverUrl != undefined && <div className="shadow-md">
+
+                                                <AMImage className="max-lg:w-full w-40 h-auto rounded-md" src={materialMapping[t.material]?.coverUrl as string} alt={t.technology} width={240} height={480} />
+
+                                            </div>}
 
                                             <div className="flex flex-col justify-between">
                                                 <div>

@@ -1,5 +1,6 @@
-import "./globals.css";
+import 'react-loading-skeleton/dist/skeleton.css';
 import 'react-toastify/dist/ReactToastify.css';
+import "./globals.css";
 import type { Metadata, ResolvingMetadata } from "next";
 import { Inter } from "next/font/google";
 import { getJwtPayload, makeJwt, UserJWT } from "./api/util/JwtHelper";

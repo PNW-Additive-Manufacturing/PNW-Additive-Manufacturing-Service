@@ -12,6 +12,7 @@ import {
 import { useFormState } from "react-dom";
 import { markAsEmpty } from "../api/farm/FarmActions";
 import FormLoadingSpinner from "./FormLoadingSpinner";
+import AMImage from "./AMImage";
 
 export interface MachineData {
 	model: string;
@@ -66,13 +67,12 @@ export function MachineIndicator(machinedData: MachineData) {
 				style={{ backgroundColor: "#efefef" }}
 				className="rounded-md flex flex-col justify-between">
 				<div className="w-full h-full">
-					<Image
+					<AMImage
 						src={getMachineImageURL(machinedData.model)}
 						alt={`${machinedData.model} cover`}
-						width={720}
-						height={720}
-						className="w-full h-full object-contain rounded-lg"
-					/>
+						width={180}
+						height={180}
+						className="rounded-lg" />
 				</div>
 				{(machinedData.identifier ?? machinedData.model) != "" && <div>
 					<p className="text-center text-sm font-medium m-0 p-0 pb-2 mb-1 text-wrap px-1">

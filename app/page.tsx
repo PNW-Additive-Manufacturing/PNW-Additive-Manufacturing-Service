@@ -10,6 +10,7 @@ import ProjectSpotlightServe from "./Types/ProjectSpotlight/ProjectSpotlightServ
 import { ProjectCard } from "./project-spotlight/ProjectCard";
 import { MdOutlineExplore } from "react-icons/md";
 import { FaArrowRightLong, FaChevronRight } from "react-icons/fa6";
+import AMImage from "./components/AMImage";
 
 // function DiscordServer() {
 // 	return (
@@ -299,7 +300,7 @@ export default async function Home() {
 								<div className="bg-background p-4 w-full rounded-md">
 									<div className="w-full text-sm">
 										<div className="px-10 max-lg:hidden">
-											<Image priority src="/assets/bambu_x1e_with_ams.png" alt="Bambu Lab A1 3D Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom" style={{ aspectRatio: "3/4" }} />
+											<AMImage src="/assets/bambu_x1e_with_ams.png" alt="Bambu Lab A1 3D Printer" width={388} height={517} className="mb-4" />
 										</div>
 										<h2 className="text-lg font-semibold">Classical FDM Printing</h2>
 										<p className="mt-2">Perfect for prototyping medium-strength parts, offering a cost-effective solution for functional prototypes and design testing.</p>
@@ -309,7 +310,7 @@ export default async function Home() {
 								<div className="bg-background p-4 w-full rounded-md">
 									<div className="w-full text-sm">
 										<div className="px-10 max-lg:hidden">
-											<Image priority src="/assets/mars4ultra.png" alt="Mars 4 Ultra Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom" style={{ aspectRatio: "3/4" }} />
+											<AMImage src="/assets/mars4ultra.png" alt="Mars 4 Ultra Printer" width={388} height={517} className="mb-4" />
 										</div>
 										<h2 className="text-lg font-semibold">Precise Resin Printing</h2>
 										<p className="mt-2">Optimal for creating detailed and smooth-surfaced models, ideal for small intricate parts.</p>
@@ -319,7 +320,7 @@ export default async function Home() {
 								<div className="bg-background p-4 w-full rounded-md">
 									<div className="w-full text-sm">
 										<div className="px-10 max-lg:hidden">
-											<Image priority src="/assets/metalx.png" alt="Metal X Printer" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom" style={{ aspectRatio: "3/4" }} />
+											<AMImage src="/assets/metalx.png" alt="Metal X Printer" width={388} height={517} className="mb-4" />
 										</div>
 										<h2 className="text-lg font-semibold">Markforged Metal X</h2>
 										<p className="mt-2">Looking for Funding</p>
@@ -331,7 +332,7 @@ export default async function Home() {
 								<div className="bg-background p-4 w-full rounded-md">
 									<div className="w-full text-sm">
 										<div className="px-10 max-lg:hidden">
-											<Image priority src="/assets/fuse_1_store_thumb_2x_1.png" alt="FormLabs Fuse 1+ 30W" width={720} height={720} className="rounded-md mb-4 object-cover object-bottom" style={{ aspectRatio: "3/4" }} />
+											<AMImage src="/assets/fuse_1_store_thumb_2x_1.png" alt="FormLabs Fuse 1+ 30W" width={388} height={517} className="mb-4" />
 										</div>
 										<h2 className="text-lg font-semibold">SLS Fuse 1+ 30W</h2>
 										<p className="mt-2">Looking for Funding</p>
