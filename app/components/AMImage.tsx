@@ -4,8 +4,9 @@ import { useCallback, useRef, useState } from 'react';
 import Image from 'next/image';
 import classNames from 'classnames';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { AnimatePresence, motion } from 'motion/react';
 
-export default function AMImage({ src, alt, width, height, priority, className }: { src: string, alt: string, width: number, height: number, priority?: boolean, className?: string }) {
+export default function AMImage({ src, alt, width, height, priority, className }: { src: string, alt: string, width: number, height: number, skeleton?: boolean, priority?: boolean, className?: string }) {
 
     if (priority === undefined) priority = false;
 
@@ -19,29 +20,38 @@ export default function AMImage({ src, alt, width, height, priority, className }
 
         <div className={classNames("relative", className)} style={{ aspectRatio: width / height }}>
 
-            <Image
-                src={src}
-                alt={alt}
-                width={width}
-                height={height}
-                priority={priority}
-                loading={"lazy"}
-                style={{ aspectRatio: width / height }}
-                className={classNames({ "invisible": isLoading }, "object-cover absolute", className)}
-                onLoad={onImageLoaded}
-                onError={onImageFailed} />
+            <AnimatePresence>
 
-            {isLoading && <>
+                <motion.div key="image" initial={{ opacity: 0 }} animate={isLoading ? { opacity: 0 } : { opacity: 1 }}>
 
-                <div className="absolute w-full h-full">
+                    <Image
+                        src={src}
+                        alt={alt}
+                        width={width}
+                        height={height}
+                        priority={priority}
+                        loading={"lazy"}
+                        style={{ aspectRatio: width / height }}
+                        className={classNames({ "invisible": isLoading }, "object-cover absolute", className)}
+                        onLoad={onImageLoaded}
+                        onError={onImageFailed} />
 
-                    <SkeletonTheme enableAnimation={true}>
-                        <Skeleton className={classNames("w-full h-full", className)} />
-                    </SkeletonTheme>
+                </motion.div>
 
-                </div>
+                {isLoading && <>
 
-            </>}
+                    <motion.div key="skeleton" className="absolute w-full h-full" transition={{ duration: 0.25 }} initial={{ opacity: 0.5 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+
+                        <SkeletonTheme enableAnimation={true}>
+                            <Skeleton className={classNames("w-full h-full", className)} />
+                        </SkeletonTheme>
+
+                    </motion.div>
+
+                </>}
+
+            </AnimatePresence>
+
 
         </div>
 
