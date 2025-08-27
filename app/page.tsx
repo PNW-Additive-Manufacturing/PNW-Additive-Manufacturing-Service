@@ -76,7 +76,7 @@ export default async function Home() {
 
 				<HorizontalWrap className="my-14">
 					<div className="xl:flex justify-center gap-10 lg:m-0 lg:text-center">
-						<div className="w-fit mb-2">
+						<div className="w-fit mb-2 mt-2">
 							<h1 className="w-fit mb-4 text-3xl font-normal lg:text-center mx-auto">
 								{/* <span>Welcome to the</span> */}
 								<span className="font-bold text-center">
