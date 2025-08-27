@@ -29,19 +29,18 @@ export async function generateMetadata(
 ): Promise<Metadata> {
 	return Promise.resolve({
 		metadataBase: new URL(envConfig.hostURL),
-		title: {
-			template: "%s | AMS of PNW",
-			default: "PNW Additive Manufacturing Service"
-		},
+		title: "PNW Additive Manufacturing Service",
 		description:
 			"Created by the PNW Additive Manufacturing Club, this service enables PNW students, and faculty members to explore the world of 3D Printing.",
-		icons: ["/assets/am_logo.png"],
-		applicationName: "Purdue Northwest Additive Manufacturing Service",
+		icons: ["/assets/am_logo_light.png"],
+		applicationName: "PNW Additive Manufacturing Service",
 		category: "3D Printing",
 		openGraph: {
 			type: "website",
-			siteName: "Purdue Northwest Additive Manufacturing Service",
-			images: [`${envConfig.hostURL}/assets/am_banner.png`]
+			title: "PNW Additive Manufacturing Service",
+			images: [`${envConfig.hostURL}/assets/am_logo_light.png`],
+			description: "Created by the PNW Additive Manufacturing Club, this service enables PNW students, and faculty members to explore the world of 3D Printing.",
+			locale: "en_US"
 		}
 	});
 }
@@ -69,7 +68,6 @@ export default async function RootLayout({
 				<title>PNW Additive Manufacturing Service</title>
 				<link rel="preconnect" href="https://fonts.gstatic.com" />
 				<link rel="preload" href="/assets/logo.svg" as="image" />
-				<link rel="preload" href="/assets/am_cropped.png" as="image" />
 				<link
 					href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
 					rel="stylesheet"

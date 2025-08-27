@@ -20,9 +20,6 @@ export function CompanyLabelAndContact() {
                     <Text style={{ color: '#b1810b' }}>PNW</Text> Additive Manufacturing Service
                 </Text>
             </View>
-            {/* <View style={{ width: "50px", height: "50px" }}>
-                <Image  src="/assets/am_cropped.png" />
-            </View> */}
         </View>
 
         <View style={globalPDFStyles.infoSection}>

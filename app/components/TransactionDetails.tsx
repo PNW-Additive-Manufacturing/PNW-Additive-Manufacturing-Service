@@ -25,7 +25,6 @@ export default function TransactionDetails({ transaction }: { transaction: Walle
                         Additive Manufacturing Service
                     </div>
                     <div className="w-10">
-                        <Image src={"/assets/am_cropped.png"} alt={"Additive Manufacturing"} width={480} height={480}></Image>
                     </div>
                 </h1>
 
