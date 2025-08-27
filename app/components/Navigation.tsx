@@ -47,7 +47,7 @@ function NavbarLink({
 		<Link
 			onClick={onClick}
 			href={path}
-			className="rounded-md whitespace-nowrap xl:rounded-none text-base w-full p-4 xl:p-0 bg-gray-100 sm:bg-transparent xl:w-fit border-b-4 offset border-b-black border-opacity-5 hover:text-pnw-gold hover:border-b-pnw-gold hover:border-opacity-100 active:text-pnw-gold">
+			className="rounded-md whitespace-nowrap xl:rounded-none text-base w-full p-3 xl:p-0 bg-gray-100 sm:bg-transparent xl:w-fit offset border-b-black border-opacity-5 hover:text-pnw-gold hover:border-b-pnw-gold hover:border-opacity-100 active:text-pnw-gold" style={{ fontSize: "16px" }}>
 			{name}
 		</Link>
 	);
@@ -108,7 +108,7 @@ export function AccountDetails({
 export function ColorfulRequestPrintButton() {
 	return (
 		<Link href={"/request-part"}>
-			<button className="w-fit px-3.5 py-1.5 mb-0 text-sm bg-white outline-2 text-pnw-gold fill-pnw-gold outline outline-pnw-gold tracking-wider font-bold uppercase shadow-sm">
+			<button className="px-3.5 py-1.5 mb-0 text-sm bg-white outline-2 text-pnw-gold fill-pnw-gold outline outline-pnw-gold tracking-wider font-bold uppercase shadow-sm">
 				Start Printing
 				{/* <RegularArrowRight className="inline ml-2 mb-0.5" /> */}
 			</button>
@@ -271,13 +271,13 @@ export function Navbar({
 
 export function Footer(): JSX.Element {
 	return (
-		<div className="bg-cool-black w-full h-fit shadow-2xl">
-			<HorizontalWrap className="py-6">
-				<div className="inline-block">
+		<div className="bg-black w-full h-fit shadow-2xl">
+			<HorizontalWrap className="py-12 flex flex-col gap-6 md:gap-12 md:flex-row">
+				<div>
 					<p className="font-bold text-gray-100 text-sm">About Us</p>
-					<a href="/team" className="text-gray-300 my-2 text-xs">
+					<Link href="/team" className="text-gray-300 my-2 text-xs">
 						Our Team
-					</a>
+					</Link>
 					<br />
 					<a
 						className="text-gray-300 my-2 text-xs"
@@ -291,7 +291,7 @@ export function Footer(): JSX.Element {
 						Pickup Schedule
 					</Link>
 				</div>
-				<div className="inline-block mx-6">
+				<div>
 					<p className="font-bold text-gray-100 text-sm">
 						Get in Touch
 					</p>
@@ -310,12 +310,11 @@ export function Footer(): JSX.Element {
 						className="text-gray-300 my-2 text-xs">
 						Visit GitHub
 					</a>
-					<br />
-					<a
-						className="text-gray-300 my-2 text-xs"
-						href="mailto:jung416@pnw.edu">
-						jung416@pnw.edu
-					</a>
+				</div>
+				<div>
+					<p className="text-gray-300 text-xs">
+						Developed by <a href="mailto:jung416@pnw.edu">Aaron F Jung</a>.
+					</p>
 				</div>
 			</HorizontalWrap>
 		</div>
