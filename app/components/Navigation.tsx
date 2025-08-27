@@ -156,8 +156,8 @@ export function Navbar({
 				<HorizontalWrap>
 					{/* <div className="w-full px-6 py-3"> */}
 					<nav className="h-full max-xl:flex overflow-x-clip w-full items-center align-middle">
-						<div className="hidden xl:flex justify-between items-center gap-8">
-							<div className="hidden xl:flex items-end justify-end tracking-wider gap-4 overflow-x-hidden">
+						<div className="hidden xl:flex justify-between items-center align-middle gap-8">
+							<div className="hidden xl:flex items-center justify-end tracking-wider gap-4 overflow-x-hidden">
 								<Link
 									href="/">
 									<Image loading={"eager"} className="w-10" src={amImageIconLightCropped} alt={""} priority={true} />
