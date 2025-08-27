@@ -107,13 +107,12 @@ export function AccountDetails({
 
 export function ColorfulRequestPrintButton() {
 	return (
-		<a
-			href="/request-part/"
-			className="bg-gradient-linear-pnw-mystic text-center tracking-wide text-sm whitespace-nowrap font-medium rounded-md bottom-0 h-fit bg-gray-100 flex items-center gap-2 py-1.5 px-3">
-			{/* <RegularCart className="inline w-5 h-5 fill-cool-black" /> */}
-			Upload Models
-			<TbCube3dSphere className="fill-cool-black" style={{ width: "21px", height: "21px" }} />
-		</a>
+		<Link href={"/request-part"}>
+			<button className="w-fit px-3.5 py-1.5 mb-0 text-sm bg-white outline-2 text-pnw-gold fill-pnw-gold outline outline-pnw-gold tracking-wider font-bold uppercase shadow-sm">
+				Start Printing
+				{/* <RegularArrowRight className="inline ml-2 mb-0.5" /> */}
+			</button>
+		</Link>
 	);
 }
 

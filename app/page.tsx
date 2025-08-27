@@ -110,7 +110,7 @@ export default async function Home() {
 								<div className="flex flex-wrap items-center gap-4">
 									<Link href={"/request-part"}>
 										<button className="w-fit px-3.5 py-2.5 mb-0 text-sm bg-white outline-2 text-pnw-gold fill-pnw-gold outline outline-pnw-gold tracking-wider font-bold uppercase shadow-sm">
-											Get Printing
+											Start Printing
 											<RegularArrowRight className="inline ml-2 mb-0.5" />
 										</button>
 									</Link>
