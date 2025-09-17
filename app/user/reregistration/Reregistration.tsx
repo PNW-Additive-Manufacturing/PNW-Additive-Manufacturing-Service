@@ -8,10 +8,10 @@ import { AnimatePresence, motion } from "motion/react";
 import { useMemo, useState } from "react";
 import { actionRegisterAccountToReregistrationSpan } from "./actions";
 
-export default function Reregistration({ registration }: { registration: RegistrationSpan }) {
+export default function Reregistration({ registration, name }: { registration: RegistrationSpan, name: string }) {
 
     const [isRegistered, setIsRegistered] = useState(false);
-    const randomTitle = useMemo(() => getRandomWelcome("Aaron Jung"), []);
+    const randomTitle = useMemo(() => getRandomWelcome(name), []);
 
     return <>
 

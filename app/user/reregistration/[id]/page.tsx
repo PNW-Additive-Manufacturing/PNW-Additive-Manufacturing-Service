@@ -20,7 +20,7 @@ export default async function Page({ params: { id } }: { params: Record<string, 
 
         <HorizontalWrap className="py-8">
             <div className="w-full lg:w-1/3 lg:mx-auto shadow-mdk">
-                {spanAccountEntry.entry !== null ? <>You have already registered!</> : <Reregistration registration={spanAccountEntry} />}
+                {spanAccountEntry.entry !== null ? <>You have already registered!</> : <Reregistration registration={spanAccountEntry} name={JWT.firstname} />}
             </div>
         </HorizontalWrap>
 
