@@ -15,7 +15,7 @@ function isMonthInRange(month: number, [start, end]: readonly [number, number]):
 }
 
 function getSemesterName(date: Date): SemesterName {
-    const month = date.getUTCMonth() + 1;
+    const month = date.getUTCMonth();
 
     if (isMonthInRange(month, SEMESTER_RANGES.FALL)) return "fall";
     if (isMonthInRange(month, SEMESTER_RANGES.SPRING)) return "spring";
