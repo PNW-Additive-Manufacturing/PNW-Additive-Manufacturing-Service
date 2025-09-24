@@ -1,69 +1,30 @@
-"use server";
-
-import Image from "next/image";
+import { StaticImageData } from "next/image";
 import HorizontalWrap from "./components/HorizontalWrap";
-import Gallery from "./components/Gallery";
 import Link from "next/link";
-import { AvailabilityText } from "./components/LocalSchedule";
-import { RegularArrowRight, RegularDiamondAlt, RegularDiamondShape, RegularPackage, RegularPointerRight } from "lineicons-react";
+import { RegularArrowRight, RegularDiamondAlt } from "lineicons-react";
 import ProjectSpotlightServe from "./Types/ProjectSpotlight/ProjectSpotlightServe";
 import { ProjectCard } from "./project-spotlight/ProjectCard";
-import { MdOutlineExplore } from "react-icons/md";
-import { FaArrowRightLong, FaChevronRight } from "react-icons/fa6";
+import { FaChevronRight } from "react-icons/fa6";
 import AMImage from "./components/AMImage";
 
-// function DiscordServer() {
-// 	return (
-// 		<a
-// 			href="https://discord.gg/YtrnzPAfpV"
-// 			target="_blank"
-// 			className="group text-white bg-cool-black text-sm px-4 py-2 flex gap-2 items-center w-fit h-fit rounded-md shadow-sm">
-// 			Talk with us on Discord
-// 			<Image
-// 				className="w-auto h-6 group fill-white"
-// 				src="/assets/discord-mark-white.svg"
-// 				alt="GitHub Logo"
-// 				width={50}
-// 				height={50}></Image>
-// 		</a>
-// 	);
-// }
+// Images
 
-// function GithubProject() {
-// 	return (
-// 		<a
-// 			href="https://github.com/PNW-Additive-Manufacturing"
-// 			target="_blank"
-// 			className="group text-white text-sm bg-cool-black px-4 py-2 flex gap-2 items-center w-fit h-fit rounded-md shadow-sm">
-// 			Learn more on Github
-// 			<Image
-// 				className="w-auto h-6 group"
-// 				src="/assets/github-mark.svg"
-// 				alt="GitHub Logo"
-// 				width={50}
-// 				height={50}></Image>
-// 		</a>
-// 	);
-// }
+import Form3LImage from "@/public/assets/form_3l_helmet_hero.webp";
+import Fuse30WImage from "@/public/assets/fuse1__transparent_productimage.png";
+import Mars4UltraImage from "@/public/assets/Saturn-3-Ultra-12K-13.png";
+import MetalXImage from "@/public/assets/Alfex_Markforged_Metal_X_3D_Printer_System.webp";
+// import BambuLabX1CImage from "@/public/assets/Bambu Lab X1 Carbon_cover.png";
+// import BambuLabX1EImage from "@/public/assets/Bambu Lab X1E_cover.png";
+// import BambuLabP1SImage from "@/public/assets/Bambu Lab P1S_cover.png";
+// import BambuLabA1Image from "@/public/assets/Bambu Lab A1_cover.png";
+// import BambuLabA1MiniImage from "@/public/assets/Bambu Lab A1 mini_cover.png";
+import BambuLabX1CImage from "@/public/assets/x1Series-main-bg-v1-sm.png";
+import BambulabA1Image from "@/public/assets/Bambu_Lab_A1.webp";
 
-
-const MapEmbed = () => {
-	return (
-		<div className="w-full h-[450px]">
-			<iframe
-				src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d595.9940031434936!2d-87.47228416193505!3d41.587223515169036!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8811de119bd6a485%3A0x1cb62e96c575a358!2sUniversity%20Services%2C%202233%20171st%20St%2C%20Hammond%2C%20IN%2046323!5e0!3m2!1sen!2sus!4v1745448045531!5m2!1sen!2sus"
-				width="100%"
-				height="100%"
-				style={{ border: 0 }}
-				allowFullScreen
-				loading="lazy"
-				referrerPolicy="no-referrer-when-downgrade"
-				title="Design Studio Location"
-			></iframe>
-		</div>
-	);
-};
-
+import BambuLabIconImage from "@/public/assets/logos/bambulab.png";
+import BlackToeRunningIconImage from "@/public/assets/logos/blacktoerunning.png";
+import FormlabsIconImage from "@/public/assets/logos/formlabs.png";
+import classNames from "classnames";
 
 export default async function Home() {
 
@@ -170,47 +131,7 @@ export default async function Home() {
 						Z" />
 				</svg>
 
-
-				{/* <div className="bg-white py-8">
-					<HorizontalWrap>
-						<h2 className="w-fit font-medium text-xl pb-2">What is Possible?</h2>
-						<div className="w-fit">
-							You can befit from our engineering and club resources.
-						</div>
-						<hr style={{ marginBottom: "0px" }} />
-
-
-					</HorizontalWrap>
-				</div> */}
-
-				{/* <div className="bg-white py-8">
-					<HorizontalWrap>
-						<h2 className="text-center font-medium text-xl">Project Spotlights</h2>
-						<br />
-						<br />
-
-						<div className="grid grid-cols-2">
-							<div>
-								<Image className="rounded-md lg:w-1/2 shadow-md mx-auto" style={{ aspectRatio: "auto 4/3" }} src={"/assets/car_thing.jpg"} alt={""} width={720} height={720}></Image>
-								<div className="mt-4">
-									<h2>Reiving the Spotify Car Thing</h2>
-									<p>This project used 3D Printing to create a high-strength mount which attaches to your monitor using the DeskThing Firmware.</p>
-								</div>
-							</div>
-							<div>
-								<Image className="rounded-md lg:w-1/2 shadow-md mx-auto" style={{ aspectRatio: "auto 4/3" }} src={"/assets/car_thing.jpg"} alt={""} width={720} height={720}></Image>
-								<div className="mt-4">
-									<h2>Reiving the Spotify Car Thing</h2>
-									<p>This project used 3D Printing to create a high-strength mount which attaches to your monitor using the DeskThing Firmware.</p>
-								</div>
-							</div>
-						</div>
-
-					</HorizontalWrap>
-				</div> */}
-
-
-				<div className="bg-white py-8 lg:py-12 lg:pt-0">
+				<div className="bg-white py-8 lg:py-12 lg:pt-0 shadow-sm">
 					<HorizontalWrap>
 
 						<h2 className="font-medium text-2xl pb-2 w-full text-center">See what <span className="font-bold">Students Created</span></h2>
@@ -221,6 +142,7 @@ export default async function Home() {
 							<div className="grid grid-rows-1 max-md:grid-rows-12 md:grid-cols-5 lg:grid-cols-10 gap-4">
 
 								{showcases.slice(0, Math.min(showcases.length, 3)).map((s, i) => <div key={s.id} className={`
+									out
 									rounded-md bg-background row-span-4 md:col-span-2 lg:col-span-3
 									${i >= 3 ? 'hidden' : ''}
 									md:${i >= 2 ? 'hidden' : ''}
@@ -250,124 +172,104 @@ export default async function Home() {
 							</div>
 
 						</div>
-					</HorizontalWrap>
-				</div>
 
-				<div className="bg-white">
-					<HorizontalWrap>
-						<svg className="opacity-50 hidden lg:block" viewBox="0 0 1440 50" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-							<defs>
-								<linearGradient id="pnwGoldOnlyWave" x1="0%" y1="0%" x2="100%" y2="0%">
-									<stop offset="0%" stopColor="#b1810b" />         {/* PNW Gold */}
-									<stop offset="40%" stopColor="#e6b10e" />        {/* PNW Gold Logo */}
-									<stop offset="100%" stopColor="#f1e8d3" />       {/* PNW Gold Light */}
-								</linearGradient>
-							</defs>
-							<path
-								d="M16 25 C 360 0, 1080 50, 1424 25"
-								stroke="url(#pnwGoldOnlyWave)"
-								strokeWidth="10"  // Increased for more pronounced roundness
-								fill="none"
-								strokeLinecap="round"  // Ensures rounded edges
-							/>
-						</svg>
-					</HorizontalWrap>
-				</div>
-
-				<div className="bg-white pt-0 lg:py-12">
-					<HorizontalWrap>
-						<div id="services">
-							<div>
-								<h2 className="font-medium text-2xl pb-2 w-full"><span className="font-bold">Additive Manufacturing Machines</span> in Hammond (Design Studio)</h2>
-								<div className="text-cool-black">
-									Each production method offers different
-									benefits and drawbacks. We recommend taking
-									a look at an excellent guide by{" "}
-									<a
-										className="underline"
-										target="_blank"
-										href="https://xometry.pro/en-eu/articles/3d-printing-sla-vs-fdm/">
-										Xometry (3D Comparisons)
-									</a>.
-								</div>
-							</div>
-						</div>
-						{/* <hr style={{ marginBottom: "0px" }} /> */}
+						{/* <hr className="my-12 opacity-50" /> */}
 						<br />
-						<div className="flex justify-between gap-4 lg:gap-6">
-							<div className="grid xl:grid-cols-5 gap-4 lg:gap-6">
 
-								<div className="bg-background p-4 w-full rounded-md">
-									<div className="w-full text-sm">
-										<div className="px-10 max-lg:hidden">
-											<AMImage src="/assets/bambu_x1e_with_ams.png" alt="Bambu Lab A1 3D Printer" width={388} height={517} className="mb-4" />
-										</div>
-										<h2 className="text-lg font-semibold">Classical FDM Printing</h2>
-										<p className="mt-2">Perfect for prototyping medium-strength parts, offering a cost-effective solution for functional prototypes and design testing.</p>
-									</div>
-								</div>
+						<h2 className="font-medium text-2xl pb-2 w-full mt-8 text-center"><span className="font-bold">Manufacturing Machines</span> in the Hammond Design Studio</h2>
+						<p className="text-cool-black text-center">Each production method offers different benefits and drawbacks.</p>
 
-								<div className="bg-background p-4 w-full rounded-md">
-									<div className="w-full text-sm">
-										<div className="px-10 max-lg:hidden">
-											<AMImage src="/assets/mars4ultra.png" alt="Mars 4 Ultra Printer" width={388} height={517} className="mb-4" />
-										</div>
-										<h2 className="text-lg font-semibold">Precise Resin Printing</h2>
-										<p className="mt-2">Optimal for creating detailed and smooth-surfaced models, ideal for small intricate parts.</p>
-									</div>
-								</div>
+						{/* <hr style={{ marginBottom: "0px" }} /> */}
+						<div className="grid items-center grid-cols-2 md:grid-cols-4 xl:grid-cols-6 grid-rows-1 gap-6 mt-8 lg:gap-6">
 
-								<div className="bg-background p-4 w-full rounded-md">
-									<div className="w-full text-sm">
-										<div className="px-10 max-lg:hidden">
-											<AMImage src="/assets/metalx.png" alt="Metal X Printer" width={388} height={517} className="mb-4" />
-										</div>
-										<h2 className="text-lg font-semibold">Markforged Metal X</h2>
-										<p className="mt-2">Looking for Funding</p>
-										<p className="mt-2">The Markforged Metal X produces extremely strong custom metal parts.</p>
-									</div>
-								</div>
+							<ManufacturingMachineCard
+								name={"Bambu Lab X1 Series"}
+								technology="Fused Deposition Modeling"
+								description={"Perfect for prototyping medium-strength parts, offering a cost-effective solution for functional prototypes and design testing"}
+								imageSrc={BambuLabX1CImage} />
 
+							<ManufacturingMachineCard
+								name={"Bambu Lab A1 Series"}
+								technology="Fused Deposition Modeling"
+								description={"Perfect for prototyping medium-strength parts, offering a cost-effective solution for functional prototypes and design testing"}
+								imageSrc={BambulabA1Image} />
 
-								<div className="bg-background p-4 w-full rounded-md">
-									<div className="w-full text-sm">
-										<div className="px-10 max-lg:hidden">
-											<AMImage src="/assets/fuse_1_store_thumb_2x_1.png" alt="FormLabs Fuse 1+ 30W" width={388} height={517} className="mb-4" />
-										</div>
-										<h2 className="text-lg font-semibold">SLS Fuse 1+ 30W</h2>
-										<p className="mt-2">Looking for Funding</p>
-										<p className="mt-2">Designed for industrial-quality production using nylon powders</p>
-									</div>
-								</div>
+							{/* <ManufacturingMachineCard
+								name={"Bambu Lab X1E"}
+								technology="Fused Deposition Modeling"
+								description={"Perfect for prototyping medium-strength parts, offering a cost-effective solution for functional prototypes and design testing"}
+								imageSrc={BambuLabX1EImage} />
 
-							</div>
+							<ManufacturingMachineCard
+								name={"Bambu Lab P1S"}
+								technology="Fused Deposition Modeling"
+								description={"Perfect for prototyping medium-strength parts, offering a cost-effective solution for functional prototypes and design testing"}
+								imageSrc={BambuLabP1SImage} />
+
+							<ManufacturingMachineCard
+								name={"Bambu Lab A1"}
+								technology="Fused Deposition Modeling"
+								description={"Perfect for prototyping medium-strength parts, offering a cost-effective solution for functional prototypes and design testing"}
+								imageSrc={BambuLabA1Image} />
+
+							<ManufacturingMachineCard
+								name={"Bambu Lab A1 Mini"}
+								technology="Fused Deposition Modeling"
+								description={"Perfect for prototyping medium-strength parts, offering a cost-effective solution for functional prototypes and design testing"}
+								imageSrc={BambuLabA1MiniImage} /> */}
+
+							<ManufacturingMachineCard
+								name={"Markforged Metal X"}
+								technology="Metal FFF"
+								description={"A manufacturing solution that cost effectively prints parts using tool and stainless steel and other alloys"}
+								imageSrc={MetalXImage} />
+
+							<ManufacturingMachineCard
+								name={"ELEGOO Mars 4 Ultra"}
+								technology="Resin LCD"
+								description={"Optimal for creating detailed and smooth-surfaced models, ideal for small intricate parts"}
+								imageSrc={Mars4UltraImage} />
+
+							<ManufacturingMachineCard
+								name={"Formlabs Fuse 3L"}
+								technology="Resin SLA"
+								unavailableReason="Accepting Donations"
+								description={"Resin trusted by professionals for fast turnaround of industrial quality"}
+								imageSrc={Form3LImage} />
+
+							<ManufacturingMachineCard
+								name={"SLS Fuse 1+ 30W"}
+								technology="Powder SLS"
+								unavailableReason="Accepting Donations"
+								description={"The Fuse 1+ 30W is a compact selective laser sintering 3D printer with an industrial punch, that brings truly rapid SLS 3D printing"}
+								imageSrc={Fuse30WImage} />
+
 						</div>
-						<div className="w-full lg:w-1/3 mt-4">
+						{/* <div className="w-full lg:w-1/3 mt-4">
 							<Link className="w-full" href="/materials">
 								<button className="text-left flex justify-between" type="button">
 									View our Materials and Processes
 									<RegularDiamondAlt className="inline fill-white ml-2 mt-0.5" />
 								</button>
 							</Link>
-							{/* <p className="text-cool-black text-sm">Browse our full inventory of materials, and processes, including lead times and costs.</p> */}
-						</div>
+						</div> */}
 					</HorizontalWrap>
 				</div>
 
-				{/* <div className="py-10">
+				<div className="py-10 lg:py-12">
 					<HorizontalWrap>
 
 						<h2 className="text-xl font-medium mb-2">Our Sponsors and Donators</h2>
 						<p>We are incredibly grateful to our sponsors and donators, whose generous support enables us to push the boundaries of Additive Manufacturing at Purdue Northwest.</p>
-						<div className="flex gap-12 py-6 opacity-65">
-							<Image className="h-14 w-fit py-2" src={"/assets/logos/bambulab.png"} alt={"Bambu Lab"} width={720} height={720}></Image>
-							<Image className="h-14 w-fit py-4" src={"/assets/logos/formlabs.png"} alt={"Formlabs"} width={720} height={720}></Image>
-							<Image className="h-14 w-fit py-2" src={"/assets/logos/onshape.png"} alt={"Onshape"} width={720} height={720}></Image>
-							<Image className="h-14 w-fit py-2" src={"/assets/logos/blacktoerunning.png"} alt={"Black Toe Clothing"} width={720} height={720}></Image>
+						<div className="flex gap-12 h-14 mt-8 overflow-x-scroll">
+							<AMImage src={BlackToeRunningIconImage} alt={"Black Toe Clothing"} />
+							{/* <AMImage src={BambuLabIconImage} alt={"Bambu Lab"} /> */}
+							{/* <AMImage src={FormlabsIconImage} alt={"Formlabs"} /> */}
+							{/* <AMImage className="h-14 w-fit py-2" src={"/assets/logos/onshape.png"} alt={"Onshape"} /> */}
 						</div>
 
 					</HorizontalWrap>
-				</div> */}
+				</div>
 				{/* <HorizontalWrap className="py-8">
 					Looking to learn more?
 					<div className="flex flex-col md:flex-row w-fit mt-6 gap-2 justify-center">
@@ -378,4 +280,23 @@ export default async function Home() {
 			</div >
 		</>
 	);
+}
+
+function ManufacturingMachineCard({ name, technology, description, unavailableReason, imageSrc }: { name: string, technology: string, description: string, imageSrc: StaticImageData, unavailableReason?: string }) {
+
+	const isUnavailable = unavailableReason != null;
+
+	return <div className={classNames("bg-white shadow-sm p-4 rounded-md out h-full", { "opacity-65": isUnavailable })}>
+		<div className="w-full text-sm">
+			<div className="px-4 w-full">
+				<div className="aspect-square mb-4">
+					<AMImage src={imageSrc} alt={name} quality={50} />
+				</div>
+			</div>
+			<h2 className="text-lg font-semibold text-center">{name}</h2>
+			<p className="mt-1.5 text-center">{unavailableReason ?? technology}</p>
+			{/* <p className="mt-2 max-lg:hidden">{description}</p> */}
+		</div>
+	</div>
+
 }
