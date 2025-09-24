@@ -27,7 +27,7 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
 
     function ProjectDownloadableContent({ content }: { content: ProjectSpotlightAttachment }) {
 
-        return <tr className="opacity-75 hover:opacity-100 bg-background">
+        return <tr className="opacity-75 hover:opacity-100 ">
             <td className="text-sm">
                 {/* <RegularFiles className="inline mr-1.5"></RegularFiles> */}
                 {content.fileName}
@@ -44,7 +44,7 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
 
     return <div className="rounded-md" key={projectData.id}>
 
-        {imageSrc && <AMImage src={imageSrc} alt={"Project Image"} className="rounded-b-none rounded-t-md max-lg:w-full mt-0 pt-0" width={720} height={350} />}
+        {imageSrc && <AMImage src={imageSrc} alt={"Project Image"} className="rounded-md max-lg:w-full mt-0 pt-0" width={720} height={350} />}
 
         <div className="p-6">
             {isEditing ? (

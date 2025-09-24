@@ -139,11 +139,10 @@ export default async function Home() {
 
 						<div className="flex flex-col gap-4 mt-8">
 
-							<div className="grid grid-rows-1 max-md:grid-rows-12 md:grid-cols-5 lg:grid-cols-10 gap-4">
+							<div className="grid grid-rows-1 max-md:grid-rows-12 md:grid-cols-7 lg:grid-cols-12 gap-4">
 
-								{showcases.slice(0, Math.min(showcases.length, 3)).map((s, i) => <div key={s.id} className={`
-									out
-									rounded-md bg-background row-span-4 md:col-span-2 lg:col-span-3
+								{showcases.slice(0, Math.min(showcases.length, 4)).map((s, i) => <div key={s.id} className={`
+									rounded-md row-span-4 md:col-span-2 lg:col-span-3
 									${i >= 3 ? 'hidden' : ''}
 									md:${i >= 2 ? 'hidden' : ''}
 									lg:inline
@@ -153,13 +152,13 @@ export default async function Home() {
 
 								</div>)}
 
-								<div className="flex justify-center items-center mt-2">
+								{/* <div className="flex justify-center items-center mt-2">
 									<a href="/project-spotlight">
 										<button className="bg-background rounded-full p-3 text-2xl w-fit h-fit mb-0 fill-cool-black hover:fill-white" type="button">
 											<FaChevronRight className="fill-inherit" style={{ width: "1em", height: "1em" }} />
 										</button>
 									</a>
-								</div>
+								</div> */}
 
 								{/* <a href="/project-spotlight" className="col-start-5 col-span-2">
 									<button className="flex py-4 items-center justify-between text-cool-black bg-background" type="button">
@@ -173,8 +172,8 @@ export default async function Home() {
 
 						</div>
 
-						{/* <hr className="my-12 opacity-50" /> */}
-						<br />
+						<hr className="my-12 mt-6 opacity-50" />
+						{/* <br /> */}
 
 						<h2 className="font-medium text-2xl pb-2 w-full mt-8 text-center"><span className="font-bold">Manufacturing Machines</span> in the Hammond Design Studio</h2>
 						<p className="text-cool-black text-center">Each production method offers different benefits and drawbacks.</p>
@@ -286,7 +285,7 @@ function ManufacturingMachineCard({ name, technology, description, unavailableRe
 
 	const isUnavailable = unavailableReason != null;
 
-	return <div className={classNames("bg-white shadow-sm p-4 rounded-md out h-full", { "opacity-65": isUnavailable })}>
+	return <div className={classNames("bg-white p-4 rounded-md h-full", { "opacity-65": isUnavailable })}>
 		<div className="w-full text-sm">
 			<div className="px-4 w-full">
 				<div className="aspect-square mb-4">
