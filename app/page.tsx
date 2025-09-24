@@ -259,7 +259,7 @@ export default async function Home() {
 				<div className="py-10 lg:py-12">
 					<HorizontalWrap>
 
-						<h2 className="text-xl font-medium mb-2">Our Sponsors and Donators</h2>
+						<h2 className="text-xl font-medium mb-2">Our Sponsors</h2>
 						<p>We are incredibly grateful to our sponsors and donators, whose generous support enables us to push the boundaries of Additive Manufacturing at Purdue Northwest.</p>
 						<div className="flex gap-12 h-14 mt-8 overflow-x-scroll">
 							<AMImage src={BlackToeRunningIconImage} alt={"Black Toe Clothing"} />
