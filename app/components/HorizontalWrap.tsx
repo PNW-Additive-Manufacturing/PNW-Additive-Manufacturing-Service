@@ -1,3 +1,5 @@
+import classNames from "classnames";
+
 export default function HorizontalWrap({
 	children,
 	className
@@ -7,9 +9,8 @@ export default function HorizontalWrap({
 }) {
 	return (
 		<div
-			className={`mx-auto w-full px-6 lg:px-0 lg:w-3/4 xl:w-3/4 ${className ?? ""
-				}`}
-			style={{ maxWidth: "1500px" }}>
+			className={classNames("mx-auto w-full px-6 lg:px-0 lg:w-3/4", className)}
+			style={{ maxWidth: "1375px" }}>
 			{children}
 		</div>
 	);
