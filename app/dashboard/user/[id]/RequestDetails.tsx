@@ -96,8 +96,7 @@ export function createRequestTimelineOptions(request: RequestWithParts) {
 			title: "Quoted",
 			description: (
 				<>
-					Hello
-					{/* {request.quote?.paidAt === undefined ? "Waiting for payment from you." : `Paid on ${formateDate(request.quote?.paidAt)}.`} */}
+					{request.quote?.paidAt === undefined ? "Waiting for payment from you." : `Paid on ${formateDate(request.quote?.paidAt)}.`}
 				</>
 			),
 			disabled: !hasQuote(request)
