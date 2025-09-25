@@ -12,7 +12,7 @@ const config: Config = {
 				"pnw-mystic": "hsl(33, 100%, 52.9%)",
 				"warning": "#ef4444",
 				"subtle": "#4b5563",
-				"background": "rgb(245, 245, 245)"
+				"background": "rgb(var(--background-rgb))"
 			},
 			fill: {
 				"warning": "#ef4444"

@@ -18,7 +18,9 @@ import MetalXImage from "@/public/assets/Alfex_Markforged_Metal_X_3D_Printer_Sys
 import BambulabA1Image from "@/public/assets/Bambu_Lab_A1.webp";
 import BambuLabX1CImage from "@/public/assets/x1Series-main-bg-v1-sm.png";
 import BlackToeRunningIconImage from "@/public/assets/logos/blacktoerunning.png";
-import MarkforgedOnyxImage from "@/public/assets/MARK-TWO-Mark3D-kaufen.jpg";
+import OnshapeIconImage from "@/public/assets/logos/onshape.png";
+import BambuLabIconImage from "@/public/assets/logos/bambulab.png";
+// import MarkforgedOnyxImage from "@/public/assets/MARK-TWO-Mark3D-kaufen.jpg";
 // import BambuLabX1CImage from "@/public/assets/Bambu Lab X1 Carbon_cover.png";
 // import BambuLabX1EImage from "@/public/assets/Bambu Lab X1E_cover.png";
 // import BambuLabP1SImage from "@/public/assets/Bambu Lab P1S_cover.png";
@@ -131,14 +133,14 @@ export default async function Home() {
 						Z" />
 				</svg> */}
 
-				<svg className="bg-background" viewBox="0 0 100 1" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-					<path className="fill-white" d="M100,0 100,1 0,0 Z" />
+				<svg className="bg-background" viewBox="0 0 100 2" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+					<path className="fill-white" d="M100,0 100,2 0,0 Z" />
 				</svg>
 
 				<div className="py-12 bg-background">
 					<HorizontalWrap>
 
-						<h2 className="font-semibold text-2xl pb-2 w-full text-center">Explore what <span className="font-bold text-pnw-gold">PNW Students Created</span></h2>
+						<h2 className="font-semibold text-2xl pb-2 w-full text-center">Showcasing <span className="wide-curl text-pnw-gold">Student Creations & Innovations</span></h2>
 						<p className="text-cool-black text-center">Students, faculty and professors bring ideas to reality using on-campus Manufacturing.</p>
 
 						{/* <hr className="my-6 opacity-50 w-1/3 mx-auto" /> */}
@@ -160,6 +162,7 @@ export default async function Home() {
 								{showcases.slice(0, Math.min(showcases.length, 8)).map((s, i) => <div key={s.id} className={`
 									out
 									shadow-sm
+									bg-white
 									rounded-md
 									${i >= 3 ? 'hidden' : ''}
 									md:${i >= 2 ? 'hidden' : ''}
@@ -203,14 +206,14 @@ export default async function Home() {
 					</HorizontalWrap>
 				</div>
 
-				<svg className="" viewBox="0 0 100 1" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-					<path className="fill-background" d="M100,0 100,1 0,0 Z" />
+				<svg className="shadow-lg" viewBox="0 0 100 2" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+					<path className="fill-background" d="M100,0 100,2 0,0 Z" />
 				</svg>
 
 				<div className="py-12 bg-white">
 					<HorizontalWrap>
 
-						<h2 className="font-semibold text-2xl pb-2 w-full max-lg:text-center">Manufacturing <span className="font-bold text-pnw-gold">Students & Research Projects Utilize</span></h2>
+						<h2 className="font-semibold text-2xl pb-2 w-full max-lg:text-center">Manufacturing Machines</h2>
 						<div className="text-cool-black max-lg:text-center max-md:hidden">
 							Each production method offers different benefits and drawbacks. We recommend taking a look at an excellent guide by{" "}
 
@@ -296,8 +299,8 @@ export default async function Home() {
 					</HorizontalWrap>
 				</div>
 
-				<svg className="bg-white" viewBox="0 0 100 1" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-					<path className="fill-background" d="M100,1 100,0 0,1 Z" />
+				<svg className="bg-white" viewBox="0 0 100 2" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+					<path className="fill-background" d="M100,2 100,0 0,2 Z" />
 				</svg>
 
 				<div className="py-12 bg-background">
@@ -307,12 +310,11 @@ export default async function Home() {
 						<h2 className="text-xl font-medium mb-2">Sponsors</h2>
 						<p>We are incredibly grateful to our sponsors and donators, whose generous support enables us to push the boundaries of Additive Manufacturing at Purdue Northwest.</p>
 						<div className="flex gap-12 h-14 mt-8 overflow-x-scroll">
+							{/* <AMImage src={OnshapeIconImage} alt={"Onshape"} /> */}
 							<AMImage src={BlackToeRunningIconImage} alt={"Black Toe Clothing"} />
 							{/* <AMImage src={BambuLabIconImage} alt={"Bambu Lab"} /> */}
 							{/* <AMImage src={FormlabsIconImage} alt={"Formlabs"} /> */}
-							{/* <AMImage className="h-14 w-fit py-2" src={"/assets/logos/onshape.png"} alt={"Onshape"} /> */}
 						</div>
-
 
 					</HorizontalWrap>
 

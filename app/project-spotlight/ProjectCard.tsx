@@ -45,7 +45,7 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
 
     return <div className="rounded-md" key={projectData.id}>
 
-        {imageSrc && <AMImage src={imageSrc} alt={"Project Image"} className="rounded-md rounded-b-none max-lg:w-full mt-0 pt-0 max-lg:h-36" width={720} height={375} />}
+        {imageSrc && <AMImage src={imageSrc} alt={"Project Image"} className="rounded-b-none max-lg:w-full mt-0 pt-0" width={720} height={350} />}
 
         <div className={classNames("py-4 px-6")}>
             {isEditing ? (
@@ -119,7 +119,7 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
                 </form>
             ) : (
                 <>
-                    <span className="text-lg flex items-center font-semibold justify-between gap-4">
+                    <span className="flex items-center font-medium justify-between gap-4 mb-1">
                         <>{projectData.title}</>
                         {editable && accountContext.isSingedIn &&
                             accountContext.account!.permission !== "user" && (
@@ -138,7 +138,7 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
                     )}
 
                     {projectData.author && style === "compact" && (
-                        <p className="text-sm">{projectData.author}</p>
+                        <p className="text-sm">{projectData.author}, {projectData.createdAt.getFullYear()}</p>
                     )}
 
                     {style === "normal" && <hr className="pb-0 mb-4" />}
