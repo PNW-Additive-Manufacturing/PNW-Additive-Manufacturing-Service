@@ -36,7 +36,7 @@ export default async function Home() {
 			<div className="bg-white">
 
 				<HorizontalWrap className="py-14">
-					<div className="xl:flex justify-center gap-10 lg:m-0 lg:text-center">
+					<div className="flex justify-center gap-10 lg:m-0 text-center">
 						<div className="w-fit mb-2 mt-2">
 							<h1 className="w-fit mb-4 text-3xl font-normal lg:text-center mx-auto">
 								{/* <span>Welcome to the</span> */}
@@ -67,7 +67,7 @@ export default async function Home() {
 								<li>Guidance in designing or optimizing models for 3D Printing using <Link className="underline" target="_blank" href={"https://www.onshape.com/en/"}>Onshape</Link>.</li>
 							</ul> */}
 
-							<div className="pt-2 lg:pt-6 lg:mx-auto w-fit">
+							<div className="pt-2 lg:pt-6 mx-auto w-fit">
 								<div className="flex flex-wrap items-center gap-4">
 									<Link href={"/request-part"}>
 										<button className="w-fit px-3.5 py-2.5 mb-0 text-sm bg-white outline-2 text-pnw-gold fill-pnw-gold outline outline-pnw-gold tracking-wider font-bold uppercase shadow-sm">
@@ -131,7 +131,7 @@ export default async function Home() {
 						Z" />
 				</svg> */}
 
-				<svg className="bg-background hidden lg:block" viewBox="0 0 100 1" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+				<svg className="bg-background" viewBox="0 0 100 1" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
 					<path className="fill-white" d="M100,0 100,1 0,0 Z" />
 				</svg>
 
@@ -155,12 +155,12 @@ export default async function Home() {
 
 						<div className="flex flex-col gap-4 mt-8">
 
-							<div className="grid grid-rows-1 max-md:grid-rows-12 md:grid-cols-7 lg:grid-cols-12 gap-6">
+							<div className="grid grid-rows-1 grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
 								{showcases.slice(0, Math.min(showcases.length, 8)).map((s, i) => <div key={s.id} className={`
 									out
 									shadow-sm
-									rounded-md row-span-4 md:col-span-2 lg:col-span-3
+									rounded-md
 									${i >= 3 ? 'hidden' : ''}
 									md:${i >= 2 ? 'hidden' : ''}
 									lg:inline
@@ -203,15 +203,15 @@ export default async function Home() {
 					</HorizontalWrap>
 				</div>
 
-				<svg className="hidden lg:block" viewBox="0 0 100 1" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+				<svg className="" viewBox="0 0 100 1" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
 					<path className="fill-background" d="M100,0 100,1 0,0 Z" />
 				</svg>
 
 				<div className="py-12 bg-white">
 					<HorizontalWrap>
 
-						<h2 className="font-semibold text-2xl pb-2 w-full max-lg:text-center">Manufacturing <span className="font-bold text-pnw-gold">Students Utilize</span></h2>
-						<div className="text-cool-black max-md:hidden">
+						<h2 className="font-semibold text-2xl pb-2 w-full max-lg:text-center">Manufacturing <span className="font-bold text-pnw-gold">Students & Research Projects Utilize</span></h2>
+						<div className="text-cool-black max-lg:text-center max-md:hidden">
 							Each production method offers different benefits and drawbacks. We recommend taking a look at an excellent guide by{" "}
 
 							<a className="underline" target="_blank" href="https://xometry.pro/en-eu/articles/3d-printing-sla-vs-fdm/">
@@ -296,7 +296,7 @@ export default async function Home() {
 					</HorizontalWrap>
 				</div>
 
-				<svg className="bg-white hidden lg:block" viewBox="0 0 100 1" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+				<svg className="bg-white" viewBox="0 0 100 1" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
 					<path className="fill-background" d="M100,1 100,0 0,1 Z" />
 				</svg>
 
