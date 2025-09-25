@@ -50,17 +50,16 @@ export default async function Home() {
 
 							<p
 								style={{ maxWidth: "600px" }}
-								className="overflow-hidden full pb-4">
+								className="overflow-hidden full pb-4 max-lg:hidden">
 								Created by the PNW Additive Manufacturing Club,
 								this service enables PNW students, and faculty
 								members to explore the world of 3D Printing.
-								Operating in the Purdue Northwest{" "}
-								<a
-									className="underline"
-									href="https://www.pnw.edu/engineering/student-resources/student-engineering-design-studio/">
-									Design Studio
-								</a>
-								.
+							</p>
+
+							<p
+								style={{ maxWidth: "600px" }}
+								className="overflow-hidden lg:hidden full pb-4">
+								Enabling PNW students to explore the world of Additive Manufacturing.
 							</p>
 
 							{/* <ul style={{ maxWidth: "600px" }}>
@@ -85,7 +84,7 @@ export default async function Home() {
 									<a
 										href="https://mypnwlife.pnw.edu/AMC/club_signup"
 										target="_blank"
-										className="block w-fit tracking-wider font-light text-sm">
+										className="block w-fit tracking-wider max-sm:hidden font-light text-sm">
 										Join MyPNW Life
 									</a>
 								</div>
@@ -140,7 +139,7 @@ export default async function Home() {
 				<div className="py-12 bg-background">
 					<HorizontalWrap>
 
-						<h2 className="font-semibold text-2xl pb-2 w-full text-center">Showcasing <span className="wide-curl text-pnw-gold">Student Creations & Innovations</span></h2>
+						<h2 className="font-semibold text-2xl pb-2 w-full text-center">Showcasing <span className="wide-curl text-pnw-gold text-nowrap">Student Creations</span></h2>
 						<p className="text-cool-black text-center">Students, faculty and professors bring ideas to reality using on-campus Manufacturing.</p>
 
 						{/* <hr className="my-6 opacity-50 w-1/3 mx-auto" /> */}
@@ -295,6 +294,18 @@ export default async function Home() {
 								imageSrc={Fuse30WImage} />
 
 						</div>
+
+						{/* <p>
+							Interested in learning 3D printing or using our machines?
+							You can submit a request through our online form, or visit the
+							<a
+								className="underline"
+								href="https://www.pnw.edu/engineering/student-resources/student-engineering-design-studio/">
+								Design Studio
+							</a>
+							during worker hours for assistance, training, and access to equipment.
+						</p> */}
+
 
 					</HorizontalWrap>
 				</div>
