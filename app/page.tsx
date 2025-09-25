@@ -33,9 +33,9 @@ export default async function Home() {
 
 	return (
 		<>
-			<div>
+			<div className="bg-white">
 
-				<HorizontalWrap className="my-14">
+				<HorizontalWrap className="py-14">
 					<div className="xl:flex justify-center gap-10 lg:m-0 lg:text-center">
 						<div className="w-fit mb-2 mt-2">
 							<h1 className="w-fit mb-4 text-3xl font-normal lg:text-center mx-auto">
@@ -122,8 +122,8 @@ export default async function Home() {
 					</g>
 				</svg> */}
 
-				{/* <svg className="bg-white hidden lg:block" viewBox="0 30 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-					<path className="fill-background" d="
+				{/* <svg className="bg-background hidden lg:block" viewBox="0 30 1440 65" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+					<path className="fill-white" d="
 						M0,80 
 						C360,40 1080,40 1440,80 
 						L1440,0 
@@ -131,11 +131,15 @@ export default async function Home() {
 						Z" />
 				</svg> */}
 
-				<div className="bg-white py-8 lg:py-12 shadow-sm">
+				<svg className="bg-background hidden lg:block" viewBox="0 0 100 1" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+					<path className="fill-white" d="M100,0 100,1 0,0 Z" />
+				</svg>
+
+				<div className="py-12 bg-background">
 					<HorizontalWrap>
 
-						<h2 className="font-medium text-2xl pb-2 w-full max-lg:text-center">See what <span className="font-bold text-pnw-gold">Students Created</span></h2>
-						<p className="text-cool-black max-lg:text-center">Students, faculty and professors bring ideas to reality using on-campus Manufacturing.</p>
+						<h2 className="font-semibold text-2xl pb-2 w-full text-center">Explore what <span className="font-bold text-pnw-gold">PNW Students Created</span></h2>
+						<p className="text-cool-black text-center">Students, faculty and professors bring ideas to reality using on-campus Manufacturing.</p>
 
 						{/* <hr className="my-6 opacity-50 w-1/3 mx-auto" /> */}
 
@@ -153,7 +157,7 @@ export default async function Home() {
 
 							<div className="grid grid-rows-1 max-md:grid-rows-12 md:grid-cols-7 lg:grid-cols-12 gap-6">
 
-								{showcases.slice(0, Math.min(showcases.length, 4)).map((s, i) => <div key={s.id} className={`
+								{showcases.slice(0, Math.min(showcases.length, 8)).map((s, i) => <div key={s.id} className={`
 									out
 									shadow-sm
 									rounded-md row-span-4 md:col-span-2 lg:col-span-3
@@ -188,15 +192,32 @@ export default async function Home() {
 
 						{/* <br /> */}
 
-						<h2 className="font-medium text-2xl pb-2 w-full mt-20 max-lg:text-center text-right">Manufacturing <span className="font-bold text-pnw-gold">Students Utilize</span></h2>
-						<div className="text-cool-black text-right max-md:hidden">
+						{/* <div className="w-full lg:w-1/3 mt-4">
+							<Link className="w-full" href="/materials">
+								<button className="text-left flex justify-between" type="button">
+									View our Materials and Processes
+									<RegularDiamondAlt className="inline fill-white ml-2 mt-0.5" />
+								</button>
+							</Link>
+						</div> */}
+					</HorizontalWrap>
+				</div>
+
+				<svg className="hidden lg:block" viewBox="0 0 100 1" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+					<path className="fill-background" d="M100,0 100,1 0,0 Z" />
+				</svg>
+
+				<div className="py-12 bg-white">
+					<HorizontalWrap>
+
+						<h2 className="font-semibold text-2xl pb-2 w-full max-lg:text-center">Manufacturing <span className="font-bold text-pnw-gold">Students Utilize</span></h2>
+						<div className="text-cool-black max-md:hidden">
 							Each production method offers different benefits and drawbacks. We recommend taking a look at an excellent guide by{" "}
 
 							<a className="underline" target="_blank" href="https://xometry.pro/en-eu/articles/3d-printing-sla-vs-fdm/">
 								Xometry (3D Comparisons)
 							</a>.
 						</div>
-						{/* <hr className="my-6 opacity-50" /> */}
 
 						<div className="grid items-center grid-cols-2 md:grid-cols-4 xl:grid-cols-6 grid-rows-1 gap-6 mt-8 lg:gap-6">
 
@@ -272,18 +293,15 @@ export default async function Home() {
 
 						</div>
 
-						{/* <div className="w-full lg:w-1/3 mt-4">
-							<Link className="w-full" href="/materials">
-								<button className="text-left flex justify-between" type="button">
-									View our Materials and Processes
-									<RegularDiamondAlt className="inline fill-white ml-2 mt-0.5" />
-								</button>
-							</Link>
-						</div> */}
 					</HorizontalWrap>
 				</div>
 
-				<div className="py-10 lg:py-12">
+				<svg className="bg-white hidden lg:block" viewBox="0 0 100 1" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+					<path className="fill-background" d="M100,1 100,0 0,1 Z" />
+				</svg>
+
+				<div className="py-12 bg-background">
+
 					<HorizontalWrap>
 
 						<h2 className="text-xl font-medium mb-2">Sponsors</h2>
@@ -295,8 +313,12 @@ export default async function Home() {
 							{/* <AMImage className="h-14 w-fit py-2" src={"/assets/logos/onshape.png"} alt={"Onshape"} /> */}
 						</div>
 
+
 					</HorizontalWrap>
+
 				</div>
+
+
 				{/* <HorizontalWrap className="py-8">
 					Looking to learn more?
 					<div className="flex flex-col md:flex-row w-fit mt-6 gap-2 justify-center">
