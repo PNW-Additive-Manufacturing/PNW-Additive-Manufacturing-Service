@@ -12,6 +12,7 @@ import { deleteProjectShowcase, editProjectShowcase } from "../api/server-action
 import { toast } from "react-toastify";
 import DropdownSection from "../components/DropdownSection";
 import AMImage from "../components/AMImage";
+import classNames from "classnames";
 
 // export function ProjectCard(projectData: ProjectSpotlightWithAttachments) {
 export function ProjectCard({ projectData, editable, style }: { projectData: ProjectSpotlight, editable: boolean, style: "normal" | "compact" }) {
@@ -46,7 +47,7 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
 
         {imageSrc && <AMImage src={imageSrc} alt={"Project Image"} className="rounded-md max-lg:w-full mt-0 pt-0" width={720} height={350} />}
 
-        <div className="p-6">
+        <div className={classNames("py-4", { "px-6": style === "normal" })}>
             {isEditing ? (
                 <form ref={editFormRef as any} action={async (data) => {
                     try {
@@ -118,7 +119,7 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
                 </form>
             ) : (
                 <>
-                    <span className="font-semibold text-lg flex items-center justify-between gap-4">
+                    <span className="text-lg flex items-center justify-between gap-4">
                         <>{projectData.title}</>
                         {editable && accountContext.isSingedIn &&
                             accountContext.account!.permission !== "user" && (
@@ -128,7 +129,7 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
                                 />
                             )}
                     </span>
-                    {/* 
+
                     {projectData.author && style === "normal" && (
                         <p className="text-sm mt-1 mb-4">
                             Published by {projectData.author} on{" "}
@@ -136,9 +137,9 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
                         </p>
                     )}
 
-                    {style === "normal" && <hr className="pb-0 mb-4" />} */}
+                    {style === "normal" && <hr className="pb-0 mb-4" />}
 
-                    <span className="text-base text-cool-black">{projectData.description}</span>
+                    {style === "normal" && <p className="text-base text-cool-black">{projectData.description}</p>}
                 </>
             )}
 

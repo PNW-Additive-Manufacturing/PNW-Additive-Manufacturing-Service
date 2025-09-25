@@ -6,6 +6,8 @@ import ProjectSpotlightServe from "./Types/ProjectSpotlight/ProjectSpotlightServ
 import { ProjectCard } from "./project-spotlight/ProjectCard";
 import { FaChevronRight } from "react-icons/fa6";
 import AMImage from "./components/AMImage";
+import classNames from "classnames";
+import Image from "next/image";
 
 // Images
 
@@ -13,18 +15,16 @@ import Form3LImage from "@/public/assets/form_3l_helmet_hero.webp";
 import Fuse30WImage from "@/public/assets/fuse1__transparent_productimage.png";
 import Mars4UltraImage from "@/public/assets/Saturn-3-Ultra-12K-13.png";
 import MetalXImage from "@/public/assets/Alfex_Markforged_Metal_X_3D_Printer_System.webp";
+import BambulabA1Image from "@/public/assets/Bambu_Lab_A1.webp";
+import BambuLabX1CImage from "@/public/assets/x1Series-main-bg-v1-sm.png";
+import BlackToeRunningIconImage from "@/public/assets/logos/blacktoerunning.png";
+import MarkforgedOnyxImage from "@/public/assets/MARK-TWO-Mark3D-kaufen.jpg";
 // import BambuLabX1CImage from "@/public/assets/Bambu Lab X1 Carbon_cover.png";
 // import BambuLabX1EImage from "@/public/assets/Bambu Lab X1E_cover.png";
 // import BambuLabP1SImage from "@/public/assets/Bambu Lab P1S_cover.png";
 // import BambuLabA1Image from "@/public/assets/Bambu Lab A1_cover.png";
 // import BambuLabA1MiniImage from "@/public/assets/Bambu Lab A1 mini_cover.png";
-import BambuLabX1CImage from "@/public/assets/x1Series-main-bg-v1-sm.png";
-import BambulabA1Image from "@/public/assets/Bambu_Lab_A1.webp";
-
-import BambuLabIconImage from "@/public/assets/logos/bambulab.png";
-import BlackToeRunningIconImage from "@/public/assets/logos/blacktoerunning.png";
-import FormlabsIconImage from "@/public/assets/logos/formlabs.png";
-import classNames from "classnames";
+// import FormlabsIconImage from "@/public/assets/logos/formlabs.png";
 
 export default async function Home() {
 
@@ -135,20 +135,32 @@ export default async function Home() {
 					<HorizontalWrap>
 
 						<h2 className="font-medium text-2xl pb-2 w-full text-center">See what <span className="font-bold">Students Created</span></h2>
-						<p className="text-cool-black text-center">Students, faculty and professors bring ideas to reality using Additive Manufacturing.</p>
+						<p className="text-cool-black text-center">Students, faculty and professors bring ideas to reality using on-campus Manufacturing.</p>
+
+						{/* <hr className="my-6 opacity-50 w-1/3 mx-auto" /> */}
+
+						{/* <div className="grid grid-cols-4 grid-rows-2 w-full h-32">
+
+							<div className="col-span-2 row-span-2 bg-purple-500 w-full h-full"></div>
+							<div className="bg-yellow-500 w-full h-full"></div>
+							<div className="col-span-1 row-span-1 bg-pink-500 w-full h-full"></div>
+							<div className="col-span-1 row-span-1 bg-blue-500 w-full h-full"></div>
+							<div className="col-span-1 row-span-1 bg-amber-700 w-full h-full"></div>
+
+						</div> */}
 
 						<div className="flex flex-col gap-4 mt-8">
 
-							<div className="grid grid-rows-1 max-md:grid-rows-12 md:grid-cols-7 lg:grid-cols-12 gap-4">
+							<div className="grid grid-rows-1 max-md:grid-rows-12 md:grid-cols-7 lg:grid-cols-12 gap-6">
 
-								{showcases.slice(0, Math.min(showcases.length, 4)).map((s, i) => <div key={s.id} className={`
+								{showcases.slice(0, Math.min(showcases.length, 8)).map((s, i) => <div key={s.id} className={`
 									rounded-md row-span-4 md:col-span-2 lg:col-span-3
 									${i >= 3 ? 'hidden' : ''}
 									md:${i >= 2 ? 'hidden' : ''}
 									lg:inline
 									`}>
 
-									<ProjectCard projectData={s} editable={false} key={s.id} style={"normal"} />
+									<ProjectCard projectData={s} editable={false} key={s.id} style={"compact"} />
 
 								</div>)}
 
@@ -172,13 +184,19 @@ export default async function Home() {
 
 						</div>
 
-						<hr className="my-12 mt-6 opacity-50" />
+						{/* <hr className="my-12 mt-6 opacity-50" /> */}
 						{/* <br /> */}
 
-						<h2 className="font-medium text-2xl pb-2 w-full mt-8 text-center"><span className="font-bold">Manufacturing Machines</span> in the Hammond Design Studio</h2>
-						<p className="text-cool-black text-center">Each production method offers different benefits and drawbacks.</p>
+						<h2 className="font-medium text-2xl pb-2 w-full mt-20">Manufacturing Machines</h2>
+						<div className="text-cool-black">
+							Each production method offers different benefits and drawbacks. We recommend taking a look at an excellent guide by{" "}
 
-						{/* <hr style={{ marginBottom: "0px" }} /> */}
+							<a className="underline" target="_blank" href="https://xometry.pro/en-eu/articles/3d-printing-sla-vs-fdm/">
+								Xometry (3D Comparisons)
+							</a>.
+						</div>
+						<hr className="my-6 opacity-50" />
+
 						<div className="grid items-center grid-cols-2 md:grid-cols-4 xl:grid-cols-6 grid-rows-1 gap-6 mt-8 lg:gap-6">
 
 							<ManufacturingMachineCard
@@ -192,6 +210,12 @@ export default async function Home() {
 								technology="Fused Deposition Modeling"
 								description={"Perfect for prototyping medium-strength parts, offering a cost-effective solution for functional prototypes and design testing"}
 								imageSrc={BambulabA1Image} />
+
+							<ManufacturingMachineCard
+								name={"ELEGOO Mars 4 Ultra"}
+								technology="Resin LCD"
+								description={"Optimal for creating detailed and smooth-surfaced models, ideal for small intricate parts"}
+								imageSrc={Mars4UltraImage} />
 
 							{/* <ManufacturingMachineCard
 								name={"Bambu Lab X1E"}
@@ -221,13 +245,15 @@ export default async function Home() {
 								name={"Markforged Metal X"}
 								technology="Metal FFF"
 								description={"A manufacturing solution that cost effectively prints parts using tool and stainless steel and other alloys"}
+								unavailableReason="Unboxing & Installing"
 								imageSrc={MetalXImage} />
 
 							<ManufacturingMachineCard
-								name={"ELEGOO Mars 4 Ultra"}
-								technology="Resin LCD"
-								description={"Optimal for creating detailed and smooth-surfaced models, ideal for small intricate parts"}
-								imageSrc={Mars4UltraImage} />
+								name={"Markforged Onyx Pro"}
+								technology="Continuous Fiber Reinforcement "
+								description={"Professional desktop printer for strong functional prototypes, tools, and MRO parts"}
+								unavailableReason="Unboxing & Installing"
+								imageSrc={MarkforgedOnyxImage} />
 
 							<ManufacturingMachineCard
 								name={"Formlabs Fuse 3L"}
@@ -244,6 +270,7 @@ export default async function Home() {
 								imageSrc={Fuse30WImage} />
 
 						</div>
+
 						{/* <div className="w-full lg:w-1/3 mt-4">
 							<Link className="w-full" href="/materials">
 								<button className="text-left flex justify-between" type="button">
@@ -285,7 +312,7 @@ function ManufacturingMachineCard({ name, technology, description, unavailableRe
 
 	const isUnavailable = unavailableReason != null;
 
-	return <div className={classNames("bg-white p-4 rounded-md h-full", { "opacity-65": isUnavailable })}>
+	return <div className={classNames("p-4 rounded-md h-full", { "opacity-65": isUnavailable })}>
 		<div className="w-full text-sm">
 			<div className="px-4 w-full">
 				<div className="aspect-square mb-4">
