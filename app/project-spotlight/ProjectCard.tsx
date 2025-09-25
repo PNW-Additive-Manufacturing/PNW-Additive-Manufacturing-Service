@@ -45,9 +45,9 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
 
     return <div className="rounded-md" key={projectData.id}>
 
-        {imageSrc && <AMImage src={imageSrc} alt={"Project Image"} className="rounded-md max-lg:w-full mt-0 pt-0" width={720} height={350} />}
+        {imageSrc && <AMImage src={imageSrc} alt={"Project Image"} className="rounded-md rounded-b-none max-lg:w-full mt-0 pt-0 max-lg:h-36" width={720} height={375} />}
 
-        <div className={classNames("py-4", { "px-6": style === "normal" })}>
+        <div className={classNames("py-4 px-6")}>
             {isEditing ? (
                 <form ref={editFormRef as any} action={async (data) => {
                     try {
@@ -119,7 +119,7 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
                 </form>
             ) : (
                 <>
-                    <span className="text-lg flex items-center justify-between gap-4">
+                    <span className="text-lg flex items-center font-semibold justify-between gap-4">
                         <>{projectData.title}</>
                         {editable && accountContext.isSingedIn &&
                             accountContext.account!.permission !== "user" && (
@@ -135,6 +135,10 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
                             Published by {projectData.author} on{" "}
                             {formateDate(projectData.createdAt)}.
                         </p>
+                    )}
+
+                    {projectData.author && style === "compact" && (
+                        <p className="text-sm">{projectData.author}</p>
                     )}
 
                     {style === "normal" && <hr className="pb-0 mb-4" />}

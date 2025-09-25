@@ -49,13 +49,13 @@ export default async function Home() {
 							<p
 								style={{ maxWidth: "600px" }}
 								className="overflow-hidden full pb-4">
-								Created by the PNW Additive Manufacturing and ASME Club,
+								Created by the PNW Additive Manufacturing Club,
 								this service enables PNW students, and faculty
 								members to explore the world of 3D Printing.
 								Operating in the Purdue Northwest{" "}
 								<a
 									className="underline"
-									href="https://maps.app.goo.gl/bLNnJAGoQFB3UPWZ7">
+									href="https://www.pnw.edu/engineering/student-resources/student-engineering-design-studio/">
 									Design Studio
 								</a>
 								.
@@ -122,20 +122,20 @@ export default async function Home() {
 					</g>
 				</svg> */}
 
-				<svg className="bg-white hidden lg:block" viewBox="0 30 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+				{/* <svg className="bg-white hidden lg:block" viewBox="0 30 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
 					<path className="fill-background" d="
 						M0,80 
 						C360,40 1080,40 1440,80 
 						L1440,0 
 						L0,0 
 						Z" />
-				</svg>
+				</svg> */}
 
-				<div className="bg-white py-8 lg:py-12 lg:pt-0 shadow-sm">
+				<div className="bg-white py-8 lg:py-12 shadow-sm">
 					<HorizontalWrap>
 
-						<h2 className="font-medium text-2xl pb-2 w-full text-center">See what <span className="font-bold">Students Created</span></h2>
-						<p className="text-cool-black text-center">Students, faculty and professors bring ideas to reality using on-campus Manufacturing.</p>
+						<h2 className="font-medium text-2xl pb-2 w-full max-lg:text-center">See what <span className="font-bold text-pnw-gold">Students Created</span></h2>
+						<p className="text-cool-black max-lg:text-center">Students, faculty and professors bring ideas to reality using on-campus Manufacturing.</p>
 
 						{/* <hr className="my-6 opacity-50 w-1/3 mx-auto" /> */}
 
@@ -153,7 +153,9 @@ export default async function Home() {
 
 							<div className="grid grid-rows-1 max-md:grid-rows-12 md:grid-cols-7 lg:grid-cols-12 gap-6">
 
-								{showcases.slice(0, Math.min(showcases.length, 8)).map((s, i) => <div key={s.id} className={`
+								{showcases.slice(0, Math.min(showcases.length, 4)).map((s, i) => <div key={s.id} className={`
+									out
+									shadow-sm
 									rounded-md row-span-4 md:col-span-2 lg:col-span-3
 									${i >= 3 ? 'hidden' : ''}
 									md:${i >= 2 ? 'hidden' : ''}
@@ -184,18 +186,17 @@ export default async function Home() {
 
 						</div>
 
-						{/* <hr className="my-12 mt-6 opacity-50" /> */}
 						{/* <br /> */}
 
-						<h2 className="font-medium text-2xl pb-2 w-full mt-20">Manufacturing Machines</h2>
-						<div className="text-cool-black">
+						<h2 className="font-medium text-2xl pb-2 w-full mt-20 max-lg:text-center text-right">Manufacturing <span className="font-bold text-pnw-gold">Students Utilize</span></h2>
+						<div className="text-cool-black text-right max-md:hidden">
 							Each production method offers different benefits and drawbacks. We recommend taking a look at an excellent guide by{" "}
 
 							<a className="underline" target="_blank" href="https://xometry.pro/en-eu/articles/3d-printing-sla-vs-fdm/">
 								Xometry (3D Comparisons)
 							</a>.
 						</div>
-						<hr className="my-6 opacity-50" />
+						{/* <hr className="my-6 opacity-50" /> */}
 
 						<div className="grid items-center grid-cols-2 md:grid-cols-4 xl:grid-cols-6 grid-rows-1 gap-6 mt-8 lg:gap-6">
 
@@ -248,12 +249,12 @@ export default async function Home() {
 								unavailableReason="Unboxing & Installing"
 								imageSrc={MetalXImage} />
 
-							<ManufacturingMachineCard
+							{/* <ManufacturingMachineCard
 								name={"Markforged Onyx Pro"}
 								technology="Continuous Fiber Reinforcement "
 								description={"Professional desktop printer for strong functional prototypes, tools, and MRO parts"}
 								unavailableReason="Unboxing & Installing"
-								imageSrc={MarkforgedOnyxImage} />
+								imageSrc={MarkforgedOnyxImage} /> */}
 
 							<ManufacturingMachineCard
 								name={"Formlabs Fuse 3L"}
@@ -285,7 +286,7 @@ export default async function Home() {
 				<div className="py-10 lg:py-12">
 					<HorizontalWrap>
 
-						<h2 className="text-xl font-medium mb-2">Our Sponsors</h2>
+						<h2 className="text-xl font-medium mb-2">Sponsors</h2>
 						<p>We are incredibly grateful to our sponsors and donators, whose generous support enables us to push the boundaries of Additive Manufacturing at Purdue Northwest.</p>
 						<div className="flex gap-12 h-14 mt-8 overflow-x-scroll">
 							<AMImage src={BlackToeRunningIconImage} alt={"Black Toe Clothing"} />
