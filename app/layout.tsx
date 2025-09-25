@@ -105,7 +105,7 @@ export default async function RootLayout({
 										path: "/materials"
 									},
 									{
-										name: "Contact Us",
+										name: "Leadership",
 										path: "/team"
 									},
 									{

@@ -273,7 +273,7 @@ export function Footer(): JSX.Element {
 				<div>
 					<p className="font-bold text-gray-100 text-sm">About Us</p>
 					<Link href="/team" className="text-gray-300 my-2 text-xs">
-						Our Team
+						Leadership
 					</Link>
 					<br />
 					<a
