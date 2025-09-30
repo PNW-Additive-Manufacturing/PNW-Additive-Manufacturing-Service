@@ -108,23 +108,27 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
 
                     <h2 className="lg:flex gap-2 justify-between text-xl font-normal mb-2 text-pnw-gold">{selectedAccount.firstName} {selectedAccount.lastName}</h2>
 
-                    <APIForm action={changePermission}>
-
-                        <input type="hidden" name="user-email" value={selectedAccount.email} />
-                        <select className="outline-none inline w-fit mb-0" name="new-permission" defaultValue={selectedAccount.permission}>
-                            <option key={AccountPermission.Admin} value={AccountPermission.Admin}>Administrator</option>
-                            <option value={AccountPermission.Maintainer}>Maintainer</option>
-                            <option value={AccountPermission.User}>User</option>
-                        </select>
-
-                    </APIForm>
-
                     <label>Account Details</label>
                     <ul>
                         {selectedAccount.yearOfStudy && <li><p className="text-sm">Joined as {selectedAccount.yearOfStudy}</p></li>}
                         {selectedAccount.department && <li><p className="text-sm">College of {selectedAccount.department}</p></li>}
                         <li><p><a className="underline text-sm" href={`mailto:${selectedAccount.email}`}>Contact at {selectedAccount.email}</a></p></li>
                     </ul>
+
+                    <DropdownSection className="text-sm px-0 mt-2" hidden={true} name="Account Permission">
+
+                        <APIForm action={changePermission} submitLabel="Update Permission" successMessage={(data) => <>Permission Updated</>}>
+
+                            <input type="hidden" name="user-email" value={selectedAccount.email} />
+                            <select name="new-permission" defaultValue={selectedAccount.permission}>
+                                <option key={AccountPermission.Admin} value={AccountPermission.Admin}>Administrator</option>
+                                <option value={AccountPermission.Maintainer}>Maintainer</option>
+                                <option value={AccountPermission.User}>User</option>
+                            </select>
+
+                        </APIForm>
+
+                    </DropdownSection>
 
                     <DropdownSection className="text-sm px-0 mt-2" hidden={true} name={`${selectedAccount.firstName} ${selectedAccount.lastName} has \$${selectedAccount.balanceInDollars.toFixed(2)}`}>
 
