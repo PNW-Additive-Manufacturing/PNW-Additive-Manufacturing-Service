@@ -1,6 +1,4 @@
-import Image, { StaticImageData } from "next/image";
 import HorizontalWrap from "../components/HorizontalWrap";
-import QRCode from "react-qr-code";
 import AMImage from "../components/AMImage";
 
 function Card({
@@ -20,7 +18,7 @@ function Card({
 
 		<div>
 
-			<AMImage src={avatar} width={720} height={720} alt="Profile Picture" className="w-full aspect-square rounded-none" />
+			<AMImage src={avatar} width={720} height={720} alt="Profile Picture" className="w-full aspect-square rounded" />
 			<div className="pb-4 py-2 w-fit mt-2">
 				<h2 className="text-2xl font-bold text-black text-wrap">{name}</h2>
 				<p className="mb-2 mt-1 text-sm">{role}.</p>
@@ -66,16 +64,23 @@ export default function Team() {
 							role="Secretary of AM Club"
 							email="moren124@pnw.edu"
 							avatar="/assets/luke.webp" />
+
+						<Card
+							name={"Jih Bin Luo"}
+							role={"Developer"}
+							avatar={"/assets/jih.jpg"} />
+
+						<Card
+							name={"Justin Meng"}
+							role={"Developer"}
+							avatar={"/assets/justin.jpeg"} />
+
+
 						<Card
 							name="David Holleman"
 							role="Former Developer"
 							email=""
 							avatar="/assets/david.jpg" />
-						{/* <Card
-							name="Dikshant Sharma"
-							role="Previous President"
-							email="sharm727@pnw.edu"
-							avatar="https://cdn.discordapp.com/avatars/176385201495212033/acac677d4f2185e4a1e57458480477dd.png?size=640" /> */}
 					</div>
 				</div>
 			</HorizontalWrap>
