@@ -1,8 +1,9 @@
 "use client";
 
 import { APIData } from "@/app/api/APIResponse";
-import { addFunds } from "@/app/api/server-actions/account";
+import { addFunds, changePermission } from "@/app/api/server-actions/account";
 import { formateDate } from "@/app/api/util/Constants";
+import APIForm from "@/app/components/APIForm";
 import DropdownSection from "@/app/components/DropdownSection";
 import FormSubmitButton from "@/app/components/FormSubmitButton";
 import Account, { AccountPermission, AccountWithTransactions } from "@/app/Types/Account/Account";
@@ -107,14 +108,16 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
 
                     <h2 className="lg:flex gap-2 justify-between text-xl font-normal mb-2 text-pnw-gold">{selectedAccount.firstName} {selectedAccount.lastName}</h2>
 
-                    {/* <form className="inline text-sm">
+                    <APIForm action={changePermission}>
+
                         <input type="hidden" name="user-email" value={selectedAccount.email} />
-                        <select className="outline-none inline w-fit mb-0" name="permission-admin" defaultValue={selectedAccount.permission}>
+                        <select className="outline-none inline w-fit mb-0" name="new-permission" defaultValue={selectedAccount.permission}>
                             <option key={AccountPermission.Admin} value={AccountPermission.Admin}>Administrator</option>
                             <option value={AccountPermission.Maintainer}>Maintainer</option>
                             <option value={AccountPermission.User}>User</option>
                         </select>
-                    </form> */}
+
+                    </APIForm>
 
                     <label>Account Details</label>
                     <ul>

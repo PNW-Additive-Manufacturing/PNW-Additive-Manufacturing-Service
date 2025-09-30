@@ -114,26 +114,21 @@ export async function logout() {
 	cookies().delete(envConfig.sessionCookie);
 }
 
-export async function changePermission(
-	prevState: string,
-	formData: FormData
-): Promise<string> {
-	console.log("changing permission");
-	let newPermission = formData.get("new-permission") as AccountPermission;
-	let userEmail = formData.get("user-email") as string;
+export async function changePermission(formData: FormData): Promise<APIData<{}>> {
+	return await resAttemptAsync(async () => {
 
-	try {
-		let res =
-			await db`update account set permission=${newPermission} where email=${userEmail} returning email`;
-		if (res.count == 0) {
-			throw new Error("Failed to update account!");
-		}
-	} catch (e) {
-		console.error(e);
-		return "Failed to update permission on user!";
-	}
+		let newPermission = formData.get("new-permission") as AccountPermission;
+		let userEmail = formData.get("user-email") as string;
 
-	return "";
+		let permission = (await getJwtPayload())?.permission;
+		if (permission !== AccountPermission.Admin) return resUnauthorized();
+
+		let res = await db`update account set permission=${newPermission} where email=${userEmail} returning email`;
+
+		if (res.count == 0) throw new Error("Account does not exist!");
+
+		return resOk();
+	});
 }
 
 export async function getUserInfo(email: string): Promise<any | null> {
