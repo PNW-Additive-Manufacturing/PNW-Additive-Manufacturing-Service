@@ -16,6 +16,7 @@ CREATE TABLE Account (
   Permission PermissionType NOT NULL DEFAULT 'user',
   IsEmailVerified BOOLEAN NOT NULL DEFAULT FALSE,
   TwoStepAuthSecret varchar(16),
+  IsTwoStepAuthSecretVerified BOOLEAN NOT NULL DEFAULT FALSE,
   IsBanned BOOLEAN DEFAULT FALSE NOT NULL,
   CONSTRAINT TwoStepAuth_CHK CHECK (
     (TwoStepAuthSecret IS NULL AND IsTwoStepAuthSecretVerified = FALSE) OR
@@ -148,7 +149,7 @@ CREATE TABLE Model (
   CONSTRAINT FLAGGED_CHK CHECK (
     (FlaggedIssues IS NOT NULL AND FlaggedAt IS NOT NULL) OR
     (FlaggedAt IS NULL AND FlaggedIssues IS NULL)
-  );
+  )
 );
 
 DROP TABLE IF EXISTS ModelAnalysis CASCADE;
