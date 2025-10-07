@@ -16,23 +16,20 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     if (!parsedData.success) return new NextResponse(null, { status: 400 });
 
     const attachmentPath = await fs.promises.realpath(getProjectShowcaseAttachmentPath(parsedData.data.attachmentId));
-    if (!attachmentPath.startsWith(envConfig.uploadProjectShowcaseAttachmentsDir))
-    {
+    if (!attachmentPath.startsWith(envConfig.uploadProjectShowcaseAttachmentsDir)) {
         return new NextResponse(null, { status: 404 });
     }
 
-    try
-    {
+    try {
         const bufferedData = fs.readFileSync(attachmentPath);
 
-        return new NextResponse(bufferedData, {
+        return new NextResponse(bufferedData as any, {
             headers: {
-                "cache-control": "max-age=3600" 
+                "cache-control": "max-age=3600"
             }
         });
     }
-    catch (ex)
-    {
+    catch (ex) {
         return new NextResponse(null, { status: 404 });
     }
 

@@ -39,7 +39,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     const receiptPDF = await renderToBuffer(<WalletTransactionReceiptPDF transaction={Object.assign(transaction, account)} />);
 
-    return new NextResponse(receiptPDF, {
+    return new NextResponse(receiptPDF as any, {
         headers: {
             "Content-Disposition": `attachment; filename="ams_receipt_${transaction.id}.pdf"`,
             "content-type": "application/octet-stream"

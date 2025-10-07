@@ -44,7 +44,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
 	const bufferedData = await fs.promises.readFile(modelPath);
 
-	return new NextResponse(bufferedData, {
+	return new NextResponse(bufferedData as any, {
 		headers: {
 			"Content-Disposition": `attachment; filename="${model.name}.stl"`,
 			"content-type": "application/octet-stream",

@@ -1,0 +1,39 @@
+{
+	"name": "ams-pdf",
+	"version": "1.0.0",
+	"license": "MIT",
+	"author": "Aaron Jung",
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"require": "./dist/index.cjs",
+			"import": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		}
+	},
+	"type": "module",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "tsdown --config tsdown.config.ts",
+		"build:test": "tsdown --config tsdown.test.config.ts",
+		"test": "npm run build:test && echo ECMAScript && node dist/test/test.js && echo CommonJS && node dist/test/test.cjs",
+		"prepare": "npm run build"
+	},
+	"devDependencies": {
+		"@types/memorystream": "^0.3.4",
+		"@types/node": "^24.7.0",
+		"@types/pdfkit": "^0.17.3"
+	},
+	"dependencies": {
+		"concurrently": "^9.2.1",
+		"memorystream": "^0.3.1",
+		"pdfkit": "^0.17.2",
+		"tsdown": "^0.15.6",
+		"typescript": "^5.9.3",
+		"zod": "^4.1.11"
+	}
+}

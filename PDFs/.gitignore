@@ -1,0 +1,4 @@
+dist
+package-lock.json
+yarn.lock
+test_output.pdf

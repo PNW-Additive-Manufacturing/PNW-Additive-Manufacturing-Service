@@ -41,7 +41,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
     const receiptPDF = await renderToBuffer(<RequestReceiptPDF request={request} />);
 
-    return new NextResponse(receiptPDF, {
+    return new NextResponse(receiptPDF as any, {
         headers: {
             "Content-Disposition": `attachment; filename="ams_request_receipt_${requestId}.pdf"`,
             "content-type": "application/octet-stream"

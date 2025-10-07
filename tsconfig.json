@@ -11,6 +11,7 @@
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
+    "declaration": true,
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
@@ -37,6 +38,7 @@
   ],
   "exclude": [
     "node_modules",
-    "cron"
+    "cron",
+    "PDFs"
   ]
 }

@@ -1,7 +1,7 @@
 "use server";
 
 import { getJwtPayload } from "@/app/api/util/JwtHelper";
-import { RegularCart, RegularLicense } from "lineicons-react";
+import { RegularBolt, RegularCart, RegularLicense } from "lineicons-react";
 import db from "@/app/api/Database";
 import GenericPrinterIcon from "@/app/components/icons/GenericPrinterIcon";
 import FilamentSpoolIcon from "@/app/components/icons/FilamentSpoolIcon";
@@ -56,6 +56,12 @@ export default async function Maintainer() {
 							<button className="flex items-center w-full text-base font-normal">
 								<FilamentSpoolIcon className="inline-block w-12 h-12 mr-auto fill-gray-300"></FilamentSpoolIcon>
 								<span>Manage Filament</span>
+							</button>
+						</a>
+						<a href="/dashboard/maintainer/quote" className="sm:max-w-sm block">
+							<button className="flex items-center w-full text-base font-normal">
+								<RegularBolt className="inline-block w-12 h-12 mr-auto fill-gray-300" />
+								<span>Generate Quote</span>
 							</button>
 						</a>
 
