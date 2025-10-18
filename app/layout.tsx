@@ -3,22 +3,23 @@ import 'react-toastify/dist/ReactToastify.css';
 import "./globals.css";
 import type { Metadata, ResolvingMetadata } from "next";
 import { Inter } from "next/font/google";
-import { getJwtPayload, makeJwt, UserJWT } from "./api/util/JwtHelper";
-import {
-	AccountDetails,
-	ColorfulRequestPrintButton,
-	Footer,
-	Navbar
-} from "@/app/components/Navigation";
+import { getJwtPayload, UserJWT } from "./api/util/JwtHelper";
+
+
+import {Navbar} from "@/app/components/navBar/Navigation";
+import {ColorfulRequestPrintButton} from "@/app/components/navBar/ColorfulRequestPrintButton";
+import { AccountDetails } from "@/app/components/navBar/AccountDetails";
+import { Footer } from '@/app/components/navBar/Footer';
+
+
 import { AccountPermission } from "./Types/Account/Account";
 import { AccountProvider, ThemeProvider } from "./ContextProviders";
 import AccountServe from "./Types/Account/AccountServe";
-import HorizontalWrap from "./components/HorizontalWrap";
-import { cookies, headers } from "next/headers";
+
 import getConfig from "./getConfig";
-import { login } from "./api/util/AccountHelper";
+
 import { ToastContainer } from "react-toastify";
-import { FloatingFormContainer, FloatingFormContext } from "./components/FloatingForm";
+import { FloatingFormContainer } from "./components/FloatingForm";
 
 const inter = Inter({ subsets: ["latin"] });
 const envConfig = getConfig();
@@ -87,16 +88,7 @@ export default async function RootLayout({
 							: await AccountServe.queryByEmail(email)
 					}>
 					<ThemeProvider>
-						{/* <div className="bg-gray-200">
-							<HorizontalWrap className="text-cool-black opacity-50 w-full py-0 pt-1 pb-1 lg:text-right text-sm">
-								Site is in{" "}
-								<span className="font-semibold">
-									testing mode
-								</span>
-								, no payments are fulfilled, nor should orders
-								be considered actual!
-							</HorizontalWrap>
-						</div> */}
+
 						<Navbar
 							links={(() => {
 								let elements: { name: string; path: string }[] = [
