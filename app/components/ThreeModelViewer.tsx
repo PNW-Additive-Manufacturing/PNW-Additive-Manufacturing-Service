@@ -1,36 +1,28 @@
 "use client";
 
 import {
-	AccumulativeShadows,
 	CameraControls,
-	Center,
-	Grid,
-	OrthographicCamera,
-	RandomizedLight
+	OrthographicCamera
 } from "@react-three/drei";
-import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
-import { LegacyRef, memo, RefObject, useEffect, useRef, useState } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import classNames from "classnames";
+import { RegularReload } from "lineicons-react";
+import { useEffect, useRef, useState } from "react";
+import { useEffectOnce } from "react-use";
 import {
 	BufferGeometry,
+	Color,
 	Euler,
-	GridHelper,
 	MeshStandardMaterial,
 	Object3D,
-	PlaneGeometry,
 	Vector3
 } from "three";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
-import { Color } from "three";
-import { useEffectOnce } from "react-use";
 import {
 	getSingleColor,
-	isGradient,
 	SwatchConfiguration,
 	templatePNW
 } from "./Swatch";
-import { detach } from "@react-three/fiber/dist/declarations/src/core/utils";
-import { RegularReload } from "lineicons-react";
-import classNames from "classnames";
 
 function UtilitySphere({
 	radius,
@@ -55,7 +47,7 @@ function UtilitySphere({
 // let loadedCount = 0;
 
 export function EngineeringCamera({ focusedGeometry, onPositioned }: { focusedGeometry: BufferGeometry, onPositioned: () => void }) {
-	const cameraRef = useRef<CameraControls>();
+	const cameraRef = useRef<CameraControls>(undefined);
 
 	// useFrame((_, delta) => {
 	// 	if (cameraRef.current) {

@@ -6,10 +6,9 @@ import { formateDate } from "@/app/api/util/Constants";
 import APIForm from "@/app/components/APIForm";
 import DropdownSection from "@/app/components/DropdownSection";
 import FormSubmitButton from "@/app/components/FormSubmitButton";
-import Account, { AccountPermission, AccountWithTransactions } from "@/app/Types/Account/Account";
+import { AccountPermission, AccountWithTransactions } from "@/app/Types/Account/Account";
 import { WalletTransaction, WalletTransactionStatus } from "@/app/Types/Account/Wallet";
-import { RegularBan, RegularCheckmark, RegularCirclePlus, RegularTrashCan, RegularWarning } from "lineicons-react";
-import Link from "next/link";
+import { RegularCheckmark, RegularCirclePlus, RegularWarning } from "lineicons-react";
 import { useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { toast } from "react-toastify";
@@ -38,7 +37,7 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
         return result;
     }) as any, undefined);
 
-    const permissionFilterElemRef = useRef<HTMLSelectElement>();
+    const permissionFilterElemRef = useRef<HTMLSelectElement>(undefined);
 
     const accountsByPermission = (permission: AccountPermission) => accounts.filter(a => a.permission == permission);
     const accountsUnverified = accounts.filter(a => !a.isEmailVerified);

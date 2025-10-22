@@ -11,7 +11,10 @@ import ResetPassword from "./resetPassword";
 
 const appConfig = getConfig();
 
-export default async function Page({ searchParams }: { searchParams?: { [key: string]: string | string[] | undefined } }) {
+export default async function Page(
+    props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }
+) {
+    const searchParams = await props.searchParams;
     const resetCode = searchParams ? z.string().safeParse(searchParams["code"]).data : null;
     if (resetCode == null) redirect(`${appConfig.hostURL}/not-found`);
 
@@ -23,5 +26,4 @@ export default async function Page({ searchParams }: { searchParams?: { [key: st
     return <HorizontalWrap className="py-8">
         <ResetPassword resetCode={resetCode} />
     </HorizontalWrap>
-
 }

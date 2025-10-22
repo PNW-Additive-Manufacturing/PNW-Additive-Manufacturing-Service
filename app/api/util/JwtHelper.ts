@@ -58,7 +58,7 @@ export async function makeJwt(
 }
 
 export async function getJwtPayload(): Promise<UserJWT> {
-	let cookie = cookies().get(appConfig.sessionCookie);
+	let cookie = (await cookies()).get(appConfig.sessionCookie);
 	if (cookie == undefined) throw new Error("Session cookie is undefined");
 
 	try {
@@ -87,7 +87,7 @@ export async function getJwtPayload(): Promise<UserJWT> {
 }
 
 export async function retrieveSafeJWTPayload(): Promise<UserJWT | null> {
-	let cookie = cookies().get(appConfig.sessionCookie);
+	let cookie = (await cookies()).get(appConfig.sessionCookie);
 	if (!cookie) return null;
 
 	try {
@@ -124,7 +124,7 @@ export async function retrieveSafeJWTPayload(): Promise<UserJWT | null> {
 
 // TODO: Replace with retrieveSafeJWTPayload to use new retrieveSafeRefinedJWTPayload
 export async function retrieveSafeRefinedJWTPayload(): Promise<RefinedUserJWT | null> {
-	let cookie = cookies().get(appConfig.sessionCookie);
+	let cookie = (await cookies()).get(appConfig.sessionCookie);
 	if (!cookie) return null;
 
 	try {

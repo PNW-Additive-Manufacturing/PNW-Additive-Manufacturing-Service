@@ -1,23 +1,21 @@
 "use server";
 
-import { attemptLogin, checkIfPasswordCorrect, createAccount, login, setSessionTokenCookie, validatePassword } from "@/app/api/util/AccountHelper";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { getJwtPayload, retrieveSafeJWTPayload } from "@/app/api/util/JwtHelper";
-import { cookies } from "next/headers";
 import db from "@/app/api/Database";
-import { hashAndSaltPassword } from "../util/PasswordHelper";
-import Account, { AccountPermission, emailVerificationExpirationDurationInDays, YearsOfStudy } from "@/app/Types/Account/Account";
-import ActionResponse, { ActionResponsePayload } from "./ActionResponse";
-import { z } from "zod";
-import AccountServe from "@/app/Types/Account/AccountServe";
-import { fundsAdded, sendEmail, verifyEmailTemplate } from "../util/Mail";
+import { attemptLogin, checkIfPasswordCorrect, createAccount, login, setSessionTokenCookie, validatePassword } from "@/app/api/util/AccountHelper";
+import { getJwtPayload, retrieveSafeJWTPayload } from "@/app/api/util/JwtHelper";
 import getConfig from "@/app/getConfig";
-import { APIData, resOkData, resError, resOk, resUnauthorized, resAttemptAsync } from "../APIResponse";
-import { addMinutes } from "@/app/utils/TimeUtils";
+import { AccountPermission, emailVerificationExpirationDurationInDays } from "@/app/Types/Account/Account";
+import AccountServe from "@/app/Types/Account/AccountServe";
 import { WalletTransaction, WalletTransactionPaymentMethod, WalletTransactionStatus } from "@/app/Types/Account/Wallet";
-import { RegistrationSpanIDSchema } from "@/app/Types/RegistrationSpan/RegistrationSpan";
-import { recordAccountInRegistrationSpan } from "@/app/Types/RegistrationSpan/RegistrationSpanServe";
+import { addMinutes } from "@/app/utils/TimeUtils";
+import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { z } from "zod";
+import { APIData, resAttemptAsync, resError, resOk, resOkData, resUnauthorized } from "../APIResponse";
+import { fundsAdded, sendEmail, verifyEmailTemplate } from "../util/Mail";
+import { hashAndSaltPassword } from "../util/PasswordHelper";
+import ActionResponse, { ActionResponsePayload } from "./ActionResponse";
 
 const envConfig = getConfig();
 
@@ -25,7 +23,7 @@ export async function tryLogin(prevState: string, formData: FormData) {
 	try {
 		const token = await attemptLogin(formData.get("email") as string, formData.get("password") as string);
 
-		setSessionTokenCookie(token);
+		await setSessionTokenCookie(token);
 
 		revalidatePath("/");
 	} catch (e: any) {
@@ -87,7 +85,7 @@ export async function tryCreateAccount(prevState: string, formData: FormData) {
 			parsedData.data.department
 		);
 
-		setSessionTokenCookie(token);
+		await setSessionTokenCookie(token);
 
 		revalidatePath("/");
 	} catch (e: any) {
@@ -111,7 +109,7 @@ export async function tryCreateAccount(prevState: string, formData: FormData) {
 
 export async function logout() {
 	console.log("Logout");
-	cookies().delete(envConfig.sessionCookie);
+	(await cookies()).delete(envConfig.sessionCookie);
 }
 
 export async function changePermission(formData: FormData): Promise<APIData<{}>> {

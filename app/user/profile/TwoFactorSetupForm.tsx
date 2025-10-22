@@ -1,10 +1,8 @@
 "use client";
 
-import { AccountContext } from "@/app/ContextProviders";
-import FocusOnMount from "@/app/components/FocusOnMount";
 import { GenericUnitInput } from "@/app/components/Inputs";
+import { AccountContext } from "@/app/ContextProviders";
 import { hasTwoStepAuthentication } from "@/app/Types/Account/Account";
-import Image from "next/image";
 import { authenticator } from "otplib";
 import { useContext, useRef, useState } from "react";
 import QRCode from "react-qr-code";
@@ -16,7 +14,7 @@ export default function TwoFactorSetupForm() {
 		undefined
 	);
 
-	const inputVerifyCodeRef = useRef<HTMLInputElement>();
+	const inputVerifyCodeRef = useRef<HTMLInputElement>(undefined);
 
 	const verifyCode = (code: string) => {
 		if (twoAuthSecret == undefined) return;

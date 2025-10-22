@@ -8,8 +8,8 @@ import ErrorPrompt from "@/app/components/ErrorPrompt";
 import { RequestWithEmails, RequestWithParts } from "@/app/Types/Request/Request";
 import HorizontalWrap from "@/app/components/HorizontalWrap";
 
-export default async function Page(req: { params: { orderId: string } }) {
-	let request = await RequestServe.fetchByIDWithAll(req.params.orderId);
+export default async function Page(req: { params: Promise<{ orderId: string }> }) {
+	let request = await RequestServe.fetchByIDWithAll((await req.params).orderId);
 	if (request == undefined) return <ErrorPrompt code={"404"} details={"Request does not exist!"}></ErrorPrompt>
 
 	request = Object.assign(request, { emails: await RequestServe.getEmails(request.id) });

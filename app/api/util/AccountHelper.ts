@@ -1,17 +1,17 @@
-import { cookies } from "next/headers";
+import db from "@/app/api/Database";
+import { makeJwt } from "@/app/api/util/JwtHelper";
 import {
 	correctPassword,
 	hashAndSaltPassword
 } from "@/app/api/util/PasswordHelper";
-import postgres, { PostgresError } from "postgres";
-import db from "@/app/api/Database";
-import { makeJwt } from "@/app/api/util/JwtHelper";
-import * as crypto from "crypto";
-import { AccountPermission } from "@/app/Types/Account/Account";
-import DOMPurify from "isomorphic-dompurify";
 import getConfig from "@/app/getConfig";
+import { AccountPermission } from "@/app/Types/Account/Account";
+import { queryInCompleteReregistration, recordAccountInRegistrationSpan } from "@/app/Types/RegistrationSpan/RegistrationSpanServe";
 import { addMinutes } from "@/app/utils/TimeUtils";
-import { queryAccountReregistration, queryInCompleteReregistration, recordAccountInRegistrationSpan } from "@/app/Types/RegistrationSpan/RegistrationSpanServe";
+import * as crypto from "crypto";
+import DOMPurify from "isomorphic-dompurify";
+import { cookies } from "next/headers";
+import postgres, { PostgresError } from "postgres";
 
 const appConfig = getConfig();
 
@@ -194,11 +194,11 @@ export async function login(
 	return token;
 }
 
-export function setSessionTokenCookie(token: string)
+export async function setSessionTokenCookie(token: string)
 {
 	//session cookie cannot be accessed via client-side javascript, making this safer than
 	//just returning the token via JSON response.
-	cookies().set(appConfig.sessionCookie, token, {
+	(await cookies()).set(appConfig.sessionCookie, token, {
 		httpOnly: true, //cannot be accessed via client-side Javascript
 		sameSite: "lax", //can only be sent to same website
 		expires: addMinutes(new Date(), 10080),

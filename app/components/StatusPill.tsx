@@ -36,7 +36,7 @@ export function SelectorStatusPill({
 }) {
 	className = className ?? "";
 
-	const statusCircleRef = useRef<HTMLElement>();
+	const statusCircleRef = useRef<HTMLElement>(undefined);
 
 	useLayoutEffect(() => {
 

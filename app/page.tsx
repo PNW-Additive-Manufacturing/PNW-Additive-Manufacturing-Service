@@ -1,25 +1,19 @@
-import { StaticImageData } from "next/image";
-import HorizontalWrap from "./components/HorizontalWrap";
-import Link from "next/link";
-import { RegularArrowRight, RegularDiamondAlt } from "lineicons-react";
-import ProjectSpotlightServe from "./Types/ProjectSpotlight/ProjectSpotlightServe";
-import { ProjectCard } from "./project-spotlight/ProjectCard";
-import { FaChevronRight } from "react-icons/fa6";
-import AMImage from "./components/AMImage";
 import classNames from "classnames";
-import Image from "next/image";
+import { StaticImageData } from "next/image";
+import Link from "next/link";
+import AMImage from "./components/AMImage";
+import HorizontalWrap from "./components/HorizontalWrap";
 
 // Images
 
-import Form3LImage from "@/public/assets/form_3l_helmet_hero.webp";
-import Fuse30WImage from "@/public/assets/fuse1__transparent_productimage.png";
-import Mars4UltraImage from "@/public/assets/Saturn-3-Ultra-12K-13.png";
 import MetalXImage from "@/public/assets/Alfex_Markforged_Metal_X_3D_Printer_System.webp";
 import BambulabA1Image from "@/public/assets/Bambu_Lab_A1.webp";
-import BambuLabX1CImage from "@/public/assets/x1Series-main-bg-v1-sm.png";
+import Form3LImage from "@/public/assets/form_3l_helmet_hero.webp";
+import Fuse30WImage from "@/public/assets/fuse1__transparent_productimage.png";
 import BlackToeRunningIconImage from "@/public/assets/logos/blacktoerunning.png";
-import OnshapeIconImage from "@/public/assets/logos/onshape.png";
-import BambuLabIconImage from "@/public/assets/logos/bambulab.png";
+import Mars4UltraImage from "@/public/assets/Saturn-3-Ultra-12K-13.png";
+import BambuLabX1CImage from "@/public/assets/x1Series-main-bg-v1-sm.png";
+import { FaArrowRight } from "react-icons/fa";
 // import MarkforgedOnyxImage from "@/public/assets/MARK-TWO-Mark3D-kaufen.jpg";
 // import BambuLabX1CImage from "@/public/assets/Bambu Lab X1 Carbon_cover.png";
 // import BambuLabX1EImage from "@/public/assets/Bambu Lab X1E_cover.png";
@@ -30,8 +24,8 @@ import BambuLabIconImage from "@/public/assets/logos/bambulab.png";
 
 export default async function Home() {
 
-	const showcases = await ProjectSpotlightServe.queryAllProjectShowcases();
-	await ProjectSpotlightServe.withManyAttachments(showcases);
+	// const showcases = await ProjectSpotlightServe.queryAllProjectShowcases();
+	// await ProjectSpotlightServe.withManyAttachments(showcases);
 
 	return (
 		<>
@@ -73,7 +67,7 @@ export default async function Home() {
 									<Link href={"/request-part"}>
 										<button className="w-fit px-3.5 py-2.5 mb-0 text-sm bg-white outline-2 text-pnw-gold fill-pnw-gold outline outline-pnw-gold tracking-wider font-bold uppercase shadow-sm">
 											Start Printing
-											<RegularArrowRight className="inline ml-2 mb-0.5" />
+											<FaArrowRight className="inline ml-2 mb-0.5"/>
 										</button>
 									</Link>
 									<Link
@@ -158,7 +152,7 @@ export default async function Home() {
 
 							<div className="grid grid-rows-1 grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
-								{showcases.slice(0, Math.min(showcases.length, 8)).map((s, i) => <div key={s.id} className={`
+								{/* {showcases.slice(0, Math.min(showcases.length, 8)).map((s, i) => <div key={s.id} className={`
 									out
 									shadow-sm
 									bg-white
@@ -170,7 +164,7 @@ export default async function Home() {
 
 									<ProjectCard projectData={s} editable={false} key={s.id} style={"compact"} />
 
-								</div>)}
+								</div>)} */}
 
 								{/* <div className="flex justify-center items-center mt-2">
 									<a href="/project-spotlight">
@@ -352,7 +346,7 @@ function ManufacturingMachineCard({ name, technology, description, unavailableRe
 		<div className="w-full text-sm">
 			<div className="px-4 w-full">
 				<div className="aspect-square mb-4">
-					<AMImage src={imageSrc} alt={name} quality={50} />
+					<AMImage src={imageSrc} alt={name}/>
 				</div>
 			</div>
 			<h2 className="text-lg font-semibold text-center">{name}</h2>

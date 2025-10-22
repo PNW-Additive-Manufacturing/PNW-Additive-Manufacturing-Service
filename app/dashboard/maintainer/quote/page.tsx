@@ -39,8 +39,8 @@ const defaultQuote: Quote = {
 export default function page() {
 
     const [isPending, setPending] = useState(false);
-    const saveAnchorRef = useRef<HTMLAnchorElement>();
-    const inputRef = useRef<HTMLTextAreaElement>();
+    const saveAnchorRef = useRef<HTMLAnchorElement>(undefined);
+    const inputRef = useRef<HTMLTextAreaElement>(undefined);
 
     const doGeneratePDF = useCallback(async () => {
 

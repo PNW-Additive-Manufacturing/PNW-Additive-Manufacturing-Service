@@ -1,83 +1,48 @@
 "use client";
 
-import ActionResponse from "@/app/api/server-actions/ActionResponse";
-import { payInvoice } from "@/app/api/server-actions/invoice";
-import { cancelRequest } from "@/app/api/server-actions/request";
 import { AccountContext } from "@/app/ContextProviders";
-import ThreeModelViewer from "@/app/components/ThreeModelViewer";
-import StatusPill from "@/app/components/StatusPill";
-import { NamedSwatch, templatePNW } from "@/app/components/Swatch";
-import { useReactToPrint } from "react-to-print";
-import Image from "next/image";
 import {
 	getStatusColor,
 	isAllComplete,
 	isAllPending,
 	isRevoked,
-	PartStatus,
 	PartWithModel
 } from "@/app/Types/Part/Part";
 import Request, {
-	getLastRefundDate,
+	getCosts,
 	getLeadTimeInDays,
-	getRequestStatus,
-	getRequestStatusColor,
-	calculateTotalCost,
 	hasQuote,
 	isAllPriced,
 	isPaid,
-	RequestWithParts,
-	getCosts,
-	RequestCosts
+	RequestCosts,
+	RequestWithParts
 } from "@/app/Types/Request/Request";
-import { Color } from "three";
+import ActionResponse from "@/app/api/server-actions/ActionResponse";
+import { payInvoice } from "@/app/api/server-actions/invoice";
+import { cancelRequest } from "@/app/api/server-actions/request";
+import { formateDate, formateDateWithTime, formatTime } from "@/app/api/util/Constants";
+import ContainerNotification from "@/app/components/ContainerNotification";
+import DropdownSection from "@/app/components/DropdownSection";
+import { Figure } from "@/app/components/Figures";
+import { closingTime, isOpen } from "@/app/components/LocalSchedule";
+import { DownloadItemizedReceipt, ItemizedPartTable, RequestTotals } from "@/app/components/Request/Pricing";
+import StatusPill from "@/app/components/StatusPill";
+import { NamedSwatch } from "@/app/components/Swatch";
+import ThreeModelViewer from "@/app/components/ThreeModelViewer";
+import Timeline from "@/app/components/Timeline";
+import classNames from "classnames";
 import {
-	RegularAlarmClock,
 	RegularArrowRight,
-	RegularBriefcase,
-	RegularCheckmark,
-	RegularCheckmarkCircle,
-	RegularCloudDownload,
-	RegularCloudUpload,
 	RegularCog,
 	RegularCrossCircle,
 	RegularDownload,
-	RegularExit,
-	RegularFiles,
-	RegularFlag,
-	RegularHand,
-	RegularHandshake,
-	RegularPackage,
-	RegularStarEmpty,
-	RegularStarFill,
-	RegularStarHalf,
-	RegularWallet,
-	RegularWarning
+	RegularExit
 } from "lineicons-react";
 import Link from "next/link";
 import { useContext, useMemo, useRef, useState } from "react";
 import { useFormState } from "react-dom";
-import { Vector3 } from "three";
-import Alert from "@mui/material/Alert";
-import { AlertTitle } from "@mui/material";
-import RefundMessage from "@/app/components/Part/RefundMessage";
-import FilamentBlock from "@/app/experiments/FilamentBlock";
-import { formateDate, formateDateWithTime, formatTime } from "@/app/api/util/Constants";
-import Timeline from "@/app/components/Timeline";
-import HiddenInput from "@/app/components/HiddenInput";
-import { RequestOverview } from "../../../components/RequestOverview";
-import { closingTime, isOpen } from "@/app/components/LocalSchedule";
-import { addMinutes } from "@/app/utils/TimeUtils";
-import { jsPDF } from "jspdf";
-import { FaBox, FaCheck, FaRegFilePdf } from "react-icons/fa";
-import Account from "@/app/Types/Account/Account";
-import { DownloadItemizedReceipt, ItemizedPartTable, RequestTotals } from "@/app/components/Request/Pricing";
-import DropdownSection from "@/app/components/DropdownSection";
-import useClipboard from "@/app/hooks/useClipboard";
-import { toast } from "react-toastify";
-import { Figure } from "@/app/components/Figures";
-import classNames from "classnames";
-import ContainerNotification from "@/app/components/ContainerNotification";
+import { FaBox, FaCheck } from "react-icons/fa";
+import { useReactToPrint } from "react-to-print";
 
 export function createRequestTimelineOptions(request: RequestWithParts) {
 	console.log(request);
@@ -134,7 +99,7 @@ export default function RequestDetails({
 		""
 	);
 
-	const invoiceRef = useRef<HTMLDivElement>();
+	const invoiceRef = useRef<HTMLDivElement>(undefined);
 	const handlePrint = useReactToPrint({ contentRef: invoiceRef as any });
 
 	const [payState, payFormAction] = useFormState(

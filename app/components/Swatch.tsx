@@ -1,5 +1,3 @@
-import { useState } from "react";
-import Filament from "../Types/Filament/Filament";
 import classNames from "classnames";
 
 export type SwatchConfiguration = {

@@ -1,3 +1,5 @@
+"use client"
+
 import { useEffect, useRef, useState } from "react";
 
 export default function FocusOnMount({
@@ -5,7 +7,7 @@ export default function FocusOnMount({
 }: {
 	children: any;
 }): JSX.Element {
-	const containerRef = useRef<HTMLElement>();
+	const containerRef = useRef<HTMLElement>(undefined);
 	const [hasScrolled, setScrolled] = useState(false);
 
 	useEffect(() => {

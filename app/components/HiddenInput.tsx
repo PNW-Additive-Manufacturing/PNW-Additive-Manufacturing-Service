@@ -1,9 +1,6 @@
 import {
-	ChangeEventHandler,
 	DetailedHTMLProps,
 	InputHTMLAttributes,
-	LegacyRef,
-	MutableRefObject,
 	ReactNode,
 	useRef
 } from "react";
@@ -12,7 +9,7 @@ export default function HiddenInput(
 	attributes: Omit<DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, "onChange" | "className" | "style">
 		& { onChange: (file: File) => void; children: ReactNode; }) {
 
-	const inputRef = useRef<LegacyRef<HTMLInputElement> | undefined>();
+	const inputRef = useRef<HTMLInputElement | undefined>(undefined);
 
 	return (
 		<div className={`inline hover:cursor-pointer`}>

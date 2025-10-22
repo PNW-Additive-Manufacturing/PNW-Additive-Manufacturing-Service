@@ -1,20 +1,14 @@
+import type { Metadata, ResolvingMetadata } from "next";
+import { Inter } from "next/font/google";
 import 'react-loading-skeleton/dist/skeleton.css';
 import 'react-toastify/dist/ReactToastify.css';
 import "./globals.css";
-import type { Metadata, ResolvingMetadata } from "next";
-import { Inter } from "next/font/google";
-import { getJwtPayload, UserJWT } from "./api/util/JwtHelper";
 
 
-import {Navbar} from "@/app/components/navBar/Navigation";
-import {ColorfulRequestPrintButton} from "@/app/components/navBar/ColorfulRequestPrintButton";
-import { AccountDetails } from "@/app/components/navBar/AccountDetails";
 import { Footer } from '@/app/components/navBar/Footer';
 
 
-import { AccountPermission } from "./Types/Account/Account";
-import { AccountProvider, ThemeProvider } from "./ContextProviders";
-import AccountServe from "./Types/Account/AccountServe";
+import { AccountProvider } from "./ContextProviders";
 
 import getConfig from "./getConfig";
 
@@ -35,7 +29,6 @@ export async function generateMetadata(
 		icons: ["/assets/am_logo_light.png"],
 		applicationName: "PNW Additive Manufacturing Service",
 		category: "3D Printing",
-		themeColor: "#f5b626",
 		openGraph: {
 			url: envConfig.hostURL,
 			siteName: "PNW Additive Manufacturing Club",
@@ -53,19 +46,21 @@ export default async function RootLayout({
 }: {
 	children: React.ReactNode;
 }) {
-	let permission: AccountPermission | null;
-	let email: string | null;
-	let jwtPayload: UserJWT | null = null;
-	try {
-		jwtPayload = await getJwtPayload();
-		permission = jwtPayload?.permission as AccountPermission;
-		email = jwtPayload?.email as string;
-	} catch {
-		permission = null;
-		email = null;
-	}
+	
+	// let permission: AccountPermission | null;
+	// let email: string | null;
+	// let jwtPayload: UserJWT | null = null;
+	// try {
+	// 	jwtPayload = await getJwtPayload();
+	// 	permission = jwtPayload?.permission as AccountPermission;
+	// 	email = jwtPayload?.email as string;
+	// } catch {
+	// 	permission = null;
+	// 	email = null;
+	// }
 
-	return (
+	return <>
+
 		<html lang="en" className="h-full">
 			<head>
 				<title>PNW Additive Manufacturing Service</title>
@@ -81,15 +76,10 @@ export default async function RootLayout({
 			</head>
 
 			<body className={inter.className} style={{ height: "100vh" }}>
-				<AccountProvider
-					account={
-						email == undefined
-							? undefined
-							: await AccountServe.queryByEmail(email)
-					}>
-					<ThemeProvider>
+				
+				<AccountProvider account={undefined}>
 
-						<Navbar
+						{/* <Navbar
 							links={(() => {
 								let elements: { name: string; path: string }[] = [
 									{
@@ -155,7 +145,8 @@ export default async function RootLayout({
 										/>
 									);
 							})()}
-						/>
+						/> */}
+
 						<main
 							className="w-full px-0 h-fit"
 							style={{ minHeight: "95vh" }}>
@@ -178,9 +169,10 @@ export default async function RootLayout({
 							</>
 						</main>
 						<Footer />
-					</ThemeProvider>
+
 				</AccountProvider>
 			</body>
 		</html>
-	);
+
+	</>
 }
