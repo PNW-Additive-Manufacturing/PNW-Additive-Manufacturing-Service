@@ -4,7 +4,8 @@ import FarmUploadForm from "@/app/components/FarmUploadForm";
 import Machine, { MachineData } from "@/app/components/Machine";
 import usePrinters from "@/app/hooks/usePrinters";
 import Filament from "@/app/Types/Filament/Filament";
-import { RegularSpinnerSolid } from "lineicons-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { useEffectOnce } from "react-use";
 
@@ -55,9 +56,10 @@ export default function Farm({
 							}`}
 						onClick={async () => await refresh()}>
 						Reload
-						<RegularSpinnerSolid
+						<FontAwesomeIcon
+							icon={faSpinner}
 							className={`fill-inherit w-auto h-auto inline ml-2 ${isFetching && "animate-spin"
-								}`}></RegularSpinnerSolid>
+								}`}/>
 					</div>
 				</div>
 			</div>

@@ -8,7 +8,10 @@ import { useDebounce } from "react-use";
 import { Label } from "./Inputs";
 import FilamentBlock from "../experiments/FilamentBlock";
 import { useState } from "react";
-import { RegularEye } from "lineicons-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+	faEye	
+} from "@fortawesome/free-regular-svg-icons";
 
 export default function PopupFilamentSelector({
 	filaments,
@@ -139,7 +142,7 @@ export default function PopupFilamentSelector({
 					// <Swatch swatch={selectedFilament.color}></Swatch>
 					<div>
 						<FilamentBlock filament={selectedFilament} />
-						<a target="_blank" className="block text-sm mt-2 hover:underline" href={`/materials#${selectedFilament.technology.toLowerCase()}-${selectedFilament.material.replaceAll(" ", "-").toLowerCase()}`}>View properties of {selectedFilament.material} <RegularEye className="inline mb-0.5" /></a>
+						<a target="_blank" className="block text-sm mt-2 hover:underline" href={`/materials#${selectedFilament.technology.toLowerCase()}-${selectedFilament.material.replaceAll(" ", "-").toLowerCase()}`}>View properties of {selectedFilament.material} <FontAwesomeIcon icon={faEye}className="inline mb-0.5" /></a>
 					</div>
 				)}
 			</div>

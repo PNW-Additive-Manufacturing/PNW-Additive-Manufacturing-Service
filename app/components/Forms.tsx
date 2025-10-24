@@ -1,6 +1,6 @@
 "use client";
 
-import { RegularArrowUp } from "lineicons-react";
+import { FaArrowUp } from "react-icons/fa";
 import { useFormState, useFormStatus } from "react-dom";
 
 // function SubmitButton({className, name, pendingName} : {className?: string, name: string, pendingName?: string}) {

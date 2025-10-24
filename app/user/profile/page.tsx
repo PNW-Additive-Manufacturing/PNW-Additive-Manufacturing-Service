@@ -1,12 +1,7 @@
 import { getJwtPayload } from "@/app/api/util/JwtHelper";
 import EditPage from "./MainPage";
 import HorizontalWrap from "@/app/components/HorizontalWrap";
-import {
-	RegularFriendly,
-	RegularHappy,
-	RegularUser,
-	RegularWallet
-} from "lineicons-react";
+
 import AccountServe from "@/app/Types/Account/AccountServe";
 import Image from "next/image";
 import Link from "next/link";

@@ -6,7 +6,7 @@ import Filament from "../Types/Filament/Filament";
 import { uploadToFarm } from "../api/farm/FarmActions";
 import { useState } from "react";
 import FormLoadingSpinner from "./FormLoadingSpinner";
-import { RegularReload, RegularSpinnerSolid } from "lineicons-react";
+import { FaSpinner } from "react-icons/fa";
 import Machine, { MachineData, MachineIndicator } from "./Machine";
 import { getSingleColor } from "./Swatch";
 import Slicer from "./Slicer";
@@ -28,7 +28,7 @@ function UploadButton({
 			className="mt-4 flex gap-4 items-center">
 			{pending ? "Processing" : content}
 			{pending && (
-				<RegularSpinnerSolid className="fill-white w-auto h-auto animate-spin"></RegularSpinnerSolid>
+				<FaSpinner className="fill-white w-auto h-auto animate-spin"></FaSpinner>
 			)}
 		</button>
 	);

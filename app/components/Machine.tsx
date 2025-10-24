@@ -3,12 +3,14 @@
 import Image from "next/image";
 import { Swatch } from "./Swatch";
 import FilamentSpoolIcon from "./icons/FilamentSpoolIcon";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-	RegularCheckmarkCircle,
-	RegularCrossCircle,
-	RegularPause,
-	RegularStop
-} from "lineicons-react";
+	faCheckCircle,
+	faTimesCircle,
+	faPauseCircle,
+	faStopCircle	
+} from "@fortawesome/free-regular-svg-icons";
+
 import { useFormState } from "react-dom";
 import { markAsEmpty } from "../api/farm/FarmActions";
 import FormLoadingSpinner from "./FormLoadingSpinner";
@@ -228,7 +230,7 @@ export default function Machine(
 									id="identity"
 									value={machinedData.identifier}></input>
 								<button className="bg-white border-2 border-solid border-gray-200 text-black fill-cool-black px-2 py-1.5 flex items-center gap-1.5 w-fit mb-0 hover:fill-white">
-									<RegularCheckmarkCircle className="fill-inherit w-3.5 h-3.5"></RegularCheckmarkCircle>
+									<FontAwesomeIcon icon={faCheckCircle} className="fill-inherit w-3.5 h-3.5"></FontAwesomeIcon>
 									<span className="text-xs font-light">
 										Plate Cleared
 									</span>

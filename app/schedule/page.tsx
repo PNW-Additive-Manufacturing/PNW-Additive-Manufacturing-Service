@@ -1,7 +1,12 @@
 "use client";
 
 import HorizontalWrap from "../components/HorizontalWrap";
-import { RegularCheckmark, RegularWarning } from "lineicons-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCheck,
+  faTriangleExclamation
+} from "@fortawesome/free-solid-svg-icons";
+
 import { currentDay, isOpen, weekdays, weeklySchedule } from "../components/LocalSchedule";
 import { useHydration } from "../hooks/useHydration";
 import { Suspense } from "react";
@@ -22,12 +27,12 @@ export default function Schedule() {
 					<div className="out bg-white px-4 lg:px-6 py-4 mt-4 lg:flex items-center gap-2 mb-8">
 						{isOpen ?
 							<>
-								<RegularCheckmark className="fill-pnw-gold max-lg:hidden"></RegularCheckmark>
+								<FontAwesomeIcon icon={faCheck} className="fill-pnw-gold max-lg:hidden"/>
 								<span className="font-semibold">One of our team members are at the Design Studio</span> You can come and pickup your completed requests!
 							</>
 							:
 							<>
-								<RegularWarning className="fill-pnw-gold max-lg:hidden"></RegularWarning>
+								<FontAwesomeIcon icon={faTriangleExclamation} className="fill-pnw-gold max-lg:hidden"/>
 								<span className="font-semibold">We are currently Closed</span> Please check back during our regular business hours.
 							</>}
 					</div>

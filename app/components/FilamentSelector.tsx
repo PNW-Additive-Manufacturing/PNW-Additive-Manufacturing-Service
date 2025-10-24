@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Filament from "../Types/Filament/Filament";
 import { toast } from "react-toastify";
 import FilamentBlock from "../experiments/FilamentBlock";
-import { RegularEye } from "lineicons-react";
+
 import { NamedSwatch } from "./Swatch";
 
 type FilamentSelectorProps = {

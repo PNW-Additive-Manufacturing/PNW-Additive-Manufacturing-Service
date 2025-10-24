@@ -8,7 +8,12 @@ import { Suspense, useState } from "react";
 import DropdownSection from "@/app/components/DropdownSection";
 import { WalletTransaction } from "@/app/Types/Account/Wallet";
 import TransactionDetails from "../../components/TransactionDetails";
-import { RegularCheckmark, RegularWarning } from "lineicons-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCheck,
+  faTriangleExclamation
+} from "@fortawesome/free-solid-svg-icons";
+
 import { formateDate } from "@/app/api/util/Constants";
 
 export default function Profile({ account, transactions }: { account: Account, transactions: WalletTransaction[] }) {
@@ -23,7 +28,7 @@ export default function Profile({ account, transactions }: { account: Account, t
 						<p>{account.firstName} {account.lastName}</p>
 						<p>
 							<span>{account.email}</span>
-							<span className="ml-2 text-xs">{account.isEmailVerified ? <span className="text-pnw-gold bg-pnw-gold-light py-0.5 px-2 rounded-lg"><RegularCheckmark className="inline fill-pnw-gold mb-0.5 mr-2" />Verified</span> : <span className="bg-red-100 py-0.5 px-2 rounded-lg text-red-400"><RegularWarning className="inline fill-red-400 mr-2 mb-0.5"></RegularWarning>Unverified</span>}</span>
+							<span className="ml-2 text-xs">{account.isEmailVerified ? <span className="text-pnw-gold bg-pnw-gold-light py-0.5 px-2 rounded-lg"><FontAwesomeIcon icon={faCheck} className="inline fill-pnw-gold mb-0.5 mr-2" />Verified</span> : <span className="bg-red-100 py-0.5 px-2 rounded-lg text-red-400"><FontAwesomeIcon icon={faTriangleExclamation} className="inline fill-red-400 mr-2 mb-0.5"/>Unverified</span>}</span>
 						</p>
 					</div>
 					<div>

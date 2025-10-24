@@ -1,7 +1,13 @@
 "use server";
 
 import { getJwtPayload } from "@/app/api/util/JwtHelper";
-import { RegularBolt, RegularCart, RegularLicense } from "lineicons-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { 
+  faBolt,
+  faCartShopping,
+  faIdBadge
+} from "@fortawesome/free-solid-svg-icons";
+
 import db from "@/app/api/Database";
 import GenericPrinterIcon from "@/app/components/icons/GenericPrinterIcon";
 import FilamentSpoolIcon from "@/app/components/icons/FilamentSpoolIcon";
@@ -42,7 +48,7 @@ export default async function Maintainer() {
 						{/* Maintainer Screens */}
 						<a href="/dashboard/maintainer/orders" className="sm:max-w-sm block">
 							<button className="flex items-center w-full text-base font-normal">
-								<RegularCart className="inline-block w-12 h-12 mr-auto fill-gray-300"></RegularCart>
+								<FontAwesomeIcon icon={faCartShopping} className="inline-block w-12 h-12 mr-auto fill-gray-300"/>
 								<span>View {orderCount.count} Requests</span>
 							</button>
 						</a>
@@ -60,7 +66,7 @@ export default async function Maintainer() {
 						</a>
 						<a href="/dashboard/maintainer/quote" className="sm:max-w-sm block">
 							<button className="flex items-center w-full text-base font-normal">
-								<RegularBolt className="inline-block w-12 h-12 mr-auto fill-gray-300" />
+								<FontAwesomeIcon icon={faBolt} className="inline-block w-12 h-12 mr-auto fill-gray-300" />
 								<span>Generate Quote</span>
 							</button>
 						</a>
@@ -76,7 +82,7 @@ export default async function Maintainer() {
 										href="/dashboard/maintainer/users"
 										className="w-full sm:max-w-sm block">
 										<button className="flex items-center w-full text-base font-normal">
-											<RegularLicense className="inline-block w-12 h-12 mr-auto fill-gray-300"></RegularLicense>
+											<FontAwesomeIcon icon={faIdBadge} className="inline-block w-12 h-12 mr-auto fill-gray-300"/>
 											<span>Manage {userCount.count} Accounts</span>
 										</button>
 									</a>

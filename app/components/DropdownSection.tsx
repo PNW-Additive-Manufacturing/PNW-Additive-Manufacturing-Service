@@ -1,6 +1,6 @@
 "use client";
 
-import { RegularChevronDown } from "lineicons-react";
+import { FaChevronDown } from "react-icons/fa";
 import { CSSProperties, ReactNode, useEffect, useRef, useState } from "react";
 import FocusOnMount from "./FocusOnMount";
 import classNames from "classnames";
@@ -38,7 +38,7 @@ export default function DropdownSection({
 					{icon}
 					{name}
 				</div>
-				<RegularChevronDown
+				<FaChevronDown
 					className={`w-5 h-5 fill-inherit ${isHidden ? "rotate-180" : ""
 						} hover:cursor-pointer transition-all`}
 					style={{}}

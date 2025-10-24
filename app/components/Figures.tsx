@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { useContext } from "react";
 import { FloatingFormContext } from "./FloatingForm";
-import { RegularPencil } from "lineicons-react";
+import { FaPencil } from "react-icons/fa6";
 
 type FigureProps = {
     name: string,
@@ -74,6 +74,6 @@ export function EditableFigure({ name, amount, prefix, style, formTitle, formDes
         });
 
     }}>
-        <Figure name={name} prefix={prefix} amount={amount} style={style} icon={<RegularPencil className="inline p-0.5 mb-0.5" />} />
+        <Figure name={name} prefix={prefix} amount={amount} style={style} icon={<FaPencil className="inline p-0.5 mb-0.5" />} />
     </div>
 }

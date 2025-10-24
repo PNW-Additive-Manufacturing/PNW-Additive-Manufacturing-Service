@@ -4,7 +4,14 @@ import Image from "next/image";
 import { useContext, useRef, useState } from "react";
 import { ProjectSpotlight, ProjectSpotlightAttachment } from "../Types/ProjectSpotlight/ProjectSpotlight";
 import { AccountContext } from "../ContextProviders";
-import { RegularCheckmark, RegularCloudDownload, RegularFiles, RegularPencil } from "lineicons-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCheck,
+  faCloudArrowDown,
+  faFile,
+  faPen
+} from "@fortawesome/free-solid-svg-icons";
+
 import FormSubmitButton from "../components/FormSubmitButton";
 import { formateDate } from "../api/util/Constants";
 import { useFormState } from "react-dom";
@@ -37,7 +44,7 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
                 <a href={`/api/download/project-showcase-attachments?attachmentId=${content.id}`} target="_blank" download>
                     {content.downloadCount} Saves
 
-                    <RegularCloudDownload className="inline ml-2 "></RegularCloudDownload>
+                    <FontAwesomeIcon icon={faCloudArrowDown}className="inline ml-2 "/>
                 </a>
             </td>
         </tr>
@@ -88,7 +95,7 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
                         />
                         {accountContext.isSingedIn &&
                             accountContext.account!.permission !== "user" && (
-                                <RegularCheckmark
+                                <FontAwesomeIcon icon={faCheck}
                                     className="inline hover:cursor-pointer"
                                     onClick={() => setIsEditing(false)}
                                 />
@@ -123,7 +130,7 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
                         <>{projectData.title}</>
                         {editable && accountContext.isSingedIn &&
                             accountContext.account!.permission !== "user" && (
-                                <RegularPencil
+                                <FontAwesomeIcon icon={faPen}
                                     className="inline opacity-25 hover:opacity-100 hover:cursor-pointer p-0.5"
                                     onClick={() => setIsEditing(true)}
                                 />

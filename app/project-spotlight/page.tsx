@@ -1,6 +1,5 @@
 "use server";
 
-import { RegularCirclePlus, RegularDiamondAlt, RegularEye, RegularMagnifier } from "lineicons-react";
 import HorizontalWrap from "../components/HorizontalWrap";
 import { ProjectCard } from "./ProjectCard";
 import db from "@/app/api/Database";

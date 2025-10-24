@@ -1,4 +1,5 @@
-import { RegularFlag } from "lineicons-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faFlag } from "@fortawesome/free-solid-svg-icons";
 import { useRef, useState } from "react";
 import { LabelWithIcon } from "./LabelWithIcon";
 
@@ -14,7 +15,7 @@ export default function RevokeInput({ onRevokeCallback, placeholder, buttonConte
 
     return showInput ? <div className="bg-gray-200 p-4 rounded-md">
 
-        <LabelWithIcon icon={<RegularFlag></RegularFlag>}>Revoking</LabelWithIcon>
+        <LabelWithIcon icon={<FontAwesomeIcon icon={faFlag}/>}>Revoking</LabelWithIcon>
 
         <form action={(data) => onRevokeCallback(data.get("content") as string)}>
             <textarea name="content" required={true} placeholder={placeholder} className="mb-2" onChange={(ev) => content.current = ev.currentTarget.textContent}></textarea>
@@ -25,7 +26,7 @@ export default function RevokeInput({ onRevokeCallback, placeholder, buttonConte
         className="opacity-50 hover:opacity-100 text-sm text-gray-700 fill-gray-700 font-light hover:cursor-pointer"
         onClick={() => setShowInput(true)}
     >
-        <LabelWithIcon icon={<RegularFlag></RegularFlag>}>Revoke</LabelWithIcon>
+        <LabelWithIcon icon={<FontAwesomeIcon icon={faFlag}/>}>Revoke</LabelWithIcon>
     </div>
 }
 

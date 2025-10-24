@@ -3,7 +3,8 @@
 import Link from "next/link";
 import {AccountContext} from "../../ContextProviders";
 import {AccountPermission} from "../../Types/Account/Account";
-import {RegularArrowRight, RegularChevronRight} from "lineicons-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import {useContext, useState} from "react";
 
 export function AccountDetails({onLinkClick} : {
@@ -35,7 +36,7 @@ export function AccountDetails({onLinkClick} : {
                             : (
                                 <span>Account</span>
                             )}
-                        <RegularChevronRight className="inline mt-0.5"/>
+                        <FontAwesomeIcon icon={faChevronRight} className="inline mt-0.5"/>
                     </div>
                 </Link>
             </div>
@@ -47,7 +48,7 @@ export function AccountDetails({onLinkClick} : {
                     href="/user/login"
                     className="bg-pnw-gold-light text-sm whitespace-nowrap rounded-md bottom-0 h-fit flex gap-2 items-center px-4 py-2">
                     Sign in
-                    <RegularArrowRight className="inline"></RegularArrowRight>
+                    <FontAwesomeIcon icon={faArrowRight}  className="inline"/>
                 </Link>
             </div>
         );

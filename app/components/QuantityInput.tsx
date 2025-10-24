@@ -1,8 +1,8 @@
 "use client";
 
-import { RegularMinus, RegularPlus } from "lineicons-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus,faMinus } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
-
 export default function QuantityInput({
 	name,
 	defaultQuantity,
@@ -32,7 +32,7 @@ export default function QuantityInput({
 				onClick={() => {
 					setQuantityClamped(quantity + 1);
 				}}>
-				<RegularPlus className="w-4 h-4 fill-slate-400"></RegularPlus>
+				<FontAwesomeIcon icon={faPlus} className="w-4 h-4 fill-slate-400"></FontAwesomeIcon>
 			</div>
 			<input
 				id="quantity"
@@ -62,7 +62,7 @@ export default function QuantityInput({
 				onClick={() => {
 					setQuantityClamped(quantity - 1);
 				}}>
-				<RegularMinus className="w-4 h-4 fill-slate-400"></RegularMinus>
+				<FontAwesomeIcon icon={faMinus} className="w-4 h-4 fill-slate-400"></FontAwesomeIcon>
 			</div>
 		</div>
 	);

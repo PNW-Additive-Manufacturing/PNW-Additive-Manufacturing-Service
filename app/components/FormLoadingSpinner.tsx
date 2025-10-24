@@ -1,6 +1,5 @@
 "use client";
-
-import { RegularSpinnerSolid } from "lineicons-react";
+import { FaSpinner } from "react-icons/fa";
 import { useFormStatus } from "react-dom";
 
 export default function FormLoadingSpinner({
@@ -11,7 +10,7 @@ export default function FormLoadingSpinner({
 	const { pending } = useFormStatus();
 
 	return pending ? (
-		<RegularSpinnerSolid
+		<FaSpinner
 			className={`inline-block h-auto w-auto animate-spin fill-white ${className}`}
 		/>
 	) : (

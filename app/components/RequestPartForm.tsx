@@ -2,8 +2,9 @@
 
 import { requestPart } from "@/app/api/server-actions/request-part";
 import { Input, InputBig } from "@/app/components/Input";
-import { Dialog } from "@headlessui/react";
-import { RegularArrowRight, RegularCrossCircle, RegularEmptyFile, RegularSpinnerSolid } from "lineicons-react";
+import { Dialog, DialogTitle, DialogPanel } from "@headlessui/react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faArrowRight, faCircleXmark, faFile, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { type ChangeEventHandler, useRef, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
@@ -21,6 +22,7 @@ import { Label } from "./Inputs";
 import { Swatch, type SwatchConfiguration } from "./Swatch";
 import Table from "./Table";
 import ThreeModelViewer from "./ThreeModelViewer";
+import { Font } from "@react-pdf/renderer";
 
 function AddPartButton({
 	onChange
@@ -85,8 +87,7 @@ function RequestPartFormSubmit({ parts }: { parts: PartData[] }) {
 			disabled={pending || parts.length === 0}
 			className="w-full h-fit mb-0 text-white text-left text-sm">
 			{pending ? "Processing Request" : "Submit Request"}
-			{pending && <RegularSpinnerSolid
-				className={"inline-block ml-2 fill-white h-auto w-auto animate-spin"}
+			{pending && <FontAwesomeIcon icon={faSpinner} className={"inline-block ml-2 fill-white h-auto w-auto animate-spin"}
 			/>}
 		</button>
 	);
@@ -134,10 +135,10 @@ export function RequestPartForm({
 				<div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 
 				<div className="fixed inset-0 flex w-screen items-center justify-center shadow-lg">
-					<Dialog.Panel className="rounded-md bg-white p-8 max-lg:w-full max-lg:mx-4">
-						<Dialog.Title className="mb-4 flex max-lg:flex-col lg:justify-between lg:items-center gap-4">
+					<DialogPanel className="rounded-md bg-white p-8 max-lg:w-full max-lg:mx-4">
+						<DialogTitle className="mb-4 flex max-lg:flex-col lg:justify-between lg:items-center gap-4">
 							<div className="flex font-light text-xl items-center gap-2">
-								<RegularEmptyFile className="inline fill-pnw-gold"></RegularEmptyFile>
+								<FontAwesomeIcon icon={faFile} className="inline fill-pnw-gold"/>
 								{modifyingPart?.ModelName}
 							</div>
 							<div className="flex max-lg:justify-between gap-2">
@@ -153,16 +154,16 @@ export function RequestPartForm({
 										toast.success(`Removed ${modifyingPart!.ModelName} from your request.`);
 									}}>
 									Remove
-									<RegularCrossCircle></RegularCrossCircle>
+									<FontAwesomeIcon icon={faCircleXmark}/>
 								</div>
 								<button
 									className="flex m-0 bg-transparent items-center gap-2 py-2 fill-pnw-gold text-pnw-gold font-light hover:cursor-pointer"
 									onClick={() => setModifyingPart(undefined)}>
 									Continue
-									<RegularArrowRight></RegularArrowRight>
+									<FontAwesomeIcon icon={faArrowRight}/>
 								</button>
 							</div>
-						</Dialog.Title>
+						</DialogTitle>
 						<div className="lg:flex gap-4">
 							<div className="max-lg:hidden flex flex-col max-w-96 h-auto">
 								<label>View Model</label>
@@ -275,7 +276,7 @@ export function RequestPartForm({
 								</div>
 							</div>
 						</div>
-					</Dialog.Panel>
+					</DialogPanel>
 				</div>
 			</Dialog>}
 

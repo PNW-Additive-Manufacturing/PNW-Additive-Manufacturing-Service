@@ -1,12 +1,14 @@
 "use client";
 
-import {
-	RegularArrowLeft,
-	RegularArrowRight,
-	RegularArrowsHorizontal,
-	RegularChevronLeft,
-	RegularChevronRight
-} from "lineicons-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { 
+    faArrowLeft,
+    faArrowRight,
+    faArrowsLeftRight,
+    faChevronLeft,
+    faChevronRight
+} from "@fortawesome/free-solid-svg-icons";
+
 import { useEffect, useState } from "react";
 
 export default function Gallery({
@@ -39,7 +41,7 @@ export default function Gallery({
 							previousSlide();
 							setAutoplay(false);
 						}}>
-						<RegularChevronLeft className="fill-cool-black w-auto h-auto"></RegularChevronLeft>
+						<FontAwesomeIcon icon={faChevronLeft} className="fill-cool-black w-auto h-auto"/>
 					</button>
 					{/* <div>
 						{currentSlide + 1} / {slides.length}
@@ -51,7 +53,7 @@ export default function Gallery({
 							nextSlide();
 							setAutoplay(false);
 						}}>
-						<RegularChevronRight className="fill-cool-black w-auto h-auto"></RegularChevronRight>
+						<FontAwesomeIcon icon={faChevronRight} className="fill-cool-black w-auto h-auto"/>
 					</button>
 				</div>
 			);
@@ -66,7 +68,7 @@ export default function Gallery({
 							previousSlide();
 							setAutoplay(false);
 						}}>
-						<RegularChevronLeft className="fill-cool-black w-auto h-auto"></RegularChevronLeft>
+						<FontAwesomeIcon icon={faChevronLeft} className="fill-cool-black w-auto h-auto"/>
 					</button>
 					<button
 						disabled={slides.length == 1}
@@ -75,7 +77,7 @@ export default function Gallery({
 							nextSlide();
 							setAutoplay(false);
 						}}>
-						<RegularChevronRight className="fill-cool-black w-auto h-auto"></RegularChevronRight>
+						<FontAwesomeIcon icon={faChevronRight} className="fill-cool-black w-auto h-auto"/>
 					</button>
 				</div>
 			);
@@ -88,7 +90,7 @@ export default function Gallery({
 							<button
 								disabled={true}
 								className="mb-0 bg-gray-200 p-2 w-fit px-4">
-								<RegularArrowsHorizontal className="fill-cool-black w-auto h-auto mx-auto" />
+								<FontAwesomeIcon icon={faArrowRight} className="fill-cool-black w-auto h-auto mx-auto" />
 							</button>
 						</>
 					) : (
@@ -100,7 +102,7 @@ export default function Gallery({
 									previousSlide();
 									setAutoplay(false);
 								}}>
-								<RegularArrowLeft className="fill-cool-black w-auto h-auto mx-auto" />
+								<FontAwesomeIcon icon={faArrowLeft} className="fill-cool-black w-auto h-auto mx-auto" />
 							</button>
 							<button
 								disabled={slides.length == 1}
@@ -109,7 +111,7 @@ export default function Gallery({
 									nextSlide();
 									setAutoplay(false);
 								}}>
-								<RegularArrowRight className="fill-cool-black w-auto h-auto mx-auto" />
+								<FontAwesomeIcon icon={faArrowRight} className="fill-cool-black w-auto h-auto mx-auto" />
 							</button>
 						</>
 					)}

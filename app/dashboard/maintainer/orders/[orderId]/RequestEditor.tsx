@@ -18,26 +18,19 @@ import Request, {
 	RequestWithParts,
 	getCosts
 } from "@/app/Types/Request/Request";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-	RegularCheckBox,
-	RegularCheckmark,
-	RegularCheckmarkCircle,
-	RegularCirclePlus,
-	RegularCog,
-	RegularCrossCircle,
-	RegularExit,
-	RegularEye,
-	RegularPagination,
-	RegularPause,
-	RegularPlay,
-	RegularPlayStoreFill,
-	RegularReload,
-	RegularSearchAlt,
-	RegularStarFill,
-	RegularTimer,
-	RegularTrashCan,
-	RegularWallet,
-} from "lineicons-react";
+  faSquareCheck,
+  faGear,
+  faRightFromBracket,
+  faEye,
+  faRotateRight,
+  faStar,
+  faStopwatch,
+  faTrashCan,
+  faWallet
+} from "@fortawesome/free-solid-svg-icons";
+
 import { FiActivity } from "react-icons/fi";
 import { useCallback, useContext, useMemo, useState } from "react";
 import { useFormState } from "react-dom";
@@ -149,7 +142,7 @@ export default function RequestEditor({
 					<div className="flex w-full gap-2 lg:justify-end max-lg:justify-between">
 						<Link href="/dashboard/maintainer/orders">
 							<button className="outline outline-1 outline-gray-300 bg-white text-black fill-black px-3 py-2 text-sm w-fit mb-0">
-								<RegularExit className="inline mb-0.5 fill-inherit"></RegularExit> <span className="text-sm font-normal">Go Back</span>
+								<FontAwesomeIcon icon={faRightFromBracket} className="inline mb-0.5 fill-inherit"/> <span className="text-sm font-normal">Go Back</span>
 							</button>
 						</Link>
 						<div className="flex gap-2">
@@ -159,7 +152,7 @@ export default function RequestEditor({
 									onClick={() =>
 										setShowActions(!showActions)
 									}>
-									<RegularCog
+									<FontAwesomeIcon icon={faGear}
 										className={`${showActions
 											? "rotate-180"
 											: "rotate-0"
@@ -175,7 +168,7 @@ export default function RequestEditor({
 											onClick={() => setShowRevoke(true)}
 											disabled={request.isFulfilled}>
 											Mark as Fulfilled
-											<RegularCheckBox className="ml-2 w-6 h-6 inline-block fill-black"></RegularCheckBox>
+											<FontAwesomeIcon icon={faSquareCheck} className="ml-2 w-6 h-6 inline-block fill-black"/>
 										</button>
 									</form>
 									<form action={deleteRequestAction}>
@@ -185,7 +178,7 @@ export default function RequestEditor({
 											type="submit"
 											disabled={isPaid(request)}>
 											Delete Request
-											<RegularTrashCan className="ml-2 w-6 h-6 inline-block fill-red-700"></RegularTrashCan>
+											<FontAwesomeIcon icon={faTrashCan} className="ml-2 w-6 h-6 inline-block fill-red-700"></FontAwesomeIcon>
 										</button>
 										<p>{deleteRequestError}</p>
 									</form>
@@ -198,14 +191,14 @@ export default function RequestEditor({
 
 			<div className="out p-4 my-4 bg-white text-xs flex flex-col sm:flex-row gap-2 md:gap-x-6 md:gap-y-4">
 
-				<Figure name={"Needed By"} style={"small"} icon={<RegularTimer style={{ marginBottom: "4px" }} />} iconPosition="start" amount={formateDateWithTime(request.needBy)} />
+				<Figure name={"Needed By"} style={"small"} icon={<FontAwesomeIcon icon={faStopwatch} style={{ marginBottom: "4px" }} />} iconPosition="start" amount={formateDateWithTime(request.needBy)} />
 
 				<div className="rounded-lg" style={{ borderLeftWidth: "2px", borderColor: "#e5e7eb" }} />
 
 				<Figure
 					name={"Automatic Analysis"} style={"small"}
 					labelClassName={classNames({ "text-pnw-gold fill-pnw-gold": analysisData.isAllAnalyzed })}
-					icon={<RegularStarFill className="opacity-60" style={{ marginBottom: "4px" }} />}
+					icon={<FontAwesomeIcon icon={faStar} className="opacity-60" style={{ marginBottom: "4px" }} />}
 					iconPosition="start" amount={analysisData.allAnalysisMachines.length > 0 ? <>
 
 						${(analysisData.totalPriceInCents / 100).toFixed(2)} consuming {Math.round(analysisData.totalGrams)} Grams
@@ -219,7 +212,7 @@ export default function RequestEditor({
 					<Figure
 						name={"Printing Status"} style={"small"}
 						labelClassName="text-pnw-gold"
-						icon={<RegularReload className="inline animate-spin fill-pnw-gold" style={{ marginBottom: "4px", animationDuration: "3s" }} />}
+						icon={<FontAwesomeIcon icon={faRotateRight} className="inline animate-spin fill-pnw-gold" style={{ marginBottom: "4px", animationDuration: "3s" }} />}
 						iconPosition="start" amount={<>
 							Printing on {analysisData.printingMachines.join(", ")}
 						</>} />
@@ -313,7 +306,7 @@ export default function RequestEditor({
 									{request.emails.map(email => <>
 										<tr className="bg-transparent">
 											<td className="first-letter:uppercase text-sm">{email.kind}</td>
-											<td className="text-sm">{email.seenAt == null ? <span><RegularEye className="inline fill-cool-black mb-0.5" /> Unclicked</span> : <span><RegularEye className="inline fill-pnw-gold mb-0.5" /> {email.seenAt.toLocaleDateString("en-us", {
+											<td className="text-sm">{email.seenAt == null ? <span><FontAwesomeIcon icon={faEye} className="inline fill-cool-black mb-0.5" /> Unclicked</span> : <span><FontAwesomeIcon icon={faEye} className="inline fill-pnw-gold mb-0.5" /> {email.seenAt.toLocaleDateString("en-us", {
 												month: "short",
 												day: "numeric",
 												hour: "2-digit",
@@ -357,7 +350,7 @@ function MaintainerQuote({ request, requester }: { request: RequestWithParts, re
 				<hr className="mb-4" />
 
 				{!isPaid(request) && <p className="my-2 font-light text-sm mb-4">
-					<RegularWallet className="inline mr-1 mb-0.5"></RegularWallet>
+					<FontAwesomeIcon icon={faWallet} className="inline mr-1 mb-0.5"/>
 					{requester.firstName} {calculatedData.hasEnoughBalance ? "has" : "does not have"} enough balance in their account.
 				</p>}
 
@@ -408,7 +401,7 @@ function WaitingForPaymentButton({ request }: { request: Request }) {
 		<button
 			className="mb-0 shadow-md text-left text-sm w-full"
 			disabled>
-			<RegularTimer className="fill-white inline mb-1 mr-1" />
+			<FontAwesomeIcon icon={faStopwatch} className="fill-white inline mb-1 mr-1" />
 			Waiting for Payment
 			<p className="text-white font-light text-sm">
 				{`${request.firstName} needs to accept this invoice.`}

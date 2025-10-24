@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { RegularMenu } from "lineicons-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import { amImageIconLightCropped } from "../../Branding";
 import NavbarLink from "./NavbarLink";
@@ -30,7 +31,8 @@ export function NavbarMobile({ links, includeIcon, specialElements }: NavbarMobi
                 </Link>
             )}
 
-            <RegularMenu
+            <FontAwesomeIcon
+				icon={faBars}
                 className="xl:hidden text-right ml-auto h-full w-auto p-2"
                 onClick={() => setExpanded(() => !itemsExpanded)}
             />
@@ -47,7 +49,8 @@ export function NavbarMobile({ links, includeIcon, specialElements }: NavbarMobi
                                 <div className="w-fit whitespace-nowrap mr-fit pr-3 text-xl tracking-wide flex-fit text-white">
                                     <span>Menu</span>
                                 </div>
-                                <RegularMenu
+                                <FontAwesomeIcon
+									icon={faBars}
                                     onClick={() => setExpanded(() => !itemsExpanded)}
                                     className="fill-pnw-gold float-right text-right h-full w-auto p-2"
                                 />

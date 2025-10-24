@@ -8,7 +8,13 @@ import DropdownSection from "@/app/components/DropdownSection";
 import FormSubmitButton from "@/app/components/FormSubmitButton";
 import { AccountPermission, AccountWithTransactions } from "@/app/Types/Account/Account";
 import { WalletTransaction, WalletTransactionStatus } from "@/app/Types/Account/Wallet";
-import { RegularCheckmark, RegularCirclePlus, RegularWarning } from "lineicons-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCheck,
+  faCirclePlus,
+  faTriangleExclamation
+} from "@fortawesome/free-solid-svg-icons";
+
 import { useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { toast } from "react-toastify";
@@ -93,7 +99,7 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
                 <div className="flex flex-col gap-2 overflow-y-scroll" style={{ maxHeight: "500px" }}>
                     {filteredAccounts.map(account => <div className={`w-full rounded-md text-sm bg-background flex justify-between p-3 hover:bg-pnw-gold hover:text-white hover:fill-white hover:cursor-pointer transition-colors ${selectedAccount == account && "bg-pnw-gold text-white fill-white"}`} onClick={() => setSelectedAccount(account)}>
                         <span>
-                            <span className="mr-2">{account.isEmailVerified ? <><RegularCheckmark className="inline fill-inherit"></RegularCheckmark></> : <><RegularWarning className="inline fill-red-300 mr-2"></RegularWarning> Unverified</>}</span>
+                            <span className="mr-2">{account.isEmailVerified ? <><FontAwesomeIcon icon={faCheck} className="inline fill-inherit"/></> : <><FontAwesomeIcon icon={faTriangleExclamation} className="inline fill-red-300 mr-2"/>/ Unverified</>}</span>
 
                             {account.firstName} {account.lastName} ({account.yearOfStudy})
                         </span>
@@ -164,9 +170,9 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
                                         <div className="flex items-center">
                                             {value.paymentStatus ==
                                                 WalletTransactionStatus.Paid ? (
-                                                <RegularCirclePlus className="h-4 w-auto fill-green-600 mr-2"></RegularCirclePlus>
+                                                <FontAwesomeIcon icon={faCirclePlus} className="h-4 w-auto fill-green-600 mr-2"/>
                                             ) : (
-                                                <RegularCirclePlus className="h-4 w-auto fill-yellow-700 mr-2"></RegularCirclePlus>
+                                                <FontAwesomeIcon icon={faCheck} className="h-4 w-auto fill-yellow-700 mr-2"/>
                                             )}
                                             ${(value.amountInCents / 100).toFixed(2)}
                                         </div>

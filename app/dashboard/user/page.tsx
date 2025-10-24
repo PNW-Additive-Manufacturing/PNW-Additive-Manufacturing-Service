@@ -13,13 +13,7 @@ import { AccountContext } from "@/app/ContextProviders";
 import { APIData } from "@/app/api/APIResponse";
 import { Input, InputCheckbox } from "@/app/components/Input";
 import DropdownSection from "@/app/components/DropdownSection";
-import {
-	RegularArrowLeft,
-	RegularArrowRight,
-	RegularExit,
-	RegularMagnifier,
-	RegularSpinnerSolid
-} from "lineicons-react";
+
 import { isAllComplete, isAllPending } from "@/app/Types/Part/Part";
 import { formateDate } from "@/app/api/util/Constants";
 import Timeline from "@/app/components/Timeline";

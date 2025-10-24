@@ -1,6 +1,6 @@
 "use client";
 
-import { RegularDownload } from "lineicons-react";
+import { FaDownload } from "react-icons/fa";
 
 export function InlineFile({
 	filename,
@@ -15,8 +15,8 @@ export function InlineFile({
 		<a download={true} href={`/api/download/?file=${filepath}`}>
 			<span className={`${className}`}>
 				{filename}
-				<RegularDownload
-					className={`inline p ml-2 h-max aspect-square transition-colors fill-slate-300 hover:fill-blue-400 hover:cursor-pointer`}></RegularDownload>
+				<FaDownload
+					className={`inline p ml-2 h-max aspect-square transition-colors fill-slate-300 hover:fill-blue-400 hover:cursor-pointer`}></FaDownload>
 			</span>
 		</a>
 	);

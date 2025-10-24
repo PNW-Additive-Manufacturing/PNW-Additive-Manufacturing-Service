@@ -1,57 +1,37 @@
 import { revokePart } from "@/app/api/server-actions/maintainer";
 import FilamentSelector from "@/app/components/FilamentSelector";
-import FormLoadingSpinner from "@/app/components/FormLoadingSpinner";
-import { CurrencyInput } from "@/app/components/Inputs";
-import Machine, { getMachineImageURL, MachineData, MachineIndicator } from "@/app/components/Machine";
+
+import { MachineData } from "@/app/components/Machine";
 import ThreeModelViewer from "@/app/components/ThreeModelViewer";
-import RefundMessage from "@/app/components/Part/RefundMessage";
+
 import { SelectorStatusPill } from "@/app/components/StatusPill";
-import { getSingleColor, NamedSwatch } from "@/app/components/Swatch";
-import Image from "next/image";
-import { FaRegCopy } from "react-icons/fa6";
+import { NamedSwatch } from "@/app/components/Swatch";
 import Filament from "@/app/Types/Filament/Filament";
-import Part, {
-	isRefunded,
+import {
 	isPriced,
 	PartStatus,
 	PartWithModel,
 	isRevoked,
 	getStatusColor,
-	isFilamentSupplemented
+	
 } from "@/app/Types/Part/Part";
 import {
 	hasQuote,
 	isPaid,
 	RequestWithParts
 } from "@/app/Types/Request/Request";
+import { Dialog } from "@mui/material";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-	Alert,
-	AlertTitle,
-	Dialog,
-	Fade,
-	Slide,
-	Snackbar
-} from "@mui/material";
-import {
-	RegularAlarm,
-	RegularAlarmClock,
-	RegularArrowRight,
-	RegularCheckmark,
-	RegularCloudDownload,
-	RegularConstructionHammer,
-	RegularCrossCircle,
-	RegularDownload,
-	RegularFlag,
-	RegularMoneyProtection,
-	RegularPlus,
-	RegularReload,
-	RegularSpinnerSolid,
-	RegularStarFill,
-	RegularSthethoscope,
-	RegularTimer,
-	RegularUpload,
-	RegularWeight
-} from "lineicons-react";
+  faClock,
+  faArrowRight,
+  faCircleXmark,
+  faDownload,
+  faFlag,
+  faUpload,
+  faWeightHanging
+} from "@fortawesome/free-solid-svg-icons";
+
 import React, { ChangeEvent, ChangeEventHandler, Suspense, useContext, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { useForm } from "react-hook-form";
@@ -214,7 +194,7 @@ export default function PartEditor({
 								{isChanged && <button
 									className={`w-fit text-[length:inherit] px-0 py-0 text-cool-black hover:text-cool-black mb-0 bg-transparent hover:bg-transparent hover:fill-black enabled:fill-pnw-gold enabled:text-pnw-gold`}
 									disabled={!isChanged || request.isFulfilled}>
-									<RegularUpload className="w-4 h-4 mb-0.5 inline mr-2"></RegularUpload>
+									<FontAwesomeIcon icon={faUpload} className="w-4 h-4 mb-0.5 inline mr-2"/>
 									Save
 								</button>}
 
@@ -365,7 +345,7 @@ export default function PartEditor({
 														{part.model.analysisResults
 															? <>
 																<div className="w-fit gap-2 fill-subtle">
-																	<span className="mr-2">Model Analysis</span><RegularAlarmClock className="inline mb-0.5" /> {part.model.analysisResults.estimatedDuration} min<RegularWeight className="ml-2 inline mb-0.5" /> {part.model.analysisResults.estimatedFilamentUsedInGrams} g
+																	<span className="mr-2">Model Analysis</span><FontAwesomeIcon icon={faClock} className="inline mb-0.5" /> {part.model.analysisResults.estimatedDuration} min<FontAwesomeIcon icon={faWeightHanging} className="ml-2 inline mb-0.5" /> {part.model.analysisResults.estimatedFilamentUsedInGrams} g
 																</div>
 															</>
 															: part.model.analysisFailedReason
@@ -389,7 +369,7 @@ export default function PartEditor({
 															download={`${part.model.name}.stl`}
 															target="_blank">
 															Download
-															<RegularDownload className="ml-2 inline mb-0.5 fill-inherit" />
+															<FontAwesomeIcon icon={faDownload} className="ml-2 inline mb-0.5 fill-inherit" />
 														</a>}
 													</div>
 
@@ -427,7 +407,7 @@ export default function PartEditor({
 																		submitName: "Remove Flag"
 																	}));
 																}} >
-																<RegularCrossCircle className="inline hover:cursor-pointer mb-0.5" />
+																<FontAwesomeIcon icon={faCircleXmark} className="inline hover:cursor-pointer mb-0.5" />
 															</span>
 														</div>
 													</div>}
@@ -454,7 +434,7 @@ export default function PartEditor({
 													<>
 														{`${part.filament!.material.toUpperCase()} `}
 														<NamedSwatch swatch={part.filament!.color} style="compact" />
-														<RegularArrowRight className="inline mx-2 fill-gray-500" style={{ marginBottom: "3px" }}></RegularArrowRight>
+														<FontAwesomeIcon icon={faArrowRight} className="inline mx-2 fill-gray-500" style={{ marginBottom: "3px" }}/>
 														{`${part.supplementedFilament.material.toUpperCase()} `}
 														<NamedSwatch swatch={part.supplementedFilament.color} style="compact" />
 													</>
@@ -534,7 +514,7 @@ export default function PartEditor({
 													// biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
 													: <div onClick={() => addForm({
 														title: <>Flagging Model: <span className="font-semibold">{part.model.name}</span></>,
-														icon: <RegularFlag className="fill-pnw-gold" />,
+														icon: <FontAwesomeIcon icon={faFlag} className="fill-pnw-gold" />,
 														description: `Flagging this model will put the request on pause until replaced. An email will be sent to ${request.firstName} asking to email an officer/maintainer.`,
 														cancelName: "Cancel",
 														submitName: `Flag ${part.model.name}`,
@@ -575,7 +555,7 @@ export default function PartEditor({
 															return null;
 														},
 													})}>
-														<LabelWithIcon classname="button" icon={<RegularFlag />}>Flag Model</LabelWithIcon>
+														<LabelWithIcon classname="button" icon={<FontAwesomeIcon icon={faFlag} />}>Flag Model</LabelWithIcon>
 													</div>}
 											</div>
 										</div>

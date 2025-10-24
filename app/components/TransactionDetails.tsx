@@ -3,7 +3,8 @@
 import { formateDate } from "@/app/api/util/Constants";
 import Table from "@/app/components/Table";
 import { WalletTransaction, WalletTransactionPaymentMethod, WalletTransactionStatus } from "@/app/Types/Account/Wallet";
-import { RegularCirclePlus } from "lineicons-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { MutableRefObject, useRef } from "react";
 import { FaRegFilePdf } from "react-icons/fa";
@@ -108,9 +109,9 @@ export default function TransactionDetails({ transaction }: { transaction: Walle
             <div className="flex text-md items-center">
                 {transaction.paymentStatus ==
                     WalletTransactionStatus.Paid ? (
-                    <RegularCirclePlus className="h-5 w-auto fill-green-600 mr-2"></RegularCirclePlus>
+                    <FontAwesomeIcon icon={faCirclePlus} className="h-5 w-auto fill-green-600 mr-2"/>
                 ) : (
-                    <RegularCirclePlus className="h-5 w-auto fill-yellow-700 mr-2"></RegularCirclePlus>
+                    <FontAwesomeIcon icon={faCirclePlus} className="h-5 w-auto fill-yellow-700 mr-2"/>
                 )}
                 ${(transaction.amountInCents / 100).toFixed(2)}
             </div>

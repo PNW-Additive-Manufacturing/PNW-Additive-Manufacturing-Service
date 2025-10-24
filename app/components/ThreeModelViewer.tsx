@@ -6,7 +6,8 @@ import {
 } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import classNames from "classnames";
-import { RegularReload } from "lineicons-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRotateRight } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useRef, useState } from "react";
 import { useEffectOnce } from "react-use";
 import {
@@ -236,7 +237,7 @@ export default function ThreeModelViewer({
 						className="px-4 py-2 text-sm font-normal rounded-sm w-fit m-0 bg-red-400"
 						type="button"
 						onClick={loadModelSTL}>
-						Encountered an Issue<RegularReload className="ml-2 inline fill-white" />
+						Encountered an Issue<FontAwesomeIcon icon={faRotateRight} className="ml-2 inline fill-white" />
 					</button>
 				</div> : (isAvailable && showPrompts) ? (
 					<div className="flex justify-center align-middle items-center h-full w-full">

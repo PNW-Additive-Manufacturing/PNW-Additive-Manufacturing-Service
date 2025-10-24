@@ -151,6 +151,7 @@ export default async function RootLayout({
 							className="w-full px-0 h-fit"
 							style={{ minHeight: "95vh" }}>
 							<>
+							
 								<FloatingFormContainer>
 									{children}
 								</FloatingFormContainer>

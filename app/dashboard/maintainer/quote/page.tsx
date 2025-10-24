@@ -2,7 +2,8 @@
 
 import HorizontalWrap from "@/app/components/HorizontalWrap";
 import { Quote } from "ams-pdf";
-import { RegularSpinnerSolid } from "lineicons-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useRef, useState } from "react";
 
 const defaultQuote: Quote = {
@@ -88,7 +89,7 @@ export default function page() {
 
         <button onClick={doGeneratePDF} className={"flex items-center gap-2 text-sm py-2.5 w-full font-normal "} type="submit" disabled={isPending}>
             Generate PDF
-            {isPending && <RegularSpinnerSolid className={`inline-block h-auto w-auto animate-spin fill-white`} />}
+            {isPending && <FontAwesomeIcon icon={faSpinner} className={`inline-block h-auto w-auto animate-spin fill-white`} />}
         </button>
 
         <a target="_blank" download={"PDF"} className="hidden" ref={saveAnchorRef as any}>Save PDF</a>

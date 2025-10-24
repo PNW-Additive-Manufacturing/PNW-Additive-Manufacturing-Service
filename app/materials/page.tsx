@@ -1,6 +1,7 @@
 "use server";
 
-import { RegularDiamondAlt, RegularDiamondShape } from "lineicons-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGem } from "@fortawesome/free-solid-svg-icons";
 import HorizontalWrap from "../components/HorizontalWrap";
 import { Swatch, SwatchColorBlock } from "../components/Swatch";
 import FilamentBlock from "../experiments/FilamentBlock";
@@ -70,7 +71,7 @@ export default async function Materials() {
     return <>
         <HorizontalWrap>
             <div className="py-8">
-                <h1 className="w-fit text-2xl font-normal mb-2"><RegularDiamondAlt className="inline mb-1 p-0.5 fill-pnw-gold" /> Process and Materials</h1>
+                <h1 className="w-fit text-2xl font-normal mb-2"><FontAwesomeIcon icon={faGem} className="inline mb-1 p-0.5 fill-pnw-gold" /> Process and Materials</h1>
                 <p>
                     Choosing the correct manufacturing process and material is essential to ensure the part meets its functional, aesthetic, and durability requirements.
                 </p>

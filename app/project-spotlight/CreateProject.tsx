@@ -1,6 +1,8 @@
 "use client";
 
-import { RegularCirclePlus } from "lineicons-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
+
 import { useEffect, useRef, useState } from "react";
 import { Input } from "../components/Input";
 import Image from "next/image";
@@ -45,7 +47,7 @@ export function CreateProject() {
         </> : <div className="flex flex-col gap-3 items-center justify-center w-full h-full p-6">
 
             <h2 className="text-base">Create another Post</h2>
-            <RegularCirclePlus className="fill-pnw-gold w-6 h-6"></RegularCirclePlus>
+            <FontAwesomeIcon icon={faCirclePlus} className="fill-pnw-gold w-6 h-6"/>
 
         </div>}
     </div>

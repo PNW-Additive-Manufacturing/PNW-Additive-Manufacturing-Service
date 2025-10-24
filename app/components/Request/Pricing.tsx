@@ -10,7 +10,10 @@ import Request, {
 } from "@/app/Types/Request/Request";
 import Table from "../Table";
 import { useContext, useMemo } from "react";
-import { RegularBookmark, RegularConsulting, RegularEmptyFile, RegularPencil } from "lineicons-react";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFile } from "@fortawesome/free-solid-svg-icons";
+
 import classNames from "classnames";
 import { FloatingFormContext } from "../FloatingForm";
 import { EditableFigure, Figure } from "../Figures";
@@ -87,7 +90,7 @@ export function DownloadItemizedReceipt({ request }: { request: Request }) {
 
 		<a href={`/api/download/request-receipt?requestId=${request.id}`} download>
 			<button title="Download Itemized Receipt" type="button" className="bg-cool-black text-xs text-left mb-0">
-				<RegularEmptyFile className="inline mr-1 my-auto fill-white mb-0.5" />
+				<FontAwesomeIcon icon={faFile} className="inline mr-1 my-auto fill-white mb-0.5" />
 				Download Itemized {isPaid(request) ? "Receipt" : "Invoice"}
 			</button>
 		</a>

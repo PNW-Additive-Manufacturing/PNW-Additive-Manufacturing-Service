@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import { RegularCheckmark } from "lineicons-react";
 import { FaCheck } from "react-icons/fa";
 
 export interface TimelineOptionData {

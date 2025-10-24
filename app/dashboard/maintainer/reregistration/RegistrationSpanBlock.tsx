@@ -11,7 +11,6 @@ import { useToggle } from "react-use";
 import classNames from "classnames";
 import { FaEye } from "react-icons/fa";
 import FormLoadingSpinner from "@/app/components/FormLoadingSpinner";
-import { RegularSpinnerSolid } from "lineicons-react";
 import Spinner from "@/app/components/Spinner";
 import { motion } from "motion/react";
 

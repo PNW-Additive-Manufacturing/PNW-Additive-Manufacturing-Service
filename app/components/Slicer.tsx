@@ -3,7 +3,6 @@ import ThreeModelViewer from "./ThreeModelViewer";
 import Filament from "../Types/Filament/Filament";
 import PopupFilamentSelector from "./PopupFilamentSelector";
 import { useState } from "react";
-import { RegularFiles, RegularTimer } from "lineicons-react";
 import { Input } from "./Input";
 import { useFormState } from "react-dom";
 import { slice, uploadToFarm } from "../api/farm/FarmActions";

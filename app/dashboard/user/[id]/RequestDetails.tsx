@@ -31,13 +31,15 @@ import { NamedSwatch } from "@/app/components/Swatch";
 import ThreeModelViewer from "@/app/components/ThreeModelViewer";
 import Timeline from "@/app/components/Timeline";
 import classNames from "classnames";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-	RegularArrowRight,
-	RegularCog,
-	RegularCrossCircle,
-	RegularDownload,
-	RegularExit
-} from "lineicons-react";
+  faArrowRight,
+  faGear,
+  faCircleXmark,
+  faDownload,
+  faRightFromBracket
+} from "@fortawesome/free-solid-svg-icons";
+
 import Link from "next/link";
 import { useContext, useMemo, useRef, useState } from "react";
 import { useFormState } from "react-dom";
@@ -133,7 +135,7 @@ export default function RequestDetails({
 					<div className="flex w-full gap-2 lg:justify-end max-lg:justify-between">
 						<Link href="/dashboard/user">
 							<button className="mb-0 outline outline-1 outline-gray-300 bg-white text-black fill-black flex flex-row gap-2 justify-end items-center px-3 py-2">
-								<RegularExit className="w-auto h-6 fill-inherit"></RegularExit>
+								<FontAwesomeIcon icon={faRightFromBracket} className="w-auto h-6 fill-inherit"/>
 								<span className="text-sm font-medium">Go Back</span>
 							</button>
 						</Link>
@@ -142,9 +144,9 @@ export default function RequestDetails({
 								className={`mb-0 px-3 py-2 text-sm outline outline-1 outline-gray-300 bg-white text-black fill-black hover:fill-white`}
 								onClick={() => setShowActions(!showActions)}>
 								<span className="text-sm font-medium">Actions</span>
-								<RegularCog
+								<FontAwesomeIcon icon={faGear}
 									className={`${showActions ? "rotate-180" : "rotate-0"
-										} ml-2 w-6 h-auto fill-inherit inline transition-transform ease-in-out duration-500`}></RegularCog>
+										} ml-2 w-6 h-auto fill-inherit inline transition-transform ease-in-out duration-500`}/>
 							</button>
 							<div
 								className={`${showActions ? "" : "hidden"
@@ -165,7 +167,7 @@ export default function RequestDetails({
 											isQuotePaid
 										}>
 										Cancel Request
-										<RegularCrossCircle className="ml-2 w-6 h-6 inline-block fill-red-700"></RegularCrossCircle>
+										<FontAwesomeIcon icon={faCircleXmark} className="ml-2 w-6 h-6 inline-block fill-red-700"/>
 									</button>
 									<span className="text-red-600">
 										{error}
@@ -412,7 +414,7 @@ function PartDetails({ part, index, count }: { part: PartWithModel; index: numbe
 											download={`${part.model.name}.stl`}
 											target="_blank">
 											Download Model
-											<RegularDownload className="ml-2 inline mb-0.5 fill-inherit" />
+											<FontAwesomeIcon icon={faDownload} className="ml-2 inline mb-0.5 fill-inherit" />
 										</a>}
 									</div>
 
@@ -437,7 +439,7 @@ function PartDetails({ part, index, count }: { part: PartWithModel; index: numbe
 
 							{part.supplementedFilament != undefined && (
 								<>
-									<RegularArrowRight className="inline mx-2 fill-gray-500" style={{ marginBottom: "3px" }} />
+									<FontAwesomeIcon icon={faArrowRight} className="inline mx-2 fill-gray-500" style={{ marginBottom: "3px" }} />
 									{`${part.supplementedFilament.material.toUpperCase()} `}
 									<NamedSwatch swatch={part.supplementedFilament.color} style="compact" />
 								</>

@@ -7,7 +7,7 @@ import ActionResponse, {
 import { AccountContext } from "@/app/ContextProviders";
 import FormLoadingSpinner from "@/app/components/FormLoadingSpinner";
 import HorizontalWrap from "@/app/components/HorizontalWrap";
-import { RegularEnvelope } from "lineicons-react";
+
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
