@@ -3,17 +3,16 @@
 import fs from "fs";
 import path from "path";
 
-import { getJwtPayload } from "@/app/api/util/JwtHelper";
 import { redirect } from "next/navigation";
 
 import db from "@/app/api/Database";
-import { maintainerRequestReceived, requestReceivedHTML, sendEmail, sendRequestEmail } from "../util/Mail";
-import { RequestServe } from "@/app/Types/Request/RequestServe";
-import AccountServe from "@/app/Types/Account/AccountServe";
-import Account from "@/app/Types/Account/Account";
 import { getModelPath } from "@/app/files";
+import AccountServe from "@/app/Types/Account/AccountServe";
 import FilamentServe from "@/app/Types/Filament/FilamentServe";
-import { addDays, addMinutes } from "@/app/utils/TimeUtils";
+import { RequestServe } from "@/app/Types/Request/RequestServe";
+import { serveRequiredSession } from "@/app/utils/SessionUtils";
+import { addDays } from "@/app/utils/TimeUtils";
+import { maintainerRequestReceived, sendEmail, sendRequestEmail } from "../util/Mail";
 
 const uploadDir = path.join(process.cwd(), "uploads", "stl");
 
@@ -31,18 +30,9 @@ export async function getFilamentList() {
 }
 
 export async function requestPart(prevState: string, formData: FormData) {
-	let account: Account;
 	// TODO: Refactor this. It sucks.
-	try {
-		const payload = await getJwtPayload();
-		account = (await AccountServe.queryByEmail(payload!.email))!;
-
-		if (account == undefined) {
-			throw new Error("Account is null!");
-		}
-	} catch (e) {
-		return redirect("/user/login");
-	}
+	
+	const session = await serveRequiredSession();
 	
 	let files = formData.getAll("file") as File[] | null;
 	let notes = formData.get("notes") as string | null;
@@ -123,13 +113,13 @@ export async function requestPart(prevState: string, formData: FormData) {
 	try {
 		let success = await db.begin(async (sql) => {
 			const request =
-				await sql`insert into request (name, owneremail, comments, needby) values (${requestName}, ${account.email}, ${notes}, ${needBy}) returning id`;
+				await sql`insert into request (name, owneremail, comments, needby) values (${requestName}, ${session.account.email}, ${notes}, ${needBy}) returning id`;
 
 			requestId = Number.parseInt(request[0].id);
 
 			const profileUploadDir = `${uploadDir}${
 				path.sep
-			}${account.email.substring(0, account.email.indexOf("@"))}`;
+			}${session.account.email.substring(0, session.account.email.indexOf("@"))}`;
 
 			if (!fs.existsSync(profileUploadDir)) {
 				fs.mkdirSync(profileUploadDir, { recursive: true });
@@ -152,13 +142,13 @@ export async function requestPart(prevState: string, formData: FormData) {
 				}
 
 				const modelRow =
-					await sql`insert into model (name, owneremail, filesizeinbytes) values (${filenames[i]}, ${account.email}, ${files[i].size}) returning id`;
+					await sql`insert into model (name, owneremail, filesizeinbytes) values (${filenames[i]}, ${session.account.email}, ${files[i].size}) returning id`;
 
 				const modelId: string = modelRow[0].id;
 
 				const buffer = Buffer.from(await files[i].arrayBuffer());
 
-				const modelPath = getModelPath(account.email, modelId);
+				const modelPath = getModelPath(session.account.email, modelId);
 
 				fs.mkdirSync(path.dirname(modelPath), {
 					recursive: true
@@ -203,7 +193,7 @@ export async function requestPart(prevState: string, formData: FormData) {
 
 		const maintainerEmails = await AccountServe.queryMaintainerEmails();
 		sendEmail(maintainerEmails.join(", "), 
-			`Request received for ${requestName} by ${account.firstName} ${account.lastName}`, 
+			`Request received for ${requestName} by ${session.account.firstName} ${session.account.lastName}`, 
 			await maintainerRequestReceived(request));
 
 		console.log("Sent!");

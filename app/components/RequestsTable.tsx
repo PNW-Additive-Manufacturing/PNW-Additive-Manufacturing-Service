@@ -1,23 +1,18 @@
 "use client";
 
-import { getRequestStatus, getRequestStatusColor, hasQuote, isPrintingOnMachines, RequestWithParts } from "@/app/Types/Request/Request";
-import Table from "@/app/components/Table";
-import { useContext, useEffect, useState, useTransition } from "react";
+import { getRequestStatus, getRequestStatusColor, hasQuote, RequestWithParts } from "@/app/Types/Request/Request";
 import { APIData } from "@/app/api/APIResponse";
 import { InputCheckbox } from "@/app/components/Input";
+import Table from "@/app/components/Table";
 import Link from "next/link";
-import ControlButton from "./ControlButton";
-import { AiOutlineReload } from "react-icons/ai";
+import { useEffect, useState } from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import Account from "../Types/Account/Account";
+import ControlButton from "./ControlButton";
 import StatusPill from "./StatusPill";
-import usePrinters from "../hooks/usePrinters";
-import { AccountContext } from "../ContextProviders";
-import { MachineData } from "./Machine";
-import { AccountPermission } from "../Types/Account/Account";
-import { FiActivity } from "react-icons/fi";
 import ThreeModelViewer from "./ThreeModelViewer";
 
-export default function RequestsTable({ accountEmail, requestsPerPage }: { accountEmail?: string, requestsPerPage: number }) {
+export default function RequestsTable({ session, requestsPerPage }: { session: Account, requestsPerPage: number }) {
 
     const [isFetchingRequests, setIsFetchingRequests] = useState(false);
     const [includeFulfilled, setIncludeFulfilled] = useState(false);
@@ -25,22 +20,19 @@ export default function RequestsTable({ accountEmail, requestsPerPage }: { accou
     const [requests, setRequests] = useState<RequestWithParts[]>();
     const [selectedRequest, setSelectedRequest] = useState<number>();
 
-    const authContext = useContext(AccountContext);
-
-    let machines: MachineData[] | undefined = undefined;
-    if (authContext.isSingedIn && authContext.account!.permission != AccountPermission.User) {
-        const printersHook = usePrinters(false);
-        machines = printersHook.machines;
-    }
+    // let machines: MachineData[] | undefined = undefined;
+    // if (session.permission != AccountPermission.User) {
+    //     const printersHook = usePrinters(false);
+    //     machines = printersHook.machines;
+    // }
 
     function fetchRequests() {
         setIsFetchingRequests(true);
 
         fetch("/api/requests", {
             method: "POST",
-            cache: "default",
             body: JSON.stringify({
-                accountEmail: accountEmail,
+                accountEmail: session.email,
                 requestedAfter: undefined,
                 includeFulfilled: includeFulfilled,
                 requestsPerPage: requestsPerPage + 1,
@@ -80,13 +72,13 @@ export default function RequestsTable({ accountEmail, requestsPerPage }: { accou
                                 <th>Parts</th>
                                 <th>Status</th>
                                 <th>Quote</th>
-                                {accountEmail == null && <th className="max-lg:hidden">Requester</th>}
+                                {session.email == null && <th className="max-lg:hidden">Requester</th>}
                                 <th className="max-lg:hidden">Requested On</th>
                             </tr>
                         </thead>
                         <tbody>
                             {requests.map((r, i) => {
-                                const rowLink = accountEmail == null ? `/dashboard/maintainer/orders/${r.id}` : `/dashboard/user/${r.id}`;
+                                const rowLink = session == null ? `/dashboard/maintainer/orders/${r.id}` : `/dashboard/user/${r.id}`;
 
                                 return <>
                                     {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
@@ -131,7 +123,7 @@ export default function RequestsTable({ accountEmail, requestsPerPage }: { accou
                                                     100
                                                 ).toFixed(2)}` : "Unquoted"}</Link>
                                         </td>
-                                        {accountEmail == null && <td className="max-lg:hidden"><Link href={rowLink}>{r.firstName} {r.lastName}</Link></td>}
+                                        {session == null && <td className="max-lg:hidden"><Link href={rowLink}>{r.firstName} {r.lastName}</Link></td>}
                                         <td className="max-lg:hidden">
                                             <Link href={rowLink}>
                                                 {r.submitTime.toLocaleDateString(
@@ -175,7 +167,7 @@ export default function RequestsTable({ accountEmail, requestsPerPage }: { accou
                             {requests!.length} {requests!.length == 1 ? "Request" : "Requests"} on Page{" "}
                             {pageNum}
                         </p>
-                    </div> : accountEmail == null ? "No requests are available." : "You do not have any ongoing requests!"}
+                    </div> : session.email == null ? "No requests are available." : "You do not have any ongoing requests!"}
                 </div>
                 <div className="flex gap-4 pr-1">
                     <InputCheckbox

@@ -1,9 +1,8 @@
 "use client";
 
-import { FaChevronDown } from "react-icons/fa";
-import { CSSProperties, ReactNode, useEffect, useRef, useState } from "react";
-import FocusOnMount from "./FocusOnMount";
 import classNames from "classnames";
+import { ReactNode, useState } from "react";
+import { FaChevronDown } from "react-icons/fa";
 
 export default function DropdownSection({
 	name,
@@ -16,7 +15,7 @@ export default function DropdownSection({
 }: {
 	name: string;
 	nameClassname?: string;
-	icon?: JSX.Element;
+	icon?: React.ReactElement;
 	hidden?: boolean;
 	collapsible?: boolean;
 	className?: string;

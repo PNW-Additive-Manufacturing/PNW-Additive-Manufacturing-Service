@@ -1,13 +1,12 @@
 "use client";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { 
-    faArrowLeft,
-    faArrowRight,
-    faArrowsLeftRight,
-    faChevronLeft,
-    faChevronRight
+import {
+	faArrowLeft,
+	faArrowRight,
+	faChevronLeft,
+	faChevronRight
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useEffect, useState } from "react";
 
@@ -16,7 +15,7 @@ export default function Gallery({
 	buttonStyle,
 	autoplay
 }: {
-	slides: JSX.Element[];
+	slides: React.ReactElement[];
 	autoplay?: boolean;
 	buttonStyle?: "compact" | "sphere" | "side-by-side";
 }) {
@@ -29,7 +28,7 @@ export default function Gallery({
 	const previousSlide = () =>
 		setCurrentSlide(Math.abs((currentSlide - 1) % slides.length));
 
-	let buttonElement: JSX.Element;
+	let buttonElement: React.ReactElement;
 	switch (buttonStyle) {
 		case "sphere":
 			buttonElement = (

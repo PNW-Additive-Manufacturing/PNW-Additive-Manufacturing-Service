@@ -1,41 +1,29 @@
 "use server";
 
 import db from "@/app/api/Database";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { cookies, headers } from "next/headers";
-import { z } from "zod";
-import { RequestServe } from "@/app/Types/Request/RequestServe";
+import { SwatchConfiguration, validateColors } from "@/app/components/Swatch";
+import { AccountPermission } from "@/app/Types/Account/Account";
+import AccountServe from "@/app/Types/Account/AccountServe";
+import FilamentServe from "@/app/Types/Filament/FilamentServe";
+import { isAllComplete, isRefunded, PartStatus } from "@/app/Types/Part/Part";
+import PartServe from "@/app/Types/Part/PartServe";
+import { ProjectSpotlight } from "@/app/Types/ProjectSpotlight/ProjectSpotlight";
+import ProjectSpotlightServe from "@/app/Types/ProjectSpotlight/ProjectSpotlightServe";
 import Request, {
 	calculateTotalCost,
-	hasQuote,
 	isPaid
 } from "@/app/Types/Request/Request";
-import { SwatchConfiguration, validateColors } from "@/app/components/Swatch";
-import FilamentServe from "@/app/Types/Filament/FilamentServe";
-import { isRefunded, isPriced, PartStatus, isAllComplete } from "@/app/Types/Part/Part";
-import PartServe from "@/app/Types/Part/PartServe";
-import { PostgresError } from "postgres";
-import AccountServe from "@/app/Types/Account/AccountServe";
+import { RequestServe } from "@/app/Types/Request/RequestServe";
+import { serveSession } from "@/app/utils/SessionUtils";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { APIData, resError, resOk, resOkData, resUnauthorized } from "../APIResponse";
 import {
-	WalletTransactionPaymentMethod,
-	WalletTransactionStatus
-} from "@/app/Types/Account/Wallet";
-import {
-	emailTemplate,
-	emailTemplateDearUser,
 	formatPartFlagged,
 	formatPartUnFlagged,
-	requestCompletedHTML,
-	requestQuotedFreeHTML,
-	requestQuotedHTML,
 	sendEmail,
 	sendRequestEmail
 } from "../util/Mail";
-import { APIData, resError, resOk, resOkData, resUnauthorized } from "../APIResponse";
-import { ProjectSpotlight } from "@/app/Types/ProjectSpotlight/ProjectSpotlight";
-import ProjectSpotlightServe from "@/app/Types/ProjectSpotlight/ProjectSpotlightServe";
-import { retrieveSafeJWTPayload } from "../util/JwtHelper";
 
 const setPartPriceSchema = z.object({
 	requestId: z.coerce.number().int(),
@@ -432,8 +420,13 @@ const postProjectShowcaseSchema = z.object({
 	author: z.string(),
 });
 export async function postProjectShowcase(prevState: APIData<{}>, data: FormData) {
-	const jwtPayload = await retrieveSafeJWTPayload();
-	if (jwtPayload == undefined || jwtPayload.permission == "user") return resUnauthorized();
+
+	const session = await serveSession({
+		requiredPermission: AccountPermission.Maintainer,
+		unauthorizedBehavior: "logged-out"
+	});
+
+	if (!session.isSignedIn) return resUnauthorized();
 
 	const parsedData = postProjectShowcaseSchema.safeParse({
 		title: data.get("title"),
@@ -455,8 +448,13 @@ export async function postProjectShowcase(prevState: APIData<{}>, data: FormData
 }
 
 export async function deleteProjectShowcase(prevState: APIData<{}>, data: FormData) {
-	const jwtPayload = await retrieveSafeJWTPayload();
-	if (jwtPayload == undefined || jwtPayload.permission == "user") return resUnauthorized();
+	
+	const session = await serveSession({
+		requiredPermission: AccountPermission.Maintainer,
+		unauthorizedBehavior: "logged-out"
+	});
+
+	if (!session.isSignedIn) return resUnauthorized();
 
 	const parsedData = z.string().safeParse(data.get("projectId"));
 
@@ -475,10 +473,13 @@ export async function deleteProjectShowcase(prevState: APIData<{}>, data: FormDa
 
 const editProjectShowcaseSchema = postProjectShowcaseSchema.partial().and(z.object({ id: z.string() }));
 export async function editProjectShowcase(prevState: APIData<{}>, data: FormData) {
-	const jwtPayload = await retrieveSafeJWTPayload();
-	if (jwtPayload == undefined || jwtPayload.permission == "user") return resUnauthorized();
+	
+	const session = await serveSession({
+		requiredPermission: AccountPermission.Maintainer,
+		unauthorizedBehavior: "logged-out"
+	});
 
-	console.log(data);
+	if (!session.isSignedIn) return resUnauthorized();
 
 	const parsedData = editProjectShowcaseSchema.safeParse({
 		title: data.get("title"),

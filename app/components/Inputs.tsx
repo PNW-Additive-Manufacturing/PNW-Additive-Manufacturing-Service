@@ -1,8 +1,7 @@
-import { register } from "module";
 import { LegacyRef } from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
 
-export function Label({ content }: { content: string }): JSX.Element {
+export function Label({ content }: { content: string }): React.ReactElement {
 	return (
 		<label className="text-gray-600">{content}</label>
 	);
@@ -22,7 +21,7 @@ export function GenericUnitInput({
 	defaultValue?: number;
 	register?: UseFormRegisterReturn;
 	onChange?: (value: number) => void;
-}): JSX.Element {
+}): React.ReactElement {
 	return (
 		<>
 			<div className="relative mt-2 rounded-md shadow-sm">
@@ -59,7 +58,7 @@ export function CurrencyInput({
 	onChange?: (value: number) => void;
 	ref?: LegacyRef<HTMLInputElement>;
 	disabled?: boolean;
-}): JSX.Element {
+}): React.ReactElement {
 	disabled = disabled ?? false;
 
 	return (

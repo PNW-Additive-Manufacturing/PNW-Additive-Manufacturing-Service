@@ -1,9 +1,9 @@
 "use server";
 
+import { AccountPermission } from "@/app/Types/Account/Account";
+import { serveSession } from "@/app/utils/SessionUtils";
 import { z } from "zod";
-import { fetchMachines } from "./farmServ";
 import getConfig from "../../getConfig";
-import { retrieveSafeJWTPayload } from "../util/JwtHelper";
 
 const env = getConfig();
 
@@ -81,11 +81,13 @@ export async function markAsEmpty(prevState: any, formData: FormData) {
 		return `Schema Error: ${parsedData.error}`;
 	}
 
-	const JWT = await retrieveSafeJWTPayload();
-	if (JWT == undefined || JWT.permission == "user") {
-		return;
-	}
-
+	const session = await serveSession({
+        requiredPermission: AccountPermission.Maintainer,
+        unauthorizedBehavior: "logged-out"
+    });
+	
+    if (!session.isSignedIn) return;
+ 
 	try {
 		await fetch(
 			`${env.farmAPIUrl}/printers/${parsedData.data.identity}/markAsCleared`,

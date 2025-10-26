@@ -1,11 +1,8 @@
+import { getProjectShowcaseImagePath } from "@/app/files";
+import getConfig from "@/app/getConfig";
+import fs from "fs";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import fs from "fs";
-import { getModelPath, getProjectShowcaseImagePath } from "@/app/files";
-import { retrieveSafeJWTPayload } from "../../util/JwtHelper";
-import { AccountPermission } from "@/app/Types/Account/Account";
-import ModelServe from "@/app/Types/Model/ModelServe";
-import getConfig from "@/app/getConfig";
 
 const envConfig = getConfig();
 

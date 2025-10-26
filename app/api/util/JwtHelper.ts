@@ -8,10 +8,9 @@ import * as jose from "jose";
 
 import { cookies } from "next/headers";
 
-import { boolean, z } from "zod";
-import { permission } from "process";
-import { AccountPermission } from "@/app/Types/Account/Account";
+import Account, { AccountPermission, AccountSchema } from "@/app/Types/Account/Account";
 import getConfig from "@/app/getConfig";
+import { z } from "zod";
 
 const appConfig = getConfig();
 
@@ -25,8 +24,8 @@ export interface UserJWT {
 	isBanned: boolean;
 }
 export const UserJWTSchema = z.object({
-	email: z.string().email(),
-	permission: z.nativeEnum(AccountPermission),
+	email: z.email(),
+	permission: z.enum(AccountPermission),
 	firstname: z.string(),
 	lastname: z.string(),
 	isemailverified: z.boolean(),
@@ -35,114 +34,27 @@ export const UserJWTSchema = z.object({
 export type RefinedUserJWT = z.infer<typeof UserJWTSchema>;
 
 export async function makeJwt(
-	email: string,
-	permission: string,
-	firstname: string,
-	lastname: string,
-	isemailverified: boolean,
-	isbanned: boolean,
+	session: Account,
 	expireDate?: Date
 ) {
-	return await new jose.SignJWT({
-		email,
-		permission,
-		firstname,
-		lastname,
-		isbanned,
-		isemailverified: isemailverified
-	})
+	return await new jose.SignJWT(session)
 		.setProtectedHeader({ alg: "HS512" })
 		.setIssuedAt()
 		.setExpirationTime(expireDate ?? "7d")
 		.sign(new TextEncoder().encode(process.env.JWT_SECRET!));
 }
 
-export async function getJwtPayload(): Promise<UserJWT> {
-	let cookie = (await cookies()).get(appConfig.sessionCookie);
-	if (cookie == undefined) throw new Error("Session cookie is undefined");
-
-	try {
-		let jwt = await jose.jwtVerify(cookie.value, new TextEncoder().encode(process.env.JWT_SECRET!));
-
-		const parsedPayload = UserJWTSchema.safeParse(jwt.payload);
-		if (!parsedPayload.success) {
-			console.error("SCHEMA ERROR");
-			throw new Error("Session was not validated correctly");
-		}
-
-		//console.log(new Date((payload.exp ?? 0) * 1000));
-		return {
-			email: parsedPayload.data.email as string,
-			permission: parsedPayload.data.permission as string,
-			firstname: parsedPayload.data.firstname as string,
-			lastname: parsedPayload.data.lastname as string,
-			isemailverified: parsedPayload.data.isemailverified as boolean,
-			isBanned: parsedPayload.data.isbanned,
-			//JWT stores their expiration dates in SECONDS, not milliseconds like Javascript Date
-			jwt_expire_date: new Date((jwt.payload.exp ?? 0) * 1000)
-		};
-	} catch (e: any) {
-		throw new Error("Invalid Token! Log Back In!\n" + e);
-	}
-}
-
-export async function retrieveSafeJWTPayload(): Promise<UserJWT | null> {
+export async function reqJWT(): Promise<Account | null> {
 	let cookie = (await cookies()).get(appConfig.sessionCookie);
 	if (!cookie) return null;
 
 	try {
-		let jwt = await jose.jwtVerify(
-			cookie.value,
-			new TextEncoder().encode(process.env.JWT_SECRET!)
-		);
 
-		const parsedPayload = UserJWTSchema.safeParse(jwt.payload);
-		if (!parsedPayload.success) {
-			console.error(
-				"JWT payload is invalid!",
-				parsedPayload.error.message
-			);
-			return null;
-		}
+		const jwt = await jose.jwtVerify(cookie.value, new TextEncoder().encode(process.env.JWT_SECRET!));
 
-		//console.log(new Date((payload.exp ?? 0) * 1000));
-		return {
-			email: parsedPayload.data.email as string,
-			permission: parsedPayload.data.permission as string,
-			firstname: parsedPayload.data.firstname as string,
-			lastname: parsedPayload.data.lastname as string,
-			isemailverified: parsedPayload.data.isemailverified as boolean,
-			isBanned: parsedPayload.data.isbanned,
-			//JWT stores their expiration dates in SECONDS, not milliseconds like Javascript Date
-			jwt_expire_date: new Date((jwt.payload.exp ?? 0) * 1000)
-		};
-	} catch (e: any) {
-		console.error(e);
-		return null;
-	}
-}
+		const parsedPayload = AccountSchema.parse(jwt.payload);
 
-// TODO: Replace with retrieveSafeJWTPayload to use new retrieveSafeRefinedJWTPayload
-export async function retrieveSafeRefinedJWTPayload(): Promise<RefinedUserJWT | null> {
-	let cookie = (await cookies()).get(appConfig.sessionCookie);
-	if (!cookie) return null;
-
-	try {
-		let jwt = await jose.jwtVerify(
-			cookie.value,
-			new TextEncoder().encode(process.env.JWT_SECRET!)
-		);
-
-		const parsedPayload = UserJWTSchema.safeParse(jwt.payload);
-		if (!parsedPayload.success) {
-			console.error(
-				"JWT payload is invalid!",
-				parsedPayload.error.message
-			);
-			return null;
-		}
-
-		return parsedPayload.data;
+		return parsedPayload;
 
 	} catch (e: any) {
 		console.error(e);

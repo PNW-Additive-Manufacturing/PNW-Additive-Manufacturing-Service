@@ -1,25 +1,21 @@
 "use client";
 
-import Image from "next/image";
-import { useContext, useRef, useState } from "react";
-import { ProjectSpotlight, ProjectSpotlightAttachment } from "../Types/ProjectSpotlight/ProjectSpotlight";
-import { AccountContext } from "../ContextProviders";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faCheck,
-  faCloudArrowDown,
-  faFile,
-  faPen
+    faCheck,
+    faCloudArrowDown,
+    faPen
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useActionState, useContext, useRef, useState } from "react";
+import { AccountContext } from "../ContextProviders";
+import { ProjectSpotlight, ProjectSpotlightAttachment } from "../Types/ProjectSpotlight/ProjectSpotlight";
 
-import FormSubmitButton from "../components/FormSubmitButton";
-import { formateDate } from "../api/util/Constants";
-import { useFormState } from "react-dom";
-import { deleteProjectShowcase, editProjectShowcase } from "../api/server-actions/maintainer";
-import { toast } from "react-toastify";
-import DropdownSection from "../components/DropdownSection";
-import AMImage from "../components/AMImage";
 import classNames from "classnames";
+import { toast } from "react-toastify";
+import { deleteProjectShowcase, editProjectShowcase } from "../api/server-actions/maintainer";
+import { formateDate } from "../api/util/Constants";
+import AMImage from "../components/AMImage";
+import FormSubmitButton from "../components/FormSubmitButton";
 
 // export function ProjectCard(projectData: ProjectSpotlightWithAttachments) {
 export function ProjectCard({ projectData, editable, style }: { projectData: ProjectSpotlight, editable: boolean, style: "normal" | "compact" }) {
@@ -29,7 +25,7 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
 
     const accountContext = useContext(AccountContext);
 
-    const [delete_res, delete_form] = useFormState<ReturnType<typeof deleteProjectShowcase>, FormData>(deleteProjectShowcase, null as any);
+    const [delete_res, delete_form] = useActionState<ReturnType<typeof deleteProjectShowcase>, FormData>(deleteProjectShowcase, null as any);
 
     const editFormRef = useRef<HTMLFormElement | undefined>(undefined);
 

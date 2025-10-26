@@ -1,17 +1,14 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { Input } from "./Input";
-import Filament from "../Types/Filament/Filament";
-import { getSingleColor, Swatch } from "./Swatch";
-import { useDebounce } from "react-use";
-import { Label } from "./Inputs";
-import FilamentBlock from "../experiments/FilamentBlock";
-import { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-	faEye	
+	faEye
 } from "@fortawesome/free-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import Filament from "../Types/Filament/Filament";
+import FilamentBlock from "./FilamentBlock";
+import { getSingleColor } from "./Swatch";
 
 export default function PopupFilamentSelector({
 	filaments,

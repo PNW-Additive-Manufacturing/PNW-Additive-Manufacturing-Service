@@ -1,26 +1,23 @@
 "use server";
 
-import "server-only";
 import { resError, resUnauthorized } from "@/app/api/APIResponse";
-import { retrieveSafeJWTPayload } from "@/app/api/util/JwtHelper";
 import getConfig from "@/app/getConfig";
 import { WalletTransactionReceiptPDF } from "@/app/PDFs/WalletReceipt";
 import { AccountPermission } from "@/app/Types/Account/Account";
 import AccountServe from "@/app/Types/Account/AccountServe";
-import { renderToBuffer, renderToStream } from "@react-pdf/renderer";
+import { serveRequiredSession } from "@/app/utils/SessionUtils";
+import { renderToBuffer } from "@react-pdf/renderer";
 import { NextRequest, NextResponse } from "next/server";
+import "server-only";
 
 const appConfig = getConfig();
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
-    let accountJWT = await retrieveSafeJWTPayload();
-    if (accountJWT == undefined) {
-        // return NextResponse.json(resError("You must be signed in!"));
-        return NextResponse.redirect(appConfig.joinHostURL("/user/login"));
-    }
+
+    const session = await serveRequiredSession();
 
     // Lazy, we need to conform the JWT parsing as a Account type in the future.
-    const account = (await AccountServe.queryByEmail(accountJWT.email))!;
+    const account = (await AccountServe.queryByEmail(session.account.email))!;
 
     const transactionId = request.nextUrl.searchParams.get("transactionId");
     if (transactionId == undefined) {
@@ -33,7 +30,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     // Account does not match with requested transaction AND they are not an elevated user.
-    if (transaction.accountEmail != accountJWT.email && accountJWT.permission == AccountPermission.User) {
+    if (transaction.accountEmail != session.account.email && session.account.permission == AccountPermission.User) {
         return NextResponse.json(resUnauthorized());
     }
 

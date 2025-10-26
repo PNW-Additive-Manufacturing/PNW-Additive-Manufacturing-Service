@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Filament from "../Types/Filament/Filament";
 import { toast } from "react-toastify";
-import FilamentBlock from "../experiments/FilamentBlock";
-
+import Filament from "../Types/Filament/Filament";
 import { NamedSwatch } from "./Swatch";
 
 type FilamentSelectorProps = {

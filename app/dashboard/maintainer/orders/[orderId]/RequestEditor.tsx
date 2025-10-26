@@ -4,57 +4,45 @@ import {
 	deleteRequest,
 	fulfillRequest
 } from "@/app/api/server-actions/request";
-import classnames from "classnames";
-import Account, { AccountPermission } from "@/app/Types/Account/Account";
-import { isAllComplete, PartStatus } from "@/app/Types/Part/Part";
+import Account from "@/app/Types/Account/Account";
 import Request, {
-	getLeadTimeInDays,
 	calculateTotalCost,
+	getCosts,
+	getLeadTimeInDays,
 	hasQuote,
 	isAllPriced,
 	isPaid,
-	RequestCosts,
 	RequestWithEmails,
-	RequestWithParts,
-	getCosts
+	RequestWithParts
 } from "@/app/Types/Request/Request";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faSquareCheck,
-  faGear,
-  faRightFromBracket,
-  faEye,
-  faRotateRight,
-  faStar,
-  faStopwatch,
-  faTrashCan,
-  faWallet
+	faEye,
+	faGear,
+	faRightFromBracket,
+	faRotateRight,
+	faSquareCheck,
+	faStar,
+	faStopwatch,
+	faTrashCan,
+	faWallet
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { FiActivity } from "react-icons/fi";
-import { useCallback, useContext, useMemo, useState } from "react";
-import { useFormState } from "react-dom";
 import { setQuote } from "@/app/api/server-actions/maintainer";
-import PartEditor from "./PartEditor";
-import Filament from "@/app/Types/Filament/Filament";
-import DropdownSection from "@/app/components/DropdownSection";
-import { DownloadItemizedReceipt, ItemizedPartTable, RequestTotals } from "@/app/components/Request/Pricing";
-import { RequestOverview } from "@/app/components/RequestOverview";
 import { formateDate, formateDateWithTime } from "@/app/api/util/Constants";
-import FormLoadingSpinner from "@/app/components/FormLoadingSpinner";
-import Machine from "@/app/components/Machine";
-import { AccountContext } from "@/app/ContextProviders";
-import { addMinutes } from "@/app/utils/TimeUtils";
-import usePrinters from "@/app/hooks/usePrinters";
-import Link from "next/link";
-import RevokeInput from "@/app/components/RevokeInput";
-import useAPIFormState from "@/app/hooks/useAPIFormState";
-import { FloatingFormContext } from "@/app/components/FloatingForm";
-import { LabelWithIcon } from "@/app/components/LabelWithIcon";
-import classNames from "classnames";
-import { Figure } from "@/app/components/Figures";
 import ContainerNotification from "@/app/components/ContainerNotification";
+import DropdownSection from "@/app/components/DropdownSection";
+import { Figure } from "@/app/components/Figures";
+import { FloatingFormContext } from "@/app/components/FloatingForm";
+import FormLoadingSpinner from "@/app/components/FormLoadingSpinner";
+import { DownloadItemizedReceipt, ItemizedPartTable, RequestTotals } from "@/app/components/Request/Pricing";
+import usePrinters from "@/app/hooks/usePrinters";
+import Filament from "@/app/Types/Filament/Filament";
+import classNames from "classnames";
+import Link from "next/link";
+import { useActionState, useCallback, useContext, useMemo, useState } from "react";
 import { FaCheck } from "react-icons/fa";
+import PartEditor from "./PartEditor";
 
 export default function RequestEditor({
 	request,
@@ -64,15 +52,15 @@ export default function RequestEditor({
 	request: RequestWithParts & RequestWithEmails;
 	requester: Account;
 	availableFilaments: Filament[];
-}): JSX.Element {
+}): React.ReactElement {
 	const partsAllPriced = isAllPriced(request);
 	const _hasQuote = hasQuote(request);
 	const isQuotePaid = isPaid(request);
 
 	const [showActions, setShowActions] = useState(false);
 	const [showRevoke, setShowRevoke] = useState(false);
-	const [fulfillState, fulfillAction] = useFormState(fulfillRequest, "");
-	const [deleteRequestError, deleteRequestAction] = useFormState(deleteRequest, "");
+	const [fulfillState, fulfillAction] = useActionState(fulfillRequest, "");
+	const [deleteRequestError, deleteRequestAction] = useActionState(deleteRequest, "");
 
 	const machineData = usePrinters(true, 60);
 

@@ -1,12 +1,10 @@
-"use server";
-
+import db from "@/app/api/Database";
+import ErrorPrompt from "@/app/components/ErrorPrompt";
+import HorizontalWrap from "@/app/components/HorizontalWrap";
 import getConfig from "@/app/getConfig";
+import { addMinutes } from "@/app/utils/TimeUtils";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import db from "@/app/api/Database";
-import { addMinutes } from "@/app/utils/TimeUtils";
-import HorizontalWrap from "@/app/components/HorizontalWrap";
-import ErrorPrompt from "@/app/components/ErrorPrompt";
 import ResetPassword from "./resetPassword";
 
 const appConfig = getConfig();
@@ -14,6 +12,7 @@ const appConfig = getConfig();
 export default async function Page(
     props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }
 ) {
+
     const searchParams = await props.searchParams;
     const resetCode = searchParams ? z.string().safeParse(searchParams["code"]).data : null;
     if (resetCode == null) redirect(`${appConfig.hostURL}/not-found`);

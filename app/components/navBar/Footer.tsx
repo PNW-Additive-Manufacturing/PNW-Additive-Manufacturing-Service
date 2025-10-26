@@ -1,7 +1,7 @@
 import Link from "next/link";
 import HorizontalWrap from "../HorizontalWrap";
 
-export function Footer() : JSX.Element {return(
+export function Footer() : React.ReactElement {return(
         <div className="bg-black w-full h-fit shadow-2xl">
             <HorizontalWrap className="py-12 flex flex-col gap-6 md:gap-12 md:flex-row">
                 <div>

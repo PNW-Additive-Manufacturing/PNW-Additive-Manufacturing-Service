@@ -1,33 +1,29 @@
 "use server";
 
-import { getJwtPayload } from "@/app/api/util/JwtHelper";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { 
-  faBolt,
-  faCartShopping,
-  faIdBadge
+import {
+	faBolt,
+	faCartShopping,
+	faIdBadge
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import db from "@/app/api/Database";
-import GenericPrinterIcon from "@/app/components/icons/GenericPrinterIcon";
-import FilamentSpoolIcon from "@/app/components/icons/FilamentSpoolIcon";
-import { AccountPermission } from "@/app/Types/Account/Account";
-import getConfig from "@/app/getConfig";
 import HorizontalWrap from "@/app/components/HorizontalWrap";
+import FilamentSpoolIcon from "@/app/components/icons/FilamentSpoolIcon";
+import GenericPrinterIcon from "@/app/components/icons/GenericPrinterIcon";
+import getConfig from "@/app/getConfig";
+import { AccountPermission } from "@/app/Types/Account/Account";
+import { serveRequiredSession } from "@/app/utils/SessionUtils";
 import { FaRegMoneyBillAlt } from "react-icons/fa";
 import { MdOutlineWavingHand } from "react-icons/md";
 
 const envConfig = getConfig();
 
 export default async function Maintainer() {
-	let jwtPayload = await getJwtPayload();
 
-	let permission: AccountPermission | null;
-	try {
-		permission = jwtPayload?.permission as AccountPermission;
-	} catch {
-		permission = null;
-	}
+	const session = await serveRequiredSession({
+		requiredPermission: AccountPermission.Maintainer
+	});
 
 	const orderCount = (await db`SELECT COUNT(*) FROM Request WHERE FulfilledAt IS NULL`)[0] as {
 		count: number;
@@ -40,7 +36,7 @@ export default async function Maintainer() {
 		<HorizontalWrap>
 			<section className="py-8">
 				<h1 className="text-2xl tracking-wide font-light mb-8">
-					Welcome, {jwtPayload?.firstname} {jwtPayload?.lastname}!
+					Welcome, {session.account.firstName} {session.account.lastName}!
 				</h1>
 
 				<div className="lg:grid grid-cols-3 w-full">
@@ -73,7 +69,7 @@ export default async function Maintainer() {
 
 						{/* Admin Only Screens */}
 						{(() => {
-							if (permission != AccountPermission.Admin) {
+							if (session.account.permission != AccountPermission.Admin) {
 								return null;
 							}
 							return (

@@ -1,19 +1,19 @@
 import { Canvas } from "@react-three/fiber";
 import {
-	useRef,
-	useState
+    useRef,
+    useState
 } from "react";
 import {
-	Box3,
-	BoxGeometry,
-	BufferGeometry,
-	Color,
-	EdgesGeometry,
-	Mesh,
-	MeshBasicMaterial,
-	PerspectiveCamera,
-	PointLight,
-	Vector3
+    Box3,
+    BoxGeometry,
+    BufferGeometry,
+    Color,
+    EdgesGeometry,
+    Mesh,
+    MeshBasicMaterial,
+    PerspectiveCamera,
+    PointLight,
+    Vector3
 } from "three";
 
 export function ModelMesh({ ref }: { ref: React.Ref<Mesh<BufferGeometry>> }) {
@@ -84,7 +84,7 @@ export function ModelMesh({ ref }: { ref: React.Ref<Mesh<BufferGeometry>> }) {
 	// </mesh>
 }
 
-// function DebugBoundingBox({ children }: { children: ReactElement<Mesh> }): JSX.Element {
+// function DebugBoundingBox({ children }: { children: ReactElement<Mesh> }): React.ReactElement {
 //     React.Children.map(children, child => {
 
 //     });
@@ -98,7 +98,7 @@ function BoundingBoxToEdgeGeometry(box: Box3): EdgesGeometry {
 	);
 }
 
-function PrintScene({}: {}): JSX.Element {
+function PrintScene({}: {}): React.ReactElement {
 	// Element references
 	const meshRef = useRef<Mesh>(null);
 	const lightRef = useRef<PointLight | undefined>(undefined);

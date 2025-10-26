@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import { useFormState } from "react-dom";
 import { modifyPart } from "../api/server-actions/maintainer";
 import Part from "../Types/Part/Part";
 import useAPIFormState from "./useAPIFormState";
@@ -9,7 +8,7 @@ import useAPIFormState from "./useAPIFormState";
  */
 export default function usePartModifier()
 {
-    let [result, formAction, isPending] = useAPIFormState(modifyPart);
+    let { result, formAction, isPending } = useAPIFormState(modifyPart);
     
     const doUpdate = useCallback((original: Part, modified: Partial<Pick<Part, "status" | "priceInDollars"> & {supplementedFilamentMaterial: string, supplementedFilamentName: string, supplementReason?: string}>) => {
 

@@ -1,6 +1,7 @@
 "use server";
 
 import postgres from "postgres";
+import "server-only";
 import getConfig from "../getConfig";
 
 // TODO: https://github.com/porsager/postgres?tab=readme-ov-file#data-transformation

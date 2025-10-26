@@ -8,22 +8,21 @@ import DropdownSection from "@/app/components/DropdownSection";
 import FormSubmitButton from "@/app/components/FormSubmitButton";
 import { AccountPermission, AccountWithTransactions } from "@/app/Types/Account/Account";
 import { WalletTransaction, WalletTransactionStatus } from "@/app/Types/Account/Wallet";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faCheck,
-  faCirclePlus,
-  faTriangleExclamation
+    faCheck,
+    faCirclePlus,
+    faTriangleExclamation
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { useRef, useState } from "react";
-import { useFormState } from "react-dom";
+import { useActionState, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
 export default function AccountManager({ accounts }: { accounts: AccountWithTransactions[] }) {
     const [selectedAccount, setSelectedAccount] = useState<AccountWithTransactions | null>();
     const [filteredAccounts, setFilteredAccounts] = useState<AccountWithTransactions[]>(accounts);
 
-    const [_, addFundsAction] = useFormState<APIData<WalletTransaction> | undefined>((async (data: any, formData: FormData) => {
+    const [_, addFundsAction] = useActionState<APIData<WalletTransaction> | undefined>((async (data: any, formData: FormData) => {
         const result = await addFunds(data, formData);
 
         if (result.success) {

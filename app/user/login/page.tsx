@@ -1,16 +1,15 @@
 "use client";
 
-import { Input } from "@/app/components/Input";
 import { tryLogin } from "@/app/api/server-actions/account";
-import { useFormState } from "react-dom";
-import HorizontalWrap from "@/app/components/HorizontalWrap";
 import AMSIcon from "@/app/components/AMSIcon";
-import { Label } from "@/app/components/Inputs";
 import FormSubmitButton from "@/app/components/FormSubmitButton";
+import HorizontalWrap from "@/app/components/HorizontalWrap";
+import { Input } from "@/app/components/Input";
 import { useSearchParams } from "next/navigation";
+import { useActionState } from "react";
 
 export default function Login() {
-	let [error, formAction] = useFormState<string, FormData>(tryLogin as any, "");
+	let [error, formAction] = useActionState<string, FormData>(tryLogin as any, "");
 	const searchParams = useSearchParams();
 	const reason = searchParams.get("reason");
 	const redirect = searchParams.get("redirect");

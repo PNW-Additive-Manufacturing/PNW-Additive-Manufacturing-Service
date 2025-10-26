@@ -3,7 +3,7 @@ import { FaCheck } from "react-icons/fa";
 
 export interface TimelineOptionData {
 	title: string;
-	description?: JSX.Element;
+	description?: React.ReactElement;
 	disabled: boolean;
 }
 

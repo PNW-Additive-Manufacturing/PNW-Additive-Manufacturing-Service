@@ -1,6 +1,7 @@
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 
 function SubmitButton({
 	className,
@@ -45,8 +46,8 @@ export default function GenericFormServerAction({
 	submitPendingName?: string;
 	clearOnSuccess?: boolean;
 	children: any;
-}): JSX.Element {
-	let [error, formAction] = useFormState<any, FormData>(serverAction, "");
+}): React.ReactElement {
+	let [error, formAction] = useActionState<any, FormData>(serverAction, "");
 
 	return (
 		<form

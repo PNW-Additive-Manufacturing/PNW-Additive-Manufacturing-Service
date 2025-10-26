@@ -1,10 +1,7 @@
 import {
-	CSSProperties,
-	ChangeEventHandler,
-	HTMLInputTypeAttribute,
-	use,
-	useEffect,
-	useState
+    CSSProperties,
+    ChangeEventHandler,
+    HTMLInputTypeAttribute
 } from "react";
 import { Label } from "./Inputs";
 
@@ -28,7 +25,7 @@ export function Input({
 	onChange?: ChangeEventHandler<HTMLInputElement>;
 	value?: string;
 	children?: any;
-}): JSX.Element {
+}): React.ReactElement {
 	required = required ?? false;
 
 	return (
@@ -67,7 +64,7 @@ export function InputCheckbox({
 	defaultChecked?: boolean;
 	onChange?: ChangeEventHandler<HTMLInputElement>;
 	children?: any;
-}): JSX.Element {
+}): React.ReactElement {
 	required = required ?? false;
 
 	return (
@@ -106,7 +103,7 @@ export function InputBig({
 	style?: CSSProperties;
 	required?: boolean;
 	max?: number;
-}): JSX.Element {
+}): React.ReactElement {
 	required = required ?? false;
 	label = label ?? "";
 

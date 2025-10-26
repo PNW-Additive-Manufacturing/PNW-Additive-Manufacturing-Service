@@ -1,23 +1,8 @@
 "use client";
 
 import { AccountContext } from "@/app/ContextProviders";
-import {
-	getStatusColor,
-	isAllComplete,
-	isAllPending,
-	isRevoked,
-	PartWithModel
-} from "@/app/Types/Part/Part";
-import Request, {
-	getCosts,
-	getLeadTimeInDays,
-	hasQuote,
-	isAllPriced,
-	isPaid,
-	RequestCosts,
-	RequestWithParts
-} from "@/app/Types/Request/Request";
-import ActionResponse from "@/app/api/server-actions/ActionResponse";
+import { getStatusColor, isAllComplete, isAllPending, isRevoked, PartWithModel } from "@/app/Types/Part/Part";
+import Request, { getCosts, getLeadTimeInDays, hasQuote, isAllPriced, isPaid, RequestCosts, RequestWithParts } from "@/app/Types/Request/Request";
 import { payInvoice } from "@/app/api/server-actions/invoice";
 import { cancelRequest } from "@/app/api/server-actions/request";
 import { formateDate, formateDateWithTime, formatTime } from "@/app/api/util/Constants";
@@ -30,19 +15,12 @@ import StatusPill from "@/app/components/StatusPill";
 import { NamedSwatch } from "@/app/components/Swatch";
 import ThreeModelViewer from "@/app/components/ThreeModelViewer";
 import Timeline from "@/app/components/Timeline";
-import classNames from "classnames";
+import useAPIFormState from "@/app/hooks/useAPIFormState";
+import { faArrowRight, faCircleXmark, faDownload, faGear, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowRight,
-  faGear,
-  faCircleXmark,
-  faDownload,
-  faRightFromBracket
-} from "@fortawesome/free-solid-svg-icons";
-
+import classNames from "classnames";
 import Link from "next/link";
-import { useContext, useMemo, useRef, useState } from "react";
-import { useFormState } from "react-dom";
+import { useActionState, useContext, useMemo, useRef, useState } from "react";
 import { FaBox, FaCheck } from "react-icons/fa";
 import { useReactToPrint } from "react-to-print";
 
@@ -91,12 +69,12 @@ export default function RequestDetails({
 	request
 }: {
 	request: RequestWithParts;
-}): JSX.Element {
+}): React.ReactElement {
 	const isQuotePaid = isPaid(request);
 
 	const [showActions, setShowActions] = useState(false);
 
-	const [error, cancelFormAction] = useFormState<any, FormData>(
+	const [error, cancelFormAction] = useActionState<any, FormData>(
 		cancelRequest,
 		""
 	);
@@ -104,14 +82,7 @@ export default function RequestDetails({
 	const invoiceRef = useRef<HTMLDivElement>(undefined);
 	const handlePrint = useReactToPrint({ contentRef: invoiceRef as any });
 
-	const [payState, payFormAction] = useFormState(
-		async (prevState: any, data: any) => {
-			const response = await payInvoice(prevState, data);
-
-			return response;
-		},
-		ActionResponse.Incomplete<undefined>()
-	);
+	const { formAction: payFormAction, result: payState } = useAPIFormState(payInvoice);
 
 	let costs = request.quote ? getCosts(request.quote) : undefined;
 
@@ -135,7 +106,7 @@ export default function RequestDetails({
 					<div className="flex w-full gap-2 lg:justify-end max-lg:justify-between">
 						<Link href="/dashboard/user">
 							<button className="mb-0 outline outline-1 outline-gray-300 bg-white text-black fill-black flex flex-row gap-2 justify-end items-center px-3 py-2">
-								<FontAwesomeIcon icon={faRightFromBracket} className="w-auto h-6 fill-inherit"/>
+								<FontAwesomeIcon icon={faRightFromBracket} className="w-auto h-6 fill-inherit" />
 								<span className="text-sm font-medium">Go Back</span>
 							</button>
 						</Link>
@@ -146,7 +117,7 @@ export default function RequestDetails({
 								<span className="text-sm font-medium">Actions</span>
 								<FontAwesomeIcon icon={faGear}
 									className={`${showActions ? "rotate-180" : "rotate-0"
-										} ml-2 w-6 h-auto fill-inherit inline transition-transform ease-in-out duration-500`}/>
+										} ml-2 w-6 h-auto fill-inherit inline transition-transform ease-in-out duration-500`} />
 							</button>
 							<div
 								className={`${showActions ? "" : "hidden"
@@ -167,7 +138,7 @@ export default function RequestDetails({
 											isQuotePaid
 										}>
 										Cancel Request
-										<FontAwesomeIcon icon={faCircleXmark} className="ml-2 w-6 h-6 inline-block fill-red-700"/>
+										<FontAwesomeIcon icon={faCircleXmark} className="ml-2 w-6 h-6 inline-block fill-red-700" />
 									</button>
 									<span className="text-red-600">
 										{error}
@@ -269,9 +240,9 @@ export default function RequestDetails({
 										costs={costs!}
 									/>
 								</form>
-								<p className="text-red-500 pl-4">
-									{payState.errorMessage}
-								</p>
+								{payState && !payState.success && <p className="text-red-500 pl-4">
+									{payState.errorMessage ?? "Unknown Error"}
+								</p>}
 							</>
 						) : (
 							<>

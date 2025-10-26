@@ -1,11 +1,11 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { APIData, resError } from "../api/APIResponse";
 import FormSubmitButton from "./FormSubmitButton";
 
 type APIFormProps<T> = React.PropsWithChildren<{
     action: (formData: FormData) => Promise<APIData<T>>,
     onRes?: (result: APIData<T>) => void, // Generic on response handler.
-    successMessage?: (data: T) => JSX.Element, // Easily display custom success messages.
+    successMessage?: (data: T) => React.ReactElement, // Easily display custom success messages.
     submitLabel?: string // Label for the submit button - no button will be auto-included if not provided.
 }>
 

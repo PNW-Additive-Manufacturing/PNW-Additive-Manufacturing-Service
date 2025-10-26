@@ -2,40 +2,45 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 import { amImageIconLightCropped } from "../../Branding";
 import NavbarLink from "./NavbarLink";
+import Navigation from "./Navigation";
+import { ServeAccountDetails } from "./ServeAccountDetails";
+import ServeNavigationAuthorizedPageLinks from "./ServeNavigationAuthorizedPageLinks";
 
-interface NavbarDesktopProps {
-    links: {
-        name: string;
-        path: string;
-    }[];
-    includeIcon?: boolean;
-    specialElements?: JSX.Element;
-}
+export function NavbarDesktop({ unauthorizedPages, authorizedPages }: React.ComponentProps<typeof Navigation>) {
 
-export function NavbarDesktop({ links, includeIcon, specialElements }: NavbarDesktopProps) {
-    return (
-        <div className="hidden xl:flex justify-between items-center align-middle gap-8">
-            <div className="hidden xl:flex items-center justify-end tracking-wider gap-4 overflow-x-hidden">
-                {includeIcon && (
-                    <Link href="/">
-                        <Image
-                            loading={"eager"}
-                            className="w-10"
-                            src={amImageIconLightCropped}
-                            alt={""}
-                            priority={true}
-                        />
-                    </Link>
-                )}
-                {links.map((val) => (
-                    <NavbarLink key={val.name} name={val.name} path={val.path} />
-                ))}
+    return <>
+
+        <div className="hidden xl:flex justify-between align-middle gap-8 items-stretch">
+
+            <div className="hidden xl:flex items-center tracking-wider gap-4 overflow-x-hidden">
+
+                <Link href="/"> 
+                    <Image className="w-10" src={amImageIconLightCropped} alt={""} priority={true} /> 
+                </Link>
+
+                {unauthorizedPages.map(p => <NavbarLink key={p.path} name={p.name} path={p.path}/>)}
+
+                {/* Stream in Authorized Pages */}
+                <Suspense>
+
+                    <ServeNavigationAuthorizedPageLinks authorizedPages={authorizedPages}/>
+                    
+                </Suspense>
+                
             </div>
-            <div className="flex gap-2">
-                {specialElements == null ? <div></div> : specialElements}
-            </div>
+
+            {/* Items to the Right */}
+            <Suspense>
+
+                <ServeAccountDetails />
+
+            </Suspense>
+
+
         </div>
-    );
+
+    </>
 }

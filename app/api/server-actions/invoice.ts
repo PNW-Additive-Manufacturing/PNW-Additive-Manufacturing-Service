@@ -1,66 +1,41 @@
-"use server";
+"use server"
 
-import { z } from "zod";
-import ActionResponse, { ActionResponsePayload } from "./ActionResponse";
 import { RequestServe } from "@/app/Types/Request/RequestServe";
-import { getJwtPayload } from "../util/JwtHelper";
-import AccountServe from "@/app/Types/Account/AccountServe";
-import db from "@/app/api/Database";
+import { serveSession } from "@/app/utils/SessionUtils";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { resError, resOk, resUnauthorized } from "../APIResponse";
 
 const payInvoiceSchema = z.object({ requestId: z.coerce.number().int() });
-export async function payInvoice(
-	prevState: ActionResponsePayload<undefined>,
-	data: FormData
-): Promise<ActionResponsePayload<undefined>> {
-	const parsedData = payInvoiceSchema.safeParse({
-		requestId: data.get("requestId")
-	});
 
-	if (!parsedData.success)
-		return ActionResponse.Error<undefined>(
-			`Schema Error: ${parsedData.error.message}`
-		);
+export async function payInvoice(data: FormData) {
 
-	const request = await RequestServe.fetchByIDWithAll(
-		parsedData.data.requestId
-	);
-	if (request == undefined) {
-		return ActionResponse.Error("Request does not exist!");
-	}
+	const parsedData = payInvoiceSchema.safeParse({ requestId: data.get("requestId") });
 
-	const JWTPayload = (await getJwtPayload())!;
-	if (request.requesterEmail != JWTPayload.email) {
-		return ActionResponse.ErrorLackPermission();
-	}
+	if (!parsedData.success) return resError(`Schema Error: ${parsedData.error.message}`);
 
-	const account = await AccountServe.queryByEmail(JWTPayload.email);
-	if (request.quote == undefined) {
-		return ActionResponse.Error(
-			"An invoice has not been assigned to this request!"
-		);
-	}
+	const request = await RequestServe.fetchByIDWithAll(parsedData.data.requestId);
 
-	if (account!.balanceInDollars < request.quote.totalPriceInCents / 100) {
-		return ActionResponse.Error("You do not have the required balance!");
-	}
+	if (request == undefined) return resError("Request does not exist!");
 
-	console.log(
-		`Paying for request #${request.id} for \$${
-			request.quote!.totalPriceInCents
-		}!`
-	);
+	const session = await serveSession();
+	if (!session.isSignedIn || request.requesterEmail != session.account.email) return resUnauthorized();
+
+	if (request.quote == undefined) return resError("An invoice has not been assigned to this request!");
+
+	if (session.account.balanceInCents < request.quote.totalPriceInCents) return resError("You do not have enough balance. Visit your wallet to make a deposit.");
 
 	try {
-		await db.begin(async (dbTransaction) => {
-			await RequestServe.setAsPaid(request.id, dbTransaction);
-		});
+
+		await RequestServe.setAsPaid(request.id);
 
 		revalidatePath("/");
 
-		return ActionResponse.Ok(undefined);
+		return resOk();
+		
 	} catch (error) {
-		console.log(error);
-		return ActionResponse.Error("Something went wrong!");
+
+		return resError(`${error}`);
+
 	}
 }

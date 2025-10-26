@@ -1,14 +1,12 @@
 "use client";
 
-import { Input } from "@/app/components/Input";
-import { useFormState, useFormStatus } from "react-dom";
 import { tryCreateAccount } from "@/app/api/server-actions/account";
 import HorizontalWrap from "@/app/components/HorizontalWrap";
-import Image from "next/image";
-import { ProgressBar } from "@/app/components/ProgressBar";
-import { RiCoupon2Fill } from "react-icons/ri";
-import { useEffect, useRef, useState } from "react";
+import { Input } from "@/app/components/Input";
 import { Departments, YearsOfStudy } from "@/app/Types/Account/Account";
+import Image from "next/image";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 
 function SubmitButton() {
 	const { pending } = useFormStatus();
@@ -37,7 +35,7 @@ async function clientSideValidation(prevState: string, formData: FormData) {
 
 export default function CreateAccount() {
 	//note that Server component cannot return null or Class objects, only plain JSONs and primitive types
-	let [error, formAction] = useFormState<string, FormData>(
+	let [error, formAction] = useActionState<string, FormData>(
 		clientSideValidation,
 		""
 	);

@@ -1,14 +1,10 @@
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
-import PopupFilamentSelector from "./PopupFilamentSelector";
-import Filament from "../Types/Filament/Filament";
-import { uploadToFarm } from "../api/farm/FarmActions";
 import { useState } from "react";
-import FormLoadingSpinner from "./FormLoadingSpinner";
+import { useFormStatus } from "react-dom";
 import { FaSpinner } from "react-icons/fa";
-import Machine, { MachineData, MachineIndicator } from "./Machine";
-import { getSingleColor } from "./Swatch";
+import Filament from "../Types/Filament/Filament";
+import { MachineData } from "./Machine";
 import Slicer from "./Slicer";
 
 function UploadButton({

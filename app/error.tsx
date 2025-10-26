@@ -1,6 +1,5 @@
-"use client";
+"use client"
 
-import { useEffect } from "react";
 import ErrorPrompt from "./components/ErrorPrompt";
 
 export default function Error({
@@ -10,10 +9,6 @@ export default function Error({
 	error: Error & { digest?: string };
 	reset: () => void;
 }) {
-	useEffect(() => {
-		console.error(error);
-		// Log the error to an error reporting service
-	}, [error]);
 
 	return (
 		<div>

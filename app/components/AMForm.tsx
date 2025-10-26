@@ -2,8 +2,8 @@ import AMSIcon from "./AMSIcon";
 import DragInOnView from "./animation/DragOnView";
 
 type AMFormProps = React.PropsWithChildren<{
-    title: React.JSX.Element | string,
-    description?: React.JSX.Element | string;
+    title: React.ReactElement | string,
+    description?: React.ReactElement | string;
 }>;
 
 export default function AMForm({ children, title, description }: AMFormProps) {

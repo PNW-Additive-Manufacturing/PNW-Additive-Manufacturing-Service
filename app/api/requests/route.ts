@@ -1,27 +1,24 @@
 "use server";
 
+import * as APIResponse from "@/app/api/APIResponse";
+import { AccountPermission } from "@/app/Types/Account/Account";
+import { RequestServe } from "@/app/Types/Request/RequestServe";
+import { serveSession } from "@/app/utils/SessionUtils";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import fs from "fs";
-import { getModelPath } from "@/app/files";
-import AccountServe from "@/app/Types/Account/AccountServe";
-import { redirect } from "next/navigation";
-import Account, { AccountPermission } from "@/app/Types/Account/Account";
-import ModelServe from "@/app/Types/Model/ModelServe";
-import { retrieveSafeJWTPayload } from "../util/JwtHelper";
-import * as APIResponse from "@/app/api/APIResponse";
-import { RequestQuery, RequestServe } from "@/app/Types/Request/RequestServe";
 
 const requestQuerySchema = z.object({
-	accountEmail: z.string().email().optional(),
+	accountEmail: z.email().optional(),
 	requestedAfter: z.date().optional(),
 	includeFulfilled: z.boolean().default(false),
 	requestsPerPage: z.number().int().default(10),
 	page: z.number().int().default(1)
 });
 export async function POST(request: NextRequest): Promise<NextResponse> {
-	const JWT = await retrieveSafeJWTPayload();
-	if (JWT === null) throw new Error("JWT not found");
+
+	const session = await serveSession();
+
+	if (!session.isSignedIn) throw new Error("JWT not found");
 
 	const queryData = requestQuerySchema.safeParse(await request.json());
 	if (!queryData.success)
@@ -34,10 +31,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 			{ status: 404 }
 		);
 
-	if (
-		queryData.data.accountEmail !== JWT.email &&
-		JWT.permission === AccountPermission.User
-	) {
+	if (queryData.data.accountEmail !== session.account.email && session.account.permission === AccountPermission.User) {
 		// A regular user cannot access requests other than theirs!
 		return new NextResponse(JSON.stringify(APIResponse.resUnauthorized()), {
 			status: 401

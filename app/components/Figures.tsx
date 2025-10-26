@@ -1,14 +1,14 @@
 import classNames from "classnames";
 import { useContext } from "react";
-import { FloatingFormContext } from "./FloatingForm";
 import { FaPencil } from "react-icons/fa6";
+import { FloatingFormContext } from "./FloatingForm";
 
 type FigureProps = {
     name: string,
     amount: any,
     style: "small" | "large" | "inline",
     prefix?: React.ReactElement | string,
-    icon?: JSX.Element,
+    icon?: React.ReactElement,
     iconPosition?: "start" | "end",
     labelClassName?: string,
     useColors?: boolean

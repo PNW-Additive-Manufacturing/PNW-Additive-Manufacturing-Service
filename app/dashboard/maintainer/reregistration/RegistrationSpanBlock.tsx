@@ -2,24 +2,21 @@
 
 import { formateDate } from "@/app/api/util/Constants";
 import { confirmationForm, FloatingFormContext } from "@/app/components/FloatingForm";
-import { RegistrationSpan, RegistrationSpanEntry } from "@/app/Types/RegistrationSpan/RegistrationSpan";
-import { useCallback, useContext, useEffect, useState } from "react";
-import { FaTrash } from "react-icons/fa";
-import { actionDeleteRegistrationSpan, actionFetchRegistrationSpanEntries } from "./actions";
-import useAPIFormState from "@/app/hooks/useAPIFormState";
-import { useToggle } from "react-use";
-import classNames from "classnames";
-import { FaEye } from "react-icons/fa";
-import FormLoadingSpinner from "@/app/components/FormLoadingSpinner";
 import Spinner from "@/app/components/Spinner";
-import { motion } from "motion/react";
+import useAPIFormState from "@/app/hooks/useAPIFormState";
+import { RegistrationSpan } from "@/app/Types/RegistrationSpan/RegistrationSpan";
+import classNames from "classnames";
+import { useCallback, useContext, useEffect } from "react";
+import { FaEye, FaTrash } from "react-icons/fa";
+import { useToggle } from "react-use";
+import { actionDeleteRegistrationSpan, actionFetchRegistrationSpanEntries } from "./actions";
 
 export default function RegistrationSpanBlock({ span }: { span: RegistrationSpan }) {
 
     const { addForm } = useContext(FloatingFormContext);
 
     const [doShowEntries, toggleShowEntries] = useToggle(false);
-    const [fetchedEntries, doFetchEntries, isFetchingEntries] = useAPIFormState(actionFetchRegistrationSpanEntries);
+    const { result: fetchedEntries, formAction: doFetchEntries, isPending: isFetchingEntries} = useAPIFormState(actionFetchRegistrationSpanEntries);
 
     const onTrashClick = useCallback(() => {
 

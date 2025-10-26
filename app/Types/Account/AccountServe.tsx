@@ -1,15 +1,15 @@
 import db from "@/app/api/Database";
+import * as Crypto from "@/app/api/util/Crypto";
+import * as Mail from "@/app/api/util/Mail";
+import getConfig from "@/app/getConfig";
+import { addMinutes } from "@/app/utils/TimeUtils";
+import postgres from "postgres";
 import Account, {
 	AccountEmailVerification,
 	AccountPermission,
 	AccountWithTransactions
 } from "./Account";
-import postgres from "postgres";
 import { WalletTransaction, WalletTransactionStatus } from "./Wallet";
-import * as Crypto from "@/app/api/util/Crypto";
-import getConfig from "@/app/getConfig";
-import * as Mail from "@/app/api/util/Mail";
-import { addMinutes } from "@/app/utils/TimeUtils";
 
 const appConfig = getConfig();
 
@@ -29,8 +29,7 @@ export default class AccountServe {
 		return accountBalanceInCents;
 	}
 
-	public static async queryAll(
-	): Promise<Account[]> {
+	public static async queryAll(): Promise<Account[]> {
 		const query = await db`SELECT * FROM Account`;
 
 		return query.map((accountRow) => {
@@ -41,6 +40,7 @@ export default class AccountServe {
 				isEmailVerified: accountRow.isemailverified,
 				permission: accountRow.permission as AccountPermission,
 				balanceInDollars: 0,
+				balanceInCents: 0,
 				joinedAt: accountRow.joinedat,
 				isTwoStepAuthVerified: accountRow.istwostepauthverified,
 				yearOfStudy: accountRow.yearofstudy,
@@ -58,6 +58,8 @@ export default class AccountServe {
 
 			const transactions = await AccountServe.queryTransactionsFor(accountRow.email);
 
+			const balanceInCents = await AccountServe.getBalance(accountRow.email);
+
 			return {
 				transactions: transactions,
 				email: accountRow.email,
@@ -65,7 +67,8 @@ export default class AccountServe {
 				lastName: accountRow.lastname,
 				isEmailVerified: accountRow.isemailverified,
 				permission: accountRow.permission as AccountPermission,
-				balanceInDollars: (await AccountServe.getBalance(accountRow.email)) / 100,
+				balanceInDollars: balanceInCents / 100,
+				balanceInCents: balanceInCents,
 				joinedAt: accountRow.joinedat,
 				isTwoStepAuthVerified: accountRow.istwostepauthverified,
 				yearOfStudy: accountRow.yearofstudy,
@@ -82,19 +85,27 @@ export default class AccountServe {
 		if (query.length == 0) return undefined;
 
 		const accountRow = query.at(0)!;
+
+		const balanceInCents = await AccountServe.getBalance(email);
+
 		return {
 			email: accountRow.email,
 			firstName: accountRow.firstname,
 			lastName: accountRow.lastname,
 			isEmailVerified: accountRow.isemailverified,
 			permission: accountRow.permission as AccountPermission,
-			balanceInDollars: (await AccountServe.getBalance(email)) / 100,
+			balanceInDollars: balanceInCents / 100,
+			balanceInCents: balanceInCents,
 			joinedAt: accountRow.joinedat,
-			isTwoStepAuthVerified: accountRow.istwostepauthverified,
 			yearOfStudy: accountRow.yearofstudy,
 			isBanned: accountRow.isbanned,
 			department: accountRow.department
 		};
+	}
+
+	public static async queryPassword(accountEmail: string)
+	{
+		return (await db`SELECT Password FROM Account WHERE Email=${accountEmail}`).at(0)?.password;
 	}
 
 	public static async queryMaintainerEmails(): Promise<string[]> {

@@ -1,5 +1,5 @@
-import HorizontalWrap from "../components/HorizontalWrap";
 import AMImage from "../components/AMImage";
+import HorizontalWrap from "../components/HorizontalWrap";
 
 function Card({
 	name,
@@ -13,7 +13,7 @@ function Card({
 	email?: string;
 	phone?: string;
 	avatar: string;
-}): JSX.Element {
+}): React.ReactElement {
 	return <>
 
 		<div>

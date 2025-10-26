@@ -5,7 +5,7 @@ export default function Table(
 		TableHTMLAttributes<HTMLTableElement>,
 		HTMLTableElement
 	>
-): JSX.Element {
+): React.ReactElement {
 	return (
 		<div
 			{...props}

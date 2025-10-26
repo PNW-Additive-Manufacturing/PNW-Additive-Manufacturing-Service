@@ -1,12 +1,12 @@
 "use server";
 
 import db from "@/app/api/Database";
-import { attemptLogin, checkIfPasswordCorrect, createAccount, login, setSessionTokenCookie, validatePassword } from "@/app/api/util/AccountHelper";
-import { getJwtPayload, retrieveSafeJWTPayload } from "@/app/api/util/JwtHelper";
+import { attemptLogin, checkIfPasswordCorrect, createAccount, setSessionTokenCookie, validatePassword } from "@/app/api/util/AccountHelper";
 import getConfig from "@/app/getConfig";
 import { AccountPermission, emailVerificationExpirationDurationInDays } from "@/app/Types/Account/Account";
 import AccountServe from "@/app/Types/Account/AccountServe";
 import { WalletTransaction, WalletTransactionPaymentMethod, WalletTransactionStatus } from "@/app/Types/Account/Wallet";
+import { serveRequiredSession, serveSession } from "@/app/utils/SessionUtils";
 import { addMinutes } from "@/app/utils/TimeUtils";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
@@ -15,11 +15,11 @@ import { z } from "zod";
 import { APIData, resAttemptAsync, resError, resOk, resOkData, resUnauthorized } from "../APIResponse";
 import { fundsAdded, sendEmail, verifyEmailTemplate } from "../util/Mail";
 import { hashAndSaltPassword } from "../util/PasswordHelper";
-import ActionResponse, { ActionResponsePayload } from "./ActionResponse";
 
 const envConfig = getConfig();
 
 export async function tryLogin(prevState: string, formData: FormData) {
+	
 	try {
 		const token = await attemptLogin(formData.get("email") as string, formData.get("password") as string);
 
@@ -33,7 +33,6 @@ export async function tryLogin(prevState: string, formData: FormData) {
 
 	//note that next redirect will intentionally throw an error in order to start redirecting
 	//WARNING: if in a try/catch, it will not work
-	let permission = (await getJwtPayload())?.permission;
 	//no error checking for Jwt payload since used just logged in
 
 	const wantedRedirect = formData.get("redirect") as string;
@@ -96,8 +95,8 @@ export async function tryCreateAccount(prevState: string, formData: FormData) {
 	//use try-catch in case JWT is invalid
 	let jwtPayload;
 	try {
-		jwtPayload = await getJwtPayload();
-		if (jwtPayload == null) {
+		jwtPayload = await serveSession();
+		if (!jwtPayload.isSignedIn) {
 			throw new Error();
 		}
 	} catch (e) {
@@ -118,8 +117,9 @@ export async function changePermission(formData: FormData): Promise<APIData<{}>>
 		let newPermission = formData.get("new-permission") as AccountPermission;
 		let userEmail = formData.get("user-email") as string;
 
-		let permission = (await getJwtPayload())?.permission;
-		if (permission !== AccountPermission.Admin) return resUnauthorized();
+		const session = (await serveSession());
+		if (!session.isSignedIn) return resUnauthorized();
+		if (session.account.permission !== AccountPermission.Admin) return resUnauthorized();
 
 		let res = await db`update account set permission=${newPermission} where email=${userEmail} returning email`;
 
@@ -142,85 +142,35 @@ export async function getUserInfo(email: string): Promise<any | null> {
 	};
 }
 
-export async function editName(
-	prevState: string,
-	formData: FormData
-): Promise<string> {
-	let fname = formData.get("firstname") as string;
-	let lname = formData.get("lastname") as string;
+export async function resendVerificationLink(formData: FormData) {
+	"use server"
 
-	//use try-catch in case JWT is invalid
-	let jwtPayload;
-	try {
-		jwtPayload = await getJwtPayload();
-		if (jwtPayload == null) {
-			throw new Error();
-		}
-	} catch (e) {
-		redirect("/user/login");
-	}
+	const session = await serveSession();
 
-	let res =
-		await db`update account set firstname=${fname}, lastname=${lname} where email=${jwtPayload.email} returning isemailverified`;
-	if (res.count === 0) {
-		return "Email does not exist!";
-	}
-
-	await login(
-		jwtPayload.email,
-		jwtPayload.permission as AccountPermission,
-		fname,
-		lname,
-		res.at(0)!.isemailverified as boolean,
-		jwtPayload.isBanned
-	);
-
-	return "";
-}
-
-export async function resendVerificationLink(
-	prevState: ActionResponse,
-	formData: FormData
-): Promise<ActionResponsePayload<{ sentAt: Date; validUntil: Date }>> {
-	let JWTPayload = await retrieveSafeJWTPayload();
-	if (JWTPayload == null) return ActionResponse.Error("Not Authenticated!");
-	if (JWTPayload!.isemailverified)
-		return ActionResponse.Error("Email has already been verified!");
+	if (!session.isSignedIn) return resUnauthorized();
+	if (session.account.isEmailVerified) return resError("You have already verified your email!");
 
 	try {
-		const verificationEntry = await AccountServe.recreateVerificationCode(
-			JWTPayload.email
-		);
-		console.log(
-			"Message ID",
-			await sendEmail(
-				JWTPayload.email,
-				"Confirm your Email",
-				await verifyEmailTemplate(
-					`${envConfig.hostURL}/user/verify-email/?token=${verificationEntry.code}`
-				)
-			)
-		);
+
+		const verificationEntry = await AccountServe.recreateVerificationCode(session.account.email);
+
+		const HTML = await verifyEmailTemplate(`${envConfig.hostURL}/user/verify-email/?token=${verificationEntry.code}`)
+
+		await sendEmail(session.account.email, "Confirm your Email", HTML);
+
 	} catch (error) {
+
 		console.error("An error occurred processing email!", error);
-		return ActionResponse.Error("An error occurred processing email!");
+		return resError("An error occurred processing email!");
+
 	}
 
-	const validUntil = new Date(
-		Date.now() + emailVerificationExpirationDurationInDays * 86400000
-	);
-
-	return ActionResponse.Ok({
-		sentAt: new Date(),
-		validUntil
-	});
+	const validUntil = new Date(Date.now() + emailVerificationExpirationDurationInDays * 86400000);
+	return resOkData({ sentAt: new Date(), validUntil });
 }
 
-export async function sendPasswordResetEmail(
-	prevState: ActionResponse,
-	formData: FormData
-): Promise<APIData<{ validUntil: Date }>> {
-	const parsedEmail = z.string().email().safeParse(formData.get("email"));
+export async function sendPasswordResetEmail(formData: FormData): Promise<APIData<{ validUntil: Date }>> {
+	const parsedEmail = z.email().safeParse(formData.get("email"));
 	if (!parsedEmail.success) return resError(parsedEmail.error.toString());
 
 	try {
@@ -237,7 +187,8 @@ const resetPasswordSchema = z.object({
 	newPassword: z.string(),
 	code: z.string()
 });
-export async function resetPassword(prevState: ActionResponse, formData: FormData): Promise<APIData<{}>> {
+export async function resetPassword(formData: FormData) {
+
 	const parsedForm = resetPasswordSchema.safeParse({
 		newPassword: formData.get("new-password"),
 		code: formData.get("code")
@@ -247,7 +198,8 @@ export async function resetPassword(prevState: ActionResponse, formData: FormDat
 	// Query a password reset request with the given code.
 	const passwordReset = (await db`SELECT * FROM AccountPasswordResetCode WHERE Code=${parsedForm.data.code}`).at(0);
 	if (passwordReset == null || new Date() > addMinutes(passwordReset.createdat as Date, envConfig.accountPasswordResetExpiration)) {
-		redirect(`${envConfig.hostURL}/not-found`);
+		// redirect(`${envConfig.hostURL}/not-found`);
+		return resError("Reset code has expired");
 	}
 
 	const passwordResetAccountEmail = passwordReset.accountemail as string;
@@ -285,29 +237,19 @@ export async function editPassword(
 		return passwordErr;
 	}
 
-	let jwtPayload;
+	const session = await serveRequiredSession();
 
-	try {
-		jwtPayload = await getJwtPayload();
-		if (jwtPayload == null) {
-			throw new Error("Invalid token!");
-		}
-	} catch (e) {
-		console.error(e);
-		redirect("/user/login");
-	}
-
-	if (!(await checkIfPasswordCorrect(jwtPayload.email, currentPassword))) {
+	if (!(await checkIfPasswordCorrect(session.account.email, currentPassword))) {
 		return "Incorrect Password!";
 	}
 
 	let newHash = hashAndSaltPassword(newPassword);
 
 	let res =
-		await db`update account set password=${newHash} where email=${jwtPayload.email}`;
+		await db`update account set password=${newHash} where email=${session.account.email}`;
 
 	if (res.count === 0) {
-		return `Cannot find user with email ${jwtPayload.email}`;
+		return `Cannot find user with email ${session.account.email}`;
 	}
 
 	return "";
@@ -328,10 +270,9 @@ export async function addFunds(prevState: any, formData: FormData): Promise<APID
 	});
 	if (!parsedForm.success) return resError(parsedForm.error.toString());
 
-	let permission = (await getJwtPayload())?.permission;
-	if (permission == AccountPermission.User) {
-		return resError("You do not have permission.");
-	}
+	const session = await serveSession();
+
+	if (!session.isSignedIn) return resError("You do not have permission.");
 
 	// The account receiving the funding.
 	const fundingAccount = await AccountServe.queryByEmail(parsedForm.data.accountEmail);

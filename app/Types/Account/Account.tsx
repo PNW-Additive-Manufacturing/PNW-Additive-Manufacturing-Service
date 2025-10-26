@@ -1,10 +1,19 @@
-import { authenticator } from "otplib";
+import z from "zod";
 import { WalletTransaction } from "./Wallet";
 
 export enum AccountPermission {
 	User = "user",
 	Maintainer = "maintainer",
 	Admin = "admin"
+}
+
+// An unfortunate side-effect of using strings as account permissions.
+export function GetAccountPermissionLevel(permission?: AccountPermission | null): number
+{
+	if (permission === AccountPermission.Admin) return 3;
+	if (permission === AccountPermission.Maintainer) return 2;
+	if (permission === AccountPermission.User) return 1;
+	return 0;
 }
 
 export const YearsOfStudy = ["Freshman", "Sophomore", "Junior", "Senior", "Graduate", "Faculty", "Professor"] as const;
@@ -22,19 +31,37 @@ export interface AccountEmailVerification {
 	code: string;
 }
 
-export default interface Account {
-	email: string;
-	firstName: string;
-	lastName: string;
-	joinedAt: Date;
-	permission: AccountPermission;
-	isEmailVerified: boolean;
-	balanceInDollars: number;
-	isTwoStepAuthVerified: boolean;
-	yearOfStudy: string;
-	department?: string;
-	isBanned: boolean;
-}
+export const AccountSchema = z.object({
+	email: z.email(),
+	firstName: z.string(),
+	lastName: z.string(),
+	joinedAt: z.coerce.date(),
+	permission: z.enum(AccountPermission),
+	isEmailVerified: z.boolean(),
+	balanceInDollars: z.number(),
+	balanceInCents: z.number().int(),
+	isBanned: z.boolean(),
+	yearOfStudy: z.string().optional(),
+	department: z.string().optional()
+});
+
+type Account = z.infer<typeof AccountSchema>;
+
+export default Account;
+
+// export default interface Account {
+// 	email: string;
+// 	firstName: string;
+// 	lastName: string;
+// 	joinedAt: Date;
+// 	permission: AccountPermission;
+// 	isEmailVerified: boolean;
+// 	balanceInDollars: number;
+// 	balanceInCents: number;
+// 	yearOfStudy: string;
+// 	department?: string;
+// 	isBanned: boolean;
+// }
 
 export function shortenedName(account: Account) {
 	return `${account.firstName} ${account.lastName.at(0)}`;

@@ -8,44 +8,38 @@ import { SelectorStatusPill } from "@/app/components/StatusPill";
 import { NamedSwatch } from "@/app/components/Swatch";
 import Filament from "@/app/Types/Filament/Filament";
 import {
+	getStatusColor,
 	isPriced,
+	isRevoked,
 	PartStatus,
 	PartWithModel,
-	isRevoked,
-	getStatusColor,
-	
 } from "@/app/Types/Part/Part";
 import {
 	hasQuote,
 	isPaid,
 	RequestWithParts
 } from "@/app/Types/Request/Request";
-import { Dialog } from "@mui/material";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faClock,
-  faArrowRight,
-  faCircleXmark,
-  faDownload,
-  faFlag,
-  faUpload,
-  faWeightHanging
+	faArrowRight,
+	faCircleXmark,
+	faClock,
+	faDownload,
+	faFlag,
+	faUpload,
+	faWeightHanging
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Dialog } from "@mui/material";
 
-import React, { ChangeEvent, ChangeEventHandler, Suspense, useContext, useRef, useState } from "react";
-import { useFormState } from "react-dom";
-import { useForm } from "react-hook-form";
-import { Color } from "three";
-import { string } from "zod";
-import { toast } from "react-toastify";
-import RevokeInput from "@/app/components/RevokeInput";
-import { confirmationForm, FloatingFormContainer, FloatingFormContext, FloatingFormQuestion } from "@/app/components/FloatingForm";
-import { LabelWithIcon } from "@/app/components/LabelWithIcon";
-import { APIData } from "@/app/api/APIResponse";
-import { makeStringNotEmpty } from "@/app/utils/StringUtils";
-import usePartModifier from "@/app/hooks/usePartState";
-import useClipboard from "@/app/hooks/useClipboard";
 import { Figure } from "@/app/components/Figures";
+import { confirmationForm, FloatingFormContext } from "@/app/components/FloatingForm";
+import { LabelWithIcon } from "@/app/components/LabelWithIcon";
+import useClipboard from "@/app/hooks/useClipboard";
+import usePartModifier from "@/app/hooks/usePartState";
+import { makeStringNotEmpty } from "@/app/utils/StringUtils";
+import { useActionState, useContext } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 
 function PartRevokeForm({
 	part,
@@ -56,7 +50,7 @@ function PartRevokeForm({
 	showRevoke: boolean;
 	setShowRevoke: (value: boolean) => void;
 }) {
-	const [revokeError, revokeFormAction] = useFormState<any, FormData>(
+	const [revokeError, revokeFormAction] = useActionState<any, FormData>(
 		revokePart,
 		""
 	);

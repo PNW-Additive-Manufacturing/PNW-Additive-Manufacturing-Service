@@ -1,7 +1,6 @@
 "use client";
 
-import { FaArrowUp } from "react-icons/fa";
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState } from "react";
 
 // function SubmitButton({className, name, pendingName} : {className?: string, name: string, pendingName?: string}) {
 //   let {pending} = useFormStatus();
@@ -21,8 +20,8 @@ import { useFormState, useFormStatus } from "react-dom";
 //   submitPendingName?: string,
 //   clearOnSuccess?: boolean,
 //   children: any}
-// ) : JSX.Element {
-//   let [error, formAction] = useFormState<any, FormData>(serverAction, "");
+// ) : React.ReactElement {
+//   let [error, formAction] = useActionState<any, FormData>(serverAction, "");
 
 //   return (
 //     <form className={className ? className : "bg-white rounded-sm p-14 pt-10 pb-10 w-full"} action={formAction}>
@@ -40,7 +39,7 @@ export function InlineServerActionForm({
 	serverAction: (state: string, formData: FormData) => Promise<string>;
 	children: any;
 }) {
-	let [error, formAction] = useFormState<any, FormData>(serverAction, "");
+	let [error, formAction] = useActionState<any, FormData>(serverAction, "");
 
 	return (
 		<>

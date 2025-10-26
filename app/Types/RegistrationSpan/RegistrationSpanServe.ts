@@ -1,8 +1,7 @@
-import "server-only";
 import db from "@/app/api/Database";
-import { RegistrationSpan, RegistrationSpanEntry, RegistrationSpanEntrySchema, RegistrationSpanSchema } from "./RegistrationSpan";
-import { PostgresError } from "postgres";
 import { correctSQLCasingWithZod } from "@/app/utils/CasingUtils";
+import { PostgresError } from "postgres";
+import { RegistrationSpan, RegistrationSpanEntry, RegistrationSpanEntrySchema, RegistrationSpanSchema } from "./RegistrationSpan";
 
 export async function queryInCompleteReregistration(date: Date, accountEmail: string): Promise<null | RegistrationSpan> {
     const query = (await db`

@@ -1,18 +1,15 @@
-import "server-only";
-import { NextRequest, NextResponse } from "next/server";
-import { makeQuotePDF, makeReceiptPDF, QuoteSchema } from "ams-pdf";
-import MemoryStream from "memorystream";
-import { retrieveSafeJWTPayload } from "@/app/api/util/JwtHelper";
-import getConfig from "@/app/getConfig";
 import { AccountPermission } from "@/app/Types/Account/Account";
-
-const appConfig = getConfig();
+import { serveSession } from "@/app/utils/SessionUtils";
+import { makeQuotePDF, QuoteSchema } from "ams-pdf";
+import MemoryStream from "memorystream";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-    let accountJWT = await retrieveSafeJWTPayload();
-    if (!accountJWT || accountJWT.permission === AccountPermission.User) {
-        return NextResponse.redirect(appConfig.joinHostURL("/user/login"));
-    }
+
+    await serveSession({
+        requiredPermission: AccountPermission.Maintainer,
+        unauthorizedBehavior: "redirect"
+    });
 
     const content = await req.text();
 

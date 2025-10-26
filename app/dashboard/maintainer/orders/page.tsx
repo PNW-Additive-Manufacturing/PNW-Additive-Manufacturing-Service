@@ -1,9 +1,9 @@
-"use server";
-
 import HorizontalWrap from "@/app/components/HorizontalWrap";
-import RequestsTable from "@/app/components/RequestsTable";
+import { Suspense } from "react";
+import Dynamic from "./Dynamic";
 
 export default async function Maintainer({ params }: { params: any }) {
+
 	return (
 		<>
 			<HorizontalWrap className="py-8 flex flex-col gap-4">
@@ -15,7 +15,11 @@ export default async function Maintainer({ params }: { params: any }) {
 			<div className="bg-white min-h-screen">
 				<HorizontalWrap className="py-8">
 
-					<RequestsTable requestsPerPage={11} />
+					<Suspense>
+
+						<Dynamic />
+
+					</Suspense>
 
 				</HorizontalWrap>
 

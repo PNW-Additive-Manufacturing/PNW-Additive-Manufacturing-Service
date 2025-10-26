@@ -5,7 +5,8 @@ import {
 	hashAndSaltPassword
 } from "@/app/api/util/PasswordHelper";
 import getConfig from "@/app/getConfig";
-import { AccountPermission } from "@/app/Types/Account/Account";
+import Account, { AccountPermission, AccountSchema } from "@/app/Types/Account/Account";
+import AccountServe from "@/app/Types/Account/AccountServe";
 import { queryInCompleteReregistration, recordAccountInRegistrationSpan } from "@/app/Types/RegistrationSpan/RegistrationSpanServe";
 import { addMinutes } from "@/app/utils/TimeUtils";
 import * as crypto from "crypto";
@@ -24,12 +25,22 @@ export async function createAccount(
 	yearOfStudy: string,
 	department: string
 ) {
-	firstName = DOMPurify.sanitize(firstName.trim());
-	lastName = DOMPurify.sanitize(lastName.trim());
-	email = email.trim();
+	const newAccount = AccountSchema.parse({
+		email: email.trim(),
+		permission,
+		firstName: DOMPurify.sanitize(firstName.trim()),
+		lastName: DOMPurify.sanitize(lastName.trim()),
+		balanceInCents: 0,
+		balanceInDollars: 0,
+		isBanned: false,
+		isEmailVerified: false,
+		joinedAt: new Date(),
+		department,
+		yearOfStudy
+	});
 
 	// TODO: Improve this LOGIC!
-	if (!email.endsWith("@pnw.edu")) {
+	if (!newAccount.email.endsWith("@pnw.edu")) {
 		throw new Error("Please enter your full pnw.edu email!");
 	}
 
@@ -44,8 +55,8 @@ export async function createAccount(
 	try {
 		res = await db.begin(async (db) => {
 			const accountRow =
-				await db`insert into account (email, firstname, lastname, password, yearOfStudy, department, permission)
-      			values (${email}, ${firstName}, ${lastName}, ${hash}, ${yearOfStudy}, ${department}, ${permission})`;
+				await db`insert into account (email, firstname, lastname, password, permission, JoinedAt)
+      				values (${newAccount.email}, ${newAccount.firstName}, ${newAccount.lastName}, ${hash}, ${yearOfStudy}, ${department}, ${newAccount.permission}, ${newAccount.joinedAt})`;
 
 			const verificationCode = crypto.randomBytes(16).toString("hex");
 			await db`insert into accountverificationcode (accountemail, code) VALUES (${email}, ${verificationCode})`;
@@ -55,7 +66,7 @@ export async function createAccount(
 	} catch (e: any) {
 		//Postgres error code for duplicate entry is 23505 (user already exists)
 		if ((e as PostgresError).code == "23505") {
-			throw new Error(`Email is already being used!`);
+			throw new Error("This email has already been registered");
 		}
 
 		console.error(e);
@@ -83,14 +94,7 @@ export async function createAccount(
 		console.error(`Failed to reregister new account ${email}`, ex);
 	}
 
-	return await login(
-		email,
-		permission as AccountPermission,
-		firstName,
-		lastName,
-		false,
-		false
-	);
+	return await login(newAccount);
 }
 
 export function validatePassword(password: string) {
@@ -106,42 +110,29 @@ export function validatePassword(password: string) {
 }
 
 export async function attemptLogin(email: string, password: string) {
+
 	email = email.trim();
 
-	let res: postgres.RowList<postgres.Row[]>;
-	try {
-		res =
-			await db`select password, permission, firstname, lastname, isemailverified, isBanned from account where email=${email}`;
-	} catch (e) {
-		console.error(e);
-		throw new Error("Error: Failed to access database!");
-	}
+	let hashedPassword = await AccountServe.queryPassword(email);
 
-	if (res.count === 0) {
-		throw new Error("We couldn't log you in. Please check your email and password and try again.");
-	}
-
-	let hash = res[0].password as string;
-	let permission = res[0].permission as AccountPermission;
-	let firstname = res[0].firstname as string;
-	let lastname = res[0].lastname as string;
-	let isemailverified = res[0].isemailverified as boolean;
-	let isBanned = res[0].isbanned as boolean;
+	if (hashedPassword === null) throw new Error("We could not log you in. Please check your email and password and try again.");
 
 	/* Because bcrypt ALWAYS uses 60 character long hashes and 
 	   our database schema forces all password hashes to be 64 characters (padding with spaces if necessary),
 	   I need to only take the first 60 characters of the hash from the database
 	   to ensure that correct passwords will be accepted by the bcrypt compareSync function.
 	*/
-	hash = hash.substring(0, 60);
+	hashedPassword = hashedPassword.substring(0, 60);
 
-	let passwordCorrect = correctPassword(password, hash);
+	let isCorrect = correctPassword(password, hashedPassword);
 
-	if (!passwordCorrect) {
-		throw new Error("We couldn't log you in. Please check your email and password and try again.");
-	}
+	if (!isCorrect) throw new Error("We could not log you in. Please check your email and password and try again.");
 
-	return await login(email, permission, firstname, lastname, isemailverified, isBanned);
+	const account = await AccountServe.queryByEmail(email);
+	
+	if (account == null) throw new Error("We could not log you in. Please check your email and password and try again.");
+
+	return await login(account);
 }
 
 export async function checkIfPasswordCorrect(
@@ -172,24 +163,9 @@ export async function checkIfPasswordCorrect(
 	return correctPassword(plaintextPassword, hash);
 }
 
-export async function login(
-	email: string,
-	permission: AccountPermission,
-	firstname: string,
-	lastname: string,
-	isemailverified: boolean,
-	isBanned: boolean,
-	expireDate?: Date
-) {
-	let token = await makeJwt(
-		email,
-		permission,
-		firstname,
-		lastname,
-		isemailverified,
-		isBanned,
-		expireDate
-	);
+export async function login(account: Account, expireDate?: Date) {
+
+	let token = await makeJwt(account, expireDate);
 
 	return token;
 }
@@ -202,6 +178,5 @@ export async function setSessionTokenCookie(token: string)
 		httpOnly: true, //cannot be accessed via client-side Javascript
 		sameSite: "lax", //can only be sent to same website
 		expires: addMinutes(new Date(), 10080),
-		secure: false //TODO: set to true once we have HTTPS connection
 	});
 }

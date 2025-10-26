@@ -1,20 +1,14 @@
 "use client";
 
-import Image from "next/image";
-import { Swatch } from "./Swatch";
-import FilamentSpoolIcon from "./icons/FilamentSpoolIcon";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-	faCheckCircle,
-	faTimesCircle,
-	faPauseCircle,
-	faStopCircle	
+	faCheckCircle
 } from "@fortawesome/free-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { useFormState } from "react-dom";
+import { useActionState } from "react";
 import { markAsEmpty } from "../api/farm/FarmActions";
-import FormLoadingSpinner from "./FormLoadingSpinner";
 import AMImage from "./AMImage";
+import FormLoadingSpinner from "./FormLoadingSpinner";
 
 export interface MachineData {
 	model: string;
@@ -100,7 +94,7 @@ export default function Machine(
 		machinedData.status == "Printing" || machinedData.status == "Preparing";
 	let showControls = showMarkedButton;
 
-	const [markAsEmptyState, markAsEmptyForm] = useFormState(markAsEmpty, null);
+	const [markAsEmptyState, markAsEmptyForm] = useActionState(markAsEmpty, null);
 
 	return (
 		<>

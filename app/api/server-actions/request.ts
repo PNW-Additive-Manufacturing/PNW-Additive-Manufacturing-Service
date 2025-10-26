@@ -1,15 +1,13 @@
 "use server";
 
-import { z } from "zod";
-import ActionResponse from "./ActionResponse";
-import { RequestServe } from "@/app/Types/Request/RequestServe";
-import AccountServe from "@/app/Types/Account/AccountServe";
-import { redirect } from "next/navigation";
+import { AccountPermission } from "@/app/Types/Account/Account";
 import { isAllComplete, isAllPending } from "@/app/Types/Part/Part";
 import { isPaid } from "@/app/Types/Request/Request";
-import { getJwtPayload } from "../util/JwtHelper";
-import { AccountPermission } from "@/app/Types/Account/Account";
+import { RequestServe } from "@/app/Types/Request/RequestServe";
+import { serveSession } from "@/app/utils/SessionUtils";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { z } from "zod";
 
 const payRequestSchema = z.object({
 	requestId: z.coerce.number().int()
@@ -26,15 +24,10 @@ export async function cancelRequest(prevState: string, data: FormData) {
 	);
 	if (request == null) return "Request does not exist";
 
-	const jwtPayload = await getJwtPayload();
-	if (
-		jwtPayload.email != request.requesterEmail &&
-		jwtPayload.permission == AccountPermission.User
-	) {
+	const session = await serveSession();
+	if (!session.isSignedIn || (session.account.permission == AccountPermission.User && session.account.email.toLowerCase() != request.requesterEmail.toLowerCase())) 
 		return "You do not have access to this resource!";
-	}
 
-	// TODO: Make sure nothing has started printing AND the quote has not been paid!
 	if (!isAllPending(request.parts) || isPaid(request)) {
 		return "You cannot cancel at this time!";
 	}
@@ -50,6 +43,10 @@ export async function fulfillRequest(
 	prevState: string,
 	data: FormData
 ): Promise<string> {
+
+	const session = await serveSession();
+	if (!session.isSignedIn || session.account.permission == AccountPermission.User) return "You do not have access to this resource!";
+	
 	const parsedData = fulfillRequestSchema.safeParse({
 		requestId: data.get("requestId")
 	});
@@ -60,11 +57,6 @@ export async function fulfillRequest(
 		parsedData.data.requestId
 	);
 	if (request == null) return "Request does not exist";
-
-	const jwtPayload = await getJwtPayload();
-	if (jwtPayload.permission == AccountPermission.User) {
-		return "You do not have access to this resource!";
-	}
 
 	// TODO: Make sure nothing has started printing AND the quote has not been paid!
 	// Correction: What if we have already printed them out for free or been paid another way outside of the website?
@@ -84,6 +76,10 @@ const deleteRequestSchema = z.object({
 	requestId: z.coerce.number().int()
 });
 export async function deleteRequest(prevState: string, data: FormData): Promise<string> {
+
+	const session = await serveSession();
+	if (!session.isSignedIn || session.account.permission == AccountPermission.User) return "You do not have access to this resource!";
+
 	const parsedData = deleteRequestSchema.safeParse({requestId: data.get("requestId")});
 	if (!parsedData.success)
 		return `Schema Failed: ${parsedData.error.message}`;
@@ -92,9 +88,6 @@ export async function deleteRequest(prevState: string, data: FormData): Promise<
 		parsedData.data.requestId
 	);
 	if (request == null) return "Request does not exist";
-
-	const jwtPayload = await getJwtPayload();
-	if (jwtPayload.permission == AccountPermission.User) return "You do not have access to this resource!";
 
 	if (isPaid(request)) return "Request cannot be deleted if Quote has been Paid!";
 

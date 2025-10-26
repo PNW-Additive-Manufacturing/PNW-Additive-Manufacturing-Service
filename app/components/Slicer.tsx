@@ -1,12 +1,11 @@
+import { useActionState, useState } from "react";
 import { useForm } from "react-hook-form";
-import ThreeModelViewer from "./ThreeModelViewer";
-import Filament from "../Types/Filament/Filament";
-import PopupFilamentSelector from "./PopupFilamentSelector";
-import { useState } from "react";
-import { Input } from "./Input";
-import { useFormState } from "react-dom";
 import { slice, uploadToFarm } from "../api/farm/FarmActions";
+import Filament from "../Types/Filament/Filament";
 import FormLoadingSpinner from "./FormLoadingSpinner";
+import { Input } from "./Input";
+import PopupFilamentSelector from "./PopupFilamentSelector";
+import ThreeModelViewer from "./ThreeModelViewer";
 
 export interface SlicingOptions {
 	quantity: number;
@@ -37,8 +36,8 @@ export default function Slicer(
 
 	console.log(filament);
 
-	const [sliceReq, sliceForm] = useFormState(slice, null);
-	const [sendReq, sendForm] = useFormState(uploadToFarm, null);
+	const [sliceReq, sliceForm] = useActionState(slice, null);
+	const [sendReq, sendForm] = useActionState(uploadToFarm, null);
 
 	console.error(sendReq);
 

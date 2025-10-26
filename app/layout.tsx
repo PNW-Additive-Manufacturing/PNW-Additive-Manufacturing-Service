@@ -8,12 +8,13 @@ import "./globals.css";
 import { Footer } from '@/app/components/navBar/Footer';
 
 
-import { AccountProvider } from "./ContextProviders";
 
 import getConfig from "./getConfig";
 
 import { ToastContainer } from "react-toastify";
 import { FloatingFormContainer } from "./components/FloatingForm";
+import Navigation from "./components/navBar/Navigation";
+import { AccountPermission } from "./Types/Account/Account";
 
 const inter = Inter({ subsets: ["latin"] });
 const envConfig = getConfig();
@@ -46,18 +47,6 @@ export default async function RootLayout({
 }: {
 	children: React.ReactNode;
 }) {
-	
-	// let permission: AccountPermission | null;
-	// let email: string | null;
-	// let jwtPayload: UserJWT | null = null;
-	// try {
-	// 	jwtPayload = await getJwtPayload();
-	// 	permission = jwtPayload?.permission as AccountPermission;
-	// 	email = jwtPayload?.email as string;
-	// } catch {
-	// 	permission = null;
-	// 	email = null;
-	// }
 
 	return <>
 
@@ -76,102 +65,59 @@ export default async function RootLayout({
 			</head>
 
 			<body className={inter.className} style={{ height: "100vh" }}>
-				
-				<AccountProvider account={undefined}>
 
-						{/* <Navbar
-							links={(() => {
-								let elements: { name: string; path: string }[] = [
-									{
-										name: "Our Inventory",
-										path: "/materials"
-									},
-									{
-										name: "Project Spotlight",
-										path: "/project-spotlight"
-									},
-									{
-										name: "Leadership",
-										path: "/team"
-									},
-									{
-										name: "Schedule",
-										path: "/schedule"
-									}
-								];
+				<Navigation
+					authorizedPages={[
+						{ name: "Your Requests", path: "/dashboard/user", permission: AccountPermission.User },
+						{ name: "Management Panel", path: "/dashboard/maintainer", permission: AccountPermission.Maintainer },
+					]}
+					unauthorizedPages={[
+							{
+								name: "Our Inventory",
+								path: "/materials"
+							},
+							{
+								name: "Project Spotlight",
+								path: "/project-spotlight"
+							},
+							{
+								name: "Leadership",
+								path: "/team"
+							},
+							{
+								name: "Schedule",
+								path: "/schedule"
+							}
+					]}
+				/>
 
-								if (permission != null) {
-									elements.push({
-										name: "Your Requests",
-										path: "/dashboard/user"
-									});
-									if (
-										permission ==
-										AccountPermission.Maintainer ||
-										permission == AccountPermission.Admin
-									) {
-										elements.push({
-											name: "Management Panel",
-											path: "/dashboard/maintainer"
-										});
-									}
-								}
-								return elements;
-							})()}
-							specialElements={(() => {
-								if (email)
-									email = email.substring(
-										0,
-										email.lastIndexOf("@")
-									) as string;
-								else email = "Account";
+				{/* <AccountProvider account={undefined}> */}
 
-								if (permission)
-									return (
-										<>
-											{" "}
-											<ColorfulRequestPrintButton />{" "}
-											<AccountDetails
-												permission={permission}
-												email={email}
-											/>{" "}
-										</>
-									);
-								else
-									return (
-										<AccountDetails
-											permission={permission}
-											email={email}
-										/>
-									);
-							})()}
-						/> */}
+					<main
+						className="w-full px-0 h-fit"
+						style={{ minHeight: "95vh" }}>
+						<>
 
-						<main
-							className="w-full px-0 h-fit"
-							style={{ minHeight: "95vh" }}>
-							<>
-							
-								<FloatingFormContainer>
-									{children}
-								</FloatingFormContainer>
-								<ToastContainer
-									position="bottom-left"
-									autoClose={7500}
-									// autoClose={false}
-									hideProgressBar
-									newestOnTop={false}
-									closeOnClick
-									rtl={false}
-									pauseOnFocusLoss
-									draggable
-									pauseOnHover
-									theme="light" />
-							</>
-						</main>
-						<Footer />
+							<FloatingFormContainer>
+								{children}
+							</FloatingFormContainer>
+							<ToastContainer
+								position="bottom-left"
+								autoClose={7500}
+								// autoClose={false}
+								hideProgressBar
+								newestOnTop={false}
+								closeOnClick
+								rtl={false}
+								pauseOnFocusLoss
+								draggable
+								pauseOnHover
+								theme="light" />
+						</>
+					</main>
+					<Footer />
 
-				</AccountProvider>
+				{/* </AccountProvider> */}
 			</body>
 		</html>
 

@@ -1,18 +1,15 @@
 "use client";
 
+import DropdownSection from "@/app/components/DropdownSection";
 import HorizontalWrap from "@/app/components/HorizontalWrap";
 import Account from "@/app/Types/Account/Account";
-import Link from "next/link";
-import { ChangePasswordForm } from "./ChangePasswordForm";
-import { Suspense, useState } from "react";
-import DropdownSection from "@/app/components/DropdownSection";
 import { WalletTransaction } from "@/app/Types/Account/Wallet";
-import TransactionDetails from "../../components/TransactionDetails";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faCheck,
-  faTriangleExclamation
+	faCheck,
+	faTriangleExclamation
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import TransactionDetails from "../../components/TransactionDetails";
 
 import { formateDate } from "@/app/api/util/Constants";
 

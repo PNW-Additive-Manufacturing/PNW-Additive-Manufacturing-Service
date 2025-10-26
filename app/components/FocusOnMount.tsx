@@ -6,7 +6,7 @@ export default function FocusOnMount({
 	children
 }: {
 	children: any;
-}): JSX.Element {
+}): React.ReactElement {
 	const containerRef = useRef<HTMLElement>(undefined);
 	const [hasScrolled, setScrolled] = useState(false);
 

@@ -1,22 +1,20 @@
 "use client";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { useEffect, useRef, useState } from "react";
-import { Input } from "../components/Input";
 import Image from "next/image";
-import HiddenInput from "../components/HiddenInput";
-import { formateDate } from "../api/util/Constants";
-import { useFormState } from "react-dom";
+import { useActionState, useState } from "react";
 import { postProjectShowcase } from "../api/server-actions/maintainer";
-import { APIData } from "../api/APIResponse";
+import { formateDate } from "../api/util/Constants";
 import FormSubmitButton from "../components/FormSubmitButton";
+import HiddenInput from "../components/HiddenInput";
+import { Input } from "../components/Input";
 
 export function CreateProject() {
     const [isEditing, setEditing] = useState(false);
     const [inputImage, setInputImage] = useState<string | undefined>(undefined);
-    let [res, formInvoke] = useFormState<ReturnType<typeof postProjectShowcase>, FormData>(postProjectShowcase, null as any);
+    let [res, formInvoke] = useActionState<ReturnType<typeof postProjectShowcase>, FormData>(postProjectShowcase, null as any);
 
     // Editing mode is essentially a form version of the Project component.
     return <div className={`bg-white out shadow-sm rounded-md font-light ${!isEditing && "opacity-50 hover:opacity-100"} hover:cursor-pointer`} onClick={() => setEditing(true)} style={{ minHeight: "10rem" }}>

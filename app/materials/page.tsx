@@ -1,15 +1,13 @@
 "use server";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGem } from "@fortawesome/free-solid-svg-icons";
-import HorizontalWrap from "../components/HorizontalWrap";
-import { Swatch, SwatchColorBlock } from "../components/Swatch";
-import FilamentBlock from "../experiments/FilamentBlock";
-import FilamentServe from "../Types/Filament/FilamentServe";
-import Image from "next/image";
-import Filament from "../Types/Filament/Filament";
-import DropdownSection from "../components/DropdownSection";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AMImage from "../components/AMImage";
+import DropdownSection from "../components/DropdownSection";
+import HorizontalWrap from "../components/HorizontalWrap";
+import { SwatchColorBlock } from "../components/Swatch";
+import Filament from "../Types/Filament/Filament";
+import FilamentServe from "../Types/Filament/FilamentServe";
 
 const materialMapping: Record<string, { coverUrl?: string, hint?: string }> = {
     "17-4PH Stainless Steel":

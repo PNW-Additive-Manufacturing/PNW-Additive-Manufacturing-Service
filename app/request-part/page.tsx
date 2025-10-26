@@ -1,19 +1,16 @@
 "use server";
 
 import { RequestPartForm } from "@/app/components/RequestPartForm";
-import { getFilamentList } from "@/app/api/server-actions/request-part";
+import Link from "next/link";
 import HorizontalWrap from "../components/HorizontalWrap";
 import FilamentServe from "../Types/Filament/FilamentServe";
 import ModelServe from "../Types/Model/ModelServe";
-import { getJwtPayload } from "../api/util/JwtHelper";
-import Filament from "../Types/Filament/Filament";
-import Link from "next/link";
+import { serveRequiredSession } from "../utils/SessionUtils";
 
 export default async function Request() {
+	
 	let filaments = await FilamentServe.queryAll();
-	const previousModels = await ModelServe.queryByAccount(
-		(await getJwtPayload())!.email
-	);
+	const previousModels = await ModelServe.queryByAccount((await serveRequiredSession()).account.email);
 
 	return (
 		<>

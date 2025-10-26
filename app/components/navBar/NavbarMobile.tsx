@@ -1,35 +1,25 @@
 "use client";
 
+import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import Link from "next/link";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import { amImageIconLightCropped } from "../../Branding";
 import NavbarLink from "./NavbarLink";
+import Navigation from "./Navigation";
 import { ScreenDimmer } from "./ScreenDimmer";
 
-interface NavbarMobileProps {
-    links: {
-        name: string;
-        path: string;
-    }[];
-    includeIcon?: boolean;
-    specialElements?: JSX.Element;
-}
-
-export function NavbarMobile({ links, includeIcon, specialElements }: NavbarMobileProps) {
+export function NavbarMobile({ unauthorizedPages  }: React.ComponentProps<typeof Navigation>) {
     let [itemsExpanded, setExpanded] = useState<boolean>(false);
 
     return (
         <>
-            {includeIcon && (
-                <Link href="/" className="mr-2 xl:hidden">
+            <Link href="/" className="mr-2 xl:hidden">
                     <div className="w-10">
                         <Image src={amImageIconLightCropped} alt={""} priority={true} />
                     </div>
                 </Link>
-            )}
 
             <FontAwesomeIcon
 				icon={faBars}
@@ -60,7 +50,7 @@ export function NavbarMobile({ links, includeIcon, specialElements }: NavbarMobi
                                 style={{
                                     backgroundColor: "rgb(248, 248, 248)",
                                 }}>
-                                {links.map((val) => (
+                                {unauthorizedPages.map((val) => (
                                     <NavbarLink
                                         onClick={() => setExpanded(false)}
                                         key={val.name}
@@ -68,7 +58,6 @@ export function NavbarMobile({ links, includeIcon, specialElements }: NavbarMobi
                                         path={val.path}
                                     />
                                 ))}
-                                {specialElements == null ? <div></div> : specialElements}
                             </div>
                         </div>
                     </div>
