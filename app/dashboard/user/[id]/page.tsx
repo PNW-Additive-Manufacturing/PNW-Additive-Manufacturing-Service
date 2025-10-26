@@ -1,22 +1,41 @@
-import Section from "@/app/components/Section";
-import AccountServe from "@/app/Types/Account/AccountServe";
+import HorizontalWrap from "@/app/components/HorizontalWrap";
+import getConfig from "@/app/getConfig";
 import { RequestServe } from "@/app/Types/Request/RequestServe";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import RequestDetails from "./RequestDetails";
-import getConfig from "@/app/getConfig";
-import HorizontalWrap from "@/app/components/HorizontalWrap";
+
+export default async function Page(props: {
+    params: Promise<{ id: number | string }>,
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+
+    return <>
+
+		<HorizontalWrap className="py-8">
+			
+			<Suspense>
+
+				<Requests params={props.params} searchParams={props.searchParams} />
+
+			</Suspense>
+
+		</HorizontalWrap>
+
+	</>;
+}
 
 const appConfig = getConfig();
 
-export default async function Page(
-    props: {
-        params: Promise<{ id: number | string }>,
-        searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-    }
-) {
-    const searchParams = await props.searchParams;
+async function Requests(props: {
+    params: Promise<{ id: number | string }>,
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+
+	const searchParams = await props.searchParams;
     const params = await props.params;
-    const request = await RequestServe.fetchByIDWithAll(params.id);
+
+	    const request = await RequestServe.fetchByIDWithAll(params.id);
     if (request == undefined) {
 		redirect("/not-found");
 	}
@@ -29,11 +48,9 @@ export default async function Page(
 		redirect(`${appConfig.hostURL}/dashboard/user/${params.id}`);
 	}
 
-    return <>
+	return <>
 
-		<HorizontalWrap className="py-8">
-			<RequestDetails request={request} />
-		</HorizontalWrap>
-
-	</>;
+		<RequestDetails request={request} />
+	
+	</>
 }

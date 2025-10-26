@@ -7,7 +7,7 @@ export async function proxy(request: NextRequest) {
 	const pathname = request.nextUrl.pathname;
 
 	const response = NextResponse.next();
-	response.cookies.set("x-current-path", pathname);
+	response.headers.set("x-current-path", pathname);
 
 	return response;
 }

@@ -1,9 +1,12 @@
 import HorizontalWrap from "@/app/components/HorizontalWrap";
+import { unstable_noStore } from "next/cache";
 import { Suspense } from "react";
-import SemesterFinancialReport from "./SemesterFinancialReport";
 import FinancialReport from "./FinancialReport";
 
 export default async function Accounting() {
+
+    unstable_noStore();
+
     return <>
         <HorizontalWrap>
             <div className="py-8 flex flex-col gap-4">
@@ -28,8 +31,10 @@ export default async function Accounting() {
         <div className="bg-white min-h-screen py-8">
             <HorizontalWrap>
 
-                <Suspense fallback={<>Querying financial information...</>}>
+                <Suspense fallback={<>Querying financial Information...</>}>
+
                     <FinancialReport />
+
                 </Suspense>
 
             </HorizontalWrap>

@@ -19,31 +19,30 @@ import { hashAndSaltPassword } from "../util/PasswordHelper";
 const envConfig = getConfig();
 
 export async function tryLogin(prevState: string, formData: FormData) {
-	
-	try {
-		const token = await attemptLogin(formData.get("email") as string, formData.get("password") as string);
-
-		await setSessionTokenCookie(token);
-
-		revalidatePath("/");
-	} catch (e: any) {
-		//e must be any because Typescript is stupid when it comes to try catch
-		return (e as Error).message;
-	}
-
-	//note that next redirect will intentionally throw an error in order to start redirecting
-	//WARNING: if in a try/catch, it will not work
-	//no error checking for Jwt payload since used just logged in
-
-	const wantedRedirect = formData.get("redirect") as string;
-	if (wantedRedirect && wantedRedirect.startsWith(envConfig.hostURL)) {
-		console.log(`Redirecting to ${wantedRedirect}`);
-
-		redirect(wantedRedirect);
-	}
-	else {
-		redirect("/");
-	}
+   
+    try {
+        const token = await attemptLogin(formData.get("email") as string, formData.get("password") as string);
+        await setSessionTokenCookie(token);
+       
+    } catch (e: any) {
+        return (e as Error).message;
+    }
+    
+    // Revalidate the layout to update the navbar
+    // revalidatePath("/", "layout");
+	// revalidateTag("account", "max");
+    
+    // Determine redirect destination
+    const wantedRedirect = formData.get("redirect") as string;
+    
+    // // redirect() throws an error by design, so this must be the last thing called
+    // if (wantedRedirect && wantedRedirect.startsWith(envConfig.hostURL)) {
+    //     console.log(`Redirecting to ${wantedRedirect}`);
+    //     redirect(wantedRedirect);
+    // }
+    // else {
+    //     redirect("/");
+    // }
 }
 
 const createAccountSchema = z.object({

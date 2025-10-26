@@ -11,13 +11,10 @@ import db from "@/app/api/Database";
 import HorizontalWrap from "@/app/components/HorizontalWrap";
 import FilamentSpoolIcon from "@/app/components/icons/FilamentSpoolIcon";
 import GenericPrinterIcon from "@/app/components/icons/GenericPrinterIcon";
-import getConfig from "@/app/getConfig";
 import { AccountPermission } from "@/app/Types/Account/Account";
 import { serveRequiredSession } from "@/app/utils/SessionUtils";
 import { FaRegMoneyBillAlt } from "react-icons/fa";
 import { MdOutlineWavingHand } from "react-icons/md";
-
-const envConfig = getConfig();
 
 export default async function Maintainer() {
 

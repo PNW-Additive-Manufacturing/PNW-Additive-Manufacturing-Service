@@ -5,6 +5,11 @@ const nextConfig: NextConfig = {
 	trailingSlash: true,
   cacheComponents: true,
 	images: {
+    localPatterns: [
+      {
+        pathname: "/api/download/**"
+      }
+    ],
     remotePatterns: [
       {
         protocol: 'https',

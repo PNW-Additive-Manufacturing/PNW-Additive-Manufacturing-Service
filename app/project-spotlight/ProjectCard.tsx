@@ -48,7 +48,7 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
 
     return <div className="rounded-md" key={projectData.id}>
 
-        {imageSrc && <AMImage src={imageSrc} alt={"Project Image"} className="rounded-b-none max-lg:w-full mt-0 pt-0" width={720} height={350} />}
+        {imageSrc && <AMImage src={imageSrc} alt={"Project Image"} className="rounded-b-none max-lg:w-full mt-0 pt-0" width={720} height={450} />}
 
         <div className={classNames("py-4 px-6")}>
             {isEditing ? (

@@ -1,8 +1,9 @@
-import "server-only";
 import db from "@/app/api/Database";
-import { z } from "zod";
 import { Figure } from "@/app/components/Figures";
-import { Suspense } from "react";
+import { AccountPermission } from "@/app/Types/Account/Account";
+import { serveRequiredSession } from "@/app/utils/SessionUtils";
+import "server-only";
+import { z } from "zod";
 import SemesterFinancialReport from "./SemesterFinancialReport";
 
 const SEMESTER_RANGES = {
@@ -135,6 +136,9 @@ async function fetchFinances(): Promise<{ semesters: SemesterFinances[], allTime
 
 export default async function FinancialReport() {
 
+	// Auth Check
+	await serveRequiredSession({ requiredPermission: AccountPermission.Maintainer });
+    
     const { semesters, allTimeWalletCustomerDepositedInCents, allTimeRequestExpenseInCents, allTimeComplimentaryDepositsInCents } = await fetchFinances();
 
     return <>

@@ -7,6 +7,6 @@ export default function AMSIcon() {
 			loading="eager"
 			src={amImageIconLightTransparent}
 			alt="Logo"
-			className="w-28"></Image>
+			className="w-28 h-fit"></Image>
 	);
 }

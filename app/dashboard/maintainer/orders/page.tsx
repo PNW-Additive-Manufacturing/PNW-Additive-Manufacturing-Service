@@ -1,8 +1,10 @@
 import HorizontalWrap from "@/app/components/HorizontalWrap";
+import RequestsTable from "@/app/components/RequestsTable";
+import { AccountPermission } from "@/app/Types/Account/Account";
+import { serveRequiredSession } from "@/app/utils/SessionUtils";
 import { Suspense } from "react";
-import Dynamic from "./Dynamic";
 
-export default async function Maintainer({ params }: { params: any }) {
+export default async function Page({ params }: { params: any }) {
 
 	return (
 		<>
@@ -26,4 +28,16 @@ export default async function Maintainer({ params }: { params: any }) {
 			</div>
 		</>
 	);
+}
+
+async function Dynamic()
+{
+	// Auth Check
+	const session = await serveRequiredSession({ requiredPermission: AccountPermission.Maintainer });
+
+	return <>
+	
+		<RequestsTable requestsPerPage={15} session={session.account} />
+	
+	</>
 }

@@ -1,5 +1,5 @@
+import { cacheTag } from "next/cache";
 import { redirect } from "next/navigation";
-import { cache } from "react";
 import { reqJWT } from "../api/util/JwtHelper";
 import Account, { AccountPermission, GetAccountPermissionLevel } from "../Types/Account/Account";
 import AccountServe from "../Types/Account/AccountServe";
@@ -11,8 +11,11 @@ type ServeSessionOptions = Partial<{ requiredPermission: AccountPermission, unau
 export type SessionSignedIn = { isSignedIn: true, account: Account };
 export type SessionLoggedOut = { isSignedIn: false };
 
-async function __serveSession(options: ServeSessionOptions)
-{
+async function __serveSession(options: ServeSessionOptions) {
+    // https://nextjs.org/docs/app/api-reference/directives/use-cache-private
+    "use cache: private"
+    cacheTag("account");
+
     // You cannot wrap redirects in try...catch because internally next throws an exception to stop execution when invoking redirect.
 
     const reqSession = await reqJWT();
@@ -21,6 +24,7 @@ async function __serveSession(options: ServeSessionOptions)
 
     // Used to route back to the current path once any login operation is complete.
     const currentPath = await reqCurrentPath();
+
 
     // Read session
     const dbSession = await AccountServe.queryByEmail(reqSession.email);
@@ -35,15 +39,11 @@ async function __serveSession(options: ServeSessionOptions)
         redirect("/user/logout");
     }
 
-    console.log(currentPath);
-    
-    if (dbSession.isBanned && !currentPath.startsWith("/user/banned"))
-    {
+    if (dbSession.isBanned && !currentPath.startsWith("/user/banned")) {
         redirect("/user/banned");
     }
 
-    if (!dbSession.isEmailVerified && !currentPath.startsWith("/user/not-verified"))
-    {
+    if (!dbSession.isEmailVerified && !currentPath.startsWith("/user/not-verified")) {
         redirect("/user/not-verified");
     }
 
@@ -72,14 +72,12 @@ async function __serveSession(options: ServeSessionOptions)
         const requiredPermissionLevel = GetAccountPermissionLevel(options.requiredPermission);
 
         if (requiredPermissionLevel > GetAccountPermissionLevel(dbSession.permission)) {
-            
+
             // Account does not have the required permission
-            if (options.unauthorizedBehavior === "redirect")
-            {
+            if (options.unauthorizedBehavior === "redirect") {
                 redirect("/");
             }
-            else if (options.unauthorizedBehavior === "logged-out")
-            {
+            else if (options.unauthorizedBehavior === "logged-out") {
                 return { isSignedIn: false } as SessionLoggedOut;
             }
 
@@ -94,13 +92,17 @@ async function __serveSession(options: ServeSessionOptions)
 // However, for other fetch methods, or when using data fetching libraries (such as some database, CMS, or GraphQL clients) 
 // that don't inherently memoize requests, you can use cache to manually memoize data requests.
 // const cachedCheckSession = cache(async (options: ServeSessionOptions) => await checkSession(options));
-const cachedServeSession = cache(async (options: ServeSessionOptions) => await __serveSession(options));
+// const cachedServeSession = unstable_cache(async (options: ServeSessionOptions) => await __serveSession(options),);
 
 export async function serveSession(options?: ServeSessionOptions): Promise<SessionSignedIn | SessionLoggedOut> {
 
-    if (options === undefined) options = { unauthorizedBehavior: "redirect" };
+    if (options == undefined) options = {};
 
-    return await cachedServeSession(options);
+    if (options?.unauthorizedBehavior == undefined) {
+        options.unauthorizedBehavior = "redirect";
+    }
+
+    return await __serveSession(options);
 }
 
 /**

@@ -10,18 +10,18 @@ const projectShowcaseImageDownloadSchema = z.object({
 	projectId: z.string().uuid()
 });
 export async function GET(request: NextRequest): Promise<NextResponse> {
+
 	const parsedData = projectShowcaseImageDownloadSchema.safeParse({
 		projectId: request.nextUrl.searchParams.get("projectId")
 	});
 	if (!parsedData.success) return new NextResponse(null, { status: 400 });
 
 	const modelPath = await fs.promises.realpath(getProjectShowcaseImagePath(parsedData.data.projectId));
-	if (!modelPath.startsWith(envConfig.uploadProjectShowcaseImageDir)) {
-		return new NextResponse(null, { status: 404 });
-	}
 
 	try {
 		const bufferedData = fs.readFileSync(modelPath);
+
+		console.log(bufferedData);
 
 		return new NextResponse(bufferedData as any, {
 			headers: {
@@ -31,6 +31,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 		});
 	}
 	catch (ex) {
+		console.error(ex);
 		return new NextResponse(null, { status: 404 });
 	}
 }

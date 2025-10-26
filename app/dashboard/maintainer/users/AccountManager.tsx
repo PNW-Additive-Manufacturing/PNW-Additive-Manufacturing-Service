@@ -19,6 +19,7 @@ import { useActionState, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
 export default function AccountManager({ accounts }: { accounts: AccountWithTransactions[] }) {
+
     const [selectedAccount, setSelectedAccount] = useState<AccountWithTransactions | null>();
     const [filteredAccounts, setFilteredAccounts] = useState<AccountWithTransactions[]>(accounts);
 
@@ -66,9 +67,6 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
 
     return <>
 
-        <h1 className="text-2xl tracking-wide font-light mb-6">
-            Accounts
-        </h1>
         <div className="lg:grid grid-cols-2 max-lg:pb-2 bg-white out">
 
             <div className="p-4">

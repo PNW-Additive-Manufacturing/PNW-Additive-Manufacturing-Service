@@ -15,7 +15,7 @@ import Request, {
 } from "@/app/Types/Request/Request";
 import { RequestServe } from "@/app/Types/Request/RequestServe";
 import { serveSession } from "@/app/utils/SessionUtils";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 import { APIData, resError, resOk, resOkData, resUnauthorized } from "../APIResponse";
 import {
@@ -420,6 +420,8 @@ const postProjectShowcaseSchema = z.object({
 	author: z.string(),
 });
 export async function postProjectShowcase(prevState: APIData<{}>, data: FormData) {
+
+	revalidateTag("project-spotlight", "max");
 
 	const session = await serveSession({
 		requiredPermission: AccountPermission.Maintainer,
