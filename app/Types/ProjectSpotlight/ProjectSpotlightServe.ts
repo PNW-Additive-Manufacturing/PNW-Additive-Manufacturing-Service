@@ -1,17 +1,17 @@
 // @ts-nocheck
 
 import db from "@/app/api/Database";
-import { ProjectSpotlight, ProjectSpotlightAttachment, ProjectSpotlightWithAttachments } from "./ProjectSpotlight";
+import {ProjectSpotlight, ProjectSpotlightAttachment, ProjectSpotlightWithAttachments} from "./ProjectSpotlight";
 import postgres from "postgres";
 import DOMPurify from "isomorphic-dompurify";
 import fs from "fs";
-import { getProjectShowcaseImagePath } from "@/app/files";
+import {getProjectShowcaseImagePath} from "@/app/files";
 import path from "path";
-import { retrieveSafeJWTPayload } from "@/app/api/util/JwtHelper";
+import {retrieveSafeJWTPayload} from "@/app/api/util/JwtHelper";
 
 export default class ProjectSpotlightServe
 {
-    private static projectShowcaseFromSQL(row: postgres.Row): ProjectSpotlight
+    private static projectShowcaseFromSQL(row : postgres.Row) : ProjectSpotlight
     {
         return {
             id: row.id,
@@ -20,86 +20,79 @@ export default class ProjectSpotlightServe
             description: row.description,
             hasImage: row.hasimage,
             createdAt: row.createdat as Date
-        };  
+        };
     }
 
-    private static projectAttachmentFromSQL(row: postgres.Row): ProjectSpotlightAttachment
+    private static projectAttachmentFromSQL(row : postgres.Row) : ProjectSpotlightAttachment
     {
-        return {
-            id: row.id,
-            projectId: row.projectid,
-            downloadCount: row.downloadcount,
-            fileName: row.filename
-        }
+        return {id: row.id, projectId: row.projectid, downloadCount: row.downloadcount, fileName: row.filename}
     }
 
-    public static async queryAllProjectShowcases(): Promise<ProjectSpotlight[]>
-    {
-        const showcases = await db`SELECT * FROM ProjectSpotlight ORDER BY CreatedAt DESC`;
+    public static async queryAllProjectShowcases() : Promise < ProjectSpotlight[] > {
+        const showcases = await db `SELECT * FROM ProjectSpotlight ORDER BY CreatedAt DESC`;
 
-        return showcases.map<ProjectSpotlight>((s) => ProjectSpotlightServe.projectShowcaseFromSQL(s));
+        return showcases.map < ProjectSpotlight > ((s) => ProjectSpotlightServe.projectShowcaseFromSQL(s));
     }
 
-    public static async queryProjectShowcase(title: string): Promise<ProjectSpotlight | null>
-    {
-        const showcase = await db`SELECT * FROM ProjectSpotlight WHERE title=${title}`;
+    public static async queryProjectShowcase(title : string) : Promise < ProjectSpotlight | null > {
+        const showcase = await db `SELECT * FROM ProjectSpotlight WHERE title=${title}`;
 
-        return showcase.length > 0 ? ProjectSpotlightServe.projectShowcaseFromSQL(showcase[0]) : null;
+        return showcase.length > 0
+            ? ProjectSpotlightServe.projectShowcaseFromSQL(showcase[0])
+            : null;
     }
 
-    public static async withAttachments(project: ProjectSpotlight): Promise<ProjectSpotlightWithAttachments>
-    {
-        const attachmentsQuery = await db`SELECT * FROM ProjectSpotlightAttachment WHERE ProjectId=${project.id}`;
+    public static async withAttachments(project : ProjectSpotlight) : Promise < ProjectSpotlightWithAttachments > {
+        const attachmentsQuery = await db `SELECT * FROM ProjectSpotlightAttachment WHERE ProjectId=${project.id}`;
 
         const attachments = attachmentsQuery.map(r => ProjectSpotlightServe.projectAttachmentFromSQL(r));
 
-        return Object.assign(project, { attachments: attachments }) as ProjectSpotlightWithAttachments;
+        return Object.assign(project, {attachments: attachments})as ProjectSpotlightWithAttachments;
     }
 
-    public static async withManyAttachments(projects: ProjectSpotlight[])
+    public static async withManyAttachments(projects : ProjectSpotlight[])
     {
-        for (let project of projects)
-        {
+        for (let project of projects) {
             await ProjectSpotlightServe.withAttachments(project);
         }
     }
 
-    public static async insertProjectShowcase(data: Omit<ProjectSpotlight, "id" | "hasImage" | "createdAt">, image: File)
+    public static async insertProjectShowcase(data : Omit < ProjectSpotlight, "id" | "hasImage" | "createdAt" >, image : File)
     {
         const purifiedTitle = DOMPurify.sanitize(data.title);
         const purifiedDescription = DOMPurify.sanitize(data.description);
-        const purifiedAuthor = DOMPurify.sanitize(data.author!);
+        const purifiedAuthor = DOMPurify.sanitize(data.author !);
 
         await db.begin(async transaction => {
 
-            const result = await transaction`INSERT INTO 
+            const result = await transaction `INSERT INTO 
                 ProjectSpotlight (Title, Description, Author, HasImage)
-                VALUES (${purifiedTitle}, ${purifiedDescription}, ${purifiedAuthor}, ${image == null ? false : true})
+                VALUES (${purifiedTitle}, ${purifiedDescription}, ${purifiedAuthor}, ${image == null
+                ? false
+                : true})
                 RETURNING Id`;
 
-            const projectId = result.at(0)?.id as string;
+            const projectId = result.at(0)
+                ?.id as string;
 
-            if (image != undefined)
-            {
+            if (image != undefined) {
                 const buffer = Buffer.from(await image.arrayBuffer());
-    
+
                 const imagePath = getProjectShowcaseImagePath(projectId);
-    
-                fs.mkdirSync(path.dirname(imagePath), {
-                    recursive: true
-                });
+
+                fs.mkdirSync(path.dirname(imagePath), {recursive: true});
 
                 fs.writeFileSync(imagePath, buffer as any);
             }
         });
     }
 
-    public static async deleteProjectShowcase(projectId: string)
+    public static async deleteProjectShowcase(projectId : string)
     {
         await db.begin(async transaction => {
 
-            await transaction`DELETE FROM ProjectSpotlight WHERE Id=${projectId}`;
-            
+            await transaction `DELETE FROM ProjectSpotlight WHERE Id=${projectId}`;
+
             const imagePath = getProjectShowcaseImagePath(projectId);
             fs.rmSync(imagePath);
 
@@ -107,18 +100,22 @@ export default class ProjectSpotlightServe
     }
 
     // We do not supporting changing the image at the moment.
-    public static async editProjectShowcase(project: Omit<Partial<ProjectSpotlight>, "hasImage">)
+    public static async editProjectShowcase(project : Omit < Partial < ProjectSpotlight >, "hasImage" >)
     {
         await db.begin(async transaction => {
 
-            const keys = (Object.entries(project)
-                .filter((key, value) => value != undefined)
-                .map(e => e[0]) as string[])
-                .filter(k => k != "id");
+            const keys = (Object.entries(project).filter((key, value) => value != undefined).map(e => e[0])as string[]).filter(k => k != "id");
 
             // console.log(keys, project);
 
-            await transaction`UPDATE ProjectSpotlight SET ${transaction(project as any, keys)} WHERE Id=${project.id}`;
+            await transaction `UPDATE ProjectSpotlight SET ${transaction(project as any, keys)} WHERE Id=${project.id}`;
         });
+    }
+    public static async queryProjectShowcaseById(id : string) : Promise < ProjectSpotlight | null > {
+        const showcase = await db `SELECT * FROM ProjectSpotlight WHERE id=${id}`;
+
+        return showcase.length > 0
+            ? ProjectSpotlightServe.projectShowcaseFromSQL(showcase[0])
+            : null;
     }
 }

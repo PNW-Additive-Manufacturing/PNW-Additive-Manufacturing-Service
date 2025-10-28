@@ -17,6 +17,10 @@ import { formateDate } from "../api/util/Constants";
 import AMImage from "../components/AMImage";
 import FormSubmitButton from "../components/FormSubmitButton";
 
+
+
+
+
 // export function ProjectCard(projectData: ProjectSpotlightWithAttachments) {
 export function ProjectCard({ projectData, editable, style }: { projectData: ProjectSpotlight, editable: boolean, style: "normal" | "compact" }) {
     const [isEditing, setIsEditing] = useState(false);
@@ -28,6 +32,7 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
     const [delete_res, delete_form] = useActionState<ReturnType<typeof deleteProjectShowcase>, FormData>(deleteProjectShowcase, null as any);
 
     const editFormRef = useRef<HTMLFormElement | undefined>(undefined);
+
 
     function ProjectDownloadableContent({ content }: { content: ProjectSpotlightAttachment }) {
 
@@ -45,12 +50,12 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
             </td>
         </tr>
     }
+	
 
-    return <div className="rounded-md" key={projectData.id}>
+    return <div className="rounded-md shadow h-full flex flex-col overflow-hidden transition-transform hover:-translate-y-1 hover:shadow-lg" key={projectData.id}>
+        {imageSrc && <AMImage src={imageSrc} alt={"Project Image"} className="rounded-t-md w-full mt-0 pt-0" width={720} height={450} />}
 
-        {imageSrc && <AMImage src={imageSrc} alt={"Project Image"} className="rounded-b-none max-lg:w-full mt-0 pt-0" width={720} height={450} />}
-
-        <div className={classNames("py-4 px-6")}>
+        <div className={classNames("py-4 px-6 flex flex-col flex-grow")}>
             {isEditing ? (
                 <form ref={editFormRef as any} action={async (data) => {
                     try {
@@ -122,7 +127,7 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
                 </form>
             ) : (
                 <>
-                    <span className="flex items-center font-medium justify-between gap-4 mb-1">
+                    <span className="flex items-center text-xl font-semibold text-black justify-between gap-4 pt-5">
                         <>{projectData.title}</>
                         {editable && accountContext.isSingedIn &&
                             accountContext.account!.permission !== "user" && (
@@ -133,10 +138,11 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
                             )}
                     </span>
 
+					{style === "normal" && <p className="pt-3 pb-5 flex-grow">{projectData.description}</p>}
+
                     {projectData.author && style === "normal" && (
-                        <p className="text-sm mt-1 mb-4">
-                            Published by {projectData.author} on{" "}
-                            {formateDate(projectData.createdAt)}.
+                        <p className="text-sm pt-5 border-t">
+                            By: {projectData.author} • {formateDate(projectData.createdAt)}
                         </p>
                     )}
 
@@ -144,9 +150,6 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
                         <p className="text-sm">{projectData.author}, {projectData.createdAt.getFullYear()}</p>
                     )}
 
-                    {style === "normal" && <hr className="pb-0 mb-4" />}
-
-                    {style === "normal" && <p className="text-base text-cool-black">{projectData.description}</p>}
                 </>
             )}
 
@@ -188,6 +191,5 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
                 </Link>
             </div> */}
         </div>
-
-    </div>;
+    </div>
 }
