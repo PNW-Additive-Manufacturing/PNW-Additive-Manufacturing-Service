@@ -20,11 +20,11 @@ export default async function Accounting() {
                     <li><span className="font-bold">Wallet Deposits</span> - The total amount of money deposited into wallets during the semester</li>
                     <li><span className="font-bold">Complimentary Deposits</span> - Complimentary or ghost credits given to users that didn't require actual payment (Not recommended unless actual Gift)</li>
                     <li><span className="font-bold">Printing Costs</span> - Money spent by users on 3D printing services during the semester</li>
-                    <li><span className="font-bold">Estimated Income</span> - Estimated revenue after accounting for gifted credits, this value should be trending towards zero.</li>
+                    {/* <li><span className="font-bold">Estimated Income</span> - Estimated revenue after accounting for gifted credits, this value should be trending towards zero.</li> */}
                 </ul>
-                <p>
+                {/* <p>
                     A non-negative estimated income does NOT mean we have access to that money. At the moment, we do not track user-facing price vs actual costs so this value is unknown.
-                </p>
+                </p> */}
             </div>
         </HorizontalWrap>
 

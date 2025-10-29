@@ -41,13 +41,14 @@ export default async function SemesterFinancialReport({ semesters }: { semesters
                             style="large"
                         />
 
-                        <Figure
+                        {/* <Figure
                             amount={(semester.walletDepositsInCents - semester.walletGiftedInCents - semester.printingExpendituresInCents) / 100}
                             prefix="$"
                             name="Estimated Income"
                             style="large"
                             useColors={true}
-                        />
+                        /> */}
+                        
                     </div>
                 ))
             )}

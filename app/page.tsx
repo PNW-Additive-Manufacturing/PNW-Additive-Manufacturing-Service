@@ -1,8 +1,9 @@
 import MetalXImage from "@/public/assets/Alfex_Markforged_Metal_X_3D_Printer_System.webp";
 import BambulabA1Image from "@/public/assets/Bambu_Lab_A1.webp";
-import Form3LImage from "@/public/assets/form_3l_helmet_hero.webp";
-import Fuse30WImage from "@/public/assets/fuse1__transparent_productimage.png";
+// import Form3LImage from "@/public/assets/form_3l_helmet_hero.webp";
+// import Fuse30WImage from "@/public/assets/fuse1__transparent_productimage.png";
 import Mars4UltraImage from "@/public/assets/Saturn-3-Ultra-12K-13.png";
+import BambuLabX1EImage from "@/public/assets/x1e-footer-1f77ba7f687a5.png";
 import BambuLabX1CImage from "@/public/assets/x1Series-main-bg-v1-sm.png";
 import classNames from "classnames";
 import { cacheLife, cacheTag } from "next/cache";
@@ -13,6 +14,7 @@ import { FaArrowRight } from "react-icons/fa";
 import { amImageIconLightTransparent } from "./Branding";
 import AMImage from "./components/AMImage";
 import HorizontalWrap from "./components/HorizontalWrap";
+import { ProjectCard } from "./project-spotlight/ProjectCard";
 import ProjectSpotlightServe from "./Types/ProjectSpotlight/ProjectSpotlightServe";
 
 export default async function Home() {
@@ -23,9 +25,9 @@ export default async function Home() {
 				<div className="bg-background shadow-sm">
 
 					<HorizontalWrap className="py-20">
-						<div className="flex gap-10 lg:m-0 justify-between items-center">
+						<div className="flex gap-10 lg:m-0 justify-between items-center max-lg:text-center max-lg:w-full">
 							<div className="w-fit mb-2 mt-2">
-								<h1 className="w-fit mb-4 text-3xl font-normal">
+								<h1 className="mb-4 text-3xl font-normal">
 									<span className="font-bold">
 										<span className="text-pnw-gold"> PNW </span>
 										Additive Manufacturing Service
@@ -33,17 +35,10 @@ export default async function Home() {
 								</h1>
 
 								<p
-									style={{ maxWidth: "600px" }}
-									className="overflow-hidden full pb-4 max-lg:hidden">
-									Created by the PNW Additive Manufacturing Club,
+									className="overflow-hidden full pb-4 max-lg:w-full w-[600px]">
+									<span className="text-pnw-gold">Created by the PNW Additive Manufacturing Club</span>,
 									this service enables PNW students, and faculty
 									members to explore the world of 3D Printing.
-								</p>
-
-								<p
-									style={{ maxWidth: "600px" }}
-									className="overflow-hidden lg:hidden full pb-4">
-									Enabling PNW students to explore the world of Additive Manufacturing.
 								</p>
 
 								{/* <ul style={{ maxWidth: "600px" }}>
@@ -52,7 +47,7 @@ export default async function Home() {
 								<li>Guidance in designing or optimizing models for 3D Printing using <Link className="underline" target="_blank" href={"https://www.onshape.com/en/"}>Onshape</Link>.</li>
 							</ul> */}
 
-								<div className="pt-2 lg:pt-6 w-fit">
+								<div className="pt-2 lg:pt-6 w-fit max-lg:mx-auto">
 									<div className="flex flex-wrap items-center gap-4">
 										<Link href={"/request-part"}>
 											<button className="w-fit px-3.5 py-2.5 mb-0 text-sm bg-white outline-2 text-pnw-gold fill-pnw-gold outline outline-pnw-gold tracking-wider font-bold uppercase shadow-sm">
@@ -83,7 +78,7 @@ export default async function Home() {
 								loading="eager"
 								src={amImageIconLightTransparent}
 								alt="Logo"
-								className="w-44 h-fit" />
+								className="w-44 h-fit hidden lg:block" />
 
 							{/* <div className="mb-6">
 							<video src={"/assets/Timeline 1.mp4"} className="max-2xl:hidden rounded-md ml-auto" style={{ maxHeight: "17.5rem" }} controls muted={true} loop={true} preload={"none"} playsInline={true} poster="/assets/lab_setup_1.jpg" />
@@ -112,31 +107,36 @@ export default async function Home() {
 						<div className="grid items-center grid-cols-2 md:grid-cols-4 xl:grid-cols-6 grid-rows-1 gap-6 mt-8 lg:gap-6">
 
 							<ManufacturingMachineCard
-								name={"Bambu Lab X1 Series"}
+								name={"Markforged Metal X"}
+								technology="Metal Fused Filament Fabrication"
+								description={"A manufacturing solution that cost effectively prints parts using tool and stainless steel and other alloys"}
+								imageSrc={MetalXImage} />
+
+							<ManufacturingMachineCard
+								name={"Bambu Lab X1C"}
 								technology="Fused Deposition Modeling"
 								description={"Perfect for prototyping medium-strength parts, offering a cost-effective solution for functional prototypes and design testing"}
 								imageSrc={BambuLabX1CImage} />
 
 							<ManufacturingMachineCard
-								name={"Bambu Lab A1 Series"}
+								name={"Bambu Lab X1E"}
+								technology="Fused Deposition Modeling"
+								description={"A cost-effective solution to engineering high-strength parts."}
+								imageSrc={BambuLabX1EImage} />
+
+							<ManufacturingMachineCard
+								name={"Bambu Lab A1"}
 								technology="Fused Deposition Modeling"
 								description={"Perfect for prototyping medium-strength parts, offering a cost-effective solution for functional prototypes and design testing"}
 								imageSrc={BambulabA1Image} />
 
 							<ManufacturingMachineCard
-								name={"ELEGOO Mars 4 Ultra"}
+								name={"ELEGOO Mars 4U"}
 								technology="Resin LCD"
 								description={"Optimal for creating detailed and smooth-surfaced models, ideal for small intricate parts"}
 								imageSrc={Mars4UltraImage} />
 
-							<ManufacturingMachineCard
-								name={"Markforged Metal X"}
-								technology="Metal FFF"
-								description={"A manufacturing solution that cost effectively prints parts using tool and stainless steel and other alloys"}
-								unavailableReason="Unboxing & Installing"
-								imageSrc={MetalXImage} />
-
-							<ManufacturingMachineCard
+							{/* <ManufacturingMachineCard
 								name={"Formlabs Fuse 3L"}
 								technology="Resin SLA"
 								unavailableReason="Accepting Donations"
@@ -148,7 +148,7 @@ export default async function Home() {
 								technology="Powder SLS"
 								unavailableReason="Accepting Donations"
 								description={"The Fuse 1+ 30W is a compact selective laser sintering 3D printer with an industrial punch, that brings truly rapid SLS 3D printing"}
-								imageSrc={Fuse30WImage} />
+								imageSrc={Fuse30WImage} /> */}
 
 						</div>
 
@@ -173,17 +173,13 @@ export default async function Home() {
 						<path className="fill-white" d="M100,0 100,2 0,0 Z" />
 					</svg> */}
 
-					<StudentCreations />
+					<EngineeringSpotlight />
 
 					{/* <svg className="shadow-lg" viewBox="0 0 100 2" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
 						<path className="fill-background" d="M100,0 100,2 0,0 Z" />
 					</svg> */}
 
 				</Suspense>
-
-				<svg className="bg-white" viewBox="0 0 100 2" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-					<path className="fill-black" d="M100,2 100,0 0,2 Z" />
-				</svg>
 
 				{/* <div className="py-12 bg-black">
 
@@ -206,7 +202,7 @@ export default async function Home() {
 	);
 }
 
-async function StudentCreations() {
+async function EngineeringSpotlight() {
 	"use cache"
 	cacheLife("hours");
 	cacheTag("project-spotlight");
@@ -230,7 +226,7 @@ async function StudentCreations() {
 				<h2 className="font-semibold text-2xl pb-2 w-full text-right">Engineering Spotlight</h2>
 				<p className="text-cool-black text-right">Students bring ideas to reality using on-campus Manufacturing.</p>
 
-				<div className="flex gap-8 w-full mt-12">
+				{/* <div className="flex gap-8 w-full mt-12"> */}
 
 					{/* {showcases.slice(0, 5).map(s => <div key={s.id} className="flex gap-2 relative">
 
@@ -247,6 +243,17 @@ async function StudentCreations() {
 
 					</div>)} */}
 
+					{/* <div className="w-1/3 aspect-square bg-purple-400"></div>
+
+					<div className="w-1/3">
+
+						<div className="bg-orange-400 w-full mb-4 h-16" />
+						<div className="bg-orange-400 w-full mb-4 h-8" />
+
+						<div className="bg-orange-400 w-full h-60" />
+
+					</div>
+
 					<div className="w-1/3 aspect-square bg-purple-400"></div>
 
 					<div className="w-1/3">
@@ -256,23 +263,12 @@ async function StudentCreations() {
 
 						<div className="bg-orange-400 w-full h-60" />
 
-					</div>
-
-										<div className="w-1/3 aspect-square bg-purple-400"></div>
-
-					<div className="w-1/3">
-
-						<div className="bg-orange-400 w-full mb-4 h-16" />
-						<div className="bg-orange-400 w-full mb-4 h-8" />
-
-						<div className="bg-orange-400 w-full h-60" />
-
-					</div>
+					</div> */}
 
 
-				</div>
+				{/* </div> */}
 
-				<div className="mx-auto w-fit flex gap-2 p-3 rounded-xl bg-white mt-6">
+				{/* <div className="mx-auto w-fit flex gap-2 p-3 rounded-xl bg-white mt-6">
 
 					<div className="w-2.5 h-2.5 rounded-full hover:bg-gray-400 bg-gray-300" />
 					<div className="w-2.5 h-2.5 rounded-full hover:bg-gray-400 bg-gray-300" />
@@ -280,19 +276,17 @@ async function StudentCreations() {
 					<div className="w-2.5 h-2.5 rounded-full hover:bg-gray-400 bg-gray-300" />
 					<div className="w-2.5 h-2.5 rounded-full hover:bg-gray-400 bg-gray-300" />
 
-				</div>
+				</div> */}
 
-				{/* <ProjectCard/> */}
+				<div className="grid lg:grid-cols-2 2xl:grid-cols-4 gap-8 mt-12">
 
-				{/* <div className="flex flex-wrap gap-6 mt-12 justify-center">
+						{showcases.slice(0, Math.min(showcases.length, 8)).map((s, i) => <div className="bg-background" key={s.id}>
 
-						{showcases.slice(0, Math.min(showcases.length, 8)).map((s, i) => <div key={s.id} className={classNames("w-1/5 bg-white")}>
-
-							<ProjectCard projectData={s} editable={false} key={s.id} style={"compact"} />
+							<ProjectCard projectData={s} editable={false} key={s.id} style={"normal"} />
 
 						</div>)}
 
-				</div> */}
+				</div>
 
 				{/* <br /> */}
 
@@ -317,8 +311,8 @@ function ManufacturingMachineCard({ name, technology, description, unavailableRe
 	return <div className={classNames("p-4 rounded-md h-full", { "opacity-65": isUnavailable })}>
 		<div className="w-full text-sm">
 			<div className="px-4 w-full">
-				<div className="aspect-square mb-4">
-					<AMImage src={imageSrc} alt={name} />
+				<div className="aspect-square w-full mb-4">
+					<AMImage src={imageSrc} className="" alt={name} />
 				</div>
 			</div>
 			<h2 className="text-lg font-semibold text-center">{name}</h2>

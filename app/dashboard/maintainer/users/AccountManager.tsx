@@ -94,7 +94,7 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
 
                 <label className="text-xs">Showing {filteredAccounts.length} Account(s)</label>
                 <div className="flex flex-col gap-2 overflow-y-scroll" style={{ maxHeight: "500px" }}>
-                    {filteredAccounts.map(account => <div className={`w-full rounded-md text-sm bg-background flex justify-between p-3 hover:bg-pnw-gold hover:text-white hover:fill-white hover:cursor-pointer transition-colors ${selectedAccount == account && "bg-pnw-gold text-white fill-white"}`} onClick={() => setSelectedAccount(account)}>
+                    {filteredAccounts.map(account => <div key={account.email} className={`w-full rounded-md text-sm bg-background flex justify-between p-3 hover:bg-pnw-gold hover:text-white hover:fill-white hover:cursor-pointer transition-colors ${selectedAccount == account && "bg-pnw-gold text-white fill-white"}`} onClick={() => setSelectedAccount(account)}>
                         <span>
                             <span className="mr-2">{account.isEmailVerified ? <><FontAwesomeIcon icon={faCheck} className="inline fill-inherit"/></> : <><FontAwesomeIcon icon={faTriangleExclamation} className="inline fill-red-300 mr-2"/>/ Unverified</>}</span>
 
@@ -106,7 +106,7 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
             </div>
             <div className="m-4 p-4 flex-grow bg-background rounded-md out">
 
-                {selectedAccount ? <>
+                {selectedAccount ? <div key={selectedAccount.email}>
 
                     <h2 className="lg:flex gap-2 justify-between text-xl font-normal mb-2 text-pnw-gold">{selectedAccount.firstName} {selectedAccount.lastName}</h2>
 
@@ -123,7 +123,7 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
 
                             <input type="hidden" name="user-email" value={selectedAccount.email} />
                             <select name="new-permission" defaultValue={selectedAccount.permission}>
-                                <option key={AccountPermission.Admin} value={AccountPermission.Admin}>Administrator</option>
+                                <option value={AccountPermission.Admin}>Administrator</option>
                                 <option value={AccountPermission.Maintainer}>Maintainer</option>
                                 <option value={AccountPermission.User}>User</option>
                             </select>
@@ -138,7 +138,7 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
                             <div className="lg:flex gap-2">
                                 <input className="bg-white py-2.5 text-sm mb-0 px-3" type="text" id="amount-in-dollars" name="amount-in-dollars" required placeholder="$0.00" />
                                 <select title="Method" defaultValue={"none"} className="bg-white py-2.5 text-sm w-fit mb-0" id="transaction-type" name="transaction-type" required>
-                                    <option value="none" disabled selected>Choose Method</option>
+                                    <option value="none" disabled>Choose Method</option>
                                     <option value="cash">Cash</option>
                                     <option value="gift">Gift</option>
                                 </select>
@@ -159,6 +159,7 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
                             <div className="flex flex-col gap-2">
                                 {selectedAccount.transactions.map((value) => (
                                     <div
+                                        key={value.id}
                                         className={`p-4 text-sm outline outline-1 ${value.paymentStatus ==
                                             WalletTransactionStatus.Paid
                                             ? "outline-gray-300"
@@ -211,7 +212,7 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
                         </div>
                     </DropdownSection> */}
 
-                </> : <div className="flex w-full h-full justify-center items-center">Account has not been Selected!</div>}
+                </div> : <div className="flex w-full h-full justify-center items-center">Account has not been Selected!</div>}
 
 
             </div>

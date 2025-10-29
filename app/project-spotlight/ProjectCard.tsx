@@ -53,9 +53,11 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
 	
 
     return <div className="rounded-md shadow h-full flex flex-col overflow-hidden transition-transform hover:-translate-y-1 hover:shadow-lg" key={projectData.id}>
-        {imageSrc && <AMImage src={imageSrc} alt={"Project Image"} className="rounded-t-md w-full mt-0 pt-0" width={720} height={450} />}
+        {imageSrc && <div className="p-1">
+            <AMImage src={imageSrc} alt={"Project Image"} className="rounded-md w-full" width={720} height={450} />
+        </div>}
 
-        <div className={classNames("py-4 px-6 flex flex-col flex-grow")}>
+        <div className={classNames("flex flex-col flex-grow", style === "compact" ? "py-2 px-3" : "pb-5 px-5")}>
             {isEditing ? (
                 <form ref={editFormRef as any} action={async (data) => {
                     try {
@@ -127,7 +129,7 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
                 </form>
             ) : (
                 <>
-                    <span className="flex items-center text-xl font-semibold text-black justify-between gap-4 pt-5">
+                    <span className="flex items-center text-base font-semibold text-black justify-between gap-4 pt-5">
                         <>{projectData.title}</>
                         {editable && accountContext.isSingedIn &&
                             accountContext.account!.permission !== "user" && (
@@ -138,12 +140,10 @@ export function ProjectCard({ projectData, editable, style }: { projectData: Pro
                             )}
                     </span>
 
-					{style === "normal" && <p className="pt-3 pb-5 flex-grow">{projectData.description}</p>}
+					{style === "normal" && <p className="mt-2 mb-5 text-sm flex-grow line-clamp-4 overflow-ellipsis">{projectData.description}</p>}
 
                     {projectData.author && style === "normal" && (
-                        <p className="text-sm pt-5 border-t">
-                            By: {projectData.author} • {formateDate(projectData.createdAt)}
-                        </p>
+                        <p className="text-sm pt-5 border-t">{projectData.author} • {formateDate(projectData.createdAt)}</p>
                     )}
 
                     {projectData.author && style === "compact" && (

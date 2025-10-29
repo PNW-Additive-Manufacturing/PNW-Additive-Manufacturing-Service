@@ -21,8 +21,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 	try {
 		const bufferedData = fs.readFileSync(modelPath);
 
-		console.log(bufferedData);
-
 		return new NextResponse(bufferedData as any, {
 			headers: {
 				"content-type": "image/jpg",

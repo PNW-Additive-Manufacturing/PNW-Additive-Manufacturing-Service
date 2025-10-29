@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
     localPatterns: [
       {
         pathname: "/api/download/**"
+      },
+      {
+        pathname: "/assets/**"
       }
     ],
     remotePatterns: [

@@ -77,7 +77,7 @@ export default async function RootLayout({
 								path: "/materials"
 							},
 							{
-								name: "Project Spotlight",
+								name: "Engineering Spotlight",
 								path: "/project-spotlight"
 							},
 							{

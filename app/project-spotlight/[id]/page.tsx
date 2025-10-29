@@ -1,5 +1,5 @@
-import{ Suspense } from "react";
 import HorizontalWrap from "@/app/components/HorizontalWrap";
+import { Suspense } from "react";
 import { ProjectDetail } from "./ProjectDetails";
 
 interface PageProps {
@@ -13,7 +13,7 @@ export default function Page({ params }: PageProps) {
         <>
             <HorizontalWrap className="py-8">
                 <a href="/project-spotlight/" className="text-blue-600 hover:underline mb-4 inline-block">
-                    ← Back to Project Spotlight
+                    ← Back to Engineering Spotlight
                 </a>
             </HorizontalWrap>
             

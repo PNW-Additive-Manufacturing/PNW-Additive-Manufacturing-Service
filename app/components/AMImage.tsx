@@ -1,11 +1,11 @@
 "use client";
 
-import { useCallback, useRef, useState } from 'react';
-import Image from 'next/image';
 import classNames from 'classnames';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { AnimatePresence, motion } from 'motion/react';
-import { StaticImageData, StaticImport } from 'next/dist/shared/lib/get-img-props';
+import { StaticImageData } from 'next/dist/shared/lib/get-img-props';
+import Image from 'next/image';
+import { useCallback, useState } from 'react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 type AMImageProps = { alt: string, skeleton?: boolean, priority?: boolean, className?: string, quality?: number } & ({ src: string, width: number, height: number } | { src: StaticImageData });
 
@@ -23,7 +23,10 @@ export default function AMImage(props: AMImageProps) {
 
     return <>
 
-        <div className={classNames("relative", props.className)} style={{ aspectRatio: ratio }}>
+        <div 
+            className={classNames("relative", props.className)} 
+            style={{ aspectRatio: ratio }}
+        >
 
             <AnimatePresence>
 
