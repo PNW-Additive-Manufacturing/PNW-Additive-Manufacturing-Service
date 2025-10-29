@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { amImageIconLightCropped } from "../../Branding";
+import { ColorfulRequestPrintButton } from "./ColorfulRequestPrintButton";
 import NavbarLink from "./NavbarLink";
 import Navigation from "./Navigation";
 import { ServeAccountDetails } from "./ServeAccountDetails";
@@ -33,12 +34,22 @@ export function NavbarDesktop({ unauthorizedPages, authorizedPages }: React.Comp
             </div>
 
 
-            {/* Items to the Right */}
-            <Suspense>
-                
-                <ServeAccountDetails />
 
-            </Suspense>
+
+            {/* Items to the Right */}
+
+            <div className="flex gap-4">
+
+                <ColorfulRequestPrintButton />
+
+                <Suspense>
+
+                    <ServeAccountDetails />
+
+                </Suspense>
+
+            </div>
+
 
 
         </div>
