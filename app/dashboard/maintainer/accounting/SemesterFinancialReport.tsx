@@ -36,7 +36,7 @@ export default async function SemesterFinancialReport({ semesters }: { semesters
                         <Figure
                             amount={(semester.printingExpendituresInCents / 100)}
                             prefix="$"
-                            name="Request Costs"
+                            name="Request Totals"
                             style="large"
                         />
 

@@ -1,6 +1,5 @@
 import HorizontalWrap from "@/app/components/HorizontalWrap";
 import { Suspense } from "react";
-import SemesterFinancialReport from "./SemesterFinancialReport";
 import FinancialReport from "./FinancialReport";
 
 export default async function Accounting() {
@@ -11,9 +10,9 @@ export default async function Accounting() {
                     Accounting
                 </h1>
                 <p>
-                    Tracks monetary flows within the 3D printing service across academic semesters. Categorizes transactions by semester (Fall: August-December, Spring: January-May, Off-Season: remaining months) and calculates key financial metrics to ensure operational balance.
+                    Tracks monetary flows within the 3D printing service across academic semesters. Categorizes transactions by semester (Fall: August-December, Spring: January-May, Off-Season: remaining months) and calculates key financial metrics to ensure operational balance along with outstanding balances.
                 </p>
-                <ul>
+                {/* <ul>
                     <li><span className="font-bold">Wallet Deposits</span> - The total amount of money deposited into wallets during the semester</li>
                     <li><span className="font-bold">Complimentary Deposits</span> - Complimentary or ghost credits given to users that didn't require actual payment (Not recommended unless actual Gift)</li>
                     <li><span className="font-bold">Printing Costs</span> - Money spent by users on 3D printing services during the semester</li>
@@ -21,7 +20,7 @@ export default async function Accounting() {
                 </ul>
                 <p>
                     A non-negative estimated income does NOT mean we have access to that money. At the moment, we do not track user-facing price vs actual costs so this value is unknown.
-                </p>
+                </p> */}
             </div>
         </HorizontalWrap>
 

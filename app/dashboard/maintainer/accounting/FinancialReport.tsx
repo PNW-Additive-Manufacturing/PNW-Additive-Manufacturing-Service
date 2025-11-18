@@ -177,7 +177,6 @@ export default async function FinancialReport() {
         </h1>
         <p className="text-sm mt-1">Deposits and wholeness tracked each Semester (ex: Fall, Spring, Summer)</p>
 
-
         <br />
 
         <SemesterFinancialReport semesters={semesters} />
@@ -185,7 +184,7 @@ export default async function FinancialReport() {
         <br />
 
         <h1 className="text-xl">
-            Outstanding Accounts
+            Outstanding Accounts ({outstandingAccounts.length})
         </h1>
         <p className="text-sm mt-1">Accounts with outstanding Balances</p>
 
