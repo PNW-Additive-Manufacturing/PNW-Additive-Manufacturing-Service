@@ -175,6 +175,8 @@ export default async function FinancialReport() {
         <h1 className="text-xl">
             Semester Financial Reportings
         </h1>
+        <p className="text-sm mt-1">Deposits and wholeness tracked each Semester (ex: Fall, Spring, Summer)</p>
+
 
         <br />
 
@@ -185,7 +187,7 @@ export default async function FinancialReport() {
         <h1 className="text-xl">
             Outstanding Accounts
         </h1>
-        <p>These accounts have outstanding wallet balances.</p>
+        <p className="text-sm mt-1">Accounts with outstanding Balances</p>
 
         <br />
 
@@ -193,10 +195,10 @@ export default async function FinancialReport() {
 
             {outstandingAccounts.map(a => <>
             
-                <div className="bg-background out p-3 flex justify-between flex-wrap items-center text-sm">
+                <div className="bg-background p-4 rounded-md gap-6 text-base">
 
                     <p>{a.name}</p>
-                    <Figure amount={a.outstandingBalanceInCents / 100} prefix={"$"} name="Outstanding Balance" style="inline" useColors={true} />
+                    <Figure amount={a.outstandingBalanceInCents / 100} prefix={"$"} name="Outstanding Balance" style="inline" />
                     
                 </div>
             
