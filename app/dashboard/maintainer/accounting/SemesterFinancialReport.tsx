@@ -33,18 +33,17 @@ export default async function SemesterFinancialReport({ semesters }: { semesters
                             style="large"
                         />
 
-                        {/* Money spent on 3D printing */}
                         <Figure
                             amount={(semester.printingExpendituresInCents / 100)}
                             prefix="$"
-                            name="Printing Costs"
+                            name="Request Costs"
                             style="large"
                         />
 
                         <Figure
-                            amount={(semester.walletDepositsInCents - semester.walletGiftedInCents - semester.printingExpendituresInCents) / 100}
+                            amount={Math.min(0, (semester.walletDepositsInCents - semester.walletGiftedInCents - semester.printingExpendituresInCents) / 100)}
                             prefix="$"
-                            name="Estimated Income"
+                            name="Outstanding Payments"
                             style="large"
                             useColors={true}
                         />

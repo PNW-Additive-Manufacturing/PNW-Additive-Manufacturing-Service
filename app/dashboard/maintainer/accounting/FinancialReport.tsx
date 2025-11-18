@@ -1,8 +1,7 @@
-import "server-only";
 import db from "@/app/api/Database";
-import { z } from "zod";
 import { Figure } from "@/app/components/Figures";
-import { Suspense } from "react";
+import "server-only";
+import { z } from "zod";
 import SemesterFinancialReport from "./SemesterFinancialReport";
 
 const SEMESTER_RANGES = {
@@ -43,7 +42,15 @@ const printingPaymentSchema = z.object({
     paidInCents: z.coerce.number().positive()
 });
 
-async function fetchFinances(): Promise<{ semesters: SemesterFinances[], allTimeWalletCustomerDepositedInCents: number, allTimeRequestExpenseInCents: number, allTimeComplimentaryDepositsInCents: number }> {
+const outstandingAccountSchema = z.object({
+    name: z.string(),
+    email: z.string().email(),
+    outstandingBalanceInCents: z.coerce.number().int()
+});
+
+type OutstandingAccount = z.infer<typeof outstandingAccountSchema>;
+
+async function fetchFinances(): Promise<{ semesters: SemesterFinances[], allTimeWalletCustomerDepositedInCents: number, allTimeRequestExpenseInCents: number, allTimeComplimentaryDepositsInCents: number, outstandingAccounts: OutstandingAccount[] }> {
     const walletTransactions = await db`
     SELECT CustomerPaidInCents, AmountInCents, PaidAt 
     FROM WalletTransaction`;
@@ -52,6 +59,21 @@ async function fetchFinances(): Promise<{ semesters: SemesterFinances[], allTime
     SELECT totalpriceincents AS PaidInCents, paidat AS PaidAt 
     FROM Request 
     WHERE PaidAt IS NOT NULL AND totalpriceincents > 0`;
+
+    
+    const outstandingAccounts = (await db`
+    SELECT a.Email, a.FirstName, a.LastName, COALESCE(SUM(wt.AmountInCents), 0) - COALESCE(SUM(r.TotalPriceInCents), 0) as BalanceInCents
+    FROM Account a
+    LEFT JOIN WalletTransaction wt ON a.Email = wt.AccountEmail AND wt.Status = 'paid'
+    LEFT JOIN Request r ON a.Email = r.OwnerEmail AND r.PaidAt IS NOT NULL
+    GROUP BY a.Email, a.FirstName, a.LastName
+    HAVING COALESCE(SUM(wt.AmountInCents), 0) - COALESCE(SUM(r.TotalPriceInCents), 0) < 0
+    ORDER BY BalanceInCents ASC;`).map<OutstandingAccount>(q => outstandingAccountSchema.parse({ 
+        email: q.email, 
+        name: `${q.firstname} ${q.lastname}`, 
+        outstandingBalanceInCents: q.balanceincents  
+    }));
+    
 
     // Process data by semester
     const semesterMap = new Map<string, SemesterFinances>();
@@ -127,6 +149,7 @@ async function fetchFinances(): Promise<{ semesters: SemesterFinances[], allTime
             if (a.year !== b.year) return b.year - a.year;
             return semesterOrder[a.semesterName] - semesterOrder[b.semesterName];
         }),
+        outstandingAccounts,
         allTimeWalletCustomerDepositedInCents,
         allTimeRequestExpenseInCents,
         allTimeComplimentaryDepositsInCents
@@ -135,7 +158,7 @@ async function fetchFinances(): Promise<{ semesters: SemesterFinances[], allTime
 
 export default async function FinancialReport() {
 
-    const { semesters, allTimeWalletCustomerDepositedInCents, allTimeRequestExpenseInCents, allTimeComplimentaryDepositsInCents } = await fetchFinances();
+    const { semesters, allTimeWalletCustomerDepositedInCents, allTimeRequestExpenseInCents, allTimeComplimentaryDepositsInCents, outstandingAccounts } = await fetchFinances();
 
     return <>
 
@@ -156,6 +179,31 @@ export default async function FinancialReport() {
         <br />
 
         <SemesterFinancialReport semesters={semesters} />
+
+        <br />
+
+        <h1 className="text-xl">
+            Outstanding Accounts
+        </h1>
+        <p>These accounts have outstanding wallet balances.</p>
+
+        <br />
+
+        <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+
+            {outstandingAccounts.map(a => <>
+            
+                <div className="bg-background out p-3 flex justify-between flex-wrap items-center text-sm">
+
+                    <p>{a.name}</p>
+                    <Figure amount={a.outstandingBalanceInCents / 100} prefix={"$"} name="Outstanding Balance" style="inline" useColors={true} />
+                    
+                </div>
+            
+            </>)}
+
+        </div>
+
 
     </>
 }
