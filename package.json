@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "npx next dev",
+    "build": "npx next build",
+    "start": "npx next start",
     "lint": "eslint .",
     "format": "eslint --fix --ext .js,.jsx ."
   },
@@ -42,8 +42,9 @@
     "micromatch": "^4.0.8",
     "motion": "^12.23.12",
     "next": "^14.2.33",
-    "nodemailer": "^6.9.14",
+    "nodemailer": "^7.0.10",
     "otplib": "^12.0.1",
+    "pdfkit": "^0.17.2",
     "postcss": "^8.5.6",
     "postgres": "^3.4.3",
     "prismjs": ">=1.30.0",
@@ -71,7 +72,9 @@
     "@types/bcrypt": "^5.0.2",
     "@types/dompurify": "^3.0.5",
     "@types/jsonwebtoken": "^9.0.5",
+    "@types/memorystream": "^0.3.4",
     "@types/react-copy-to-clipboard": "^5.0.7",
+    "eslint": "^8.57.1",
     "eslint-config-custom": "*"
   },
   "main": "index.js",

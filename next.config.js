@@ -14,10 +14,6 @@ const nextConfig = {
   },
 
   trailingSlash: true,
-  experimental:
-  {
-    missingSuspenseWithCSRBailout: false
-  },
 
   images: {
     remotePatterns: [
