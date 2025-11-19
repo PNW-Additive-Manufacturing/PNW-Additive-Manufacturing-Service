@@ -1,14 +1,14 @@
 "use server";
 
-import "server-only";
 import { resError, resUnauthorized } from "@/app/api/APIResponse";
 import { retrieveSafeJWTPayload } from "@/app/api/util/JwtHelper";
 import getConfig from "@/app/getConfig";
 import { AccountPermission } from "@/app/Types/Account/Account";
-import { renderToBuffer, renderToStream } from "@react-pdf/renderer";
-import { NextRequest, NextResponse } from "next/server";
-import { RequestReceiptPDF } from "@/app/PDFs/RequestReceipt";
 import { RequestServe } from "@/app/Types/Request/RequestServe";
+import * as PDF from "ams-pdf";
+import MemoryStream from "memorystream";
+import { NextRequest, NextResponse } from "next/server";
+import "server-only";
 
 const appConfig = getConfig();
 
@@ -37,11 +37,32 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         return NextResponse.json(resUnauthorized());
     }
 
-    console.log(request);
+    if (!request.quote) return NextResponse.json(resError("Request has not been quoted!"));
 
-    const receiptPDF = await renderToBuffer(<RequestReceiptPDF request={request} />);
+    const stream = new MemoryStream();
 
-    return new NextResponse(receiptPDF as any, {
+    await PDF.makeQuotePDF({
+
+        // TODO: Preparer should be whoever assigned the quote!
+        preparedAt: request.submitTime,
+        contact: {
+            name: `${request.firstName} ${request.lastName}`,
+            email: request.requesterEmail
+        },
+        feesCostInCents: request.quote.feesInCents,
+        items: request.parts.map(p => ({
+            name: p.model.name,
+            discountPercent: 0,
+            quantity: p.quantity,
+            taxInCents: 0,
+            unitCostInCents: (p.priceInDollars ?? 0) * 100,
+        })),
+        quoteNumber: `R${request.id}`,
+        payment: request.quote.isPaid ? { paidAt: request.quote.paidAt, paymentMethod: "AMS Wallet" } : undefined,
+
+    }, stream);
+    
+    return new NextResponse(stream as any, {
         headers: {
             "Content-Disposition": `attachment; filename="ams_request_receipt_${requestId}.pdf"`,
             "content-type": "application/octet-stream"

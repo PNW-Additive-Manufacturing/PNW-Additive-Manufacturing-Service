@@ -6,7 +6,7 @@ import ImportCompanyLogo from "../assets/images/am_dark.png";
 
 export const COMPANY_NAME = "PNW Additive Manufacturing Club";
 export const COMPANY_LOGO = ImportCompanyLogo;
-export const COMPANY_ADDRESS = "2200 169 Street Hammond, Indiana 46323";
+export const COMPANY_ADDRESS = "2200 169 Street Hammond, Indiana 46323 (PNW Design Studio)";
 
 // Styling
 

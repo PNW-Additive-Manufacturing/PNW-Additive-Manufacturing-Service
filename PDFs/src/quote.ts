@@ -1,10 +1,10 @@
 import PDFDocument from "pdfkit";
 import { z } from "zod";
-import { docItem } from "./docElements";
-import { formatCurrencyUSD } from "./formatting";
-import { docApplyStandardFont, docRegisterStandardFonts } from "./docFonts";
 import { BORDER_COLOR, COMPANY_ADDRESS, COMPANY_LOGO, COMPANY_NAME, FONT_SIZE } from "./constants";
+import { docItem } from "./docElements";
+import { docApplyStandardFont, docRegisterStandardFonts } from "./docFonts";
 import { writePDFToStream } from "./docUtilities";
+import { formatCurrencyUSD } from "./formatting";
 
 export const QuoteItemSchema = z.object({
 
@@ -23,20 +23,20 @@ export const QuotePayment = z
     .object({ paidAt: z.coerce.date() })
     .and(
         z.object({ paymentMethod: z.literal("TooCOOL"), tooCOOLInvoice: z.number() }).or(
-        z.object({ paymentMethod: z.string() })));
+            z.object({ paymentMethod: z.string() })));
 
 export const QuoteSchema = z.object({
 
-    quoteNumber: z.number().optional(),
+    quoteNumber: z.string().optional(),
     preparer: z.object({ name: z.string(), email: z.email() }).optional(),
-    preparedAt: z.coerce.date(),
+    preparedAt: z.coerce.date().optional(),
     expirationDate: z.coerce.date().optional(),
     declinedAt: z.coerce.date().optional(),
     contact: z.object({ name: z.string(), email: z.email() }),
     items: QuoteItemSchema.array().min(1),
-    feesCostInCents: z.number().default(0),
+    feesCostInCents: z.coerce.number().default(0),
     payment: QuotePayment.optional()
-    
+
 });
 
 export type Quote = z.infer<typeof QuoteSchema>;
@@ -65,6 +65,7 @@ export function calculateQuoteTotalsInCents(quote: Quote) {
 }
 
 export async function makeQuotePDF(quote: Quote, stream: NodeJS.WritableStream) {
+
     const doc = new PDFDocument({ size: "LETTER", compress: true, font: "" });
     // font: "" is a sneaky trick to avoid PDFKit crashing when attempting to load the default Helvetica font on node without it being present.
 
@@ -87,13 +88,19 @@ export async function makeQuotePDF(quote: Quote, stream: NodeJS.WritableStream) 
     doc.moveDown();
 
     // Quote details
-    const labelCol = doc.widthOfString("Expiration Date");
+    const labelCol = doc.widthOfString("Company Address");
 
     doc.font("Inter-Bold");
-    docItem(doc, quote.payment ? "Receipt" : "Quote", labelCol, quote.quoteNumber ? `#${quote.quoteNumber}` : "");
+    doc.text(`${(quote.payment ? "Receipt" : "Quote")} ${(quote.quoteNumber ? `${quote.quoteNumber}` : "")}`);
+    // docItem(doc, quote.payment ? "Receipt" : "Quote", labelCol, quote.quoteNumber ? `${quote.quoteNumber}` : "");
     doc.font("Inter");
 
-    docItem(doc, "Issued Date", labelCol, quote.preparedAt.toLocaleDateString());
+    doc.moveDown();
+
+    if (quote.preparedAt)
+    {
+        docItem(doc, "Prepared At", labelCol, quote.preparedAt.toLocaleDateString());
+    }
 
     if (quote.preparer) {
         docItem(doc, "Prepared By", labelCol, quote.preparer.name);
@@ -106,15 +113,15 @@ export async function makeQuotePDF(quote: Quote, stream: NodeJS.WritableStream) 
 
     doc.moveDown();
 
-    docItem(doc, "Contact Name", labelCol, quote.contact.name);
-    docItem(doc, "Contact Email", labelCol, quote.contact.email);
+    docItem(doc, "Customer Name", labelCol, quote.contact.name);
+    docItem(doc, "Customer Email", labelCol, quote.contact.email);
 
     doc.moveDown();
 
-    docItem(doc, "Bill to Name", labelCol, "Additive Manufacturing Club of Purdue Northwest University", {
+    docItem(doc, "Company Name", labelCol, "Additive Manufacturing Club of Purdue Northwest University", {
         link: "https://www.pnw.edu/student-life/get-involved/organizations-listing/additive-manufacturing-club-of-pnw/"
     });
-    docItem(doc, "Bill to Address", labelCol, COMPANY_ADDRESS);
+    docItem(doc, "Company Address", labelCol, COMPANY_ADDRESS);
 
     doc.moveDown();
 
@@ -156,19 +163,21 @@ export async function makeQuotePDF(quote: Quote, stream: NodeJS.WritableStream) 
 
     const prevY = doc.y;
 
-    doc.fontSize(FONT_SIZE - 1);
+    if (!quote.payment) {
+        doc.fontSize(FONT_SIZE - 1);
 
-    doc.font("Inter").text(
-        "Payments should be made to the Additive Manufacturing Club at Purdue Northwest via COOL, uStore, or cash. If you pay via COOL/uStore, notify the preparer or club officers and include your invoice number to ensure timely processing. RSOs, research projects, and grant-funded programs can typically pursue collegiate reimbursement. Work begins after payment is confirmed.",
-        { width: 250 }
-    );
+        doc.font("Inter").text(
+            "Payments should be made to the Additive Manufacturing Club at Purdue Northwest via COOL, uStore, or cash. If you pay via COOL/uStore, notify the preparer or club officers and include your invoice number to ensure timely processing. RSOs, research projects, and grant-funded programs can typically pursue collegiate reimbursement. Work begins after payment is confirmed.",
+            { width: 250 }
+        );
+    }
 
     docApplyStandardFont(doc);
 
     // Totals section
     const totals = calculateQuoteTotalsInCents(quote);
     const totalLabelWidth = doc.font("Inter-Bold").widthOfString("TooCOOL Invoice #");
-    const totalsX = 350;
+    const totalsX = !quote.payment ? 350 : doc.page.margins.left;
 
     doc.font("Inter");
 
@@ -187,6 +196,11 @@ export async function makeQuotePDF(quote: Quote, stream: NodeJS.WritableStream) 
     doc.font("Inter-Bold");
     docItem(doc, "Grand Total", totalLabelWidth, formatCurrencyUSD(totals.total / 100), {}, totalsX);
 
+    if (quote.payment)
+    {
+        docItem(doc, "Paid by Customer", totalLabelWidth, formatCurrencyUSD(totals.total / 100), {}, totalsX);
+    }
+
     if (quote.declinedAt) {
 
         docItem(doc, "Declined Date", totalLabelWidth, quote.declinedAt.toLocaleDateString(), {}, totalsX);
@@ -195,12 +209,10 @@ export async function makeQuotePDF(quote: Quote, stream: NodeJS.WritableStream) 
 
         docItem(doc, "Payment Date", totalLabelWidth, quote.payment.paidAt.toLocaleDateString(), {}, totalsX);
 
-        if ("tooCOOLInvoice" in quote.payment)
-        {
+        if ("tooCOOLInvoice" in quote.payment) {
             docItem(doc, "TooCOOL Invoice #", totalLabelWidth, quote.payment.tooCOOLInvoice, {}, totalsX);
         }
-        else
-        {           
+        else {
             docItem(doc, "Payment Method", totalLabelWidth, quote.payment.paymentMethod, {}, totalsX);
         }
     }

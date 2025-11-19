@@ -1,15 +1,15 @@
 import db from "@/app/api/Database";
+import * as Crypto from "@/app/api/util/Crypto";
+import * as Mail from "@/app/api/util/Mail";
+import getConfig from "@/app/getConfig";
+import { addMinutes } from "@/app/utils/TimeUtils";
+import postgres from "postgres";
 import Account, {
 	AccountEmailVerification,
 	AccountPermission,
 	AccountWithTransactions
 } from "./Account";
-import postgres from "postgres";
 import { WalletTransaction, WalletTransactionStatus } from "./Wallet";
-import * as Crypto from "@/app/api/util/Crypto";
-import getConfig from "@/app/getConfig";
-import * as Mail from "@/app/api/util/Mail";
-import { addMinutes } from "@/app/utils/TimeUtils";
 
 const appConfig = getConfig();
 
@@ -171,9 +171,9 @@ export default class AccountServe {
 		return {
 			id: row!.id,
 			accountEmail: row.accountemail,
-			amountInCents: row!.amountincents,
-			customerPaidInCents: row!.customerpaidincents,
-			feesInCents: row!.feesincents,
+			amountInCents: Number.parseFloat(row!.amountincents),
+			customerPaidInCents: Number.parseFloat(row!.customerpaidincents),
+			feesInCents: Number.parseFloat(row!.feesincents),
 			paidAt: row!.paidat,
 			paymentStatus: row!.status,
 			paymentMethod: row!.paymentmethod,
@@ -232,8 +232,6 @@ export default class AccountServe {
 		dbContext?: postgres.Sql<{}>
 	): Promise<string> {
 		dbContext = dbContext ?? db;
-
-		console.log(transaction);
 
 		const insertQuery = await dbContext`INSERT INTO WalletTransaction ${db({
 			accountemail: transaction.accountEmail,

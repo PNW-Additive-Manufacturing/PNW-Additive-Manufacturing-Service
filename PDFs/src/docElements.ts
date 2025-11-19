@@ -1,10 +1,9 @@
-import { BORDER_COLOR } from "./constants";
 
 export function docItem(doc: PDFKit.PDFDocument, name: string, labelWidth: number, value: any, options?: PDFKit.Mixins.TextOptions, x?: number, y?: number,) {
 	const x0 = x ?? doc.x;
 	const y0 = y ?? doc.y;
 
-	const GAP = 30;
+	const GAP = 20;
 
 	const right = doc.page.width - doc.page.margins.right;
 	const labelW = labelWidth + 1;

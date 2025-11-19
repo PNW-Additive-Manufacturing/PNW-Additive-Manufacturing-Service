@@ -1,17 +1,10 @@
 "use client";
 
-import { formateDate } from "@/app/api/util/Constants";
-import Table from "@/app/components/Table";
 import { WalletTransaction, WalletTransactionPaymentMethod, WalletTransactionStatus } from "@/app/Types/Account/Wallet";
 import { RegularCirclePlus } from "lineicons-react";
 import Link from "next/link";
-import { MutableRefObject, useRef } from "react";
 import { FaRegFilePdf } from "react-icons/fa";
-import { useReactToPrint } from "react-to-print";
-import Image from "next/image";
 import Account from "../Types/Account/Account";
-import { PDFViewer } from "@react-pdf/renderer";
-import { WalletTransactionReceiptPDF } from "../PDFs/WalletReceipt";
 
 export default function TransactionDetails({ transaction }: { transaction: WalletTransaction & Account }) {
     return <>

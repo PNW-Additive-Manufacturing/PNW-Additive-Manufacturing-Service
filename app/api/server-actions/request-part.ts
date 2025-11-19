@@ -7,13 +7,13 @@ import { getJwtPayload } from "@/app/api/util/JwtHelper";
 import { redirect } from "next/navigation";
 
 import db from "@/app/api/Database";
-import { maintainerRequestReceived, requestReceivedHTML, sendEmail, sendRequestEmail } from "../util/Mail";
-import { RequestServe } from "@/app/Types/Request/RequestServe";
-import AccountServe from "@/app/Types/Account/AccountServe";
-import Account from "@/app/Types/Account/Account";
 import { getModelPath } from "@/app/files";
+import Account from "@/app/Types/Account/Account";
+import AccountServe from "@/app/Types/Account/AccountServe";
 import FilamentServe from "@/app/Types/Filament/FilamentServe";
-import { addDays, addMinutes } from "@/app/utils/TimeUtils";
+import { RequestServe } from "@/app/Types/Request/RequestServe";
+import { addDays } from "@/app/utils/TimeUtils";
+import { maintainerRequestReceived, sendEmail, sendRequestEmail } from "../util/Mail";
 
 const uploadDir = path.join(process.cwd(), "uploads", "stl");
 
@@ -104,6 +104,7 @@ export async function requestPart(prevState: string, formData: FormData) {
 	try {
 		fs.mkdirSync(uploadDir, { recursive: true });
 	} catch (e: any) {
+		console.error(e);
 		return "Error, server cannot create uploads folder, try again later!";
 	}
 
