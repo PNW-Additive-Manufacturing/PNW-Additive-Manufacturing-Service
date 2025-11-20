@@ -387,7 +387,7 @@ export async function addFunds(
 			try {
 				await sendEmail(
 					parsedForm.data.accountEmail,
-					"Thank you for your Purchase",
+					"Thank you for your Deposit",
 					await fundsAdded(completeTransaction),
 					transactionPDFStream
 						? [{ filename: "receipt.pdf", content: transactionPDFStream }]
