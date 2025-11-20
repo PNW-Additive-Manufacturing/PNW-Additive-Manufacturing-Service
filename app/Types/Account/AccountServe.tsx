@@ -3,6 +3,8 @@ import * as Crypto from "@/app/api/util/Crypto";
 import * as Mail from "@/app/api/util/Mail";
 import getConfig from "@/app/getConfig";
 import { addMinutes } from "@/app/utils/TimeUtils";
+import * as PDF from "ams-pdf";
+import MemoryStream from "memorystream";
 import postgres from "postgres";
 import Account, {
 	AccountEmailVerification,
@@ -52,7 +54,7 @@ export default class AccountServe {
 
 	public static async queryAllWithTransactions(
 	): Promise<AccountWithTransactions[]> {
-		const query = await db`SELECT * FROM Account`;
+		const query = await db`SELECT * FROM Account ORDER BY JoinedAt ASC`;
 
 		return await Promise.all(query.map(async (accountRow) => {
 
@@ -269,4 +271,32 @@ export default class AccountServe {
 
 		return updateQuery.length > 0;
 	}
+}
+
+export async function makeTransactionPDF(transaction: WalletTransaction, account: Account)
+{
+    const stream = new MemoryStream();
+
+	await PDF.makeQuotePDF({
+
+		contact: {
+			name: `${account.firstName} ${account.lastName}`,
+			email: account.email
+		},
+		feesCostInCents: transaction.feesInCents,
+		items: [
+			{
+				name: "PNW Additive Manufacturing Service Deposit",
+				discountPercent: 0,
+				quantity: 1,
+				taxInCents: 0,
+				unitCostInCents: transaction.amountInCents
+			}
+		],
+		quoteNumber: `W${transaction.id}`,
+		payment: transaction.paidAt ? { paidAt: transaction.paidAt, paymentMethod: transaction.paymentMethod.toUpperCase() } : undefined,
+
+	}, stream);
+
+	return stream;
 }

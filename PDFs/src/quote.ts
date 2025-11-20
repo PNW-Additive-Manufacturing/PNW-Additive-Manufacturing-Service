@@ -95,7 +95,12 @@ export async function makeQuotePDF(quote: Quote, stream: NodeJS.WritableStream) 
     // docItem(doc, quote.payment ? "Receipt" : "Quote", labelCol, quote.quoteNumber ? `${quote.quoteNumber}` : "");
     doc.font("Inter");
 
-    doc.moveDown();
+    const showExpirationDate = quote.expirationDate && !quote.payment && !quote.declinedAt;
+    
+    if (quote.preparedAt || quote.preparer || showExpirationDate)
+    {       
+        doc.moveDown();
+    }
 
     if (quote.preparedAt)
     {
@@ -107,8 +112,8 @@ export async function makeQuotePDF(quote: Quote, stream: NodeJS.WritableStream) 
         docItem(doc, "Email", labelCol, quote.preparer.email);
     }
 
-    if (quote.expirationDate && !quote.payment && !quote.declinedAt) {
-        docItem(doc, "Expiration Date", labelCol, quote.expirationDate.toLocaleDateString());
+    if (showExpirationDate) {
+        docItem(doc, "Expiration Date", labelCol, quote.expirationDate!.toLocaleDateString());
     }
 
     doc.moveDown();

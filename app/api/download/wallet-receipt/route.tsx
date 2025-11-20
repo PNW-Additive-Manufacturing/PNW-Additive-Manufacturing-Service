@@ -20,9 +20,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         return NextResponse.redirect(appConfig.joinHostURL("/user/login"));
     }
 
-    // Lazy, we need to conform the JWT parsing as a Account type in the future.
-    const account = (await AccountServe.queryByEmail(accountJWT.email))!;
-
     const transactionId = request.nextUrl.searchParams.get("transactionId");
     if (transactionId == undefined) {
         return NextResponse.json(resError("Include transactionId search parameter!"));
@@ -34,9 +31,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     // Account does not match with requested transaction AND they are not an elevated user.
-    if (transaction.accountEmail != accountJWT.email && accountJWT.permission == AccountPermission.User) {
+    if (transaction.accountEmail.toLowerCase() != accountJWT.email.toLowerCase() && (accountJWT.permission == AccountPermission.User || accountJWT.permission == AccountPermission.Maintainer)) {
         return NextResponse.json(resUnauthorized());
     }
+
+    const account = (await AccountServe.queryByEmail(transaction.accountEmail))!;
 
     const stream = new MemoryStream();
 

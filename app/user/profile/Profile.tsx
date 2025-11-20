@@ -1,15 +1,12 @@
 "use client";
 
+import { formateDate } from "@/app/api/util/Constants";
+import DropdownSection from "@/app/components/DropdownSection";
 import HorizontalWrap from "@/app/components/HorizontalWrap";
 import Account from "@/app/Types/Account/Account";
-import Link from "next/link";
-import { ChangePasswordForm } from "./ChangePasswordForm";
-import { Suspense, useState } from "react";
-import DropdownSection from "@/app/components/DropdownSection";
 import { WalletTransaction } from "@/app/Types/Account/Wallet";
-import TransactionDetails from "../../components/TransactionDetails";
 import { RegularCheckmark, RegularWarning } from "lineicons-react";
-import { formateDate } from "@/app/api/util/Constants";
+import TransactionDetails from "../../components/TransactionDetails";
 
 export default function Profile({ account, transactions }: { account: Account, transactions: WalletTransaction[] }) {
 	return (
@@ -73,7 +70,7 @@ export default function Profile({ account, transactions }: { account: Account, t
 								) : (
 									<div className="flex flex-col gap-2">
 										{transactions.map((value) => (
-											<TransactionDetails transaction={Object.assign(value, account)}></TransactionDetails>
+											<TransactionDetails transaction={Object.assign(value, account)} />
 										))}
 									</div>
 								)}

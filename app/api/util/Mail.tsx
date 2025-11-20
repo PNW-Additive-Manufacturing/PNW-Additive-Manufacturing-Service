@@ -1,18 +1,16 @@
 "use server";
 
-import "server-only";
-import Request, { RequestEmail, RequestWithParts } from "@/app/Types/Request/Request";
-import nodemailer from "nodemailer";
-import DOMPurify from "isomorphic-dompurify";
 import getConfig from "@/app/getConfig";
-import SMTPTransport from "nodemailer/lib/smtp-transport";
-import { formateDate, formateDateWithTime } from "./Constants";
+import { WalletTransaction } from "@/app/Types/Account/Wallet";
+import { RequestEmail, RequestWithParts } from "@/app/Types/Request/Request";
 import { RequestServe } from "@/app/Types/Request/RequestServe";
 import { randomUUID } from "crypto";
-import { WalletTransaction } from "@/app/Types/Account/Wallet";
-import Account from "@/app/Types/Account/Account";
+import DOMPurify from "isomorphic-dompurify";
+import nodemailer from "nodemailer";
 import Mail from "nodemailer/lib/mailer";
-import Part from "@/app/Types/Part/Part";
+import SMTPTransport from "nodemailer/lib/smtp-transport";
+import "server-only";
+import { formateDate, formateDateWithTime } from "./Constants";
 
 DOMPurify.setConfig({ USE_PROFILES: { html: false } });
 
@@ -108,10 +106,10 @@ export async function emailTemplateDearUser(
 export async function fundsAdded(transaction: WalletTransaction) {
 	return emailTemplate(`
 		<p style="font-family: inherit; color: rgb(64, 64, 64); font-size: medium;">
-			\$${(transaction.amountInCents / 100).toFixed(2)} has been added to your account. You can apply these funds to pay for 3D Printing services. 
+			\$${(transaction.amountInCents / 100).toFixed(2)} has been added to your account. You can apply these funds to pay for our Additive Manufacturing Service. 
 		</p>
-		<a href=${`${envConfig.hostURL}/api/download/wallet-receipt?transactionId=${transaction.id}`} target="_blank" style="font-family: inherit; text-decoration:none; height: fit-content; width: fit-content; display: block;">
-			<button style="font-family: inherit; text-decoration: none; border-radius: 5px; padding: 1rem 1.2rem 1rem 1.2rem; padding-top: 12px; padding-bottom: 12px; display: block; margin-bottom: 0px; outline: none; border: none; background-color: #2b2b2b; color: white; font-size: large; font-weight: 500; text-wrap: nowrap; width: auto; font-size: small;">Download Receipt</button>
+		<a href=${`${envConfig.hostURL}/user/profile#wallet-transaction-${transaction.id}`} target="_blank" style="font-family: inherit; text-decoration:none; height: fit-content; width: fit-content; display: block;">
+			<button style="font-family: inherit; text-decoration: none; border-radius: 5px; padding: 1rem 1.2rem 1rem 1.2rem; padding-top: 12px; padding-bottom: 12px; display: block; margin-bottom: 0px; outline: none; border: none; background-color: #2b2b2b; color: white; font-size: large; font-weight: 500; text-wrap: nowrap; width: auto; font-size: small;">View Wallet</button>
 		</a>`
 	);
 }

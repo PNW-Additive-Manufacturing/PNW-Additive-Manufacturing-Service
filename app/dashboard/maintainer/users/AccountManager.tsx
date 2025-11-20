@@ -6,10 +6,10 @@ import { formateDate } from "@/app/api/util/Constants";
 import APIForm from "@/app/components/APIForm";
 import DropdownSection from "@/app/components/DropdownSection";
 import FormSubmitButton from "@/app/components/FormSubmitButton";
-import Account, { AccountPermission, AccountWithTransactions } from "@/app/Types/Account/Account";
-import { WalletTransaction, WalletTransactionStatus } from "@/app/Types/Account/Wallet";
-import { RegularBan, RegularCheckmark, RegularCirclePlus, RegularTrashCan, RegularWarning } from "lineicons-react";
-import Link from "next/link";
+import TransactionDetails from "@/app/components/TransactionDetails";
+import { AccountPermission, AccountWithTransactions } from "@/app/Types/Account/Account";
+import { WalletTransaction } from "@/app/Types/Account/Wallet";
+import { RegularCheckmark, RegularWarning } from "lineicons-react";
 import { useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { toast } from "react-toastify";
@@ -22,12 +22,20 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
         const result = await addFunds(data, formData);
 
         if (result.success) {
-            toast.success(`Successfully added \$${formData.get("amount-in-dollars")} to the account of ${selectedAccount?.firstName} ${selectedAccount?.lastName}.`);
 
             if (selectedAccount) {
-                selectedAccount.transactions.push(result);
-                selectedAccount.balanceInDollars += (result.amountInCents / 100);
+                selectedAccount.transactions.push(result.transaction);
+                selectedAccount.balanceInDollars += (result.transaction.amountInCents / 100);
             }
+
+            if (!result.sentEmail && formData.get("send-email"))
+            {
+                // Wanted to send an email, but an issue occurred sending it!
+                toast.warning(`Failed to send deposit email to ${selectedAccount?.firstName} ${selectedAccount?.lastName}.`);
+            }
+
+            toast.success(`Deposited \$${formData.get("amount-in-dollars")} into the account of ${selectedAccount?.firstName} ${selectedAccount?.lastName}.`);
+
         }
         else {
             toast.error(`Failed to allocate funds to ${selectedAccount?.firstName} ${selectedAccount?.lastName}.`);
@@ -120,7 +128,7 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
                         <APIForm action={changePermission} submitLabel="Update Permission" successMessage={(data) => <>Permission Updated</>}>
 
                             <input type="hidden" name="user-email" value={selectedAccount.email} />
-                            <select name="new-permission" defaultValue={selectedAccount.permission}>
+                            <select key={selectedAccount.email} name="new-permission" defaultValue={selectedAccount.permission}>
                                 <option key={AccountPermission.Admin} value={AccountPermission.Admin}>Administrator</option>
                                 <option value={AccountPermission.Maintainer}>Maintainer</option>
                                 <option value={AccountPermission.User}>User</option>
@@ -155,47 +163,9 @@ export default function AccountManager({ accounts }: { accounts: AccountWithTran
                         {selectedAccount.transactions.length == 0 ? <p className="text-sm">No transactions Found</p> : <>
 
                             <div className="flex flex-col gap-2">
-                                {selectedAccount.transactions.map((value) => (
-                                    <div
-                                        className={`p-4 text-sm outline outline-1 ${value.paymentStatus ==
-                                            WalletTransactionStatus.Paid
-                                            ? "outline-gray-300"
-                                            : "outline-yellow-700"
-                                            } bg-white rounded-md flex justify-between items-center`}>
-                                        <div className="flex items-center">
-                                            {value.paymentStatus ==
-                                                WalletTransactionStatus.Paid ? (
-                                                <RegularCirclePlus className="h-4 w-auto fill-green-600 mr-2"></RegularCirclePlus>
-                                            ) : (
-                                                <RegularCirclePlus className="h-4 w-auto fill-yellow-700 mr-2"></RegularCirclePlus>
-                                            )}
-                                            ${(value.amountInCents / 100).toFixed(2)}
-                                        </div>
-                                        <div className="text-xs">
-                                            {value.paymentStatus ==
-                                                WalletTransactionStatus.Paid ? (
-                                                <>
-                                                    {value.paymentMethod.toUpperCase()}{" "}
-                                                    On{" "}
-                                                    {value.paidAt!.toLocaleDateString(
-                                                        "en-us",
-                                                        {
-                                                            weekday: "long",
-                                                            month: "short",
-                                                            day: "numeric",
-                                                            hour: "numeric"
-                                                        }
-                                                    )}
-                                                </>
-                                            ) : value.paymentStatus ==
-                                                WalletTransactionStatus.Cancelled ? (
-                                                "Cancelled"
-                                            ) : (
-                                                "Pending Transaction"
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
+                                
+                                {selectedAccount.transactions.map((value) => <TransactionDetails transaction={value}/>)}
+
                             </div>
 
                         </>}

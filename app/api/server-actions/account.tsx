@@ -1,23 +1,21 @@
 "use server";
 
-import { attemptLogin, checkIfPasswordCorrect, createAccount, login, setSessionTokenCookie, validatePassword } from "@/app/api/util/AccountHelper";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { getJwtPayload, retrieveSafeJWTPayload } from "@/app/api/util/JwtHelper";
-import { cookies } from "next/headers";
 import db from "@/app/api/Database";
-import { hashAndSaltPassword } from "../util/PasswordHelper";
-import Account, { AccountPermission, emailVerificationExpirationDurationInDays, YearsOfStudy } from "@/app/Types/Account/Account";
-import ActionResponse, { ActionResponsePayload } from "./ActionResponse";
-import { z } from "zod";
-import AccountServe from "@/app/Types/Account/AccountServe";
-import { fundsAdded, sendEmail, verifyEmailTemplate } from "../util/Mail";
+import { attemptLogin, checkIfPasswordCorrect, createAccount, login, setSessionTokenCookie, validatePassword } from "@/app/api/util/AccountHelper";
+import { getJwtPayload, retrieveSafeJWTPayload } from "@/app/api/util/JwtHelper";
 import getConfig from "@/app/getConfig";
-import { APIData, resOkData, resError, resOk, resUnauthorized, resAttemptAsync } from "../APIResponse";
-import { addMinutes } from "@/app/utils/TimeUtils";
+import { AccountPermission, emailVerificationExpirationDurationInDays } from "@/app/Types/Account/Account";
+import AccountServe, { makeTransactionPDF } from "@/app/Types/Account/AccountServe";
 import { WalletTransaction, WalletTransactionPaymentMethod, WalletTransactionStatus } from "@/app/Types/Account/Wallet";
-import { RegistrationSpanIDSchema } from "@/app/Types/RegistrationSpan/RegistrationSpan";
-import { recordAccountInRegistrationSpan } from "@/app/Types/RegistrationSpan/RegistrationSpanServe";
+import { addMinutes } from "@/app/utils/TimeUtils";
+import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { z } from "zod";
+import { APIData, resAttemptAsync, resError, resOk, resOkData, resUnauthorized } from "../APIResponse";
+import { fundsAdded, sendEmail, verifyEmailTemplate } from "../util/Mail";
+import { hashAndSaltPassword } from "../util/PasswordHelper";
+import ActionResponse, { ActionResponsePayload } from "./ActionResponse";
 
 const envConfig = getConfig();
 
@@ -317,52 +315,108 @@ export async function editPassword(
 
 const addFundsSchema = z.object({
 	amountInDollars: z.coerce.number().min(0.01),
-	transactionType: z.literal("cash").or(z.literal("gift")),
+	transactionType: z.enum(["cash", "gift"]),
 	sendEmail: z.coerce.boolean(),
-	accountEmail: z.string()
+	accountEmail: z.string().email(),
 });
-export async function addFunds(prevState: any, formData: FormData): Promise<APIData<WalletTransaction>> {
+
+export async function addFunds(
+	prevState: any,
+	formData: FormData
+): Promise<APIData<{ sentEmail: boolean; transaction: WalletTransaction; }>> {
+	// Parse and validate form data
 	const parsedForm = addFundsSchema.safeParse({
 		amountInDollars: formData.get("amount-in-dollars"),
 		transactionType: formData.get("transaction-type"),
 		accountEmail: formData.get("account-email"),
-		sendEmail: formData.get("send-email")
+		sendEmail: formData.get("send-email"),
 	});
+
 	if (!parsedForm.success) return resError(parsedForm.error.toString());
 
-	let permission = (await getJwtPayload())?.permission;
-	if (permission == AccountPermission.User) {
-		return resError("You do not have permission.");
-	}
+	// Check admin permission
+	const permission = (await getJwtPayload())?.permission;
+	if (permission !== AccountPermission.Admin) return resError("You do not have permission.");
 
-	// The account receiving the funding.
+	// Verify account exists
 	const fundingAccount = await AccountServe.queryByEmail(parsedForm.data.accountEmail);
-	if (fundingAccount == undefined) {
-		return resError("That account does not exist!");
-	}
+
+	if (!fundingAccount) return resError("That account does not exist!");
 
 	try {
-		let transaction: Omit<WalletTransaction, "id"> = {
+		// Create transaction
+		const amountInCents = parsedForm.data.amountInDollars * 100;
+		const transaction: Omit<WalletTransaction, "id"> = {
 			accountEmail: parsedForm.data.accountEmail,
-			amountInCents: parsedForm.data.amountInDollars * 100,
+			amountInCents,
 			feesInCents: 0,
-			customerPaidInCents: parsedForm.data.transactionType == "gift" ? 0 : parsedForm.data.amountInDollars * 100,
+			customerPaidInCents: parsedForm.data.transactionType === "gift" ? 0 : amountInCents,
 			paymentMethod: parsedForm.data.transactionType as WalletTransactionPaymentMethod,
 			paymentStatus: WalletTransactionStatus.Paid,
-			paidAt: new Date()
+			paidAt: new Date(),
 		};
 
-		(transaction as WalletTransaction).id = await AccountServe.insertTransaction(transaction);
+		const transactionId = await AccountServe.insertTransaction(transaction);
+		const completeTransaction: WalletTransaction = {
+			...transaction,
+			id: transactionId,
+		};
 
-		if (parsedForm.data.sendEmail && transaction.paymentStatus == WalletTransactionStatus.Paid && transaction.customerPaidInCents > 0) {
+		// Generate PDF receipt
+		let transactionPDFStream = null;
+		try {
 
-			sendEmail(parsedForm.data.accountEmail, "Thank you for your Purchase", await fundsAdded(transaction as WalletTransaction));
+			transactionPDFStream = await makeTransactionPDF(
+				completeTransaction,
+				fundingAccount
+			);
+
+		} catch (ex) {
+
+			console.error("Failed to generate transaction PDF for email receipt:", ex);
+
 		}
 
-		return resOkData(transaction as WalletTransaction);
-	}
-	catch (ex) {
-		console.error(ex);
-		return resError("Failed to add Funds!");
+		// Send email if requested and conditions are met which for now, will always be the case.
+		const shouldSendEmail =
+			parsedForm.data.sendEmail &&
+			completeTransaction.paymentStatus === WalletTransactionStatus.Paid &&
+			completeTransaction.customerPaidInCents > 0;
+
+		if (shouldSendEmail) {
+			try {
+				await sendEmail(
+					parsedForm.data.accountEmail,
+					"Thank you for your Purchase",
+					await fundsAdded(completeTransaction),
+					transactionPDFStream
+						? [{ filename: "receipt.pdf", content: transactionPDFStream }]
+						: undefined
+				);
+
+				return resOkData({
+					sentEmail: true,
+					transaction: completeTransaction,
+				});
+
+			} catch (ex) {
+
+				console.error("Failed to send email:", ex);
+				return resOkData({
+					sentEmail: false,
+					transaction: completeTransaction,
+				});
+
+			}
+		}
+
+		return resOkData({
+			sentEmail: false,
+			transaction: completeTransaction,
+		});
+
+	} catch (ex) {
+		console.error("Failed to add funds:", ex);
+		return resError("Failed to add funds!");
 	}
 }
