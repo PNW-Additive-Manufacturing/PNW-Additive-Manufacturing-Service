@@ -60,20 +60,17 @@ async function fetchFinances(): Promise<{ semesters: SemesterFinances[], allTime
     FROM Request 
     WHERE PaidAt IS NOT NULL AND totalpriceincents > 0`;
 
-    
     const outstandingAccounts = (await db`
-    SELECT a.Email, a.FirstName, a.LastName, COALESCE(SUM(wt.AmountInCents), 0) - COALESCE(SUM(r.TotalPriceInCents), 0) as BalanceInCents
+    SELECT a.Email, a.FirstName, a.LastName, COALESCE(wt.TotalWallet, 0) - COALESCE(r.TotalRequests, 0) AS BalanceInCents
     FROM Account a
-    LEFT JOIN WalletTransaction wt ON a.Email = wt.AccountEmail AND wt.Status = 'paid'
-    LEFT JOIN Request r ON a.Email = r.OwnerEmail AND r.PaidAt IS NOT NULL
-    GROUP BY a.Email, a.FirstName, a.LastName
-    HAVING COALESCE(SUM(wt.AmountInCents), 0) - COALESCE(SUM(r.TotalPriceInCents), 0) < 0
+    LEFT JOIN (SELECT AccountEmail, SUM(AmountInCents) AS TotalWallet FROM WalletTransaction WHERE Status = 'paid' GROUP BY AccountEmail) wt ON wt.AccountEmail = a.Email
+    LEFT JOIN (SELECT OwnerEmail, SUM(TotalPriceInCents) AS TotalRequests FROM Request WHERE PaidAt IS NOT NULL GROUP BY OwnerEmail) r ON r.OwnerEmail = a.Email
+    WHERE COALESCE(wt.TotalWallet, 0) - COALESCE(r.TotalRequests, 0) < 0
     ORDER BY BalanceInCents ASC;`).map<OutstandingAccount>(q => outstandingAccountSchema.parse({ 
         email: q.email, 
         name: `${q.firstname} ${q.lastname}`, 
         outstandingBalanceInCents: q.balanceincents  
     }));
-    
 
     // Process data by semester
     const semesterMap = new Map<string, SemesterFinances>();
