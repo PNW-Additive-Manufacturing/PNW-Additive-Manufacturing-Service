@@ -137,6 +137,7 @@ export async function makeQuotePDF(quote: Quote, stream: NodeJS.WritableStream) 
         data: [
             ["ITEM NAME", "UNIT COST", "QUANTITY", "SUBTOTAL"],
             ...quote.items.map(item => {
+
                 const totals = calculateQuoteItemTotalsInCents(item);
                 const discountText = (item.discountPercent ?? 0) > 0
                     ? ` (${((item.discountPercent ?? 0) * 100).toFixed(0)}% Off)`

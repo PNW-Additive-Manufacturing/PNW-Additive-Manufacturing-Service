@@ -1,17 +1,17 @@
-import { cookies } from "next/headers";
+import db from "@/app/api/Database";
+import { makeJwt } from "@/app/api/util/JwtHelper";
 import {
 	correctPassword,
 	hashAndSaltPassword
 } from "@/app/api/util/PasswordHelper";
-import postgres, { PostgresError } from "postgres";
-import db from "@/app/api/Database";
-import { makeJwt } from "@/app/api/util/JwtHelper";
-import * as crypto from "crypto";
-import { AccountPermission } from "@/app/Types/Account/Account";
-import DOMPurify from "isomorphic-dompurify";
 import getConfig from "@/app/getConfig";
+import { AccountPermission } from "@/app/Types/Account/Account";
+import { queryInCompleteReregistration, recordAccountInRegistrationSpan } from "@/app/Types/RegistrationSpan/RegistrationSpanServe";
 import { addMinutes } from "@/app/utils/TimeUtils";
-import { queryAccountReregistration, queryInCompleteReregistration, recordAccountInRegistrationSpan } from "@/app/Types/RegistrationSpan/RegistrationSpanServe";
+import * as crypto from "crypto";
+import DOMPurify from "isomorphic-dompurify";
+import { cookies } from "next/headers";
+import postgres, { PostgresError } from "postgres";
 
 const appConfig = getConfig();
 
@@ -26,7 +26,7 @@ export async function createAccount(
 ) {
 	firstName = DOMPurify.sanitize(firstName.trim());
 	lastName = DOMPurify.sanitize(lastName.trim());
-	email = email.trim();
+	email = email.trim().toLowerCase();
 
 	// TODO: Improve this LOGIC!
 	if (!email.endsWith("@pnw.edu")) {

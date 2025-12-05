@@ -42,8 +42,7 @@ export function Footer() : JSX.Element {return(
                 </div>
                 <div>
                     <p className="text-gray-300 text-xs">
-                        Developed by
-                        <a href="mailto:jung416@pnw.edu">Aaron F Jung</a>.
+                        Developed by <a href="mailto:jung416@pnw.edu">Aaron F Jung</a>.
                     </p>
                 </div>
             </HorizontalWrap>

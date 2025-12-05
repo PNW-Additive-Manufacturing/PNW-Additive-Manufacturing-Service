@@ -1,41 +1,29 @@
 "use server";
 
 import db from "@/app/api/Database";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { cookies, headers } from "next/headers";
-import { z } from "zod";
-import { RequestServe } from "@/app/Types/Request/RequestServe";
+import { SwatchConfiguration, validateColors } from "@/app/components/Swatch";
+import AccountServe from "@/app/Types/Account/AccountServe";
+import FilamentServe from "@/app/Types/Filament/FilamentServe";
+import { isAllComplete, isRefunded, PartStatus } from "@/app/Types/Part/Part";
+import PartServe from "@/app/Types/Part/PartServe";
+import { ProjectSpotlight } from "@/app/Types/ProjectSpotlight/ProjectSpotlight";
+import ProjectSpotlightServe from "@/app/Types/ProjectSpotlight/ProjectSpotlightServe";
 import Request, {
 	calculateTotalCost,
-	hasQuote,
 	isPaid
 } from "@/app/Types/Request/Request";
-import { SwatchConfiguration, validateColors } from "@/app/components/Swatch";
-import FilamentServe from "@/app/Types/Filament/FilamentServe";
-import { isRefunded, isPriced, PartStatus, isAllComplete } from "@/app/Types/Part/Part";
-import PartServe from "@/app/Types/Part/PartServe";
-import { PostgresError } from "postgres";
-import AccountServe from "@/app/Types/Account/AccountServe";
+import { RequestServe } from "@/app/Types/Request/RequestServe";
+import { dollarsToCents } from "@/app/utils/MathUtils";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { APIData, resError, resOk, resOkData, resUnauthorized } from "../APIResponse";
+import { retrieveSafeJWTPayload } from "../util/JwtHelper";
 import {
-	WalletTransactionPaymentMethod,
-	WalletTransactionStatus
-} from "@/app/Types/Account/Wallet";
-import {
-	emailTemplate,
-	emailTemplateDearUser,
 	formatPartFlagged,
 	formatPartUnFlagged,
-	requestCompletedHTML,
-	requestQuotedFreeHTML,
-	requestQuotedHTML,
 	sendEmail,
 	sendRequestEmail
 } from "../util/Mail";
-import { APIData, resError, resOk, resOkData, resUnauthorized } from "../APIResponse";
-import { ProjectSpotlight } from "@/app/Types/ProjectSpotlight/ProjectSpotlight";
-import ProjectSpotlightServe from "@/app/Types/ProjectSpotlight/ProjectSpotlightServe";
-import { retrieveSafeJWTPayload } from "../util/JwtHelper";
 
 const setPartPriceSchema = z.object({
 	requestId: z.coerce.number().int(),
@@ -52,8 +40,7 @@ export async function setPartPrice(
 	if (!parsedData.success) return `Schema Failed: ${parsedData.error}`;
 
 	try {
-		await db`UPDATE part SET pricecents=${parsedData.data.priceInDollars * 100
-			} WHERE id=${parsedData.data.requestId}`;
+		await db`UPDATE part SET pricecents=${dollarsToCents(parsedData.data.priceInDollars)} WHERE id=${parsedData.data.requestId}`;
 	} catch (err) {
 		return "An issue occurred updating the database!";
 	}
@@ -83,7 +70,7 @@ export async function setQuote(prevState: undefined, data: FormData): Promise<AP
 
 
 	const costs = calculateTotalCost(request, Number.parseFloat(data.get("cost_fees") as string));
-	const priceInCents = Math.round(costs.totalCost * 100);
+	const priceInCents = dollarsToCents(costs.totalCost);
 
 	console.log(costs);
 
@@ -250,8 +237,7 @@ export async function modifyPart(data: FormData): Promise<APIData<{}>> {
 	}
 
 	const includesCost = parsedData.data!.costInDollars != undefined;
-	if (includesCost)
-		newValues["pricecents"] = Math.round(parsedData.data.costInDollars! * 100);
+	if (includesCost && parsedData.data.costInDollars) newValues["pricecents"] = dollarsToCents(parsedData.data.costInDollars)
 
 	const includesRefund =
 		parsedData.data.reasonForRefund != undefined &&
@@ -361,9 +347,7 @@ export async function addFilament(
 	instock: boolean | null;
 }> {
 	const material = data.get("filament-material") as string;
-	const materialCostInCents = Math.round(
-		Number.parseFloat(data.get("filament-material-cost")!.toString()) * 100
-	);
+	const materialCostInCents = dollarsToCents(Number.parseFloat(data.get("filament-material-cost")!.toString()));
 	const details = data.get("filament-details") as string;
 	const colorName = data.get("filament-colorName") as string;
 	const monoColor = data.get("filament-mono-color") as string;

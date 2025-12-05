@@ -5,6 +5,7 @@ import { retrieveSafeJWTPayload } from "@/app/api/util/JwtHelper";
 import getConfig from "@/app/getConfig";
 import { AccountPermission } from "@/app/Types/Account/Account";
 import { RequestServe } from "@/app/Types/Request/RequestServe";
+import { dollarsToCents } from "@/app/utils/MathUtils";
 import * as PDF from "ams-pdf";
 import MemoryStream from "memorystream";
 import { NextRequest, NextResponse } from "next/server";
@@ -55,7 +56,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
             discountPercent: 0,
             quantity: p.quantity,
             taxInCents: 0,
-            unitCostInCents: (p.priceInDollars ?? 0) * 100,
+            unitCostInCents: dollarsToCents(p.priceInDollars ?? 0),
         })),
         quoteNumber: `R${request.id}`,
         payment: request.quote.isPaid ? { paidAt: request.quote.paidAt, paymentMethod: "AMS Wallet" } : undefined,

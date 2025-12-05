@@ -7,6 +7,7 @@ import getConfig from "@/app/getConfig";
 import { AccountPermission, emailVerificationExpirationDurationInDays } from "@/app/Types/Account/Account";
 import AccountServe, { makeTransactionPDF } from "@/app/Types/Account/AccountServe";
 import { WalletTransaction, WalletTransactionPaymentMethod, WalletTransactionStatus } from "@/app/Types/Account/Wallet";
+import { dollarsToCents } from "@/app/utils/MathUtils";
 import { addMinutes } from "@/app/utils/TimeUtils";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
@@ -21,7 +22,7 @@ const envConfig = getConfig();
 
 export async function tryLogin(prevState: string, formData: FormData) {
 	try {
-		const token = await attemptLogin(formData.get("email") as string, formData.get("password") as string);
+		const token = await attemptLogin((formData.get("email") as string).toLowerCase(), formData.get("password") as string);
 
 		setSessionTokenCookie(token);
 
@@ -48,7 +49,7 @@ export async function tryLogin(prevState: string, formData: FormData) {
 }
 
 const createAccountSchema = z.object({
-	email: z.string().email(),
+	email: z.string().toLowerCase().email(),
 	firstName: z.string(),
 	lastName: z.string(),
 	password: z.string(),
@@ -314,7 +315,7 @@ export async function editPassword(
 }
 
 const addFundsSchema = z.object({
-	amountInDollars: z.coerce.number().min(0.01),
+	amountInDollars: z.coerce.number().gt(0),
 	transactionType: z.enum(["cash", "gift"]),
 	sendEmail: z.coerce.boolean(),
 	accountEmail: z.string().email(),
@@ -343,9 +344,10 @@ export async function addFunds(
 
 	if (!fundingAccount) return resError("That account does not exist!");
 
+	const amountInCents = dollarsToCents(parsedForm.data.amountInDollars);
+
 	try {
 		// Create transaction
-		const amountInCents = parsedForm.data.amountInDollars * 100;
 		const transaction: Omit<WalletTransaction, "id"> = {
 			accountEmail: parsedForm.data.accountEmail,
 			amountInCents,

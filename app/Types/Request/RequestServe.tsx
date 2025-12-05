@@ -1,9 +1,8 @@
 import db from "@/app/api/Database";
-import Request, { hasQuote, RequestCosts, RequestEmail, RequestWithParts } from "./Request";
-import PartServe from "../Part/PartServe";
+import { dollarsToCents } from "@/app/utils/MathUtils";
 import postgres from "postgres";
-import { WalletTransactionStatus } from "../Account/Wallet";
-import { assert } from "console";
+import PartServe from "../Part/PartServe";
+import Request, { hasQuote, RequestCosts, RequestEmail, RequestWithParts } from "./Request";
 
 export interface RequestQuery {
 	accountEmail?: string;
@@ -330,8 +329,8 @@ export class RequestServe {
 			throw new Error("Quote cannot be modified after payment!");
 		}
 
-		const amountInCents = Math.round(costs.totalCost * 100);
-		const feesInCents = Math.round(costs.fees * 100);
+		const amountInCents = dollarsToCents(costs.totalCost);
+		const feesInCents = dollarsToCents(costs.fees);
 
 		await db`UPDATE Request SET TotalPriceInCents = ${amountInCents}, FeesInCents = ${feesInCents}, EstimatedCompletionDate = ${estimatedCompletion} WHERE Id = ${requestId} `;
 	}
