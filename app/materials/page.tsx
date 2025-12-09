@@ -1,19 +1,16 @@
 "use server";
 
-import { RegularDiamondAlt, RegularDiamondShape } from "lineicons-react";
-import HorizontalWrap from "../components/HorizontalWrap";
-import { Swatch, SwatchColorBlock } from "../components/Swatch";
-import FilamentBlock from "../experiments/FilamentBlock";
-import FilamentServe from "../Types/Filament/FilamentServe";
-import Image from "next/image";
-import Filament from "../Types/Filament/Filament";
-import DropdownSection from "../components/DropdownSection";
+import { RegularDiamondAlt } from "lineicons-react";
 import AMImage from "../components/AMImage";
+import DropdownSection from "../components/DropdownSection";
+import HorizontalWrap from "../components/HorizontalWrap";
+import { SwatchColorBlock } from "../components/Swatch";
+import Filament from "../Types/Filament/Filament";
+import FilamentServe from "../Types/Filament/FilamentServe";
 
 const materialMapping: Record<string, { coverUrl?: string, hint?: string }> = {
     "17-4PH Stainless Steel":
     {
-        coverUrl: "/assets/filaments/17-4PH Stainless Steel.png",
         hint: "Industrial Strength"
     },
     "PLA":
@@ -22,7 +19,6 @@ const materialMapping: Record<string, { coverUrl?: string, hint?: string }> = {
     },
     "ABS":
     {
-        coverUrl: "/assets/filaments/blocks.jpg",
         hint: "Heat and impact Resistant"
     },
     "PAHT-CF":
@@ -84,6 +80,7 @@ export default async function Materials() {
             <HorizontalWrap>
                 <div className="py-8">
                     {uniqueTechnology.map(t => {
+
                         const uniqueMaterials = filaments.filter((f, index) => filaments.findIndex(b => b.material == f.material) == index && f.technology == t.technology);
 
                         return <div>
@@ -92,7 +89,13 @@ export default async function Materials() {
                             <div className="flex gap-6 mb-12">
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                     {uniqueMaterials.map((m, index) => {
+
                                         const filamentsOfMaterial = filaments.filter(f => f.material == m.material && f.inStock);
+
+                                        const costs = Array.from(new Set(filamentsOfMaterial.map(f => f.costPerGramInCents)));
+                                        const minimumCostInCents = Math.min(...costs);
+                                        const minimumCostInDollars = (minimumCostInCents / 100).toFixed(2);
+                                        const isSingleCost = costs.length === 1;
 
                                         return <div className="flex max-lg:flex-col gap-6 ">
                                             {materialMapping[m.material]?.coverUrl != undefined && <div className="shadow-md">
@@ -111,7 +114,7 @@ export default async function Materials() {
                                                 </div>
                                                 <div>
                                                     <p className="text-gray-600">Lead Time: {m.leadTimeInDays}-{m.leadTimeInDays + 2} Days.</p>
-                                                    <p className="text-gray-600">Starting at ${(Math.min(...filamentsOfMaterial.map(f => f.costPerGramInCents)) / 100)} USD per Gram.</p>
+                                                    <p className="text-gray-600">{isSingleCost ? `\$${minimumCostInDollars}` : `Starting at \$${minimumCostInDollars}`} USD per Gram.</p>
                                                     <div className={materialMapping[m.material]?.coverUrl ? "" : `mt-2 pb-2.5 rounded-md`}>
                                                         <label className="mt-1">Colors</label>
                                                         <div className="flex gap-4">
