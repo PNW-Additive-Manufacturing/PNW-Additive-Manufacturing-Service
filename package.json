@@ -42,7 +42,7 @@
     "micromatch": "^4.0.8",
     "motion": "^12.23.12",
     "next": "^14.2.35",
-    "nodemailer": "^7.0.10",
+    "nodemailer": ">=7.0.11",
     "otplib": "^12.0.1",
     "pdfkit": "^0.17.2",
     "postcss": "^8.5.6",
