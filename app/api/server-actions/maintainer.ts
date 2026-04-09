@@ -1,9 +1,11 @@
 "use server";
 
 import db from "@/app/api/Database";
-import { SwatchConfiguration, validateColors } from "@/app/components/Swatch";
+import { SwatchConfiguration, SwatchConfigurationSchema } from "@/app/components/Swatch";
 import AccountServe from "@/app/Types/Account/AccountServe";
 import FilamentServe from "@/app/Types/Filament/FilamentServe";
+import ManufacturingMethodServe from "@/app/Types/ManufacturingMethod/ManufacturingMethodServe";
+import MaterialServe from "@/app/Types/Material/MaterialServe";
 import { isAllComplete, isRefunded, PartStatus } from "@/app/Types/Part/Part";
 import PartServe from "@/app/Types/Part/PartServe";
 import { ProjectSpotlight } from "@/app/Types/ProjectSpotlight/ProjectSpotlight";
@@ -172,7 +174,8 @@ export async function revokePart(data: FormData): Promise<APIData<{ emailSent: b
 		console.error(ex);
 	}
 
-	revalidatePath("/dashboard/maintainer/orders");
+	revalidatePath("/dashboard/maintainer/orders/[orderId]", "page");
+	revalidatePath("/dashboard/user/[id]", "page");
 	return resOkData({ emailSent });
 }
 
@@ -214,7 +217,7 @@ export async function modifyPart(data: FormData): Promise<APIData<{}>> {
 	const newValues: Record<string, any> = {};
 
 	if (parsedData.data!.supplementedColor != undefined && parsedData.data!.supplementedMaterial != undefined) {
-		const filament = await FilamentServe.queryIdByNameAndMaterial(
+		const filament = await FilamentServe.queryByColorAndMaterial(
 			parsedData.data!.supplementedColor!,
 			parsedData.data!.supplementedMaterial!
 		);
@@ -233,7 +236,7 @@ export async function modifyPart(data: FormData): Promise<APIData<{}>> {
 
 	if (includesStatus) {
 		newValues["status"] = parsedData.data!.status!;
-		partRequest.parts.find(p => parsedData.data.partId)!.status = parsedData.data!.status!;
+		partRequest.parts.find(p => p.id === parsedData.data.partId)!.status = parsedData.data!.status!;
 	}
 
 	const includesCost = parsedData.data!.costInDollars != undefined;
@@ -340,74 +343,289 @@ export async function setRequestFulfilled(
 export async function addFilament(
 	prevState: string,
 	data: FormData
-): Promise<{
-	error: string | null;
-	newMaterial: string | null;
-	newColor: SwatchConfiguration | null;
-	instock: boolean | null;
-}> {
-	const material = data.get("filament-material") as string;
-	const materialCostInCents = dollarsToCents(Number.parseFloat(data.get("filament-material-cost")!.toString()));
-	const details = data.get("filament-details") as string;
+): Promise<{ error: string | null }> {
+	const materialShortName = data.get("filament-material") as string;
+	const methodShortName = data.get("filament-method") as string;
 	const colorName = data.get("filament-colorName") as string;
-	const monoColor = data.get("filament-mono-color") as string;
-	const diColorA = data.get("filament-di-colorA") as string;
-	const diColorB = data.get("filament-di-colorB") as string;
+	const monoColor = (data.get("filament-mono-color") as string) || undefined;
+	const diColorA = (data.get("filament-di-colorA") as string) || undefined;
+	const diColorB = (data.get("filament-di-colorB") as string) || undefined;
+	const costRaw = (data.get("filament-material-cost") as string)?.trim();
+	const costInDollars = costRaw ? Number.parseFloat(costRaw) : 0;
 	const leadTimeInDays = Number.parseInt(data.get("filament-lead-time-in-days") as string);
-	const technology = data.get("filament-technology") as string;
+	const description = (data.get("filament-details") as string) ?? "";
 
-	const newSwatch: SwatchConfiguration = {
+	if (!materialShortName || !methodShortName || !colorName)
+		return { error: "Material, method, and color name are required." };
+	if (Number.isNaN(costInDollars) || Number.isNaN(leadTimeInDays))
+		return { error: "Invalid cost or lead time." };
+
+	const colorParsed = SwatchConfigurationSchema.safeParse({
 		name: colorName,
 		monoColor,
-		diColor: {
-			colorA: diColorA,
-			colorB: diColorB
-		}
-	};
-	validateColors(newSwatch);
-
-	await FilamentServe.insert({
-		material,
-		color: newSwatch,
-		inStock: true,
-		costPerGramInCents: materialCostInCents,
-		details,
-		leadTimeInDays: leadTimeInDays,
-		technology: technology
+		diColor: diColorA && diColorB ? { colorA: diColorA, colorB: diColorB } : undefined,
 	});
+	if (!colorParsed.success)
+		return { error: "Invalid color configuration." };
 
-	//successful
+	try {
+		await FilamentServe.insert({
+			material: { shortName: materialShortName } as any,
+			manufacturingMethod: { shortName: methodShortName } as any,
+			color: colorParsed.data,
+			inStock: true,
+			isArchived: false,
+			costPerGramInCents: dollarsToCents(costInDollars),
+			description,
+			leadTimeInDays,
+			benefits: [],
+			cons: [],
+			icon: null,
+		});
+	} catch (e: any) {
+		return { error: e.message };
+	}
+
 	revalidatePath("/dashboard/maintainer/filaments");
-	return {
-		error: null,
-		newMaterial: material,
-		newColor: newSwatch,
-		instock: true
-	};
+	return { error: null };
+}
+
+export async function addManufacturingMethod(
+	prevState: string,
+	data: FormData
+): Promise<string> {
+	const shortName = (data.get("shortName") as string)?.trim();
+	const wholeName = (data.get("wholeName") as string)?.trim();
+	const description = (data.get("description") as string) ?? "";
+	const icon = (data.get("icon") as string) || null;
+	const benefits = ((data.get("benefits") as string) ?? "").split(",").map(s => s.trim()).filter(Boolean);
+	const cons = ((data.get("cons") as string) ?? "").split(",").map(s => s.trim()).filter(Boolean);
+	const learnMoreURL = (data.get("learnMoreURL") as string) || undefined;
+	const company = (data.get("company") as string) || undefined;
+	const unit = (data.get("unit") as string) || "g";
+
+	if (!shortName || !wholeName) return "Short name and whole name are required.";
+
+	try {
+		await ManufacturingMethodServe.insert({
+			shortName, wholeName, description, icon, benefits, cons, learnMoreURL, company, unit,
+		} as any);
+	} catch (e: any) {
+		return e.message;
+	}
+
+	revalidatePath("/dashboard/maintainer/filaments");
+	return "";
+}
+
+export async function deleteManufacturingMethod(
+	prevState: string,
+	data: FormData
+): Promise<string> {
+	const shortName = data.get("shortName") as string;
+	if (!shortName) return "Short name is required.";
+
+	try {
+		await ManufacturingMethodServe.delete(shortName);
+	} catch (e: any) {
+		return e.message;
+	}
+
+	revalidatePath("/dashboard/maintainer/filaments");
+	return "";
+}
+
+export async function addMaterial(
+	prevState: string,
+	data: FormData
+): Promise<string> {
+	const shortName = (data.get("shortName") as string)?.trim();
+	const wholeName = (data.get("wholeName") as string)?.trim();
+	const description = (data.get("description") as string) ?? "";
+	const icon = (data.get("icon") as string) || null;
+	const benefits = ((data.get("benefits") as string) ?? "").split(",").map(s => s.trim()).filter(Boolean);
+	const cons = ((data.get("cons") as string) ?? "").split(",").map(s => s.trim()).filter(Boolean);
+	const learnMoreURL = (data.get("learnMoreURL") as string) || undefined;
+
+	if (!shortName || !wholeName) return "Short name and whole name are required.";
+
+	try {
+		await MaterialServe.insert({
+			shortName, wholeName, description, icon, benefits, cons, learnMoreURL,
+		} as any);
+	} catch (e: any) {
+		return e.message;
+	}
+
+	revalidatePath("/dashboard/maintainer/filaments");
+	return "";
+}
+
+export async function deleteMaterial(
+	prevState: string,
+	data: FormData
+): Promise<string> {
+	const shortName = data.get("shortName") as string;
+	if (!shortName) return "Short name is required.";
+
+	try {
+		await MaterialServe.delete(shortName);
+	} catch (e: any) {
+		return e.message;
+	}
+
+	revalidatePath("/dashboard/maintainer/filaments");
+	return "";
 }
 
 export async function setFilamentInStock(
 	prevState: string,
 	data: FormData
 ): Promise<string> {
-	var material = (data.get("filament-material") as string).toLowerCase();
-	var color = (data.get("filament-color") as string).toLowerCase();
-	var inStock = (data.get("filament-instock") as string) === "true";
+	const filamentId = Number.parseInt(data.get("filament-id") as string);
+	const inStock = (data.get("filament-instock") as string) === "true";
+
+	if (Number.isNaN(filamentId)) return "Invalid filament ID.";
 
 	try {
-		await FilamentServe.setInStock(material, color, inStock);
+		await FilamentServe.setInStock(filamentId, inStock);
 	} catch (e: any) {
 		return "Failed to update filament with error: " + e.message;
 	}
 
+	revalidatePath("/dashboard/maintainer/filaments");
 	return "";
 }
 
-export async function deleteFilament(prevState: string, data: FormData) {
-	var material = (data.get("filament-material") as string).toLowerCase();
-	var color = (data.get("filament-color") as string).toLowerCase();
+export async function deleteFilament(
+	prevState: string,
+	data: FormData
+): Promise<string> {
+	const filamentId = Number.parseInt(data.get("filament-id") as string);
+	if (Number.isNaN(filamentId)) return "Invalid filament ID.";
 
-	await FilamentServe.delete(material, color);
+	try {
+		await FilamentServe.delete(filamentId);
+	} catch (e: any) {
+		return e?.message ?? "Failed to delete filament.";
+	}
+	revalidatePath("/dashboard/maintainer/filaments");
+	return "";
+}
+
+export async function setFilamentArchived(
+	prevState: string,
+	data: FormData
+): Promise<string> {
+	const filamentId = Number.parseInt(data.get("filament-id") as string);
+	const isArchived = (data.get("filament-archived") as string) === "true";
+
+	if (Number.isNaN(filamentId)) return "Invalid filament ID.";
+
+	try {
+		await FilamentServe.setArchived(filamentId, isArchived);
+	} catch (e: any) {
+		return "Failed to update filament with error: " + e.message;
+	}
+	revalidatePath("/dashboard/maintainer/filaments");
+	return "";
+}
+
+export async function editManufacturingMethod(
+	prevState: string,
+	data: FormData
+): Promise<string> {
+	const shortName = (data.get("shortName") as string)?.trim();
+	const wholeName = (data.get("wholeName") as string)?.trim();
+	const description = (data.get("description") as string) ?? "";
+	const icon = (data.get("icon") as string) || null;
+	const benefits = ((data.get("benefits") as string) ?? "").split(",").map(s => s.trim()).filter(Boolean);
+	const cons = ((data.get("cons") as string) ?? "").split(",").map(s => s.trim()).filter(Boolean);
+	const learnMoreURL = (data.get("learnMoreURL") as string) || undefined;
+	const company = (data.get("company") as string) || undefined;
+	const unit = (data.get("unit") as string) || "g";
+
+	if (!shortName || !wholeName) return "Short name and whole name are required.";
+
+	try {
+		await ManufacturingMethodServe.update({
+			shortName, wholeName, description, icon, benefits, cons, learnMoreURL, company, unit,
+		} as any);
+	} catch (e: any) {
+		return e.message;
+	}
+
+	revalidatePath("/dashboard/maintainer/filaments");
+	return "";
+}
+
+export async function editMaterial(
+	prevState: string,
+	data: FormData
+): Promise<string> {
+	const shortName = (data.get("shortName") as string)?.trim();
+	const wholeName = (data.get("wholeName") as string)?.trim();
+	const description = (data.get("description") as string) ?? "";
+	const icon = (data.get("icon") as string) || null;
+	const benefits = ((data.get("benefits") as string) ?? "").split(",").map(s => s.trim()).filter(Boolean);
+	const cons = ((data.get("cons") as string) ?? "").split(",").map(s => s.trim()).filter(Boolean);
+	const learnMoreURL = (data.get("learnMoreURL") as string) || undefined;
+
+	if (!shortName || !wholeName) return "Short name and whole name are required.";
+
+	try {
+		await MaterialServe.update({
+			shortName, wholeName, description, icon, benefits, cons, learnMoreURL,
+		} as any);
+	} catch (e: any) {
+		return e.message;
+	}
+
+	revalidatePath("/dashboard/maintainer/filaments");
+	return "";
+}
+
+export async function editFilament(
+	prevState: string,
+	data: FormData
+): Promise<{ error: string | null }> {
+	const filamentId = Number.parseInt(data.get("filament-id") as string);
+	const colorName = data.get("filament-colorName") as string;
+	const monoColor = (data.get("filament-mono-color") as string) || undefined;
+	const diColorA = (data.get("filament-di-colorA") as string) || undefined;
+	const diColorB = (data.get("filament-di-colorB") as string) || undefined;
+	const costRaw = (data.get("filament-material-cost") as string)?.trim();
+	const costInDollars = costRaw ? Number.parseFloat(costRaw) : 0;
+	const leadTimeInDays = Number.parseInt(data.get("filament-lead-time-in-days") as string);
+	const description = (data.get("filament-details") as string) ?? "";
+
+	if (Number.isNaN(filamentId)) return { error: "Invalid filament ID." };
+	if (!colorName) return { error: "Color name is required." };
+	if (Number.isNaN(costInDollars) || Number.isNaN(leadTimeInDays))
+		return { error: "Invalid cost or lead time." };
+
+	const colorParsed = SwatchConfigurationSchema.safeParse({
+		name: colorName,
+		monoColor,
+		diColor: diColorA && diColorB ? { colorA: diColorA, colorB: diColorB } : undefined,
+	});
+	if (!colorParsed.success)
+		return { error: "Invalid color configuration." };
+
+	try {
+		await FilamentServe.update({
+			id: filamentId,
+			color: colorParsed.data,
+			costPerGramInCents: dollarsToCents(costInDollars),
+			leadTimeInDays,
+			description,
+		});
+	} catch (e: any) {
+		return { error: e.message };
+	}
+
+	revalidatePath("/dashboard/maintainer/filaments");
+	return { error: null };
 }
 
 const postProjectShowcaseSchema = z.object({

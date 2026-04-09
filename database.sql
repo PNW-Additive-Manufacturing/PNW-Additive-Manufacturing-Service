@@ -1,8 +1,29 @@
 DROP TYPE IF EXISTS PermissionType CASCADE;
 CREATE TYPE PermissionType AS ENUM ('user', 'maintainer', 'admin');
 
-DROP TYPE IF EXISTS Technology CASCADE;
-CREATE TYPE Technology AS ENUM ('FDM', 'LCD', 'Metal FFF');
+DROP TABLE IF EXISTS Material CASCADE;
+CREATE TABLE Material (
+  ShortName varchar(50) PRIMARY KEY,
+  WholeName varchar(100) NOT NULL,
+  Description varchar(1000) NOT NULL DEFAULT '',
+  Icon varchar(50),
+  Benefits text[] NOT NULL DEFAULT '{}',
+  Cons text[] NOT NULL DEFAULT '{}',
+  LearnMoreURL varchar(2048)
+);
+
+DROP TABLE IF EXISTS ManufacturingMethod CASCADE;
+CREATE TABLE ManufacturingMethod (
+  ShortName varchar(50) PRIMARY KEY,
+  WholeName varchar(100) NOT NULL,
+  Description varchar(1000) NOT NULL DEFAULT '',
+  Icon varchar(50),
+  Benefits text[] NOT NULL DEFAULT '{}',
+  Cons text[] NOT NULL DEFAULT '{}',
+  LearnMoreURL varchar(2048),
+  Company varchar(100),
+  Unit varchar(10) NOT NULL DEFAULT 'g'
+);
 
 DROP TABLE IF EXISTS Account CASCADE;
 CREATE TABLE Account (
@@ -64,34 +85,23 @@ CREATE TABLE AccountPasswordResetCode (
 DROP TABLE IF EXISTS Filament CASCADE;
 CREATE TABLE Filament (
   Id SMALLSERIAL PRIMARY KEY,
-  Material varchar(50) NOT NULL,
-  Details VARCHAR(1000) NOT NULL,
+  Material varchar(50) NOT NULL REFERENCES Material(ShortName),
+  ManufacturingMethodShortName varchar(50) NOT NULL REFERENCES ManufacturingMethod(ShortName),
+  Details VARCHAR(1000) NOT NULL DEFAULT '',
   ColorName varchar(50) NOT NULL,
-  Technology Technology NOT NULL,
   MonoColor varchar(20),
   Hint VARCHAR(50),
   DiColorA varchar(20),
   DiColorB varchar(20),
   InStock bool NOT NULL DEFAULT TRUE,
+  IsArchived bool NOT NULL DEFAULT FALSE,
   CostPerGramInCents REAL NOT NULL CHECK (CostPerGramInCents >= 0),
   LeadTimeInDays INT NOT NULL CHECK (LeadTimeInDays >= 0),
-  UNIQUE (ColorName, Material),
+  UNIQUE (ColorName, Material, ManufacturingMethodShortName),
   CONSTRAINT COLOR_CHK CHECK (
 	(MonoColor IS NOT NULL AND (DiColorA IS NULL AND DiColorB IS NULL)) OR
-	((DiColorA IS NOT NULL AND DiColorB IS NOT NULL) AND MonoColor IS NULL) 
+	((DiColorA IS NOT NULL AND DiColorB IS NOT NULL) AND MonoColor IS NULL)
   )
-);
-
-DROP TABLE IF EXISTS Printer CASCADE;
-CREATE TABLE Printer (
-  Name varchar(120) NOT NULL PRIMARY KEY,
-  Model varchar(120) NOT NULL,
-  Dimensions int[3] NOT NULL DEFAULT '{}',
-  SupportedMaterials varchar(10)[] NOT NULL,
-  OutOfOrder bool NOT NULL DEFAULT false,
-  CommunicationStrategy varchar,
-  CommunicationStrategyOptions varchar,
-  Queue SMALLINT[] NOT NULL DEFAULT '{}'
 );
 
 DROP TABLE IF EXISTS Request CASCADE;
@@ -179,9 +189,9 @@ CREATE TABLE Part (
   Quantity int NOT NULL CHECK (Quantity > 0 and Quantity <= 1000),
   Note VARCHAR(500) CHECK (LENGTH(Note) > 0),
   Status PartStatus NOT NULL DEFAULT 'pending',
-  AssignedPrinterName varchar(120) DEFAULT NULL REFERENCES Printer(Name) ON DELETE SET NULL,
-  AssignedFilamentId SMALLINT REFERENCES Filament(Id) ON DELETE SET NULL ON UPDATE CASCADE,
-  SupplementedFilamentId SMALLINT REFERENCES Filament(Id) ON DELETE SET NULL ON UPDATE CASCADE,
+  AssignedPrinterName varchar(120) DEFAULT NULL,
+  AssignedFilamentId SMALLINT REFERENCES Filament(Id) ON DELETE RESTRICT ON UPDATE CASCADE,
+  SupplementedFilamentId SMALLINT REFERENCES Filament(Id) ON DELETE RESTRICT ON UPDATE CASCADE,
   SupplementedReason VARCHAR(500),
   PriceCents BIGINT DEFAULT NULL,
   RefundReason VARCHAR(500),

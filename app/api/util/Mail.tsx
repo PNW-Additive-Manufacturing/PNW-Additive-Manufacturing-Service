@@ -143,7 +143,7 @@ export async function requestReceivedHTML(request: RequestWithParts, trackingId?
 		`
 		<p style="font-family: inherit; color: rgb(64, 64, 64); font-size: medium;">
 			Your request for ${DOMPurify.sanitize(request.name)} has been received. We are currently processing your request,
-			and a quote will be provided within 1-2 business days.
+			and a quote will be provided within 1-2 business days. Please note that printing will not begin until your quote has been paid.
 		</p>
 		<a href=${`${envConfig.hostURL}/dashboard/user/${request.id}${trackingId ? `?trackingId=${trackingId}` : ""}`} target="_blank" style="font-family: inherit; text-decoration:none; height: fit-content; width: fit-content; display: block;">
 			<button style="font-family: inherit; text-decoration: none; border-radius: 5px; padding: 1rem 1.2rem 1rem 1.2rem; padding-top: 12px; padding-bottom: 12px; display: block; margin-bottom: 0px; outline: none; border: none; background-color: #2b2b2b; color: white; font-size: large; font-weight: 500; text-wrap: nowrap; width: auto; font-size: small;">View Request</button>

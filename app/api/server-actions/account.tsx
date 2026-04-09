@@ -49,7 +49,7 @@ export async function tryLogin(prevState: string, formData: FormData) {
 }
 
 const createAccountSchema = z.object({
-	email: z.string().toLowerCase().email(),
+	email: z.string().email().toLowerCase(),
 	firstName: z.string(),
 	lastName: z.string(),
 	password: z.string(),

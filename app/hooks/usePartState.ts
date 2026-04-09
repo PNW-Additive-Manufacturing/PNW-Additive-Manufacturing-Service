@@ -20,12 +20,9 @@ export default function usePartModifier()
         // Update status if changed.
         if (modified.status != null && modified.status != original.status) data_to_update.set("status", modified.status);
         // Update the supplemented filament if changed.
-        console.log(typeof(modified.supplementedFilamentMaterial), typeof(original.supplementedFilament?.material));
-
-
         const isFilamentChanged = typeof(modified.supplementedFilamentMaterial) != "undefined"
             && typeof(modified.supplementedFilamentName) != "undefined"
-            && modified.supplementedFilamentMaterial != original.supplementedFilament?.material 
+            && modified.supplementedFilamentMaterial != original.supplementedFilament?.material.shortName
             && modified.supplementedFilamentName != original.supplementedFilament?.color.name
 
         if (isFilamentChanged)

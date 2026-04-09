@@ -1,25 +1,19 @@
-import { StaticImageData } from "next/image";
-import HorizontalWrap from "./components/HorizontalWrap";
-import Link from "next/link";
-import { RegularArrowRight, RegularDiamondAlt } from "lineicons-react";
-import ProjectSpotlightServe from "./Types/ProjectSpotlight/ProjectSpotlightServe";
-import { ProjectCard } from "./project-spotlight/ProjectCard";
-import { FaChevronRight } from "react-icons/fa6";
-import AMImage from "./components/AMImage";
 import classNames from "classnames";
-import Image from "next/image";
+import { RegularArrowRight } from "lineicons-react";
+import { StaticImageData } from "next/image";
+import Link from "next/link";
+import AMImage from "./components/AMImage";
+import HorizontalWrap from "./components/HorizontalWrap";
+import { ProjectCard } from "./project-spotlight/ProjectCard";
+import ProjectSpotlightServe from "./Types/ProjectSpotlight/ProjectSpotlightServe";
 
-// Images
-
-import Form3LImage from "@/public/assets/form_3l_helmet_hero.webp";
-import Fuse30WImage from "@/public/assets/fuse1__transparent_productimage.png";
-import Mars4UltraImage from "@/public/assets/Saturn-3-Ultra-12K-13.png";
 import MetalXImage from "@/public/assets/Alfex_Markforged_Metal_X_3D_Printer_System.webp";
 import BambulabA1Image from "@/public/assets/Bambu_Lab_A1.webp";
-import BambuLabX1CImage from "@/public/assets/x1Series-main-bg-v1-sm.png";
+import Form3LImage from "@/public/assets/form_3l_helmet_hero.webp";
+import Fuse30WImage from "@/public/assets/fuse1__transparent_productimage.png";
 import BlackToeRunningIconImage from "@/public/assets/logos/blacktoerunning.png";
-import OnshapeIconImage from "@/public/assets/logos/onshape.png";
-import BambuLabIconImage from "@/public/assets/logos/bambulab.png";
+import Mars4UltraImage from "@/public/assets/Saturn-3-Ultra-12K-13.png";
+import BambuLabX1CImage from "@/public/assets/x1Series-main-bg-v1-sm.png";
 // import MarkforgedOnyxImage from "@/public/assets/MARK-TWO-Mark3D-kaufen.jpg";
 // import BambuLabX1CImage from "@/public/assets/Bambu Lab X1 Carbon_cover.png";
 // import BambuLabX1EImage from "@/public/assets/Bambu Lab X1E_cover.png";

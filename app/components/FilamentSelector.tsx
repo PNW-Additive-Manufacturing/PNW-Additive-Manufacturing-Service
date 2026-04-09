@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Filament from "../Types/Filament/Filament";
+import { ManufacturingMethod } from "../Types/ManufacturingMethod/ManufacturingMethod";
 import { toast } from "react-toastify";
 import FilamentBlock from "../experiments/FilamentBlock";
 import { RegularEye } from "lineicons-react";
@@ -12,21 +13,24 @@ type FilamentSelectorProps = {
 	materialInputID?: string;
 	colorNameInputID?: string;
 	displayFilamentInsight: boolean;
+	method?: ManufacturingMethod;
 	onChange?: (chosenFilament: Filament) => void
 };
 
-export default function FilamentSelector({ filaments, materialInputID, colorNameInputID, onChange, canSelectOutOfStock, displayFilamentInsight, defaultFilament }: FilamentSelectorProps) {
+export default function FilamentSelector({ filaments, materialInputID, colorNameInputID, onChange, canSelectOutOfStock, displayFilamentInsight, defaultFilament, method }: FilamentSelectorProps) {
 
 	materialInputID ||= "filament-selector-material";
 	colorNameInputID ||= "filament-selector-color";
+
+	filaments = useMemo(() => method ? filaments.filter(f => f.manufacturingMethod.shortName === method.shortName) : filaments, [filaments, method]);
 
 	if (filaments.length == 0) return <>Contact an Admin, there are no available Filaments!</>;
 
 	const availableMaterials = useMemo(() => {
 		// We need a unique list of the materials!
 		const uniqueMaterials = new Set<string>();
-		for (let material of filaments.map(f => f.material)) {
-			uniqueMaterials.add(material);
+		for (let f of filaments) {
+			uniqueMaterials.add(f.material.shortName);
 		}
 		return Array.from(uniqueMaterials);
 
@@ -41,20 +45,20 @@ export default function FilamentSelector({ filaments, materialInputID, colorName
 	}, [availableMaterials]);
 
 	const [selectedMaterial, setSelectedMaterial] = useState<string>(defaultMaterial);
-	const availableColors = useMemo(() => filaments.filter(f => f.material == selectedMaterial && (canSelectOutOfStock ? true : f.inStock)).map(f => f.color), [selectedMaterial])
+	const availableColors = useMemo(() => filaments.filter(f => f.material.shortName == selectedMaterial && (canSelectOutOfStock ? true : f.inStock)).map(f => f.color), [selectedMaterial])
 
 	const [selectedFilament, setSelectedFilament] = useState<Filament | undefined>(defaultFilament);
 
 	useEffect(() => {
 		// Material was switched, use the first available color matching the given material.
-		setSelectedFilament(availableColors.map(c => filaments.find(f => f.color.name == c.name)!).find(f => f.material == selectedMaterial && (canSelectOutOfStock ? true : f.inStock)));
+		setSelectedFilament(availableColors.map(c => filaments.find(f => f.color.name == c.name)!).find(f => f.material.shortName == selectedMaterial && (canSelectOutOfStock ? true : f.inStock)));
 
 	}, [selectedMaterial, availableColors, filaments]);
 
 
 	const chooseColor = useCallback((colorName: string) => {
 		console.log(selectedMaterial, colorName);
-		const newSelectedFilament = filaments.find(f => f.material == selectedMaterial && f.color.name == colorName);
+		const newSelectedFilament = filaments.find(f => f.material.shortName == selectedMaterial && f.color.name == colorName);
 
 		if (newSelectedFilament == undefined) {
 			toast.error("Contact an Admin, selected filament does not exist!");
@@ -71,7 +75,7 @@ export default function FilamentSelector({ filaments, materialInputID, colorName
 			title="Filament Material"
 			className="mb-0"
 			name={materialInputID} id={materialInputID}
-			defaultValue={selectedFilament?.material}
+			defaultValue={selectedFilament?.material.shortName}
 			onChange={(ev) => setSelectedMaterial(ev.currentTarget.value)}>
 
 			<option disabled={true}>Choose a variant of {selectedMaterial}</option>
@@ -99,9 +103,9 @@ export default function FilamentSelector({ filaments, materialInputID, colorName
 }
 
 export function FilamentInsight({ selectedFilament }: { selectedFilament: Filament }) {
-	return <a target="_blank" className="w-fit mt-0 button" href={`/materials#${selectedFilament.technology.toLowerCase()}-${selectedFilament.material.replaceAll(" ", "-").toLowerCase()}`}>
+	return <a target="_blank" className="w-fit mt-0 button" href={`/materials#${selectedFilament.manufacturingMethod.shortName.toLowerCase()}-${selectedFilament.material.shortName.replaceAll(" ", "-").toLowerCase()}`}>
 		{/* <RegularEye className="inline mb-0.5 mr-2" /> */}
-		View properties of {`${selectedFilament.material.toUpperCase()} `}
+		View properties of {`${selectedFilament.material.shortName.toUpperCase()} `}
 		<NamedSwatch swatch={selectedFilament.color} style="long" />
 	</a>
 }

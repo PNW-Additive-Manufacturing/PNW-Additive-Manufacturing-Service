@@ -24,7 +24,7 @@ export default interface Part {
 	filament?: Filament;
 	supplementedFilament?: Filament;
 	reasonForSupplementedFilament?: string;
-	notes?: string;
+	note?: string;
 	priceInDollars?: number;
 	deniedReason?: string;
 	refund?: {

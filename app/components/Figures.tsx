@@ -32,7 +32,7 @@ export function Figure({ name, amount, prefix, style, icon, iconPosition, labelC
             {icon && iconPosition === "start" && <span className="mr-1 [&>*]:inline">{icon}</span>}
             {name}
         </label>
-        <p className={classNames(fontStyle, "text-nowrap", { "inline ": style === "inline", "text-warning": useColors && (flipColors ? amount > 0 : amount < 0), "text-lime-600": useColors && (flipColors ? amount <= 0 : amount >= 0) })}>
+        <p className={classNames(fontStyle, { "text-nowrap": style !== "inline", "inline ": style === "inline", "text-warning": useColors && (flipColors ? amount > 0 : amount < 0), "text-lime-600": useColors && (flipColors ? amount <= 0 : amount >= 0) })}>
             {style === "inline" && " "}{prefix && prefix}{typeof amount === "number" ? amount.toFixed(2) : amount}
             {icon && iconPosition === "end" && <span className="ml-1 [&>*]:inline">{icon}</span>}
         </p>

@@ -1,22 +1,20 @@
-import db from "@/app/api/Database";
-import { FilamentList } from "./FilamentTable";
-import DropdownSection from "@/app/components/DropdownSection";
-import { FilamentForm } from "./FilamentForm";
 import FilamentServe from "@/app/Types/Filament/FilamentServe";
-import FilamentManager from "./FilamentManager";
+import ManufacturingMethodServe from "@/app/Types/ManufacturingMethod/ManufacturingMethodServe";
+import MaterialServe from "@/app/Types/Material/MaterialServe";
 import HorizontalWrap from "@/app/components/HorizontalWrap";
+import FilamentManager from "./FilamentManager";
 
 export default async function Page() {
-	const filaments = await FilamentServe.queryAll();
+	const [methods, materials, filaments] = await Promise.all([
+		ManufacturingMethodServe.queryAll(),
+		MaterialServe.queryAll(),
+		FilamentServe.queryAll({ includeArchived: true }),
+	]);
 
 	return (
-		<>
-			{/* <div className="out p-4 xl:p-6 bg-white">
-				<FilamentManager filaments={filaments}></FilamentManager>
-			</div> */}
-			<HorizontalWrap className="py-8">
-				<FilamentList initialFilaments={filaments} />
-			</HorizontalWrap>
-		</>
+		<HorizontalWrap className="py-8">
+			<h1 className="text-2xl font-normal mb-6">Filament Inventory</h1>
+			<FilamentManager methods={methods} materials={materials} filaments={filaments} />
+		</HorizontalWrap>
 	);
 }

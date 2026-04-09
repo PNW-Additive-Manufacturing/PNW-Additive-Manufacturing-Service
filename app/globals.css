@@ -11,7 +11,7 @@
   --pnw-gold-logo: #e6b10e;
   --pnw-gold: #b1810b;
   --pnw-blue: #7ca6c0;
-  --pnw-gold-light: #f1e8d3;
+  --pnw-gold-light: rgb(243, 235, 215);
   --pnw-black: #000000;
 
   --nav-height: 4rem;
@@ -74,7 +74,7 @@ input, textarea, select {
   border: 0px;
   font-weight: normal;
   background-color: rgb(var(--background-rgb));
-  border-radius: 0.125rem;
+  border-radius: 0.375rem;
 }
 input, textarea, select 
 {
@@ -254,7 +254,6 @@ td > a {
 }
 
 li {
-  list-style: disc outside none;
   display: list-item;
   margin-left: 1em;
 }

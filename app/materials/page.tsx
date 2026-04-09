@@ -59,9 +59,9 @@ function MaterialWizard({ filaments }: { filaments: Filament[] }) {
 
 export default async function Materials() {
 
-    const filaments = (await FilamentServe.queryAll()).sort((a, b) => a.material.localeCompare(b.material)).filter(f => f.inStock);
-    // We are filtering out to create a unique list of technologies we currently support.
-    const uniqueTechnology = filaments.filter((f, index) => filaments.findIndex(b => b.technology == f.technology) == index);
+    const filaments = (await FilamentServe.queryAll()).sort((a, b) => a.material.shortName.localeCompare(b.material.shortName)).filter(f => f.inStock);
+    // We are filtering out to create a unique list of manufacturing methods we currently support.
+    const uniqueTechnology = filaments.filter((f, index) => filaments.findIndex(b => b.manufacturingMethod.shortName == f.manufacturingMethod.shortName) == index);
 
     return <>
         <HorizontalWrap>
@@ -81,16 +81,16 @@ export default async function Materials() {
                 <div className="py-8">
                     {uniqueTechnology.map(t => {
 
-                        const uniqueMaterials = filaments.filter((f, index) => filaments.findIndex(b => b.material == f.material) == index && f.technology == t.technology);
+                        const uniqueMaterials = filaments.filter((f, index) => filaments.findIndex(b => b.material.shortName == f.material.shortName) == index && f.manufacturingMethod.shortName == t.manufacturingMethod.shortName);
 
                         return <div>
-                            <label className="text-xl">{t.technology} Manufacturing</label>
+                            <label className="text-xl">{t.manufacturingMethod.wholeName} Manufacturing</label>
                             <hr />
                             <div className="flex gap-6 mb-12">
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                     {uniqueMaterials.map((m, index) => {
 
-                                        const filamentsOfMaterial = filaments.filter(f => f.material == m.material && f.inStock);
+                                        const filamentsOfMaterial = filaments.filter(f => f.material.shortName == m.material.shortName && f.inStock);
 
                                         const costs = Array.from(new Set(filamentsOfMaterial.map(f => f.costPerGramInCents)));
                                         const minimumCostInCents = Math.min(...costs);
@@ -98,24 +98,24 @@ export default async function Materials() {
                                         const isSingleCost = costs.length === 1;
 
                                         return <div className="flex max-lg:flex-col gap-6 ">
-                                            {materialMapping[m.material]?.coverUrl != undefined && <div className="shadow-md">
+                                            {materialMapping[m.material.shortName]?.coverUrl != undefined && <div className="shadow-md">
 
-                                                <AMImage className="max-lg:w-full w-40 h-auto rounded-md" src={materialMapping[t.material]?.coverUrl as string} alt={t.technology} width={240} height={480} />
+                                                <AMImage className="max-lg:w-full w-40 h-auto rounded-md" src={materialMapping[m.material.shortName]?.coverUrl as string} alt={t.manufacturingMethod.shortName} width={240} height={480} />
 
                                             </div>}
 
                                             <div className="flex flex-col justify-between">
                                                 <div>
-                                                    <h3 id={`${m.technology.toLowerCase()}-${m.material.replaceAll(" ", "-").toLowerCase()}`} className="text-xl target:bg-yellow-100 target:px-2 w-fit">
-                                                        {m.material}
-                                                        {materialMapping[m.material]?.hint != undefined && <span className="text-pnw-gold font-semibold ml-2">| {materialMapping[m.material]?.hint}</span>}
+                                                    <h3 id={`${m.manufacturingMethod.shortName.toLowerCase()}-${m.material.shortName.replaceAll(" ", "-").toLowerCase()}`} className="text-xl target:bg-yellow-100 target:px-2 w-fit">
+                                                        {m.material.wholeName}
+                                                        {materialMapping[m.material.shortName]?.hint != undefined && <span className="text-pnw-gold font-semibold ml-2">| {materialMapping[m.material.shortName]?.hint}</span>}
                                                     </h3>
-                                                    <p className="mb-4 mt-1" style={{ maxWidth: "900px" }}>{m.details}</p>
+                                                    <p className="mb-4 mt-1" style={{ maxWidth: "900px" }}>{m.material.description || m.description}</p>
                                                 </div>
                                                 <div>
                                                     <p className="text-gray-600">Lead Time: {m.leadTimeInDays}-{m.leadTimeInDays + 2} Days.</p>
                                                     <p className="text-gray-600">{isSingleCost ? `\$${minimumCostInDollars}` : `Starting at \$${minimumCostInDollars}`} USD per Gram.</p>
-                                                    <div className={materialMapping[m.material]?.coverUrl ? "" : `mt-2 pb-2.5 rounded-md`}>
+                                                    <div className={materialMapping[m.material.shortName]?.coverUrl ? "" : `mt-2 pb-2.5 rounded-md`}>
                                                         <label className="mt-1">Colors</label>
                                                         <div className="flex gap-4">
                                                             {filamentsOfMaterial.map(f => <SwatchColorBlock swatch={f.color} />)}

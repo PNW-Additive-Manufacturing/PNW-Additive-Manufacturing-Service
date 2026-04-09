@@ -28,10 +28,10 @@ export default function PopupFilamentSelector({
 	const materials: string[] = [];
 	for (let filament of filaments) {
 		const isExisting =
-			materials.find((material) => material == filament.material) !=
+			materials.find((material) => material == filament.material.shortName) !=
 			undefined;
 
-		if (!isExisting) materials.push(filament.material);
+		if (!isExisting) materials.push(filament.material.shortName);
 	}
 
 	const isAnyAvailable = materials.length > 0;
@@ -42,19 +42,19 @@ export default function PopupFilamentSelector({
 		colorHex: string;
 	}>({
 		defaultValues: {
-			"filament-selector-material": defaultFilament?.colorName,
-			"filament-selector-color": defaultFilament?.material
+			"filament-selector-material": defaultFilament?.material,
+			"filament-selector-color": defaultFilament?.colorName
 		}
 	});
 
 	const selectedMaterial = watch("filament-selector-material");
 	const filamentsMatchingMaterial = filaments.filter(
-		(filament) => filament.material == selectedMaterial && filament.inStock
+		(filament) => filament.material.shortName == selectedMaterial && filament.inStock
 	);
 	const selectedColorName = watch("filament-selector-color");
 	const selectedFilament = filaments.find(
 		(filament) =>
-			filament.material == selectedMaterial &&
+			filament.material.shortName == selectedMaterial &&
 			filament.color.name == selectedColorName &&
 			filament.inStock
 	);
@@ -62,7 +62,7 @@ export default function PopupFilamentSelector({
 	function changeFilament(material?: string, colorName?: string) {
 		const m__selectedFilament = filaments.find(
 			(filament) =>
-				filament.material == (material ?? selectedMaterial) &&
+				filament.material.shortName == (material ?? selectedMaterial) &&
 				filament.color.name == (colorName ?? selectedColorName)
 		);
 
@@ -139,7 +139,7 @@ export default function PopupFilamentSelector({
 					// <Swatch swatch={selectedFilament.color}></Swatch>
 					<div>
 						<FilamentBlock filament={selectedFilament} />
-						<a target="_blank" className="block text-sm mt-2 hover:underline" href={`/materials#${selectedFilament.technology.toLowerCase()}-${selectedFilament.material.replaceAll(" ", "-").toLowerCase()}`}>View properties of {selectedFilament.material} <RegularEye className="inline mb-0.5" /></a>
+						<a target="_blank" className="block text-sm mt-2 hover:underline" href={`/materials#${selectedFilament.manufacturingMethod.shortName.toLowerCase()}-${selectedFilament.material.shortName.replaceAll(" ", "-").toLowerCase()}`}>View properties of {selectedFilament.material.shortName} <RegularEye className="inline mb-0.5" /></a>
 					</div>
 				)}
 			</div>

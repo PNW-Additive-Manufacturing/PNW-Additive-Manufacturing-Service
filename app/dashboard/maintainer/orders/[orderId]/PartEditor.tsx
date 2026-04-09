@@ -4,6 +4,7 @@ import FormLoadingSpinner from "@/app/components/FormLoadingSpinner";
 import { CurrencyInput } from "@/app/components/Inputs";
 import Machine, { getMachineImageURL, MachineData, MachineIndicator } from "@/app/components/Machine";
 import ThreeModelViewer from "@/app/components/ThreeModelViewer";
+import IconByName from "@/app/components/IconByName";
 import RefundMessage from "@/app/components/Part/RefundMessage";
 import { SelectorStatusPill } from "@/app/components/StatusPill";
 import { getSingleColor, NamedSwatch } from "@/app/components/Swatch";
@@ -160,8 +161,8 @@ export default function PartEditor({
 		) != part.supplementedFilament?.color?.name &&
 		watch(
 			"supplementedFilamentMaterial",
-			part.supplementedFilament?.material
-		) != part.supplementedFilament?.material;
+			part.supplementedFilament?.material.shortName
+		) != part.supplementedFilament?.material.shortName;
 	const isStatusChanged = watch("status", part.status) != part.status;
 	const isCostChanged = makeStringNotEmpty(watch("costInDollars") as any) != undefined &&
 		(watch("costInDollars") ?? part.priceInDollars) != part.priceInDollars;
@@ -246,7 +247,7 @@ export default function PartEditor({
 										}>
 										Printed
 									</option>}
-									{!request.isFulfilled && isPaid(request) && (
+									{!request.isFulfilled && (
 										<>
 											<option
 												value={
@@ -355,6 +356,7 @@ export default function PartEditor({
 											<ThreeModelViewer
 												isAvailable={!part.model.isPurged}
 												modelSize={part.model?.fileSizeInBytes}
+												swatch={(part.supplementedFilament ?? part.filament)?.color}
 												modelURL={`/api/download/model?modelId=${part.modelId}`} />
 										</div>
 										<div>
@@ -446,36 +448,54 @@ export default function PartEditor({
 									<div>
 										<div className="text-sm flex flex-col gap-0.5">
 
-											<Figure name={"Manufacturing Process:"} amount={part.supplementedFilament?.technology ?? part.filament?.technology} style={"inline"} />
+											{(() => {
+												const method = part.supplementedFilament?.manufacturingMethod ?? part.filament?.manufacturingMethod;
+												return method?.shortName && <Figure name={"Manufacturing Process:"} amount={<span className="inline-flex items-center gap-1.5">
+													{method.shortName}
+													{method.icon && <IconByName iconWholeName={method.icon as any} className="inline text-xs opacity-50" />}
+												</span>} style={"inline"} />;
+											})()}
 
 											<Figure name="Filament:" style="inline" amount={<>
 
 												{part.supplementedFilament != undefined && (
 													<>
-														{`${part.filament!.material.toUpperCase()} `}
-														<NamedSwatch swatch={part.filament!.color} style="compact" />
+														{part.filament ? (
+															<>
+																{`${part.filament.material.shortName.toUpperCase()} `}
+																<NamedSwatch swatch={part.filament.color} style="compact" />
+															</>
+														) : (
+															<span className="italic text-gray-500">Deleted filament</span>
+														)}
 														<RegularArrowRight className="inline mx-2 fill-gray-500" style={{ marginBottom: "3px" }}></RegularArrowRight>
-														{`${part.supplementedFilament.material.toUpperCase()} `}
+														{`${part.supplementedFilament.material.shortName.toUpperCase()} `}
 														<NamedSwatch swatch={part.supplementedFilament.color} style="compact" />
 													</>
 												)}
 
 												{part.supplementedFilament == null && (
 													<>
-														{`${part.filament!.material.toUpperCase()} `}
-														<NamedSwatch swatch={part.filament!.color} style="compact" />
+														{part.filament ? (
+															<>
+																{`${part.filament.material.shortName.toUpperCase()} `}
+																<NamedSwatch swatch={part.filament.color} style="compact" />
+															</>
+														) : (
+															<span className="italic text-gray-500">Deleted filament</span>
+														)}
 
 														{/* Display the supplement filament button */}
-														{!hasQuote(request) && <span className="ml-2 button" onClick={() => addForm({
+														{part.filament && !hasQuote(request) && <span className="ml-2 button" onClick={() => addForm({
 
-															title: `Supplement ${part.filament?.material?.toUpperCase()} ${part.filament?.color.name}`,
+															title: `Supplement ${part.filament?.material?.shortName?.toUpperCase()} ${part.filament?.color.name}`,
 															description: `${request.firstName} will receive a notification that their intended filament has been changed.`,
 															submitName: `Confirm Supplementation`,
 															onSubmit: async (data) => {
 																const colorName = data.get("supplementedFilamentColorName") as string;
 																const material = data.get("supplementedFilamentMaterial") as string;
-																console.log(part.filament?.color.name, colorName, part.filament?.material, material);
-																if (part.filament?.color.name == colorName && part.filament.material == material) {
+																console.log(part.filament?.color.name, colorName, part.filament?.material?.shortName, material);
+																if (part.filament?.color.name == colorName && part.filament.material.shortName == material) {
 																	return "You must selected a different filament than the one already selected!";
 																}
 
@@ -494,6 +514,7 @@ export default function PartEditor({
 																			displayFilamentInsight={true}
 																			colorNameInputID="supplementedFilamentColorName"
 																			materialInputID="supplementedFilamentMaterial"
+																			method={part.filament?.manufacturingMethod}
 																			filaments={filaments} />
 																	</div>
 																},
@@ -515,15 +536,17 @@ export default function PartEditor({
 
 											<Figure name={"Quantity:"} amount={`x${part.quantity}`} style={"inline"} />
 
+											{part.note && <Figure name={"Comments:"} amount={part.note} style={"inline"} />}
+
 											<Figure name={"Cost per-unit:"} style={"inline"} amount={<>
 
 												<span className={!isQuoted && (getValues("costInDollars") == undefined || getValues("costInDollars").toString() == "") ? "opacity-50" : ""}>$</span>
-												<input required className="inline w-fit p-0 mb-0 bg-transparent outline-none min-w-fit focus:outline-none"
+												<input className="inline w-fit p-0 mb-0 bg-transparent outline-none min-w-fit focus:outline-none"
 													disabled={isQuoted || part.status == PartStatus.Denied}
 													{...register("costInDollars", {
 														min: 0
 													})}
-													placeholder={(part.model.analysisResults ? `${((part.model.analysisResults!.estimatedFilamentUsedInGrams * part.filament!.costPerGramInCents) / 100).toFixed(2)} (Recommended)` : (0).toFixed(2))}
+													placeholder={(part.model.analysisResults && part.filament ? `${((part.model.analysisResults.estimatedFilamentUsedInGrams * part.filament.costPerGramInCents) / 100).toFixed(2)} (Recommended)` : (0).toFixed(2))}
 													defaultValue={part.priceInDollars?.toFixed(2)} />
 
 											</>} />

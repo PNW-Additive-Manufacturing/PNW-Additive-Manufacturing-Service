@@ -1,3 +1,4 @@
+import HorizontalWrap from '@/app/components/HorizontalWrap';
 import checkDiskSpace from 'check-disk-space';
 
 export default async function MaintainerLayout({ children }: { children: React.ReactNode; }) {
@@ -10,11 +11,12 @@ export default async function MaintainerLayout({ children }: { children: React.R
 	const isLowOnStorage = remainingStorage < 50;
 
 	return <>
-		{isLowOnStorage &&
-			<div className="mb-6 rounded-md border-dashed border-2 border-red-500 w-full h-full bg-red-100 p-2 lg:p-6">
+		<HorizontalWrap>
+			{isLowOnStorage &&
+			<div className="mt-4 mb-0 rounded-md border-dashed border-2 border-red-500 w-full h-full bg-red-100 p-3 text-sm">
 				{isLowOnStorage && <p>Available storage is under 50 GB ({remainingStorage} GB remaining). Attempt to purge stale models or expand volume.</p>}
-			</div>
-		}
+			</div>}
+		</HorizontalWrap>
 		{children}
 	</>;
 }

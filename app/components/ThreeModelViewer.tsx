@@ -1,36 +1,28 @@
 "use client";
 
 import {
-	AccumulativeShadows,
 	CameraControls,
-	Center,
-	Grid,
-	OrthographicCamera,
-	RandomizedLight
+	OrthographicCamera
 } from "@react-three/drei";
-import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
-import { LegacyRef, memo, RefObject, useEffect, useRef, useState } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import classNames from "classnames";
+import { RegularReload } from "lineicons-react";
+import { useEffect, useRef, useState } from "react";
+import { useEffectOnce } from "react-use";
 import {
 	BufferGeometry,
+	Color,
 	Euler,
-	GridHelper,
 	MeshStandardMaterial,
 	Object3D,
-	PlaneGeometry,
 	Vector3
 } from "three";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
-import { Color } from "three";
-import { useEffectOnce } from "react-use";
 import {
 	getSingleColor,
-	isGradient,
 	SwatchConfiguration,
 	templatePNW
 } from "./Swatch";
-import { detach } from "@react-three/fiber/dist/declarations/src/core/utils";
-import { RegularReload } from "lineicons-react";
-import classNames from "classnames";
 
 function UtilitySphere({
 	radius,
@@ -117,7 +109,8 @@ export default function ThreeModelViewer({
 	showOrientation,
 	loadOnPrompt,
 	showPrompts,
-	style
+	style,
+	geometry
 }: {
 	swatch?: SwatchConfiguration;
 	modelURL?: string;
@@ -130,6 +123,7 @@ export default function ThreeModelViewer({
 	showPrompts?: boolean;
 	showOrientation?: boolean;
 	style?: string;
+	geometry?: BufferGeometry
 
 	onClickOrientation?: (rotation: Euler) => void;
 }) {
@@ -151,10 +145,24 @@ export default function ThreeModelViewer({
 	// 	color = new Color("rgb(180, 180, 180)");
 	// }
 
+	useEffect(() => {
+
+		if (geometry)
+		{
+			geometry.computeBoundingSphere();
+			geometry.computeBoundingBox();
+
+			const geometryOffsetFromOrigin =geometry.boundingSphere!.center;
+
+			geometry.translate(-geometryOffsetFromOrigin.x, -geometryOffsetFromOrigin.y, -geometry.boundingBox!.min.z);
+
+			geometry.computeBoundingSphere();
+		}
+
+	}, [geometry]);
+
 	const [loadingError, setLoadingError] = useState<string | null>(null);
-	const [STLModel, setSTLModel] = useState<BufferGeometry | undefined>(
-		undefined
-	);
+	const [STLModel, setSTLModel] = useState<BufferGeometry | undefined>(geometry);
 	const [isSTLLoading, setSTLLoading] = useState(false);
 	const [isPositioned, setPositioned] = useState(false);
 
@@ -184,19 +192,11 @@ export default function ThreeModelViewer({
 			parsedSTLGeometry.computeBoundingSphere();
 			parsedSTLGeometry.computeBoundingBox();
 
-			const geometryOffsetFromOrigin =
-				// biome-ignore lint/style/noNonNullAssertion: <explanation>
-				parsedSTLGeometry.boundingSphere!.center;
-			parsedSTLGeometry.translate(
-				-geometryOffsetFromOrigin.x,
-				-geometryOffsetFromOrigin.y,
-				-parsedSTLGeometry.boundingBox!.min.z
-			);
+			const geometryOffsetFromOrigin =parsedSTLGeometry.boundingSphere!.center;
+
+			parsedSTLGeometry.translate(-geometryOffsetFromOrigin.x, -geometryOffsetFromOrigin.y, -parsedSTLGeometry.boundingBox!.min.z);
 
 			parsedSTLGeometry.computeBoundingSphere();
-			if (parsedSTLGeometry.boundingSphere !== null) {
-				// parsedSTLGeometry.boundingSphere.radius *= 1.1;
-			}
 
 			setSTLModel(parsedSTLGeometry);
 		} catch (error) {
@@ -268,6 +268,7 @@ export default function ThreeModelViewer({
 				<>
 
 					<Canvas
+						key={modelURL ?? modelFile?.name ?? "geometry"}
 						className={classNames("block w-full h-full", { "invisible": !isPositioned })}
 						frameloop="demand"
 						shadows>

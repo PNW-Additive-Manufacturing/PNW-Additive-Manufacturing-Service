@@ -42,6 +42,10 @@ import { FiActivity } from "react-icons/fi";
 import { useCallback, useContext, useMemo, useState } from "react";
 import { useFormState } from "react-dom";
 import { setQuote } from "@/app/api/server-actions/maintainer";
+import { forceAcceptInvoice } from "@/app/api/server-actions/invoice";
+import { Menu, MenuItem } from "@mui/material";
+import { toast } from "react-toastify";
+import { confirmationForm } from "@/app/components/FloatingForm";
 import PartEditor from "./PartEditor";
 import Filament from "@/app/Types/Filament/Filament";
 import DropdownSection from "@/app/components/DropdownSection";
@@ -61,7 +65,7 @@ import { LabelWithIcon } from "@/app/components/LabelWithIcon";
 import classNames from "classnames";
 import { Figure } from "@/app/components/Figures";
 import ContainerNotification from "@/app/components/ContainerNotification";
-import { FaCheck } from "react-icons/fa";
+import { FaCaretDown, FaCheck } from "react-icons/fa";
 
 export default function RequestEditor({
 	request,
@@ -404,16 +408,70 @@ function AlreadyPaidButton({ request }: { request: Request }) {
 }
 
 function WaitingForPaymentButton({ request }: { request: Request }) {
+	const { addForm } = useContext(FloatingFormContext);
+	const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
+	const [isPending, setIsPending] = useState(false);
+	const menuOpen = Boolean(menuAnchor);
+
+	const handleForceAccept = () => {
+		setMenuAnchor(null);
+		addForm(confirmationForm({
+			title: <>Force Accept Invoice</>,
+			description: `This will mark request #${request.id} as paid on behalf of ${request.firstName}, even if it puts their balance negative. This cannot be undone.`,
+			submitName: "Force Accept",
+			onSubmit: async (_) => {
+				setIsPending(true);
+				try {
+					const data = new FormData();
+					data.set("requestId", request.id.toString());
+					const res = await forceAcceptInvoice(data);
+					if (res.isComplete && res.errorMessage == undefined) {
+						toast.success(`Request #${request.id} marked as accepted.`);
+						return null;
+					}
+					return res.errorMessage ?? "Something went wrong.";
+				} catch (ex) {
+					console.error(ex);
+					return "Could not contact the server.";
+				} finally {
+					setIsPending(false);
+				}
+			},
+			onCancel: () => { }
+		}));
+	};
+
 	return (
-		<button
-			className="mb-0 shadow-md text-left text-sm w-full"
-			disabled>
-			<RegularTimer className="fill-white inline mb-1 mr-1" />
-			Waiting for Payment
-			<p className="text-white font-light text-sm">
-				{`${request.firstName} needs to accept this invoice.`}
-			</p>
-		</button>
+		<div className="flex w-full">
+			<button
+				className="mb-0 shadow-md text-left text-sm w-full rounded-r-none"
+				disabled>
+				<RegularTimer className="fill-white inline mb-1 mr-1" />
+				Waiting for Payment
+				<p className="text-white font-light text-sm">
+					{`${request.firstName} needs to accept this invoice.`}
+				</p>
+			</button>
+			<button
+				type="button"
+				aria-label="More payment options"
+				disabled={isPending}
+				onClick={(e) => setMenuAnchor(e.currentTarget)}
+				className="mb-0 shadow-md rounded-l-none border-l border-white/20 flex items-center justify-center hover:opacity-100"
+				style={{ width: "fit-content", paddingLeft: "0.75rem", paddingRight: "0.75rem", opacity: 0.65 }}>
+				<FaCaretDown className="fill-white w-4 h-4" />
+			</button>
+			<Menu
+				anchorEl={menuAnchor}
+				open={menuOpen}
+				onClose={() => setMenuAnchor(null)}
+				anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+				transformOrigin={{ vertical: "top", horizontal: "right" }}>
+				<MenuItem onClick={handleForceAccept} sx={{ fontSize: "0.875rem" }}>
+					Force Mark as Accepted
+				</MenuItem>
+			</Menu>
+		</div>
 	);
 }
 

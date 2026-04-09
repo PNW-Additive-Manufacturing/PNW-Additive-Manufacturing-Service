@@ -1,30 +1,26 @@
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
-import { Input, InputBig } from "@/app/components/Input";
 import { requestPart } from "@/app/api/server-actions/request-part";
-import { type ChangeEventHandler, LegacyRef, useRef, useState } from "react";
-import { RegularEmptyFile, RegularArrowRight, RegularCrossCircle, RegularSpinnerSolid, RegularWarning, RegularMoneyLocation, RegularMoneyProtection } from "lineicons-react";
-import Table from "./Table";
+import { Input, InputBig } from "@/app/components/Input";
 import { Dialog } from "@headlessui/react";
-import type Model from "../Types/Model/Model";
-import type Filament from "../Types/Filament/Filament";
-import PopupFilamentSelector from "./PopupFilamentSelector";
-import ThreeModelViewer from "./ThreeModelViewer";
-import { Swatch, type SwatchConfiguration } from "./Swatch";
-import type { BufferGeometry } from "three";
-import { Label } from "./Inputs";
-import { toast } from 'react-toastify';
-import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
+import { RegularArrowRight, RegularCrossCircle, RegularEmptyFile, RegularSpinnerSolid } from "lineicons-react";
 import Link from "next/link";
-import { addDays, addMinutes, fixInputDate, formatDateForHTMLInput, formatTimeForHTMLInput, withDate, withTime } from "../utils/TimeUtils";
-import { formateDateWithTime } from "../api/util/Constants";
-import { getLeadTimeDate, getLeadTimeInDays } from "../Types/Request/Request";
-import FilamentSelector, { FilamentInsight } from "./FilamentSelector";
-import DropdownSection from "./DropdownSection";
-import { TiStarFullOutline } from "react-icons/ti";
-import { IoFolderOpen } from "react-icons/io5";
+import { type ChangeEventHandler, useRef, useState } from "react";
+import { useFormState, useFormStatus } from "react-dom";
 import { TbFileUpload } from "react-icons/tb";
+import { toast } from 'react-toastify';
+import type { BufferGeometry } from "three";
+import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
+import { formateDateWithTime } from "../api/util/Constants";
+import type Filament from "../Types/Filament/Filament";
+import type Model from "../Types/Model/Model";
+import { getLeadTimeInDays } from "../Types/Request/Request";
+import { addDays, addMinutes, fixInputDate, formatDateForHTMLInput, formatTimeForHTMLInput, withDate, withTime } from "../utils/TimeUtils";
+import FilamentSelector, { FilamentInsight } from "./FilamentSelector";
+import { Label } from "./Inputs";
+import { Swatch, type SwatchConfiguration } from "./Swatch";
+import Table from "./Table";
+import ThreeModelViewer from "./ThreeModelViewer";
 
 function AddPartButton({
 	onChange
@@ -46,6 +42,7 @@ function AddPartButton({
 				onChange={(ev) => {
 					ev.preventDefault();
 					onChange(ev);
+					ev.currentTarget.files
 					ev.currentTarget.value = "";
 				}}
 			/>
@@ -233,7 +230,7 @@ export function RequestPartForm({
 									onChange={(filament) => {
 										if (modifyingPart) {
 											// Update the modifyingPart properties
-											modifyingPart.Material = filament.material;
+											modifyingPart.Material = filament.material.shortName;
 											modifyingPart.Color = filament.color;
 											modifyingPart.LeadTimeInDays = filament.leadTimeInDays;
 
@@ -256,7 +253,7 @@ export function RequestPartForm({
 									<FilamentSelector filaments={filaments} defaultFilament={modifyingPart.Filament} canSelectOutOfStock={false} displayFilamentInsight={false} onChange={(filament) => {
 										if (modifyingPart) {
 											// Update the modifyingPart properties
-											modifyingPart.Material = filament.material;
+											modifyingPart.Material = filament.material.shortName;
 											modifyingPart.Color = filament.color;
 											modifyingPart.LeadTimeInDays = filament.leadTimeInDays;
 											modifyingPart.Filament = filament;

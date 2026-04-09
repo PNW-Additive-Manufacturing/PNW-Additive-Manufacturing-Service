@@ -5,6 +5,7 @@ import { payInvoice } from "@/app/api/server-actions/invoice";
 import { cancelRequest } from "@/app/api/server-actions/request";
 import { AccountContext } from "@/app/ContextProviders";
 import ThreeModelViewer from "@/app/components/ThreeModelViewer";
+import IconByName from "@/app/components/IconByName";
 import StatusPill from "@/app/components/StatusPill";
 import { NamedSwatch, templatePNW } from "@/app/components/Swatch";
 import { useReactToPrint } from "react-to-print";
@@ -13,6 +14,7 @@ import {
 	getStatusColor,
 	isAllComplete,
 	isAllPending,
+	isPriced,
 	isRevoked,
 	PartStatus,
 	PartWithModel
@@ -52,7 +54,8 @@ import {
 	RegularStarFill,
 	RegularStarHalf,
 	RegularWallet,
-	RegularWarning
+	RegularWarning,
+	RegularWeight
 } from "lineicons-react";
 import Link from "next/link";
 import { useContext, useMemo, useRef, useState } from "react";
@@ -406,12 +409,21 @@ function UserQuote({ request }: { request: RequestWithParts }) {
 
 function PartDetails({ part, index, count }: { part: PartWithModel; index: number, count: number }) {
 	let statusColor = getStatusColor(part.status);
+	const { copyToClipboard } = useClipboard();
+
+	const method = part.supplementedFilament?.manufacturingMethod ?? part.filament?.manufacturingMethod;
 
 	return (
-		<div className=" gap-4 h-full shadow-sm out w-full bg-white">
+		<div className="gap-4 h-full shadow-sm out w-full bg-white">
 			<div className={classNames("w-full p-4 lg:p-6")}>
 				<div className="flex w-full items-center gap-4 mb-2">
-					<p className="w-full truncate text-base font-medium">{part.model.name}</p>
+					<p
+						className="w-full truncate text-base font-medium hover:fill-pnw-gold hover:text-pnw-gold hover:cursor-pointer"
+						onClick={() => {
+							copyToClipboard(part.model.name).then(() => toast.success(`Part name copied to clipboard!`, { autoClose: 1000 }));
+						}}>
+						{part.model.name}
+					</p>
 
 					<StatusPill
 						statusColor={statusColor}
@@ -420,33 +432,34 @@ function PartDetails({ part, index, count }: { part: PartWithModel; index: numbe
 
 				<div className={"w-full flex gap-4 flex-col-reverse"}>
 					<div className={classNames("h-full out relative", "w-full")}>
-						{/* <div className="absolute top-2 left-2 p-2 stroke-cool-black hover:stroke-pnw-gold opacity-25 hover:cursor-pointer hover:opacity-100 fill-transparent hover:fill-pnw-gold z-20 flex items-center justify-center" style={{ borderRadius: "100%" }}>
-							<RegularStarFill className="stroke-inherit fill-inherit opacity-100 w-4 h-4" style={{ strokeWidth: "6px" }} />
-						</div> */}
 						<div className="h-36 bg-gray-50 rounded-sm w-full">
 							<ThreeModelViewer
 								isAvailable={!part.model.isPurged}
 								modelSize={part.model?.fileSizeInBytes}
-
+								swatch={(part.supplementedFilament ?? part.filament)?.color}
 								modelURL={`/api/download/model?modelId=${part.modelId}`}></ThreeModelViewer>
 						</div>
 						<div>
 							<div className="bg-background text-subtle w-full p-3 text-xs rounded-b-sm">
 								<div className="flex gap-2 flex-wrap justify-between items-start">
+									<div>
+										{part.model.analysisResults
+											? <>
+												<div className="w-fit gap-2 fill-subtle">
+													<span className="mr-2">Model Analysis</span><RegularAlarmClock className="inline mb-0.5" /> {part.model.analysisResults.estimatedDuration} min<RegularWeight className="ml-2 inline mb-0.5" /> {part.model.analysisResults.estimatedFilamentUsedInGrams} g
+												</div>
+											</>
+											: part.model.analysisFailedReason
+												? <p className="text-warning fill-warning">{part.model.analysisFailedReason}</p>
+												: <p className="text-subtle">Queued for Analysis</p>}
+									</div>
+
 									<div className="shrink">
-										{/* This needs to go to user-facing dashboard */}
-										{/* {isRevoked(part) && <a className={`text-warning fill-warning mb-0.5 text-right block`}
-															href={part.model.isPurged ? undefined : `/api/download/model?modelId=${part.modelId}`}
-															download={`${part.model.name}.stl`}
-															target="_blank">
-															Upload Revision
-															<RegularUpload className="ml-2 inline mb-0.5 fill-inherit" />
-														</a>} */}
 										{!part.model.isPurged && <a className={`text-gray-500 fill-gray-500 hover:text-black text-right hover:fill-black text-nowrap block`}
 											href={part.model.isPurged ? undefined : `/api/download/model?modelId=${part.modelId}`}
 											download={`${part.model.name}.stl`}
 											target="_blank">
-											Download Model
+											Download
 											<RegularDownload className="ml-2 inline mb-0.5 fill-inherit" />
 										</a>}
 									</div>
@@ -463,17 +476,26 @@ function PartDetails({ part, index, count }: { part: PartWithModel; index: numbe
 					<div className="text-sm flex w-full flex-col gap-0.5">
 
 
-						<Figure name={"Manufacturing Process:"} amount={part.supplementedFilament?.technology ?? part.filament?.technology} style={"inline"} />
+						{method?.shortName && <Figure name={"Manufacturing Process:"} amount={<span className="inline-flex items-center gap-1.5">
+							{method.shortName}
+							{method.icon && <IconByName iconWholeName={method.icon as any} className="inline text-xs opacity-50" />}
+						</span>} style={"inline"} />}
 
 						<Figure name="Filament:" style="inline" amount={<>
 
-							{`${part.filament!.material.toUpperCase()} `}
-							<NamedSwatch swatch={part.filament!.color} style="compact" />
+							{part.filament ? (
+								<>
+									{`${part.filament.material.shortName.toUpperCase()} `}
+									<NamedSwatch swatch={part.filament.color} style="compact" />
+								</>
+							) : (
+								<span className="italic text-gray-500">Deleted filament</span>
+							)}
 
 							{part.supplementedFilament != undefined && (
 								<>
 									<RegularArrowRight className="inline mx-2 fill-gray-500" style={{ marginBottom: "3px" }} />
-									{`${part.supplementedFilament.material.toUpperCase()} `}
+									{`${part.supplementedFilament.material.shortName.toUpperCase()} `}
 									<NamedSwatch swatch={part.supplementedFilament.color} style="compact" />
 								</>
 							)}
@@ -482,6 +504,10 @@ function PartDetails({ part, index, count }: { part: PartWithModel; index: numbe
 						{part.supplementedFilament != null && <Figure name={"Supplemented Reason:"} amount={part.reasonForSupplementedFilament ?? "None was provided!"} style={"inline"} />}
 
 						<Figure name={"Quantity:"} amount={`x${part.quantity}`} style={"inline"} />
+
+						{part.note && <Figure name={"Comments:"} amount={part.note} style={"inline"} />}
+
+						{isPriced(part) && <Figure name={"Cost per-unit:"} amount={`$${part.priceInDollars!.toFixed(2)}`} style={"inline"} />}
 					</div>
 				</div>
 			</div>

@@ -3,7 +3,6 @@ import Model from "../Model/Model";
 import Request from "../Request/Request";
 import Part, { PartWithModel, PartWithRequest } from "./Part";
 import db from "@/app/api/Database";
-import { validateColors } from "@/app/components/Swatch";
 import ModelServe from "../Model/ModelServe";
 import FilamentServe from "../Filament/FilamentServe";
 import AccountServe from "../Account/AccountServe";
@@ -42,7 +41,7 @@ export default class PartServe {
 			reasonForSupplementedFilament: partRow.supplementedreason,
 			status: partRow.status,
 			deniedReason: partRow.revokedreason,
-			notes: partRow.notes,
+			note: partRow.note,
 			refund:
 				partRow.refundreason == undefined
 					? undefined
@@ -68,24 +67,19 @@ export default class PartServe {
 		const parts: Array<postgres.Row> =
 			await db`select * from part where RequestId=${request.id} ORDER BY Id DESC`;
 
-		// const models: Array<postgres.Row> =
-		// 	await db`select * from model where id in ${db(
-		// 		parts.map((p) => p.modelid)
-		// 	)} order by id`;
-		const filaments: Array<postgres.Row> =
-			await db`select * from filament where id in ${db(
-				parts.map((p) => p.assignedfilamentid)
-			)} order by id`;
+		const filamentIds = Array.from(new Set(
+			parts
+				.flatMap((p) => [p.assignedfilamentid, p.supplementedfilamentid])
+				.filter((id): id is number => id != null)
+		));
+		const filaments = await FilamentServe.queryByIds(filamentIds);
+		const filamentById = new Map(filaments.map((f) => [f.id, f]));
 
 		const parsedParts: (PartWithModel & PartWithRequest)[] = [];
 		for (let partIndex in parts) {
 			const partRow = parts[partIndex];
 
 			const model = (await ModelServe.queryById(partRow.modelid))!;
-
-			let filamentRow = filaments.find(
-				(f) => f.id === partRow.assignedfilamentid
-			)!;
 
 			const priceInDollars =
 				partRow.pricecents == null
@@ -98,12 +92,6 @@ export default class PartServe {
 				request,
 				modelId: partRow.modelid,
 				model: model,
-				// model: {
-				// 	id: model.id,
-				// 	name: model.name,
-				// 	ownerEmail: model.owneremail,
-				// 	fileSizeInBytes: model.filesizeinbytes
-				// },
 				deniedReason: partRow.revokedreason,
 				refund:
 					partRow.refundreason == undefined
@@ -123,18 +111,16 @@ export default class PartServe {
 				quantity: partRow.quantity,
 				priceInDollars: priceInDollars as number | undefined,
 				status: partRow.status,
-				notes: partRow.notes,
+				note: partRow.note,
 				supplementedFilament:
-					partRow.supplementedfilamentid == undefined
+					partRow.supplementedfilamentid == null
 						? undefined
-						: await FilamentServe.queryById(
-							partRow.supplementedfilamentid
-						),
+						: filamentById.get(partRow.supplementedfilamentid),
 				reasonForSupplementedFilament: partRow.supplementedreason,
 				filament:
-					filamentRow == undefined
+					partRow.assignedfilamentid == null
 						? undefined
-						: FilamentServe.fromSQLRow(filamentRow)
+						: filamentById.get(partRow.assignedfilamentid)
 			};
 			parsedParts.push(part);
 		}

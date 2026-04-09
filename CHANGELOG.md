@@ -28,6 +28,92 @@ Insert any changes related to configuring the application's environment variable
 
  -->
 
+## April-09-2026
+
+Overhauled the order request UI with a new 3-stage workflow (Upload → Parts → Finalize), where the manufacturing method is now chosen per-part instead of once per order. Introduced first-class `Material` and `ManufacturingMethod` tables so filament metadata (descriptions, icons, benefits/cons) is stored in the database rather than hardcoded. Replaced the old flat filament admin table with a three-column cascading manager and added an archive workflow so legacy filaments referenced by existing parts can be hidden from new orders without breaking history. Decoupled part status progression (printing, printed) from payment status.
+
+### Release Highlights
+
+- New 3-stage `/request-part` workflow replacing the old single-form UI. Users can now mix manufacturing methods within a single order (e.g. one SLA fixture plus three FDM brackets).
+- `Material` and `ManufacturingMethod` are now proper database entities with rich metadata.
+- Admin filament manager redesigned as a cascading panel: Method → Material → Colors, with per-variant archive/unarchive controls.
+- Filaments referenced by existing parts can no longer be hard-deleted. Maintainers archive them instead, hiding them from new orders while preserving order history.
+- Maintainer order view now shows the manufacturing method prominently per part and restricts filament supplementation to the part's own method.
+- Maintainers can now mark parts as Printing/Printed/Failed without requiring the request to be paid first.
+
+### Database Changes
+
+Added `Material` and `ManufacturingMethod` tables. Replaced the `Technology` enum column on `Filament` with a `ManufacturingMethodShortName` FK, and added a FK on the existing `Material` column. Added an `IsArchived` flag on `Filament`, and switched `Part.AssignedFilamentId` / `Part.SupplementedFilamentId` to `ON DELETE RESTRICT` so active filaments cannot be silently orphaned.
+
+#### Migration Script
+
+```sql
+BEGIN;
+
+CREATE TABLE Material (
+  ShortName varchar(50) PRIMARY KEY,
+  WholeName varchar(100) NOT NULL,
+  Description varchar(1000) NOT NULL DEFAULT '',
+  Icon varchar(50),
+  Benefits text[] NOT NULL DEFAULT '{}',
+  Cons text[] NOT NULL DEFAULT '{}',
+  LearnMoreURL varchar(2048)
+);
+
+CREATE TABLE ManufacturingMethod (
+  ShortName varchar(50) PRIMARY KEY,
+  WholeName varchar(100) NOT NULL,
+  Description varchar(1000) NOT NULL DEFAULT '',
+  Icon varchar(50),
+  Benefits text[] NOT NULL DEFAULT '{}',
+  Cons text[] NOT NULL DEFAULT '{}',
+  LearnMoreURL varchar(2048),
+  Company varchar(100),
+  Unit varchar(10) NOT NULL DEFAULT 'g'
+);
+
+INSERT INTO Material (ShortName, WholeName) SELECT DISTINCT Material, Material FROM Filament ON CONFLICT (ShortName) DO NOTHING;
+
+INSERT INTO ManufacturingMethod (ShortName, WholeName, Description, Icon, Benefits, Unit) VALUES
+  ('FDM', 'Fused Deposition Modeling', 'Most common and cost-effective method. Great for prototypes and functional parts.', 'fa:Bolt', ARRAY['Prototyping', 'General Purpose Printing'], 'g'),
+  ('Resin LCD', 'Resin Liquid Crystal Display', 'High-resolution printing with smooth surface finish and fine details.', 'fa:Droplet', ARRAY['High-Detail', 'Miniatures'], 'g'),
+  ('Metal FFF', 'MarkForged Metal X', 'Industrial-grade metal printing for high-strength applications.', 'fa:Industry', ARRAY['Metal Tooling', 'High-Strength Fixtures'], 'g')
+ON CONFLICT (ShortName) DO NOTHING;
+
+ALTER TABLE Filament ADD COLUMN ManufacturingMethodShortName varchar(50) REFERENCES ManufacturingMethod(ShortName);
+
+UPDATE Filament SET ManufacturingMethodShortName = CASE Technology::text
+  WHEN 'FDM' THEN 'FDM'
+  WHEN 'LCD' THEN 'Resin LCD'
+  WHEN 'Metal FFF' THEN 'Metal FFF'
+END;
+
+ALTER TABLE Filament ALTER COLUMN ManufacturingMethodShortName SET NOT NULL;
+
+ALTER TABLE Filament ADD CONSTRAINT fk_filament_material FOREIGN KEY (Material) REFERENCES Material(ShortName);
+
+ALTER TABLE Filament DROP COLUMN Technology;
+DROP TYPE IF EXISTS Technology;
+
+ALTER TABLE Filament ADD COLUMN IF NOT EXISTS IsArchived bool NOT NULL DEFAULT FALSE;
+
+ALTER TABLE Part DROP CONSTRAINT IF EXISTS part_assignedfilamentid_fkey;
+ALTER TABLE Part DROP CONSTRAINT IF EXISTS part_supplementedfilamentid_fkey;
+
+ALTER TABLE Part
+  ADD CONSTRAINT part_assignedfilamentid_fkey
+    FOREIGN KEY (AssignedFilamentId) REFERENCES Filament(Id)
+    ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT part_supplementedfilamentid_fkey
+    FOREIGN KEY (SupplementedFilamentId) REFERENCES Filament(Id)
+    ON DELETE RESTRICT ON UPDATE CASCADE;
+
+ALTER TABLE Part DROP CONSTRAINT IF EXISTS part_assignedprintername_fkey;
+DROP TABLE IF EXISTS Printer;
+
+-- Verify, then COMMIT;
+```
+
 ## August-06-2025 
 
 Introduced **reregistration**, a new system designed to monitor user activity by requiring them to re-register their accounts within defined academic periods *(e.g., Fall, Spring, Summer)*.

@@ -1,10 +1,9 @@
 import classNames from "classnames";
-import { RegularCheckmark } from "lineicons-react";
 import { FaCheck } from "react-icons/fa";
 
 export interface TimelineOptionData {
 	title: string;
-	description?: JSX.Element;
+	description?: JSX.Element | string;
 	disabled: boolean;
 }
 
@@ -21,7 +20,7 @@ export default function Timeline({
 		options = options.slice(0, firstDisabledOptionIndex + 1);
 
 	return (
-		<>
+		<div>
 			{options.map((option, index) => {
 				const isLast = index == options.length - 1;
 
@@ -46,6 +45,6 @@ export default function Timeline({
 					</div >
 				);
 			})}
-		</>
+		</div>
 	);
 }

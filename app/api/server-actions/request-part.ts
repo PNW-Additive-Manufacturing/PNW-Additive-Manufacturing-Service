@@ -24,7 +24,7 @@ export async function getFilamentList() {
 	let rtn: { material: string; color: string }[] = [];
 
 	for (let filament of filaments) {
-		rtn.push({ material: filament.material, color: filament.colorname });
+		rtn.push({ material: filament.material as string, color: filament.colorname as string });
 	}
 
 	return rtn;
@@ -142,7 +142,7 @@ export async function requestPart(prevState: string, formData: FormData) {
 					throw new Error("Quantity must at least be one!");
 				}
 
-				const filament = await FilamentServe.queryIdByNameAndMaterial(color[i], material[i], true);
+				const filament = await FilamentServe.queryByColorAndMaterial(color[i], material[i], true);
 				if (filament == undefined) {
 					throw new Error(`${color[i]} ${material[i]} is not in stock!`);
 				}
