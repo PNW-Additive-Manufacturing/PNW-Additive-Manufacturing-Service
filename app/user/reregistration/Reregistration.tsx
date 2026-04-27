@@ -5,13 +5,14 @@ import APIForm from "@/app/components/APIForm";
 import { Departments, YearsOfStudy } from "@/app/Types/Account/Account";
 import { RegistrationSpan } from "@/app/Types/RegistrationSpan/RegistrationSpan";
 import { AnimatePresence, motion } from "motion/react";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { actionRegisterAccountToReregistrationSpan } from "./actions";
 
 export default function Reregistration({ registration, name }: { registration: RegistrationSpan, name: string }) {
 
     const [isRegistered, setIsRegistered] = useState(false);
-    const randomTitle = useMemo(() => getRandomWelcome(name), []);
+    const [randomTitle, setRandomTitle] = useState("");
+    useEffect(() => { setRandomTitle(getRandomWelcome(name)); }, []);
 
     return <>
 
