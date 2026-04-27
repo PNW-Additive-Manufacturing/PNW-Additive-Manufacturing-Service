@@ -10,6 +10,7 @@ import { FaCheck, FaTimes } from "react-icons/fa";
 import { FaA, FaArrowRight, FaClock, FaCloudArrowUp, FaEllipsis, FaFont, FaHashtag, FaLayerGroup, FaLocationArrow, FaSquarePlus, FaTrash, FaTriangleExclamation } from "react-icons/fa6";
 import { BufferGeometry, Vector3 } from "three";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
+import ErrorPrompt from "../components/ErrorPrompt";
 import IconByName from "../components/IconByName";
 import InvisibleFileInput, { InvisibleFileInputHandle } from "../components/InvisibleFileInput";
 import QuantitySelector from "../components/QuantitySelector";
@@ -22,7 +23,9 @@ import { formatBytes } from "../utils/StringUtils";
 
 const uploadLimitInBytes = 99 * Math.pow(10, 6); // 99 MB
 
-export default function RequestPart({ filaments }: { filaments: Filament[] }) {
+type ActiveSpanData = { id: string; name: string; beginAt: string; endAt: string } | null;
+
+export default function RequestPart({ filaments, activeSpan }: { filaments: Filament[], activeSpan: ActiveSpanData }) {
 
     const [stage, setStage] = useState<1 | 2 | 3>(1);
 
@@ -31,7 +34,22 @@ export default function RequestPart({ filaments }: { filaments: Filament[] }) {
     const [submitError, setSubmitError] = useState<string | undefined>();
     const [isPending, startTransition] = useTransition();
 
+    if (!activeSpan) {
+        return <ErrorPrompt
+            code="Closed"
+            details="The Additive Manufacturing Lab is not currently accepting new requests. Check back when a new semester registration period opens."
+        />;
+    }
+
+    const msPerDay = 1000 * 60 * 60 * 24;
+    const daysUntilClose = Math.ceil((new Date(activeSpan.endAt).getTime() - Date.now()) / msPerDay);
+
     return <>
+
+        {daysUntilClose <= 14 && <div className="mb-6 bg-yellow-50 border border-yellow-300 rounded-lg p-4 flex gap-3 items-start">
+            <FaTriangleExclamation className="fill-yellow-500 mt-0.5 shrink-0" />
+            <p className="font-light text-sm">The lab will stop accepting requests on <strong>{new Date(activeSpan.endAt).toLocaleDateString()}</strong>. Submit your order before then.</p>
+        </div>}
 
         {/* <div className="flex items-center font-light gap-1 text-sm mb-6">
 
@@ -141,8 +159,11 @@ function FinalizeOrder({ partsForSubmission, onCancel, onNext, isPending, submit
     const leadTimeInDays = useMemo(() => Math.max(...partsForSubmission.map(p => p.filament.leadTimeInDays)), [partsForSubmission]);
     const minExpectedBy = useMemo(() => {
         const msPerDay = 1000 * 60 * 60 * 24;
-        return new Date(currentDate.getTime() + msPerDay * leadTimeInDays);
+        const raw = new Date(currentDate.getTime() + msPerDay * leadTimeInDays);
+        return nextWeekday(raw);
     }, [currentDate, leadTimeInDays]);
+    const submittingOnWeekend = isWeekend(currentDate);
+    const spansWeekend = leadTimeSpansWeekend(currentDate, leadTimeInDays);
     const methodsInUse = useMemo(() => getUniqueManufacturingMethods(partsForSubmission.map(p => p.filament)), [partsForSubmission]);
 
     // console.log(expectedBy, minExpectedBy, expectedBy > minExpectedBy);
@@ -162,11 +183,24 @@ function FinalizeOrder({ partsForSubmission, onCancel, onNext, isPending, submit
 
                 <Snibbit text={"When do you require these items?"} icon={<FaClock />} className="mb-3 w-full" />
 
+                {submittingOnWeekend && <div className="mb-3 bg-yellow-50 border border-yellow-300 rounded-lg p-3 flex gap-2 items-start text-sm">
+                    <FaTriangleExclamation className="fill-yellow-500 mt-0.5 shrink-0" />
+                    <p className="font-light">You are submitting on a weekend. Your order will begin processing on the next business day, and there is no guarantee parts will be ready by your selected date.</p>
+                </div>}
+
+                {!submittingOnWeekend && spansWeekend && <div className="mb-3 bg-yellow-50 border border-yellow-300 rounded-lg p-3 flex gap-2 items-start text-sm">
+                    <FaTriangleExclamation className="fill-yellow-500 mt-0.5 shrink-0" />
+                    <p className="font-light">Your lead time extends through the weekend. Parts may not be available until {minExpectedBy.toLocaleDateString()}.</p>
+                </div>}
+
                 <input type="datetime-local" placeholder="Select a Date" required min={formatDateToYYYYMMDD(minExpectedBy)} className={classNames("mb-2 w-full", { "text-warning": expectedBy != null && minExpectedBy > expectedBy })} onChange={(ev) => setExpectedBy(fromLocalDateHTMLInput(ev.currentTarget.valueAsDate ?? ev.currentTarget.value))} />
 
                 {/* <p className="button hover:underline" onClick={() => setExpectedBy(new Date(minExpectedBy.getTime() + 1000 * 5))}>Use Minimum Lead-Time</p> */}
 
-                <p className={classNames("font-light", { "text-warning": expectedBy != null && minExpectedBy > expectedBy })}>With what you've selected, our minimum lead-time is {leadTimeInDays} Day(s).</p>
+                <p className={classNames("font-light", { "text-warning": expectedBy != null && minExpectedBy > expectedBy })}>
+                    With what you've selected, our minimum lead-time is {leadTimeInDays} Day(s).
+                    {(submittingOnWeekend || spansWeekend) ? " Weekends are not included as processing days." : ""}
+                </p>
 
                 <div className="flex flex-wrap gap-2 mt-3 items-center">
 
@@ -477,6 +511,7 @@ import useClickedOutside from "../hooks/useClickedOutside";
 import useDate from "../hooks/useDate";
 import { uniqueBy } from "../utils/ArrayUtils";
 import { formatDateToYYYYMMDD, fromLocalDateHTMLInput } from "../utils/JSDateUtils";
+import { isWeekend, leadTimeSpansWeekend, nextWeekday } from "../utils/TimeUtils";
 
 function DropdownMenu({ children, isShown }: React.PropsWithChildren<{ isShown: boolean }>) {
 

@@ -4,8 +4,9 @@ import { formateDate } from "@/app/api/util/Constants";
 import { confirmationForm, FloatingFormContext } from "@/app/components/FloatingForm";
 import { RegistrationSpan, RegistrationSpanEntry } from "@/app/Types/RegistrationSpan/RegistrationSpan";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { FaTrash } from "react-icons/fa";
-import { actionDeleteRegistrationSpan, actionFetchRegistrationSpanEntries } from "./actions";
+import { FaPencil, FaTrash } from "react-icons/fa6";
+import { actionDeleteRegistrationSpan, actionFetchRegistrationSpanEntries, actionUpdateRegistrationSpan } from "./actions";
+import { formatDateForHTMLInput } from "@/app/utils/TimeUtils";
 import useAPIFormState from "@/app/hooks/useAPIFormState";
 import { useToggle } from "react-use";
 import classNames from "classnames";
@@ -35,6 +36,44 @@ export default function RegistrationSpanBlock({ span }: { span: RegistrationSpan
                 return result.success ? null : result.errorMessage ?? "Unknown";
             }
         }));
+
+    }, [span]);
+
+    const onEditClick = useCallback(() => {
+
+        addForm({
+            title: "Edit Registration Span",
+            description: "Update the name and date range for this registration span.",
+            submitName: "Save Changes",
+            questions: [
+                {
+                    type: "text",
+                    id: "name",
+                    name: "Name",
+                    required: true,
+                    defaultValue: span.name,
+                },
+                {
+                    type: "date",
+                    id: "beginAt",
+                    name: "Begin At",
+                    required: true,
+                    defaultValue: formatDateForHTMLInput(span.beginAt),
+                },
+                {
+                    type: "date",
+                    id: "endAt",
+                    name: "End At",
+                    required: true,
+                    defaultValue: formatDateForHTMLInput(span.endAt),
+                },
+            ],
+            async onSubmit(data) {
+                data.set("spanId", span.id);
+                const result = await actionUpdateRegistrationSpan(data);
+                return result.success ? null : result.errorMessage ?? "Unknown";
+            },
+        });
 
     }, [span]);
 
@@ -75,6 +114,11 @@ export default function RegistrationSpanBlock({ span }: { span: RegistrationSpan
 
                     </div>
 
+                </div>
+
+                <div className="button bg-pnw-gold-light p-3 rounded-lg" onClick={onEditClick}>
+
+                    <FaPencil className="w-5 h-5" />
 
                 </div>
 

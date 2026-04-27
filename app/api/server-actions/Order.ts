@@ -10,6 +10,7 @@ import db from "@/app/api/Database";
 import { getModelPath } from "@/app/files";
 import AccountServe from "@/app/Types/Account/AccountServe";
 import FilamentServe from "@/app/Types/Filament/FilamentServe";
+import { queryActiveRegistrationSpan } from "@/app/Types/RegistrationSpan/RegistrationSpanServe";
 import { RequestServe } from "@/app/Types/Request/RequestServe";
 import { addDays } from "@/app/utils/TimeUtils";
 import { maintainerRequestReceived, sendEmail, sendRequestEmail } from "../util/Mail";
@@ -51,6 +52,10 @@ export async function submitOrder(formData: FormData): Promise<SubmitOrderResult
 		return { error: "Invalid required-by date." };
 	if (requiredBy <= now)
 		return { error: "Required-by date must be in the future." };
+
+	const activeSpan = await queryActiveRegistrationSpan(now);
+	if (!activeSpan)
+		return { error: "The Additive Manufacturing Lab is not currently accepting requests." };
 
 	if (models.length === 0)
 		return { error: "You must upload at least one model." };

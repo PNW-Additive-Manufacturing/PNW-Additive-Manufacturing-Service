@@ -82,6 +82,26 @@ export async function addRegistrationSpan(span: RegistrationSpan) {
     await db`INSERT INTO ReregistrationSpan (Id, Name, BeginAt, EndAt) VALUES (${span.id}, ${span.name}, ${span.beginAt}, ${span.endAt})`;
 }
 
+export async function updateRegistrationSpan(id: RegistrationSpan["id"], name: string, beginAt: Date, endAt: Date): Promise<void> {
+    await db`UPDATE ReregistrationSpan SET Name = ${name}, BeginAt = ${beginAt}, EndAt = ${endAt} WHERE Id = ${id}`;
+}
+
+
+export async function queryActiveRegistrationSpan(date: Date): Promise<RegistrationSpan | null> {
+    const row = (await db`
+        SELECT rs.*
+        FROM ReregistrationSpan rs
+        WHERE rs.beginAt <= ${date}
+            AND rs.endAt >= ${date}
+        LIMIT 1
+    `)?.at(0);
+    if (!row) return null;
+    try { return parseRegistrationSpanFromSQL(row); }
+    catch (error) {
+        console.error(`Unable to parse registration span! ${error}`);
+        return null;
+    }
+}
 
 export async function deleteAccountInRegistrationSpan(spanId: RegistrationSpan["id"]) {
     await db`DELETE FROM ReregistrationSpan WHERE Id=${spanId}`;

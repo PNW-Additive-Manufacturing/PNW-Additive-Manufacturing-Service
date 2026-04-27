@@ -51,3 +51,23 @@ export function formatTimeForHTMLInput(date: Date) {
         ':' +
         String(date.getMinutes()).padStart(2, '0');
 }
+
+export function isWeekend(date: Date): boolean {
+    const day = date.getDay();
+    return day === 0 || day === 6;
+}
+
+export function nextWeekday(date: Date): Date {
+    const d = new Date(date);
+    while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate() + 1);
+    return d;
+}
+
+export function leadTimeSpansWeekend(startDate: Date, days: number): boolean {
+    const d = new Date(startDate);
+    for (let i = 0; i < days; i++) {
+        d.setDate(d.getDate() + 1);
+        if (d.getDay() === 0 || d.getDay() === 6) return true;
+    }
+    return false;
+}

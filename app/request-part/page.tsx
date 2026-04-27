@@ -2,15 +2,23 @@
 
 import HorizontalWrap from "../components/HorizontalWrap";
 import FilamentServe from "../Types/Filament/FilamentServe";
+import { queryActiveRegistrationSpan } from "../Types/RegistrationSpan/RegistrationSpanServe";
 import RequestPart from "./RequestPart";
 
 export default async function Request() {
-	const filaments = await FilamentServe.queryAll();
+	const [filaments, activeSpan] = await Promise.all([
+		FilamentServe.queryAll(),
+		queryActiveRegistrationSpan(new Date()),
+	]);
+
+	const activeSpanData = activeSpan
+		? { id: activeSpan.id, name: activeSpan.name, beginAt: activeSpan.beginAt.toISOString(), endAt: activeSpan.endAt.toISOString() }
+		: null;
 
 	return (
 		<div className="bg-background min-h-screen">
 			<HorizontalWrap className="py-8">
-				<RequestPart filaments={filaments} />
+				<RequestPart filaments={filaments} activeSpan={activeSpanData} />
 			</HorizontalWrap>
 		</div>
 	);
