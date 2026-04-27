@@ -5,9 +5,9 @@ import { ManufacturingMethod } from "@/app/Types/ManufacturingMethod/Manufacturi
 import classNames from "classnames";
 import { RegularSpinnerSolid } from "lineicons-react";
 import React, { useCallback, useMemo, useRef, useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
+
 import { FaCheck, FaTimes } from "react-icons/fa";
-import { FaA, FaArrowRight, FaClock, FaCloudArrowUp, FaEllipsis, FaFont, FaHashtag, FaLayerGroup, FaLocationArrow, FaSquarePlus, FaTrash, FaTriangleExclamation } from "react-icons/fa6";
+import { FaA, FaArrowRight, FaClock, FaCloudArrowUp, FaEllipsis, FaFont, FaHashtag, FaLayerGroup, FaLocationArrow, FaPlus, FaTrash, FaTriangleExclamation } from "react-icons/fa6";
 import { BufferGeometry, Vector3 } from "three";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 import IconByName from "../components/IconByName";
@@ -26,9 +26,8 @@ type ActiveSpanData = { id: string; name: string; beginAt: string; endAt: string
 
 export default function RequestPart({ filaments, activeSpan }: { filaments: Filament[], activeSpan: ActiveSpanData }) {
 
-    const [stage, setStage] = useState<1 | 2 | 3>(1);
+    const [stage, setStage] = useState<1 | 2>(1);
 
-    const [modelSelection, setModelSelection] = useState<ModelSelection>();
     const [selectedParts, setSelectedParts] = useState<PartForSubmission[]>();
     const [submitError, setSubmitError] = useState<string | undefined>();
     const [isPending, startTransition] = useTransition();
@@ -39,7 +38,7 @@ export default function RequestPart({ filaments, activeSpan }: { filaments: Fila
                 <div className="py-8 flex flex-col items-center gap-3 text-center">
                     <FaTriangleExclamation className="w-10 h-10 fill-pnw-gold" />
                     <p className="text-xl font-semibold">The Additive Manufacturing Lab is Closed</p>
-                    <p className="font-light text-sm max-w-md">We are not currently accepting new requests. Check back when a new semester registration period opens.</p>
+                    <p className="text-sm max-w-md">We are not currently accepting new requests. Check back when a new semester registration period opens.</p>
                 </div>
             </Surface>
         );
@@ -50,7 +49,7 @@ export default function RequestPart({ filaments, activeSpan }: { filaments: Fila
 
     return <>
 
-        {daysUntilClose <= 14 && <div className="mb-6 bg-white border border-pnw-gold/30 rounded-lg p-4 flex gap-3 items-center drop-shadow-sm">
+        {daysUntilClose <= 14 && <div className="mb-6 bg-white rounded-lg p-4 flex gap-3 items-center drop-shadow-sm">
             <FaTriangleExclamation className="fill-pnw-gold shrink-0" />
             <p className="text-sm font-medium">The lab will stop accepting requests on <strong>{new Date(activeSpan.endAt).toLocaleDateString()}</strong>. Submit your order before then.</p>
         </div>}
@@ -78,9 +77,8 @@ export default function RequestPart({ filaments, activeSpan }: { filaments: Fila
                 <Surface>
 
                     <Timeline options={[
-                        { title: "Select 3D Models", description: (modelSelection ? modelSelection.uploadedModels.length > 0 ? `${modelSelection.uploadedModels.length} Model(s)` : undefined : "Using Previous Models"), disabled: !(stage > 1) },
-                        { title: "Parts to Manufacture", disabled: !(stage >= 2), description: selectedParts ? `${selectedParts.length} Part(s)` : undefined },
-                        { title: "Review & Submit", disabled: !(stage >= 3) },
+                        { title: "Parts to Manufacture", disabled: false, description: selectedParts ? `${selectedParts.length} Part(s)` : undefined },
+                        { title: "Review & Submit", disabled: !(stage >= 2) },
                     ]} />
 
                 </Surface>
@@ -100,19 +98,16 @@ export default function RequestPart({ filaments, activeSpan }: { filaments: Fila
             <div className="col-span-3">
                 <Surface gap={8}>
 
-                    {stage === 1 && <Upload3DModels onNext={(models) => { setStage(2); setModelSelection(models); }} existingState={modelSelection} />}
-                    {stage === 2 && modelSelection && <PartSelection
+                    {stage === 1 && <PartSelection
                         materials={filaments}
                         defaultValue={selectedParts}
-                        modelSelection={modelSelection}
-                        onNext={parts => { setStage(3); setSelectedParts(parts); }}
-                        onCancel={() => setStage(1)} />}
+                        onNext={parts => { setStage(2); setSelectedParts(parts); }} />}
 
-                    {stage === 3 && selectedParts && <>
+                    {stage === 2 && selectedParts && <>
 
                         <FinalizeOrder
                             partsForSubmission={selectedParts}
-                            onCancel={() => setStage(2)}
+                            onCancel={() => setStage(1)}
                             isPending={isPending}
                             submitError={submitError}
                             onNext={(orderName, requiredBy, comments) => {
@@ -474,35 +469,78 @@ function PartSelectionConfigureStage({ selectedPart, materials, onNext, onCancel
     </>
 }
 
-function PartSelectionChooseModel({ modelSelection, onSelect, onCancel, partCount }: { partCount: number, modelSelection: ModelSelection, onCancel: () => void, onSelect: (model: UploadedModel) => void; }) {
+function PartSelectionUploadModel({ existingModels, onSelect, onCancel }: { existingModels: UploadedModel[], onSelect: (model: UploadedModel) => void, onCancel: () => void }) {
 
-    const [chosenModel, setChosenModel] = useState<UploadedModel>();
+    const invisibleFileInputRef = useRef<InvisibleFileInputHandle>(null);
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [parseError, setParseError] = useState<string>();
+
+    const handleFiles = useCallback(async (files: FileList) => {
+        const file = files[0];
+        if (!file) return;
+
+        const duplicate = existingModels.find(m => isFileEqual(m.file, file));
+        if (duplicate) { onSelect(duplicate); return; }
+
+        const model: UploadedModel = {
+            file,
+            fileName: file.name,
+            name: cleanseFilename(file.name),
+            extension: file.name.split(".").at(-1)!,
+            sizeInBytes: file.size,
+        };
+
+        setIsProcessing(true);
+        setParseError(undefined);
+        try {
+            const geometry = await parseUploadedModelGeometry(model);
+            onSelect({ ...model, geometry });
+        } catch (err) {
+            setParseError(String(err));
+            setIsProcessing(false);
+        }
+    }, [existingModels, onSelect]);
 
     return <>
 
         <Slide
-            title={"Choose Model"}
-            description={"Select the model you'd like to utilize for the next Part."}
-            nextEnabled={chosenModel !== undefined}
-            onNext={() => onSelect?.(chosenModel!)}
-            nextText={chosenModel ? `Choose ${chosenModel.name}` : "Choose Model"}
-            onCancel={onCancel}>
+            title={"Upload Model"}
+            description={"Upload the STL file for this part. If you've already used a file in this order, select it below to reuse it."}
+            nextEnabled={false}
+            onCancel={onCancel}
+            cancelText="Cancel">
 
-            <div>
+            <InvisibleFileInput ref={invisibleFileInputRef} accept=".stl" onChange={handleFiles} />
 
-                <Snibbit icon={<FaCloudArrowUp />} text={"Uploaded Models"} className="mb-2" />
+            <div className={classNames("hover:cursor-pointer", { "opacity-50 pointer-events-none": isProcessing })} onClick={() => invisibleFileInputRef.current?.enter?.()}>
+
+                <OutlinedInstructionPanel
+                    title={isProcessing ? "Processing..." : "Select to Upload File"}
+                    icon={isProcessing ? <RegularSpinnerSolid className="animate-spin" /> : <FaCloudArrowUp />}
+                    descriptions={[
+                        `Supported Format: STL (Max ${formatBytes(uploadLimitInBytes, 0)})`,
+                        "Models must be sized under 256x256x256 Millimeters"
+                    ]} />
+
+            </div>
+
+            {parseError && <p className="text-warning text-sm">{parseError}</p>}
+
+            {existingModels.length > 0 && <div>
+
+                <Snibbit icon={<FaCloudArrowUp />} text={"Already in this Order"} className="mb-2" />
 
                 <div className="grid gap-4 grid-cols-2">
 
-                    {modelSelection.uploadedModels.map(model => <ModelDia
-                        selected={true}
+                    {existingModels.map(model => <ModelDia
+                        selected={false}
                         key={model.fileName}
                         uploadModel={model}
-                        onSelect={() => { setChosenModel(model); onSelect(model); }} />)}
+                        onSelect={() => onSelect(model)} />)}
 
                 </div>
 
-            </div>
+            </div>}
 
         </Slide>
 
@@ -627,33 +665,93 @@ function ContextActionMenu({ children, actions }: React.PropsWithChildren<{ acti
     </>
 }
 
-function PartSelection({ onCancel, onNext, modelSelection, materials, defaultValue }: { defaultValue?: PartForSubmission[], modelSelection: ModelSelection, materials: Filament[], onCancel?: () => void, onNext?: (parts: PartForSubmission[]) => void }) {
+function GhostPartCard() {
+    return <div className="rounded-lg border-2 border-dashed border-black/[0.06] min-h-[220px]" />;
+}
+
+function EmptyPartsState({ onClick, isProcessing, parseError }: { onClick: () => void, isProcessing: boolean, parseError?: string }) {
+    return (
+        <div
+            onClick={isProcessing ? undefined : onClick}
+            className={classNames(
+                "col-span-3 border-2 border-dashed border-black/10 rounded-lg py-12 px-6 flex flex-col items-center gap-5 text-center transition-colors",
+                isProcessing
+                    ? "opacity-60 pointer-events-none"
+                    : "hover:cursor-pointer hover:border-pnw-gold hover:bg-pnw-gold-light/40"
+            )}>
+            <div className="w-12 h-12 [&>*]:w-full [&>*]:h-full">
+                {isProcessing ? <RegularSpinnerSolid className="animate-spin fill-pnw-gold" /> : <FaCloudArrowUp className="fill-pnw-gold" />}
+            </div>
+            <div>
+                <p className="font-semibold text-base">{isProcessing ? "Processing..." : "Click to upload your first STL file"}</p>
+                <p className="font-light text-xs text-gray-500 mt-1">
+                    STL only, max {formatBytes(uploadLimitInBytes, 0)}, under 256×256×256 mm
+                </p>
+            </div>
+            {parseError && <p className="text-warning text-xs">{parseError}</p>}
+        </div>
+    );
+}
+
+function PartSelection({ onNext, materials, defaultValue }: { defaultValue?: PartForSubmission[], materials: Filament[], onNext?: (parts: PartForSubmission[]) => void }) {
 
     const [selectedParts, setSelectedParts] = useState<PartForSubmission[]>(defaultValue ?? []);
-    const [isSelectingModel, setIsSelectingModel] = useState(false);
     const [modifyingPart, setModifyingPart] = useState<{ stage: 1 | 2 | 3, insertAt?: number, submission: Partial<PartForSubmission> & Pick<PartForSubmission, "model"> }>();
+    const [isParsingModel, setIsParsingModel] = useState(false);
+    const [parseError, setParseError] = useState<string>();
+    const invisibleFileInputRef = useRef<InvisibleFileInputHandle>(null);
+
+    const handleFiles = useCallback(async (files: FileList) => {
+        const file = files[0];
+        if (!file) return;
+        const existing = uniqueBy(selectedParts.map(p => p.model), m => m.fileName).find(m => isFileEqual(m.file, file));
+        if (existing) { setModifyingPart({ stage: 1, submission: { model: existing } }); return; }
+        const model: UploadedModel = { file, fileName: file.name, name: cleanseFilename(file.name), extension: file.name.split(".").at(-1)!, sizeInBytes: file.size };
+        setIsParsingModel(true);
+        setParseError(undefined);
+        try {
+            const geometry = await parseUploadedModelGeometry(model);
+            setModifyingPart({ stage: 1, submission: { model: { ...model, geometry } } });
+        } catch (err) {
+            setParseError(String(err));
+        } finally {
+            setIsParsingModel(false);
+        }
+    }, [selectedParts]);
 
     return <>
 
-        {!isSelectingModel && !modifyingPart && <>
+        {!modifyingPart && <>
 
             {/* To continue, one or more parts must be completed. */}
 
             <Slide
                 title={"Parts to Manufacture"}
-                description={"In this step, select the model you'd like to print or choose an existing part to modify or remove. Each part has its own manufacturing method, quantity, and filament settings, so you can mix methods or reuse the same model in different colors, materials, or amounts."}
+                description={"Add each part you need printed. The same model file can be reused across multiple parts with different settings."}
                 nextEnabled={selectedParts.length > 0}
                 nextHelperText="Add one or more Parts"
                 nextText="Finalize Order"
-                cancelText="Go Back to Files"
                 onNext={() => onNext?.(selectedParts)}
-                onCancel={onCancel}>
+                bottomLeft={selectedParts.length > 0 ? (
+                    <div className="flex flex-col gap-1">
+                        <div
+                            className={classNames("hover:cursor-pointer flex items-center gap-2 w-fit text-sm font-medium text-pnw-gold hover:underline", { "opacity-50 pointer-events-none": isParsingModel })}
+                            onClick={() => invisibleFileInputRef.current?.enter?.()}>
+                            {isParsingModel ? <RegularSpinnerSolid className="w-4 h-4 animate-spin fill-pnw-gold" /> : <FaPlus className="fill-pnw-gold" />}
+                            {isParsingModel ? "Processing..." : "Add to Order"}
+                        </div>
+                        {parseError && <p className="text-warning text-xs">{parseError}</p>}
+                    </div>
+                ) : undefined}>
 
                 <div>
 
-                    <div className="grid grid-cols-3 gap-6 flex-wrap">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
-                        {selectedParts.map((p, i) => <>
+                        {selectedParts.length === 0 ? <EmptyPartsState
+                            onClick={() => invisibleFileInputRef.current?.enter?.()}
+                            isProcessing={isParsingModel}
+                            parseError={parseError} /> : selectedParts.map((p, i) => <>
 
                             <ContextActionMenu key={p.name} actions={[
 
@@ -728,15 +826,11 @@ function PartSelection({ onCancel, onNext, modelSelection, materials, defaultVal
 
                         </>)}
 
-                        <div className="hover:cursor-pointer w-full h-full col-span-full" onClick={() => setIsSelectingModel(true)}>
+                        {selectedParts.length > 0 && Array.from({ length: (3 - (selectedParts.length % 3)) % 3 }).map((_, i) => (
+                            <GhostPartCard key={`ghost-${i}`} />
+                        ))}
 
-                            <OutlinedInstructionPanel
-                                title={"Add to Order"}
-                                descriptions={["Configure material and colors", "Models may be added to multiple parts"]}
-                                icon={<FaSquarePlus />}
-                            />
-
-                        </div>
+                        <InvisibleFileInput ref={invisibleFileInputRef} accept=".stl" onChange={handleFiles} />
 
                     </div>
 
@@ -746,13 +840,6 @@ function PartSelection({ onCancel, onNext, modelSelection, materials, defaultVal
 
         </>}
 
-        {/* Prompt to select a model. THEN partial insert into modifyingPart.  */}
-
-        {isSelectingModel && <PartSelectionChooseModel
-            partCount={selectedParts.length}
-            modelSelection={modelSelection}
-            onSelect={(model) => { setModifyingPart({ stage: 1, submission: { model: model } }); setIsSelectingModel(false); }}
-            onCancel={() => setIsSelectingModel(false)} />}
 
         {/* Displayed once an initial model has been selected above. */}
 
@@ -762,14 +849,7 @@ function PartSelection({ onCancel, onNext, modelSelection, materials, defaultVal
                 materials={materials}
                 selectedPart={modifyingPart.submission}
                 isEditing={modifyingPart.insertAt != null}
-                onCancel={() => {
-                    if (modifyingPart.insertAt != null) {
-                        setModifyingPart(undefined);
-                    } else {
-                        setModifyingPart(undefined);
-                        setIsSelectingModel(true);
-                    }
-                }}
+                onCancel={() => setModifyingPart(undefined)}
                 onNext={p => {
                     if (modifyingPart.insertAt == null) {
                         setModifyingPart({ submission: p, stage: 2 });
@@ -909,12 +989,6 @@ function DisplayManufacturingMethod({ method, selected, filaments, onClick }: { 
 
 type UploadedModel = { file: File, fileName: string, name: string, extension: string, sizeInBytes: number, geometry?: ModelGeometry, geometryParseIssues?: string };
 
-type ModelSelection = {
-
-    usePreviousModels: boolean,
-    uploadedModels: UploadedModel[],
-
-};
 
 function ModelDia({ uploadModel, onRemove, onSelect, selected }: { selected: boolean, uploadModel: UploadedModel, onRemove?: () => void; onSelect?: () => void; }) {
 
@@ -979,98 +1053,8 @@ function ModelDia({ uploadModel, onRemove, onSelect, selected }: { selected: boo
     </>
 }
 
-function Upload3DModels({ existingState, onNext, onCancel }: React.PropsWithChildren<{ existingState?: ModelSelection, onCancel?: () => void, onNext?: (selection: ModelSelection) => void }>) {
 
-    const { register, watch } = useForm({ defaultValues: { "use-previous-models": existingState?.usePreviousModels ?? false } });
-
-    const doUsePreviousModels = watch("use-previous-models");
-
-    const invisibleFileInputRef = useRef<InvisibleFileInputHandle>(null);
-
-    const [uploadedModels, setUploadModels] = useState<UploadedModel[]>(existingState?.uploadedModels ?? []);
-
-    const anyModelParseFailed = uploadedModels.some(m => m.geometryParseIssues != null);
-    const anyModelsProcessing = uploadedModels.some(m => m.geometry == null);
-
-    const uploadSizeInBytes = useMemo(() => uploadedModels.map(m => m.sizeInBytes).reduce((p, v) => p + v, 0), [uploadedModels]);
-    const uploadSizeIsUnderLimit = uploadSizeInBytes <= uploadLimitInBytes;
-
-    const addModelCallback = useCallback((files: FileList) => {
-
-        const newModels = uniqueBy(Array.from(files)
-            .map(f => ({ file: f, fileName: f.name, name: cleanseFilename(f.name), extension: f.name.split(".").at(-1), sizeInBytes: f.size } as UploadedModel))
-            .filter(mA => !uploadedModels.some(mB => isFileEqual(mA.file, mB.file))), e => e.name);
-
-        newModels.forEach((model, i) => {
-            sleep(i * 250) // Delay each model processing by 1/4 of a second.
-                .then(() => parseUploadedModelGeometry(model))
-                .then(geometry => setUploadModels(prev => prev.map(item => item === model ? { ...item, geometry } : item)))
-                .catch(err => setUploadModels(prev => prev.map(item => item === model ? { ...item, geometryParseIssues: String(err) } : item)));
-        });
-
-        // Add new models after scheduling their parsing
-        setUploadModels(prev => [...prev, ...newModels]);
-
-    }, [uploadedModels]);
-
-    const removeModelCallback = useCallback((model: UploadedModel) => {
-
-        setUploadModels(prev => prev.filter(item => item !== model));
-
-    }, []);
-
-    return <>
-
-        <Slide
-            title={"Upload your 3D Files"}
-            description={<>Upload the 3D models you would like to use and click to remove. Our printers handle everything from quick prototypes to polished final designs with reliable quality.</>}
-            nextText="Choose Manufacturing Method"
-            onNext={() => onNext?.({ usePreviousModels: doUsePreviousModels, uploadedModels: uploadedModels })}
-            nextEnabled={uploadSizeIsUnderLimit && !anyModelsProcessing && (uploadedModels.length > 0 || doUsePreviousModels)}
-            nextHelperText={
-                !uploadSizeIsUnderLimit
-                    ? `Upload size exceeds the Limit (${formatBytes(uploadLimitInBytes, 0)})`
-                    : anyModelParseFailed
-                        ? "Failed to parse one or more Geometries"
-                        : anyModelsProcessing
-                            ? "Processing Models"
-                            : "Upload a model to Continue"}
-            cancelText="Cancel"
-            onCancel={onCancel}>
-
-            <InvisibleFileInput ref={invisibleFileInputRef} accept=".stl" multiple onChange={addModelCallback} />
-
-            <div className="hover:cursor-pointer" onClick={() => invisibleFileInputRef.current?.enter?.()}>
-
-                <OutlinedInstructionPanel
-                    title={"Select to Upload Files"}
-                    icon={<FaCloudArrowUp />}
-                    descriptions={[
-                        `Supported Formats: STL, OBJ, 3MF (Max ${formatBytes(uploadLimitInBytes, 0)})`,
-                        "Models must sized under 256x256x256 Millimeters"]} />
-
-            </div>
-
-            {/* Item List */}
-            <div className="grid grid-cols-2 gap-4 w-full">
-
-                {uploadedModels.map(model => <ModelDia selected={false} key={model.fileName} uploadModel={model} onRemove={() => removeModelCallback(model)} />)}
-
-            </div>
-
-            {/* <div className="flex gap-2 text-sm items-center justify-center w-fit ml-auto">
-
-                <span className="text-nowrap">I'd like to use my previous Models</span>
-                <input className="border-none outline-none mb-0" type="checkbox" {...register("use-previous-models")} />
-
-            </div> */}
-
-        </Slide>
-
-    </>
-}
-
-function Slide({ title, icon, description, children, onCancel, onNext, nextText, nextHelperText, cancelText, nextEnabled, titleSide }: React.PropsWithChildren<{ title: string | React.ReactElement, icon?: React.ReactElement, titleSide?: React.ReactElement, description: string | React.ReactElement, onCancel?: () => void, onNext?: () => void, nextHelperText?: string, nextText?: string, cancelText?: string, nextEnabled: boolean }>) {
+function Slide({ title, icon, description, children, onCancel, onNext, nextText, nextHelperText, cancelText, nextEnabled, titleSide, bottomLeft }: React.PropsWithChildren<{ title: string | React.ReactElement, icon?: React.ReactElement, titleSide?: React.ReactElement, description: string | React.ReactElement, onCancel?: () => void, onNext?: () => void, nextHelperText?: string, nextText?: string, cancelText?: string, nextEnabled: boolean, bottomLeft?: React.ReactNode }>) {
 
     return <>
 
@@ -1092,7 +1076,7 @@ function Slide({ title, icon, description, children, onCancel, onNext, nextText,
         {/* Controls */}
         <div className="flex justify-between items-center w-full">
 
-            {(onCancel) ? <button
+            {bottomLeft ? bottomLeft : (onCancel) ? <button
                 className={classNames("flex text-sm gap-2 mb-0 pl-0 items-center bg-transparent rounded-lg text-black hover:text-black hover:bg-transparent justify-center w-fit")}
                 onClick={() => onCancel?.()}>
                 {cancelText ?? "Go Back"}
