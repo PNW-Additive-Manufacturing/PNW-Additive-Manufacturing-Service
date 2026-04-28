@@ -32,20 +32,13 @@ export async function tryLogin(prevState: string, formData: FormData) {
 		return (e as Error).message;
 	}
 
-	//note that next redirect will intentionally throw an error in order to start redirecting
-	//WARNING: if in a try/catch, it will not work
-	try {
-		const session = await serveRequiredSession();
-		const wantedRedirect = formData.get("redirect") as string;
-		if (wantedRedirect && wantedRedirect.startsWith(envConfig.hostURL)) {
-			console.log(`Redirecting to ${wantedRedirect}`);
-			redirect(wantedRedirect);
-		} else {
-			redirect("/");
-		}
-	} catch (error) {
-		redirect("/user/login");
+	const wantedRedirect = formData.get("redirect") as string;
+	if (wantedRedirect && wantedRedirect.startsWith(envConfig.hostURL)) {
+		console.log(`Redirecting to ${wantedRedirect}`);
+		redirect(wantedRedirect);
 	}
+
+	redirect("/");
 }
 
 const createAccountSchema = z.object({

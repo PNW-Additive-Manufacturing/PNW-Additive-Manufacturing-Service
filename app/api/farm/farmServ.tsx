@@ -13,7 +13,9 @@ export async function fetchMachines(): Promise<MachineData[] | null> {
 		).json();
 	} catch (ex) {
 		// Do nothing.
-		console.error("Failed to request information of printers!");
+		if (process.env.NODE_ENV === "development") {
+			console.error("Failed to request information of printers!");
+		}
 		return null;
 	}
 	return printerData!;
@@ -33,9 +35,11 @@ export async function findMachinesWithFilament(
 		).json();
 	} catch (ex) {
 		// Do nothing.
-		console.error(
-			"Failed to request information on printers with specified filament!"
-		);
+		if (process.env.NODE_ENV === "development") {
+			console.error(
+				"Failed to request information on printers with specified filament!"
+			);
+		}
 	}
 	return Object.keys(printerData!);
 }
