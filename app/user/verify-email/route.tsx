@@ -1,12 +1,12 @@
 "use server";
 
-import AccountServe from "@/app/Types/Account/AccountServe";
-import { getJwtPayload, retrieveSafeJWTPayload } from "@/app/api/util/JwtHelper";
-import db from "@/app/api/Database";
-import { NextRequest, NextResponse } from "next/server";
 import { AccountPermission, IsVerificationCodeExpired } from "@/app/Types/Account/Account";
+import AccountServe from "@/app/Types/Account/AccountServe";
+import db from "@/app/api/Database";
 import { login } from "@/app/api/util/AccountHelper";
+import { serveOptionalSession } from "@/app/api/util/SessionHelper";
 import getConfig from "@/app/getConfig";
+import { NextRequest, NextResponse } from "next/server";
 
 const envConfig = getConfig();
 
@@ -25,8 +25,7 @@ export async function GET(request: NextRequest) {
 
 	// Query user data!
 	// JWT cannot be null due to middleware preventing non-logged users access.
-	// const JWT = (await getJwtPayload())!;
-	const existingJWT = await retrieveSafeJWTPayload();
+	const existingJWT = await serveOptionalSession();
 	if (existingJWT == null) return NextResponse.redirect(
 		envConfig.joinHostURL(`/user/login?redirect=${envConfig.joinHostURL(`/user/verify-email?token=${verificationToken}`)}&reason=You must be logged in to validate your email!`));
 

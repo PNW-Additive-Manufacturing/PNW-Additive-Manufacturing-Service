@@ -1,17 +1,14 @@
 "use server";
 
-import { RegularCirclePlus, RegularDiamondAlt, RegularEye, RegularMagnifier } from "lineicons-react";
-import HorizontalWrap from "../components/HorizontalWrap";
-import { ProjectCard } from "./ProjectCard";
-import db from "@/app/api/Database";
 import ProjectSpotlightServe from "../Types/ProjectSpotlight/ProjectSpotlightServe";
-import { retrieveSafeJWTPayload } from "../api/util/JwtHelper";
+import { serveOptionalSession } from "../api/util/SessionHelper";
+import HorizontalWrap from "../components/HorizontalWrap";
 import { CreateProject } from "./CreateProject";
-import { Metadata, ResolvingMetadata } from "next";
+import { ProjectCard } from "./ProjectCard";
 
 export default async function Page() {
 
-    const JWTPayload = await retrieveSafeJWTPayload();
+    const JWTPayload = await serveOptionalSession();
     const showcases = await ProjectSpotlightServe.queryAllProjectShowcases();
     await ProjectSpotlightServe.withManyAttachments(showcases);
 

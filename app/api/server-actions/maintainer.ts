@@ -1,7 +1,8 @@
 "use server";
 
 import db from "@/app/api/Database";
-import { SwatchConfiguration, SwatchConfigurationSchema } from "@/app/components/Swatch";
+import { SwatchConfigurationSchema } from "@/app/components/Swatch";
+import { AccountPermission } from "@/app/Types/Account/Account";
 import AccountServe from "@/app/Types/Account/AccountServe";
 import FilamentServe from "@/app/Types/Filament/FilamentServe";
 import ManufacturingMethodServe from "@/app/Types/ManufacturingMethod/ManufacturingMethodServe";
@@ -11,21 +12,21 @@ import PartServe from "@/app/Types/Part/PartServe";
 import { ProjectSpotlight } from "@/app/Types/ProjectSpotlight/ProjectSpotlight";
 import ProjectSpotlightServe from "@/app/Types/ProjectSpotlight/ProjectSpotlightServe";
 import Request, {
-	calculateTotalCost,
-	isPaid
+    calculateTotalCost,
+    isPaid
 } from "@/app/Types/Request/Request";
 import { RequestServe } from "@/app/Types/Request/RequestServe";
 import { dollarsToCents } from "@/app/utils/MathUtils";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { APIData, resError, resOk, resOkData, resUnauthorized } from "../APIResponse";
-import { retrieveSafeJWTPayload } from "../util/JwtHelper";
 import {
-	formatPartFlagged,
-	formatPartUnFlagged,
-	sendEmail,
-	sendRequestEmail
+    formatPartFlagged,
+    formatPartUnFlagged,
+    sendEmail,
+    sendRequestEmail
 } from "../util/Mail";
+import { serveOptionalSession } from "../util/SessionHelper";
 
 const setPartPriceSchema = z.object({
 	requestId: z.coerce.number().int(),
@@ -634,8 +635,8 @@ const postProjectShowcaseSchema = z.object({
 	author: z.string(),
 });
 export async function postProjectShowcase(prevState: APIData<{}>, data: FormData) {
-	const jwtPayload = await retrieveSafeJWTPayload();
-	if (jwtPayload == undefined || jwtPayload.permission == "user") return resUnauthorized();
+	const jwtPayload = await serveOptionalSession();
+	if (jwtPayload == null || jwtPayload.permission == AccountPermission.User) return resUnauthorized();
 
 	const parsedData = postProjectShowcaseSchema.safeParse({
 		title: data.get("title"),
@@ -657,8 +658,8 @@ export async function postProjectShowcase(prevState: APIData<{}>, data: FormData
 }
 
 export async function deleteProjectShowcase(prevState: APIData<{}>, data: FormData) {
-	const jwtPayload = await retrieveSafeJWTPayload();
-	if (jwtPayload == undefined || jwtPayload.permission == "user") return resUnauthorized();
+	const jwtPayload = await serveOptionalSession();
+	if (jwtPayload == null || jwtPayload.permission == AccountPermission.User) return resUnauthorized();
 
 	const parsedData = z.string().safeParse(data.get("projectId"));
 
@@ -677,8 +678,8 @@ export async function deleteProjectShowcase(prevState: APIData<{}>, data: FormDa
 
 const editProjectShowcaseSchema = postProjectShowcaseSchema.partial().and(z.object({ id: z.string() }));
 export async function editProjectShowcase(prevState: APIData<{}>, data: FormData) {
-	const jwtPayload = await retrieveSafeJWTPayload();
-	if (jwtPayload == undefined || jwtPayload.permission == "user") return resUnauthorized();
+	const jwtPayload = await serveOptionalSession();
+	if (jwtPayload == null || jwtPayload.permission == AccountPermission.User) return resUnauthorized();
 
 	console.log(data);
 

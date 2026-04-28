@@ -3,7 +3,7 @@
 import fs from "fs";
 import path from "path";
 
-import { getJwtPayload } from "@/app/api/util/JwtHelper";
+import { serveRequiredSession } from "@/app/api/util/SessionHelper";
 import { redirect } from "next/navigation";
 
 import db from "@/app/api/Database";
@@ -23,7 +23,7 @@ export async function submitOrder(formData: FormData): Promise<SubmitOrderResult
 	// Authenticate
 	let account;
 	try {
-		const payload = await getJwtPayload();
+		const payload = await serveRequiredSession();
 		account = (await AccountServe.queryByEmail(payload!.email))!;
 		if (account == undefined) throw new Error("Account is null!");
 	} catch {

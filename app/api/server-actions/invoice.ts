@@ -1,12 +1,13 @@
 "use server";
 
-import { z } from "zod";
-import ActionResponse, { ActionResponsePayload } from "./ActionResponse";
-import { RequestServe } from "@/app/Types/Request/RequestServe";
-import { getJwtPayload, retrieveSafeJWTPayload } from "../util/JwtHelper";
+import { AccountPermission } from "@/app/Types/Account/Account";
 import AccountServe from "@/app/Types/Account/AccountServe";
+import { RequestServe } from "@/app/Types/Request/RequestServe";
 import db from "@/app/api/Database";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { serveOptionalSession, serveRequiredSession } from "../util/SessionHelper";
+import ActionResponse, { ActionResponsePayload } from "./ActionResponse";
 
 const payInvoiceSchema = z.object({ requestId: z.coerce.number().int() });
 export async function payInvoice(
@@ -29,7 +30,13 @@ export async function payInvoice(
 		return ActionResponse.Error("Request does not exist!");
 	}
 
-	const JWTPayload = (await getJwtPayload())!;
+	let JWTPayload;
+	try {
+		JWTPayload = await serveRequiredSession();
+	} catch (error) {
+		return ActionResponse.Error("Authentication required");
+	}
+
 	if (request.requesterEmail != JWTPayload.email) {
 		return ActionResponse.ErrorLackPermission();
 	}
@@ -69,8 +76,8 @@ const forceAcceptInvoiceSchema = z.object({ requestId: z.coerce.number().int() }
 export async function forceAcceptInvoice(
 	data: FormData
 ): Promise<ActionResponsePayload<undefined>> {
-	const jwtPayload = await retrieveSafeJWTPayload();
-	if (jwtPayload == null || jwtPayload.permission == "user") {
+	const jwtPayload = await serveOptionalSession();
+	if (jwtPayload == null || jwtPayload.permission == AccountPermission.User) {
 		return ActionResponse.ErrorLackPermission();
 	}
 

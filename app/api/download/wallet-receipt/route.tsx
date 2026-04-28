@@ -1,7 +1,7 @@
 "use server";
 
 import { resError, resUnauthorized } from "@/app/api/APIResponse";
-import { retrieveSafeJWTPayload } from "@/app/api/util/JwtHelper";
+import { serveOptionalSession } from "@/app/api/util/SessionHelper";
 import getConfig from "@/app/getConfig";
 import { AccountPermission } from "@/app/Types/Account/Account";
 import AccountServe from "@/app/Types/Account/AccountServe";
@@ -14,8 +14,8 @@ const appConfig = getConfig();
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
 
-    let accountJWT = await retrieveSafeJWTPayload();
-    if (accountJWT == undefined) {
+    let accountJWT = await serveOptionalSession();
+    if (accountJWT == null) {
         // return NextResponse.json(resError("You must be signed in!"));
         return NextResponse.redirect(appConfig.joinHostURL("/user/login"));
     }

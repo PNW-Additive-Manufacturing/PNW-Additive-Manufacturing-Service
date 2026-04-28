@@ -1,13 +1,13 @@
-import HorizontalWrap from "@/app/components/HorizontalWrap";
-import Reregistration from "../Reregistration";
 import { queryAccountReregistration } from "@/app/Types/RegistrationSpan/RegistrationSpanServe";
-import { retrieveSafeJWTPayload } from "@/app/api/util/JwtHelper";
-import { NextResponse } from "next/server";
+import { serveOptionalSession } from "@/app/api/util/SessionHelper";
+import HorizontalWrap from "@/app/components/HorizontalWrap";
+import { redirect } from "next/navigation";
+import Reregistration from "../Reregistration";
 
 export default async function Page({ params: { id } }: { params: Record<string, string> }) {
 
-    const JWT = await retrieveSafeJWTPayload();
-    if (JWT === null) return NextResponse.redirect("/");
+    const JWT = await serveOptionalSession();
+    if (JWT === null) redirect("/");
 
     const spanAccountEntry = await queryAccountReregistration(id, JWT.email);
 

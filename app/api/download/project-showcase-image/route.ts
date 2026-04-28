@@ -1,39 +1,55 @@
-import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
-import fs from "fs";
-import { getModelPath, getProjectShowcaseImagePath } from "@/app/files";
-import { retrieveSafeJWTPayload } from "../../util/JwtHelper";
-import { AccountPermission } from "@/app/Types/Account/Account";
-import ModelServe from "@/app/Types/Model/ModelServe";
+import { getProjectShowcaseImagePath } from "@/app/files";
 import getConfig from "@/app/getConfig";
+import fs from "fs";
+import { NextRequest, NextResponse } from "next/server";
+import path from "path";
+import { z } from "zod";
 
 const envConfig = getConfig();
 
 const projectShowcaseImageDownloadSchema = z.object({
-	projectId: z.string().uuid()
+	projectId: z.string().uuid(),
 });
+
 export async function GET(request: NextRequest): Promise<NextResponse> {
-	const parsedData = projectShowcaseImageDownloadSchema.safeParse({
-		projectId: request.nextUrl.searchParams.get("projectId")
-	});
-	if (!parsedData.success) return new NextResponse(null, { status: 400 });
-
-	const modelPath = await fs.promises.realpath(getProjectShowcaseImagePath(parsedData.data.projectId));
-	if (!modelPath.startsWith(envConfig.uploadProjectShowcaseImageDir)) {
-		return new NextResponse(null, { status: 404 });
-	}
-
 	try {
-		const bufferedData = fs.readFileSync(modelPath);
-
-		return new NextResponse(bufferedData as any, {
-			headers: {
-				"content-type": "image/jpg",
-				"cache-control": "max-age=3600"
-			}
+		const parsedData = projectShowcaseImageDownloadSchema.safeParse({
+			projectId: request.nextUrl.searchParams.get("projectId"),
 		});
-	}
-	catch (ex) {
+
+		if (!parsedData.success) {
+			return new NextResponse(null, { status: 400 });
+		}
+
+		const imagePath = getProjectShowcaseImagePath(parsedData.data.projectId);
+		const resolvedPath = await fs.promises.realpath(imagePath);
+
+		// Security: Ensure the resolved path is within the upload directory
+		const uploadDir = await fs.promises.realpath(envConfig.uploadProjectShowcaseImageDir);
+		if (!resolvedPath.startsWith(uploadDir + path.sep) && resolvedPath !== uploadDir) {
+			return new NextResponse(null, { status: 404 });
+		}
+
+		// Check if file exists before reading
+		const fileStats = await fs.promises.stat(resolvedPath);
+		if (!fileStats.isFile()) {
+			return new NextResponse(null, { status: 404 });
+		}
+
+		const bufferedData = await fs.promises.readFile(resolvedPath);
+
+		return new NextResponse(bufferedData, {
+			headers: {
+				"content-type": "image/jpeg",
+				"cache-control": "public, max-age=3600, immutable",
+				"content-length": bufferedData.length.toString(),
+			},
+		});
+	} catch (error) {
+		console.error("[project-showcase-image] Error:", {
+			error: error instanceof Error ? error.message : String(error),
+			projectId: request.nextUrl.searchParams.get("projectId"),
+		});
 		return new NextResponse(null, { status: 404 });
 	}
 }

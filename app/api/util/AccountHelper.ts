@@ -1,8 +1,9 @@
 import db from "@/app/api/Database";
 import { makeJwt } from "@/app/api/util/JwtHelper";
+import { sendVerificationEmail } from "@/app/api/util/Mail";
 import {
-	correctPassword,
-	hashAndSaltPassword
+    correctPassword,
+    hashAndSaltPassword
 } from "@/app/api/util/PasswordHelper";
 import getConfig from "@/app/getConfig";
 import { AccountPermission } from "@/app/Types/Account/Account";
@@ -40,6 +41,7 @@ export async function createAccount(
 
 	let hash = hashAndSaltPassword(password);
 
+	let verificationCode: string;
 	let res: postgres.RowList<postgres.Row[]>;
 	try {
 		res = await db.begin(async (db) => {
@@ -47,7 +49,7 @@ export async function createAccount(
 				await db`insert into account (email, firstname, lastname, password, yearOfStudy, department, permission)
       			values (${email}, ${firstName}, ${lastName}, ${hash}, ${yearOfStudy}, ${department}, ${permission})`;
 
-			const verificationCode = crypto.randomBytes(16).toString("hex");
+			verificationCode = crypto.randomBytes(16).toString("hex");
 			await db`insert into accountverificationcode (accountemail, code) VALUES (${email}, ${verificationCode})`;
 
 			return accountRow;
@@ -81,6 +83,14 @@ export async function createAccount(
 	catch (ex)
 	{
 		console.error(`Failed to reregister new account ${email}`, ex);
+	}
+
+	// Send verification email (don't block on failure)
+	try {
+		await sendVerificationEmail(email, verificationCode!, firstName, lastName);
+	} catch (error) {
+		console.error(`[ACCOUNT] Failed to send verification email after creating account for ${email}:`, error);
+		// Don't throw - account creation succeeded, email is just a notification
 	}
 
 	return await login(
@@ -202,6 +212,6 @@ export function setSessionTokenCookie(token: string)
 		httpOnly: true, //cannot be accessed via client-side Javascript
 		sameSite: "lax", //can only be sent to same website
 		expires: addMinutes(new Date(), 10080),
-		secure: false //TODO: set to true once we have HTTPS connection
+		secure: appConfig.sessionCookieSecure // true in production, false in development
 	});
 }

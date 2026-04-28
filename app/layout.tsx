@@ -1,19 +1,19 @@
-import 'react-loading-skeleton/dist/skeleton.css';
-import 'react-toastify/dist/ReactToastify.css';
-import "./globals.css";
 import type { Metadata, ResolvingMetadata } from "next";
 import { Inter } from "next/font/google";
-import { getJwtPayload, UserJWT } from "./api/util/JwtHelper";
+import 'react-loading-skeleton/dist/skeleton.css';
+import 'react-toastify/dist/ReactToastify.css';
+import { serveOptionalSession } from "./api/util/SessionHelper";
+import "./globals.css";
 
 
-import {Navbar} from "@/app/components/navBar/Navigation";
-import {ColorfulRequestPrintButton} from "@/app/components/navBar/ColorfulRequestPrintButton";
 import { AccountDetails } from "@/app/components/navBar/AccountDetails";
+import { ColorfulRequestPrintButton } from "@/app/components/navBar/ColorfulRequestPrintButton";
 import { Footer } from '@/app/components/navBar/Footer';
+import { Navbar } from "@/app/components/navBar/Navigation";
 
 
-import { AccountPermission } from "./Types/Account/Account";
 import { AccountProvider, ThemeProvider } from "./ContextProviders";
+import { AccountPermission } from "./Types/Account/Account";
 import AccountServe from "./Types/Account/AccountServe";
 
 import getConfig from "./getConfig";
@@ -55,9 +55,8 @@ export default async function RootLayout({
 }) {
 	let permission: AccountPermission | null;
 	let email: string | null;
-	let jwtPayload: UserJWT | null = null;
 	try {
-		jwtPayload = await getJwtPayload();
+		const jwtPayload = await serveOptionalSession();
 		permission = jwtPayload?.permission as AccountPermission;
 		email = jwtPayload?.email as string;
 	} catch {

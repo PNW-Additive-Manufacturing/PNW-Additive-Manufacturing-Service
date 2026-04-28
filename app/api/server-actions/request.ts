@@ -1,15 +1,13 @@
 "use server";
 
-import { z } from "zod";
-import ActionResponse from "./ActionResponse";
-import { RequestServe } from "@/app/Types/Request/RequestServe";
-import AccountServe from "@/app/Types/Account/AccountServe";
-import { redirect } from "next/navigation";
+import { AccountPermission } from "@/app/Types/Account/Account";
 import { isAllComplete, isAllPending } from "@/app/Types/Part/Part";
 import { isPaid } from "@/app/Types/Request/Request";
-import { getJwtPayload } from "../util/JwtHelper";
-import { AccountPermission } from "@/app/Types/Account/Account";
+import { RequestServe } from "@/app/Types/Request/RequestServe";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { z } from "zod";
+import { serveRequiredSession } from "../util/SessionHelper";
 
 const payRequestSchema = z.object({
 	requestId: z.coerce.number().int()
@@ -26,7 +24,13 @@ export async function cancelRequest(prevState: string, data: FormData) {
 	);
 	if (request == null) return "Request does not exist";
 
-	const jwtPayload = await getJwtPayload();
+	let jwtPayload;
+	try {
+		jwtPayload = await serveRequiredSession();
+	} catch (error) {
+		return "Authentication required";
+	}
+
 	if (
 		jwtPayload.email != request.requesterEmail &&
 		jwtPayload.permission == AccountPermission.User
@@ -61,7 +65,7 @@ export async function fulfillRequest(
 	);
 	if (request == null) return "Request does not exist";
 
-	const jwtPayload = await getJwtPayload();
+	const jwtPayload = await serveRequiredSession();
 	if (jwtPayload.permission == AccountPermission.User) {
 		return "You do not have access to this resource!";
 	}
@@ -93,7 +97,7 @@ export async function deleteRequest(prevState: string, data: FormData): Promise<
 	);
 	if (request == null) return "Request does not exist";
 
-	const jwtPayload = await getJwtPayload();
+	const jwtPayload = await serveRequiredSession();
 	if (jwtPayload.permission == AccountPermission.User) return "You do not have access to this resource!";
 
 	if (isPaid(request)) return "Request cannot be deleted if Quote has been Paid!";

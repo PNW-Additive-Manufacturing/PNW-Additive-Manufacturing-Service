@@ -1,26 +1,35 @@
 "use server";
 
-import { getJwtPayload } from "@/app/api/util/JwtHelper";
-import { RegularBolt, RegularCart, RegularLicense } from "lineicons-react";
 import db from "@/app/api/Database";
-import GenericPrinterIcon from "@/app/components/icons/GenericPrinterIcon";
-import FilamentSpoolIcon from "@/app/components/icons/FilamentSpoolIcon";
-import { AccountPermission } from "@/app/Types/Account/Account";
-import getConfig from "@/app/getConfig";
+import { serveRequiredSession } from "@/app/api/util/SessionHelper";
 import HorizontalWrap from "@/app/components/HorizontalWrap";
+import FilamentSpoolIcon from "@/app/components/icons/FilamentSpoolIcon";
+import GenericPrinterIcon from "@/app/components/icons/GenericPrinterIcon";
+import getConfig from "@/app/getConfig";
+import { AccountPermission } from "@/app/Types/Account/Account";
+import { RegularBolt, RegularCart, RegularLicense } from "lineicons-react";
+import { redirect } from "next/navigation";
 import { FaRegMoneyBillAlt } from "react-icons/fa";
 import { MdOutlineWavingHand } from "react-icons/md";
 
 const envConfig = getConfig();
 
 export default async function Maintainer() {
-	let jwtPayload = await getJwtPayload();
+	let jwtPayload;
+	try {
+		jwtPayload = await serveRequiredSession();
+	} catch (error) {
+		redirect("/user/login");
+	}
 
 	let permission: AccountPermission | null;
 	try {
 		permission = jwtPayload?.permission as AccountPermission;
+		if (permission !== AccountPermission.Maintainer && permission !== AccountPermission.Admin) {
+			redirect("/dashboard/user");
+		}
 	} catch {
-		permission = null;
+		redirect("/user/login");
 	}
 
 	const orderCount = (await db`SELECT COUNT(*) FROM Request WHERE FulfilledAt IS NULL`)[0] as {

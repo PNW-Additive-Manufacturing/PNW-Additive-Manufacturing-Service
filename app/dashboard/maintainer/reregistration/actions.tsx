@@ -1,9 +1,9 @@
 "use server";
 
-import { APIData, resAttemptAsync, resOk, resOkData, resUnauthorized } from "@/app/api/APIResponse";
-import { retrieveSafeRefinedJWTPayload } from "@/app/api/util/JwtHelper";
+import { resAttemptAsync, resOk, resOkData, resUnauthorized } from "@/app/api/APIResponse";
+import { serveOptionalSession } from "@/app/api/util/SessionHelper";
 import { AccountPermission } from "@/app/Types/Account/Account";
-import { makeHashedRegistrationSpan, RegistrationSpanEntry, RegistrationSpanIDSchema, RegistrationSpanSchema } from "@/app/Types/RegistrationSpan/RegistrationSpan";
+import { makeHashedRegistrationSpan, RegistrationSpanIDSchema, RegistrationSpanSchema } from "@/app/Types/RegistrationSpan/RegistrationSpan";
 import { addRegistrationSpan, deleteAccountInRegistrationSpan, queryRegistrationSpanEntries, updateRegistrationSpan } from "@/app/Types/RegistrationSpan/RegistrationSpanServe";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -12,7 +12,7 @@ const RegistrationSpanSchemaWithoutId = RegistrationSpanSchema.omit({ id: true }
 
 export async function actionAddRegistrationSpan(formData: FormData) {
 
-    const JWT = await retrieveSafeRefinedJWTPayload();
+    const JWT = await serveOptionalSession();
 
     return resAttemptAsync(async () => {
 
@@ -37,7 +37,7 @@ export async function actionAddRegistrationSpan(formData: FormData) {
 const ActionDeleteRegistrationSpanSchema = z.object({ spanId: RegistrationSpanIDSchema });
 
 export async function actionDeleteRegistrationSpan(formData: FormData) {
-    const JWT = await retrieveSafeRefinedJWTPayload();
+    const JWT = await serveOptionalSession();
 
     return resAttemptAsync(async () => {
 
@@ -65,7 +65,7 @@ const ActionUpdateRegistrationSpanSchema = z.object({
 });
 
 export async function actionUpdateRegistrationSpan(formData: FormData) {
-    const JWT = await retrieveSafeRefinedJWTPayload();
+    const JWT = await serveOptionalSession();
 
     return resAttemptAsync(async () => {
         if (JWT === null || JWT.permission !== AccountPermission.Admin) return resUnauthorized();
@@ -85,7 +85,7 @@ const ActionFetchRegistrationSpanEntriesSchema = z.object({ spanId: Registration
 
 export async function actionFetchRegistrationSpanEntries(formData: FormData) {
 
-    const JWT = await retrieveSafeRefinedJWTPayload();
+    const JWT = await serveOptionalSession();
 
     return await resAttemptAsync(async () => {
 

@@ -1,13 +1,12 @@
 // @ts-nocheck
 
 import db from "@/app/api/Database";
-import { ProjectSpotlight, ProjectSpotlightAttachment, ProjectSpotlightWithAttachments } from "./ProjectSpotlight";
-import postgres from "postgres";
-import DOMPurify from "isomorphic-dompurify";
-import fs from "fs";
 import { getProjectShowcaseImagePath } from "@/app/files";
+import fs from "fs";
+import DOMPurify from "isomorphic-dompurify";
 import path from "path";
-import { retrieveSafeJWTPayload } from "@/app/api/util/JwtHelper";
+import postgres from "postgres";
+import { ProjectSpotlight, ProjectSpotlightAttachment, ProjectSpotlightWithAttachments } from "./ProjectSpotlight";
 
 export default class ProjectSpotlightServe
 {

@@ -1,9 +1,9 @@
 "use server";
 
+import { AccountPermission } from "@/app/Types/Account/Account";
 import { z } from "zod";
-import { fetchMachines } from "./farmServ";
 import getConfig from "../../getConfig";
-import { retrieveSafeJWTPayload } from "../util/JwtHelper";
+import { serveOptionalSession } from "../util/SessionHelper";
 
 const env = getConfig();
 
@@ -81,8 +81,8 @@ export async function markAsEmpty(prevState: any, formData: FormData) {
 		return `Schema Error: ${parsedData.error}`;
 	}
 
-	const JWT = await retrieveSafeJWTPayload();
-	if (JWT == undefined || JWT.permission == "user") {
+	const JWT = await serveOptionalSession();
+	if (JWT == null || JWT.permission == AccountPermission.User) {
 		return;
 	}
 

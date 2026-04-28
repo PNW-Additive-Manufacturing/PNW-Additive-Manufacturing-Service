@@ -1,20 +1,15 @@
-import { getJwtPayload } from "@/app/api/util/JwtHelper";
-import EditPage from "./MainPage";
-import HorizontalWrap from "@/app/components/HorizontalWrap";
-import {
-	RegularFriendly,
-	RegularHappy,
-	RegularUser,
-	RegularWallet
-} from "lineicons-react";
+import { serveRequiredSession } from "@/app/api/util/SessionHelper";
 import AccountServe from "@/app/Types/Account/AccountServe";
-import Image from "next/image";
-import Link from "next/link";
-import { ChangePasswordForm } from "./ChangePasswordForm";
+import { redirect } from "next/navigation";
 import Profile from "./Profile";
 
 export default async function Page() {
-	let jwtPayload = await getJwtPayload();
+	let jwtPayload;
+	try {
+		jwtPayload = await serveRequiredSession();
+	} catch (error) {
+		redirect("/user/login");
+	}
 
 	const account = (await AccountServe.queryByEmail(jwtPayload.email))!;
 	const transactions = await AccountServe.queryTransactionsFor(account.email);

@@ -2,7 +2,7 @@
 
 import db from "@/app/api/Database";
 import { attemptLogin, checkIfPasswordCorrect, createAccount, login, setSessionTokenCookie, validatePassword } from "@/app/api/util/AccountHelper";
-import { getJwtPayload, retrieveSafeJWTPayload } from "@/app/api/util/JwtHelper";
+import { serveAdminSession, serveRequiredSession } from "@/app/api/util/SessionHelper";
 import getConfig from "@/app/getConfig";
 import { AccountPermission, emailVerificationExpirationDurationInDays } from "@/app/Types/Account/Account";
 import AccountServe, { makeTransactionPDF } from "@/app/Types/Account/AccountServe";
@@ -13,7 +13,7 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { APIData, resAttemptAsync, resError, resOk, resOkData, resUnauthorized } from "../APIResponse";
+import { APIData, resAttemptAsync, resError, resOk, resOkData } from "../APIResponse";
 import { fundsAdded, sendEmail, verifyEmailTemplate } from "../util/Mail";
 import { hashAndSaltPassword } from "../util/PasswordHelper";
 import ActionResponse, { ActionResponsePayload } from "./ActionResponse";
@@ -34,17 +34,17 @@ export async function tryLogin(prevState: string, formData: FormData) {
 
 	//note that next redirect will intentionally throw an error in order to start redirecting
 	//WARNING: if in a try/catch, it will not work
-	let permission = (await getJwtPayload())?.permission;
-	//no error checking for Jwt payload since used just logged in
-
-	const wantedRedirect = formData.get("redirect") as string;
-	if (wantedRedirect && wantedRedirect.startsWith(envConfig.hostURL)) {
-		console.log(`Redirecting to ${wantedRedirect}`);
-
-		redirect(wantedRedirect);
-	}
-	else {
-		redirect("/");
+	try {
+		const session = await serveRequiredSession();
+		const wantedRedirect = formData.get("redirect") as string;
+		if (wantedRedirect && wantedRedirect.startsWith(envConfig.hostURL)) {
+			console.log(`Redirecting to ${wantedRedirect}`);
+			redirect(wantedRedirect);
+		} else {
+			redirect("/");
+		}
+	} catch (error) {
+		redirect("/user/login");
 	}
 }
 
@@ -95,17 +95,12 @@ export async function tryCreateAccount(prevState: string, formData: FormData) {
 	}
 
 	//use try-catch in case JWT is invalid
-	let jwtPayload;
 	try {
-		jwtPayload = await getJwtPayload();
-		if (jwtPayload == null) {
-			throw new Error();
-		}
-	} catch (e) {
+		const session = await serveRequiredSession();
+		redirect("/");
+	} catch (error) {
 		redirect("/user/login");
 	}
-	//remember not to use redirect in try block unless checking if catch(e) has e.message == "NEXT_REDIRECT"
-	redirect(`/`);
 }
 
 export async function logout() {
@@ -115,12 +110,11 @@ export async function logout() {
 
 export async function changePermission(formData: FormData): Promise<APIData<{}>> {
 	return await resAttemptAsync(async () => {
+		// Require admin permission
+		const session = await serveAdminSession();
 
 		let newPermission = formData.get("new-permission") as AccountPermission;
 		let userEmail = formData.get("user-email") as string;
-
-		let permission = (await getJwtPayload())?.permission;
-		if (permission !== AccountPermission.Admin) return resUnauthorized();
 
 		let res = await db`update account set permission=${newPermission} where email=${userEmail} returning email`;
 
@@ -147,74 +141,76 @@ export async function editName(
 	prevState: string,
 	formData: FormData
 ): Promise<string> {
-	let fname = formData.get("firstname") as string;
-	let lname = formData.get("lastname") as string;
-
-	//use try-catch in case JWT is invalid
-	let jwtPayload;
 	try {
-		jwtPayload = await getJwtPayload();
-		if (jwtPayload == null) {
-			throw new Error();
+		const jwtPayload = await serveRequiredSession();
+		let fname = formData.get("firstname") as string;
+		let lname = formData.get("lastname") as string;
+
+		let res =
+			await db`update account set firstname=${fname}, lastname=${lname} where email=${jwtPayload.email} returning isemailverified`;
+		if (res.count === 0) {
+			return "Email does not exist!";
 		}
-	} catch (e) {
-		redirect("/user/login");
+
+		await login(
+			jwtPayload.email,
+			jwtPayload.permission as AccountPermission,
+			fname,
+			lname,
+			res.at(0)!.isemailverified as boolean,
+			jwtPayload.isBanned
+		);
+
+		return "";
+	} catch (error) {
+		if (error instanceof Error && error.message.includes("Unauthorized")) {
+			redirect("/user/login");
+		}
+		console.error("[EDIT NAME]", error);
+		return "An error occurred updating your name";
 	}
-
-	let res =
-		await db`update account set firstname=${fname}, lastname=${lname} where email=${jwtPayload.email} returning isemailverified`;
-	if (res.count === 0) {
-		return "Email does not exist!";
-	}
-
-	await login(
-		jwtPayload.email,
-		jwtPayload.permission as AccountPermission,
-		fname,
-		lname,
-		res.at(0)!.isemailverified as boolean,
-		jwtPayload.isBanned
-	);
-
-	return "";
 }
 
 export async function resendVerificationLink(
 	prevState: ActionResponse,
 	formData: FormData
 ): Promise<ActionResponsePayload<{ sentAt: Date; validUntil: Date }>> {
-	let JWTPayload = await retrieveSafeJWTPayload();
-	if (JWTPayload == null) return ActionResponse.Error("Not Authenticated!");
-	if (JWTPayload!.isemailverified)
-		return ActionResponse.Error("Email has already been verified!");
-
 	try {
-		const verificationEntry = await AccountServe.recreateVerificationCode(
-			JWTPayload.email
-		);
-		console.log(
-			"Message ID",
-			await sendEmail(
-				JWTPayload.email,
-				"Confirm your Email",
-				await verifyEmailTemplate(
-					`${envConfig.hostURL}/user/verify-email/?token=${verificationEntry.code}`
+		const JWTPayload = await serveRequiredSession();
+		if (JWTPayload.isemailverified) {
+			return ActionResponse.Error("Email has already been verified!");
+		}
+
+		try {
+			const verificationEntry = await AccountServe.recreateVerificationCode(
+				JWTPayload.email
+			);
+			console.log(
+				"Message ID",
+				await sendEmail(
+					JWTPayload.email,
+					"Confirm your Email",
+					await verifyEmailTemplate(
+						`${envConfig.hostURL}/user/verify-email/?token=${verificationEntry.code}`
+					)
 				)
-			)
+			);
+		} catch (error) {
+			console.error("An error occurred processing email!", error);
+			return ActionResponse.Error("An error occurred processing email!");
+		}
+
+		const validUntil = new Date(
+			Date.now() + emailVerificationExpirationDurationInDays * 86400000
 		);
+
+		return ActionResponse.Ok({
+			sentAt: new Date(),
+			validUntil
+		});
 	} catch (error) {
-		console.error("An error occurred processing email!", error);
-		return ActionResponse.Error("An error occurred processing email!");
+		return ActionResponse.Error("Authentication required");
 	}
-
-	const validUntil = new Date(
-		Date.now() + emailVerificationExpirationDurationInDays * 86400000
-	);
-
-	return ActionResponse.Ok({
-		sentAt: new Date(),
-		validUntil
-	});
 }
 
 export async function sendPasswordResetEmail(
@@ -273,45 +269,42 @@ export async function editPassword(
 	prevState: string,
 	formData: FormData
 ): Promise<string> {
-	let currentPassword = formData.get("password") as string;
-	let newPassword = formData.get("new_password") as string;
-	let confirmNewPassword = formData.get("confirm_new_password") as string;
-
-	if (newPassword !== confirmNewPassword) {
-		return "New Password and Confirm New Password fields do not match!";
-	}
-
-	let passwordErr = validatePassword(newPassword);
-	if (passwordErr) {
-		return passwordErr;
-	}
-
-	let jwtPayload;
-
 	try {
-		jwtPayload = await getJwtPayload();
-		if (jwtPayload == null) {
-			throw new Error("Invalid token!");
+		const jwtPayload = await serveRequiredSession();
+		let currentPassword = formData.get("password") as string;
+		let newPassword = formData.get("new_password") as string;
+		let confirmNewPassword = formData.get("confirm_new_password") as string;
+
+		if (newPassword !== confirmNewPassword) {
+			return "New Password and Confirm New Password fields do not match!";
 		}
-	} catch (e) {
-		console.error(e);
-		redirect("/user/login");
+
+		let passwordErr = validatePassword(newPassword);
+		if (passwordErr) {
+			return passwordErr;
+		}
+
+		if (!(await checkIfPasswordCorrect(jwtPayload.email, currentPassword))) {
+			return "Incorrect Password!";
+		}
+
+		let newHash = hashAndSaltPassword(newPassword);
+
+		let res =
+			await db`update account set password=${newHash} where email=${jwtPayload.email}`;
+
+		if (res.count === 0) {
+			return `Cannot find user with email ${jwtPayload.email}`;
+		}
+
+		return "";
+	} catch (error) {
+		if (error instanceof Error && error.message.includes("Unauthorized")) {
+			redirect("/user/login");
+		}
+		console.error("[EDIT PASSWORD]", error);
+		return "An error occurred updating your password";
 	}
-
-	if (!(await checkIfPasswordCorrect(jwtPayload.email, currentPassword))) {
-		return "Incorrect Password!";
-	}
-
-	let newHash = hashAndSaltPassword(newPassword);
-
-	let res =
-		await db`update account set password=${newHash} where email=${jwtPayload.email}`;
-
-	if (res.count === 0) {
-		return `Cannot find user with email ${jwtPayload.email}`;
-	}
-
-	return "";
 }
 
 const addFundsSchema = z.object({
@@ -335,9 +328,12 @@ export async function addFunds(
 
 	if (!parsedForm.success) return resError(parsedForm.error.toString());
 
-	// Check admin permission
-	const permission = (await getJwtPayload())?.permission;
-	if (permission !== AccountPermission.Admin) return resError("You do not have permission.");
+	// Require admin permission
+	try {
+		const session = await serveAdminSession();
+	} catch (error) {
+		return resError("You do not have permission.");
+	}
 
 	// Verify account exists
 	const fundingAccount = await AccountServe.queryByEmail(parsedForm.data.accountEmail);

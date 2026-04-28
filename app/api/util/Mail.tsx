@@ -80,6 +80,39 @@ export async function sendEmail(to: string, subject: string, html: string, attac
 	}
 }
 
+/**
+ * Send verification email to user after account creation or when they request resend
+ * Does not throw - logs error and returns false on failure
+ * This prevents account creation from failing if email delivery fails
+ */
+export async function sendVerificationEmail(
+	email: string,
+	verificationCode: string,
+	firstName?: string,
+	lastName?: string
+): Promise<boolean> {
+	try {
+		const verifyUrl = `${envConfig.hostURL}/user/verify-email/?token=${verificationCode}`;
+		const html = await verifyEmailTemplate(verifyUrl);
+		
+		await sendEmail(
+			email,
+			"Confirm your Email - PNW Additive Manufacturing Service",
+			html
+		);
+		
+		console.log(`[MAIL] Verification email sent to ${email}`);
+		return true;
+	} catch (error) {
+		console.error(
+			`[MAIL ERROR] Failed to send verification email to ${email}:`,
+			error instanceof Error ? error.message : error
+		);
+		// Don't throw - allow account creation to proceed even if email fails
+		return false;
+	}
+}
+
 export async function emailTemplate(content: string) {
 	return `
 		<div style="font-family:inherit;background-color:rgb(248,248,248);padding:1.5rem;border-radius:12px;color:rgb(64,64,64);">

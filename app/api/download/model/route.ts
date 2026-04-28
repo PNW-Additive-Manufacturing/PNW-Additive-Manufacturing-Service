@@ -1,21 +1,19 @@
 // PART MODELS WILL BE SERVED USING THIS ROUTE
 
+import { serveOptionalSession } from "@/app/api/util/SessionHelper";
+import { getModelPath } from "@/app/files";
+import { AccountPermission } from "@/app/Types/Account/Account";
+import ModelServe from "@/app/Types/Model/ModelServe";
+import fs from "fs";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import fs from "fs";
-import { getModelPath } from "@/app/files";
-import AccountServe from "@/app/Types/Account/AccountServe";
-import { getJwtPayload, retrieveSafeJWTPayload } from "../../util/JwtHelper";
-import { redirect } from "next/navigation";
-import Account, { AccountPermission } from "@/app/Types/Account/Account";
-import ModelServe from "@/app/Types/Model/ModelServe";
 
 const modelDownloadSchema = z.object({
 	modelId: z.string().uuid()
 });
 export async function GET(request: NextRequest): Promise<NextResponse> {
-	let JWT = await retrieveSafeJWTPayload();
-	if (JWT == undefined) throw new Error("JWT not found");
+	let JWT = await serveOptionalSession();
+	if (JWT == null) throw new Error("JWT not found");
 
 	const parsedData = modelDownloadSchema.safeParse({
 		modelId: request.nextUrl.searchParams.get("modelId")

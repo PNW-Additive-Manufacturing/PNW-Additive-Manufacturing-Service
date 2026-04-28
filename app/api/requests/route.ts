@@ -1,16 +1,11 @@
 "use server";
 
+import * as APIResponse from "@/app/api/APIResponse";
+import { AccountPermission } from "@/app/Types/Account/Account";
+import { RequestServe } from "@/app/Types/Request/RequestServe";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import fs from "fs";
-import { getModelPath } from "@/app/files";
-import AccountServe from "@/app/Types/Account/AccountServe";
-import { redirect } from "next/navigation";
-import Account, { AccountPermission } from "@/app/Types/Account/Account";
-import ModelServe from "@/app/Types/Model/ModelServe";
-import { retrieveSafeJWTPayload } from "../util/JwtHelper";
-import * as APIResponse from "@/app/api/APIResponse";
-import { RequestQuery, RequestServe } from "@/app/Types/Request/RequestServe";
+import { serveOptionalSession } from "../util/SessionHelper";
 
 const requestQuerySchema = z.object({
 	accountEmail: z.string().email().optional(),
@@ -20,7 +15,7 @@ const requestQuerySchema = z.object({
 	page: z.number().int().default(1)
 });
 export async function POST(request: NextRequest): Promise<NextResponse> {
-	const JWT = await retrieveSafeJWTPayload();
+	const JWT = await serveOptionalSession();
 	if (JWT === null) throw new Error("JWT not found");
 
 	const queryData = requestQuerySchema.safeParse(await request.json());

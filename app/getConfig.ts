@@ -1,5 +1,4 @@
 import "server-only";
-import path from "path";
 import { z } from "zod";
 
 function errorMissingEnvironmentVariable(variableName: string) {
@@ -38,6 +37,12 @@ export default function getConfig() {
 	// The amount of time in minutes until a password reset requests should expire!
 	const accountPasswordResetExpiration = process.env["ACCOUNT_PASSWORD_RESET_EXPIRATION"] == null ? 30 : Number.parseInt(process.env["ACCOUNT_PASSWORD_RESET_EXPIRATION"]);
 
+	// The amount of time in minutes until an email verification code should expire!
+	const emailVerificationExpirationMinutes = process.env["EMAIL_VERIFICATION_EXPIRATION_MINUTES"] == null ? 60 : Number.parseInt(process.env["EMAIL_VERIFICATION_EXPIRATION_MINUTES"]);
+
+	// Session cookie secure flag - true in production, false in development
+	const sessionCookieSecure = parsedEnvironment.data === "production";
+
 	return {
 		sessionCookie: "session-token",
 		dbConnectionString,
@@ -56,6 +61,8 @@ export default function getConfig() {
 			password: emailPassword,
 			host: emailHost
 		},
-		accountPasswordResetExpiration
+		accountPasswordResetExpiration,
+		emailVerificationExpirationMinutes,
+		sessionCookieSecure
 	};
 }
