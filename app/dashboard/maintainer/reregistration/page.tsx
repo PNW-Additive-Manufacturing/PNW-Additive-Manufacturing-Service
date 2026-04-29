@@ -1,12 +1,7 @@
-import { formateDate } from "@/app/api/util/Constants";
 import HorizontalWrap from "@/app/components/HorizontalWrap";
-import { Label } from "@/app/components/Inputs";
-import { RegistrationSpan } from "@/app/Types/RegistrationSpan/RegistrationSpan";
-import { queryAllRegistrationSpans } from "@/app/Types/RegistrationSpan/RegistrationSpanServe";
+import Spinner from "@/app/components/Spinner";
 import { Suspense } from "react";
 import AddRegistrationSpanForm from "./AddRegistrationForm";
-import RegistrationSpanBlock from "./RegistrationSpanBlock";
-import Spinner from "@/app/components/Spinner";
 import RegistrationSpanBlocks from "./RegistrationSpanBlocks";
 
 export default async function Accounting() {
@@ -16,7 +11,7 @@ export default async function Accounting() {
             <HorizontalWrap>
                 <div className="py-8 flex flex-col gap-4">
                     <h1 className="w-fit text-3xl font-normal">
-                        Account Reregistration
+                        Registration Period
                     </h1>
                     <p className="text-gray-600">
                         Review and manage user registration activity across defined time periods.

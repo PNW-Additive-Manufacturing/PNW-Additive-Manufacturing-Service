@@ -5,7 +5,7 @@ import APIForm from "@/app/components/APIForm";
 import { Departments, YearsOfStudy } from "@/app/Types/Account/Account";
 import { RegistrationSpan } from "@/app/Types/RegistrationSpan/RegistrationSpan";
 import { AnimatePresence, motion } from "motion/react";
-import { useMemo, useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { actionRegisterAccountToReregistrationSpan } from "./actions";
 
 export default function Reregistration({ registration, name }: { registration: RegistrationSpan, name: string }) {
@@ -23,7 +23,7 @@ export default function Reregistration({ registration, name }: { registration: R
                 <motion.div key="registering">
                     <AMForm
                         title={`${registration.name} Registered`}
-                        description={<>Welcome back to the <span className="text-pnw-gold">PNW Additive Manufacturing Service</span> — proudly created and maintained by Aaron Jung.</>} />
+                        description={<>Welcome back to the <span className="text-pnw-gold">PNW Additive Manufacturing Lab</span>.</>} />
                 </motion.div>
 
             </> : <>
@@ -31,7 +31,7 @@ export default function Reregistration({ registration, name }: { registration: R
                 <motion.div key="registered">
                     <AMForm
                         title={randomTitle}
-                        description={<>To continue using our service, please update your academic and departmental information for the <span className="font-semibold">{registration.name}</span>.</>}>
+                        description={<>To continue using our lab, please update your academic and departmental information for the <span className="font-semibold">{registration.name}</span>.</>}>
 
                         <APIForm action={actionRegisterAccountToReregistrationSpan} submitLabel="Done" onRes={(res) => setIsRegistered(res.success)}>
 

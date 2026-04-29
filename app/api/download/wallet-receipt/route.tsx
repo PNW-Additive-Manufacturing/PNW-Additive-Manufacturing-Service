@@ -48,7 +48,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         feesCostInCents: transaction.feesInCents,
         items: [
             {
-                name: "PNW Additive Manufacturing Service Deposit",
+                name: "PNW Additive Manufacturing Lab Deposit",
                 discountPercent: 0,
                 quantity: 1,
                 taxInCents: 0,

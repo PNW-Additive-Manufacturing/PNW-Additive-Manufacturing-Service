@@ -4,10 +4,9 @@ import db from "@/app/api/Database";
 import { serveRequiredSession } from "@/app/api/util/SessionHelper";
 import HorizontalWrap from "@/app/components/HorizontalWrap";
 import FilamentSpoolIcon from "@/app/components/icons/FilamentSpoolIcon";
-import GenericPrinterIcon from "@/app/components/icons/GenericPrinterIcon";
 import getConfig from "@/app/getConfig";
 import { AccountPermission } from "@/app/Types/Account/Account";
-import { RegularBolt, RegularCart, RegularLicense } from "lineicons-react";
+import { RegularCart, RegularLicense } from "lineicons-react";
 import { redirect } from "next/navigation";
 import { FaRegMoneyBillAlt } from "react-icons/fa";
 import { MdOutlineWavingHand } from "react-icons/md";
@@ -55,24 +54,24 @@ export default async function Maintainer() {
 								<span>View {orderCount.count} Requests</span>
 							</button>
 						</a>
-						<a href="/dashboard/maintainer/printers" className="sm:max-w-sm block">
+						{/* <a href="/dashboard/maintainer/printers" className="sm:max-w-sm block">
 							<button className="flex items-center w-full text-base font-normal">
 								<GenericPrinterIcon className="inline-block w-12 h-12 mr-auto fill-gray-100"></GenericPrinterIcon>
 								<span>View Printers</span>
 							</button>
-						</a>
+						</a> */}
 						<a href="/dashboard/maintainer/filaments" className="sm:max-w-sm block">
 							<button className="flex items-center w-full text-base font-normal">
 								<FilamentSpoolIcon className="inline-block w-12 h-12 mr-auto fill-gray-300"></FilamentSpoolIcon>
-								<span>Manage Filament</span>
+								<span>Materials</span>
 							</button>
 						</a>
-						<a href="/dashboard/maintainer/quote" className="sm:max-w-sm block">
+						{/* <a href="/dashboard/maintainer/quote" className="sm:max-w-sm block">
 							<button className="flex items-center w-full text-base font-normal">
 								<RegularBolt className="inline-block w-12 h-12 mr-auto fill-gray-300" />
 								<span>Generate Quote</span>
 							</button>
-						</a>
+						</a> */}
 
 						{/* Admin Only Screens */}
 						{(() => {
@@ -104,7 +103,7 @@ export default async function Maintainer() {
 										className="w-full sm:max-w-sm block">
 										<button className="flex items-center w-full text-base font-normal">
 											<MdOutlineWavingHand className="inline-block w-12 h-12 mr-auto fill-gray-300" />
-											<span>Reregistration</span>
+											<span>Registration Periods</span>
 										</button>
 									</a>
 

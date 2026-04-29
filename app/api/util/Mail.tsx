@@ -97,7 +97,7 @@ export async function sendVerificationEmail(
 		
 		await sendEmail(
 			email,
-			"Confirm your Email - PNW Additive Manufacturing Service",
+			"Confirm your Email - PNW Additive Manufacturing Lab",
 			html
 		);
 		

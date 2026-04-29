@@ -63,7 +63,7 @@ export default async function Home() {
 							</ul> */}
 
 							<div className="pt-2 lg:pt-6 mx-auto w-fit">
-								<div className="flex flex-wrap items-center gap-4">
+								<div className="flex flex-wrap items-center gap-6">
 									<Link href={"/request-part"}>
 										<button className="w-fit px-3.5 py-2.5 mb-0 text-sm bg-white outline-2 text-pnw-gold fill-pnw-gold outline outline-pnw-gold tracking-wider font-bold uppercase shadow-sm">
 											Start Printing

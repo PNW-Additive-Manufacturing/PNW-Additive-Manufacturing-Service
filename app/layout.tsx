@@ -30,10 +30,10 @@ export async function generateMetadata(
 ): Promise<Metadata> {
 	return Promise.resolve({
 		metadataBase: new URL(envConfig.hostURL),
-		title: "PNW Additive Manufacturing Service",
+		title: "PNW Additive Manufacturing Lab",
 		description: "Providing PNW students and faculty with access to advanced 3D Printing technology.",
 		icons: ["/assets/am_logo_light.png"],
-		applicationName: "PNW Additive Manufacturing Service",
+		applicationName: "PNW Additive Manufacturing Lab",
 		category: "3D Printing",
 		themeColor: "#f5b626",
 		openGraph: {
@@ -67,7 +67,7 @@ export default async function RootLayout({
 	return (
 		<html lang="en" className="h-full">
 			<head>
-				<title>PNW Additive Manufacturing Service</title>
+				<title>PNW Additive Manufacturing Lab</title>
 				<link rel="preconnect" href="https://fonts.gstatic.com" />
 				<link rel="preload" href="/assets/logo.svg" as="image" />
 				<link

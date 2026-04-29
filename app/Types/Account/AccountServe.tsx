@@ -286,7 +286,7 @@ export async function makeTransactionPDF(transaction: WalletTransaction, account
 		feesCostInCents: transaction.feesInCents,
 		items: [
 			{
-				name: "PNW Additive Manufacturing Service Deposit",
+				name: "PNW Additive Manufacturing Lab Deposit",
 				discountPercent: 0,
 				quantity: 1,
 				taxInCents: 0,
