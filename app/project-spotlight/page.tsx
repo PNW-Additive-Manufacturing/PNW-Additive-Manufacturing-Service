@@ -17,7 +17,7 @@ export default async function Page() {
         <HorizontalWrap className="py-8">
             <h1 className="w-fit text-2xl font-normal mb-2">
                 {/* <RegularMagnifier className="inline mb-1 p-0.5 fill-pnw-gold" />{" "} */}
-                Project Spotlight
+                Project
             </h1>
             <p className="">
                 Curious about the possibilities of 3D printing? Discover the projects our club members have created!

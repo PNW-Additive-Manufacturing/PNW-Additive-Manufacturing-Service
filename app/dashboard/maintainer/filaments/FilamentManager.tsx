@@ -21,8 +21,8 @@ import { Material } from "@/app/Types/Material/Material";
 import { Dialog } from "@headlessui/react";
 import classNames from "classnames";
 import React, { useState, useTransition } from "react";
-import { toast } from "react-toastify";
 import { FaBoxArchive, FaBoxOpen, FaLayerGroup, FaPalette, FaPen, FaPlus, FaTrash, FaXmark } from "react-icons/fa6";
+import { toast } from "react-toastify";
 
 // -----------------------------------------------------------------------------
 // Helpers
@@ -626,6 +626,13 @@ function ColorVariantForm({
 	const initialDiB =
 		initial && "diColor" in initial.color ? initial.color.diColor.colorB : "#000000";
 
+	const [monoColorValue, setMonoColorValue] = useState(initialMono.toUpperCase());
+	const [diAColorValue, setDiAColorValue] = useState(initialDiA.toUpperCase());
+	const [diBColorValue, setDiBColorValue] = useState(initialDiB.toUpperCase());
+
+	const isValidHex = (v: string) => /^#[0-9A-F]{6}$/i.test(v);
+	const safeHex = (v: string, fallback = "#000000") => (isValidHex(v) ? v : fallback);
+
 	return (
 		<form
 			className="flex flex-col gap-4"
@@ -663,15 +670,15 @@ function ColorVariantForm({
 			</Field>
 
 			<Field label="Color type">
-				<div className="flex gap-2">
+				<div className="inline-flex rounded-lg border border-gray-200 p-1 bg-gray-50 gap-1 w-fit">
 					<button
 						type="button"
 						onClick={() => setColorType("mono")}
 						className={classNames(
-							"px-3 py-1.5 rounded-md text-xs border-2 mb-0 w-fit",
+							"mb-0 px-4 py-1.5 rounded-md text-sm font-medium transition-colors",
 							colorType === "mono"
-								? "border-pnw-gold bg-pnw-gold/10 text-pnw-gold"
-								: "border-black/10 bg-transparent text-gray-600 hover:bg-transparent hover:border-pnw-gold/50"
+								? "bg-pnw-gold text-white shadow-sm"
+								: "!bg-transparent text-gray-600 hover:!bg-white hover:text-gray-900"
 						)}>
 						Single color
 					</button>
@@ -679,10 +686,10 @@ function ColorVariantForm({
 						type="button"
 						onClick={() => setColorType("gradient")}
 						className={classNames(
-							"px-3 py-1.5 rounded-md text-xs border-2 mb-0 w-fit",
+							"mb-0 px-4 py-1.5 rounded-md text-sm font-medium transition-colors",
 							colorType === "gradient"
-								? "border-pnw-gold bg-pnw-gold/10 text-pnw-gold"
-								: "border-black/10 bg-transparent text-gray-600 hover:bg-transparent hover:border-pnw-gold/50"
+								? "bg-pnw-gold text-white shadow-sm"
+								: "!bg-transparent text-gray-600 hover:!bg-white hover:text-gray-900"
 						)}>
 						Gradient
 					</button>
@@ -691,33 +698,66 @@ function ColorVariantForm({
 
 			{colorType === "mono" ? (
 				<Field label="Color">
-					<input
-						key="mono"
-						name="filament-mono-color"
-						type="color"
-						defaultValue={initialMono}
-						className="w-full h-12 rounded mb-0"
-					/>
+					<div className="flex gap-2 items-center">
+						<input
+							name="filament-mono-color"
+							type="color"
+							value={safeHex(monoColorValue)}
+							onChange={(e) => setMonoColorValue(e.currentTarget.value.toUpperCase())}
+							title="Open color picker"
+							className="w-10 h-10 rounded-md cursor-pointer border border-gray-300 p-0 shadow-sm flex-shrink-0 mb-0 appearance-none overflow-hidden bg-transparent [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:border-none [&::-webkit-color-swatch]:rounded-md [&::-moz-color-swatch]:border-none [&::-moz-color-swatch]:rounded-md"
+						/>
+						<input
+							type="text"
+							placeholder="#FFFFFF"
+							value={monoColorValue}
+							onChange={(e) => setMonoColorValue(e.currentTarget.value.toUpperCase())}
+							maxLength={7}
+							className="flex-grow h-10 px-3 border border-gray-300 rounded-md font-mono text-sm focus:border-pnw-gold focus:outline-none transition-colors mb-0"
+						/>
+					</div>
 				</Field>
 			) : (
-				<div className="grid grid-cols-2 gap-4">
+				<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 					<Field label="Color A">
-						<input
-							key="diA"
-							name="filament-di-colorA"
-							type="color"
-							defaultValue={initialDiA}
-							className="w-full h-12 rounded mb-0"
-						/>
+						<div className="flex gap-2 items-center">
+							<input
+								name="filament-di-colorA"
+								type="color"
+								value={safeHex(diAColorValue)}
+								onChange={(e) => setDiAColorValue(e.currentTarget.value.toUpperCase())}
+								title="Open color picker"
+								className="w-10 h-10 rounded-md cursor-pointer border border-gray-300 p-0 shadow-sm flex-shrink-0 mb-0 appearance-none overflow-hidden bg-transparent [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:border-none [&::-webkit-color-swatch]:rounded-md [&::-moz-color-swatch]:border-none [&::-moz-color-swatch]:rounded-md"
+							/>
+							<input
+								type="text"
+								placeholder="#FFFFFF"
+								value={diAColorValue}
+								onChange={(e) => setDiAColorValue(e.currentTarget.value.toUpperCase())}
+								maxLength={7}
+								className="flex-grow min-w-0 h-10 px-3 border border-gray-300 rounded-md font-mono text-sm focus:border-pnw-gold focus:outline-none transition-colors mb-0"
+							/>
+						</div>
 					</Field>
 					<Field label="Color B">
-						<input
-							key="diB"
-							name="filament-di-colorB"
-							type="color"
-							defaultValue={initialDiB}
-							className="w-full h-12 rounded mb-0"
-						/>
+						<div className="flex gap-2 items-center">
+							<input
+								name="filament-di-colorB"
+								type="color"
+								value={safeHex(diBColorValue)}
+								onChange={(e) => setDiBColorValue(e.currentTarget.value.toUpperCase())}
+								title="Open color picker"
+								className="w-10 h-10 rounded-md cursor-pointer border border-gray-300 p-0 shadow-sm flex-shrink-0 mb-0 appearance-none overflow-hidden bg-transparent [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:border-none [&::-webkit-color-swatch]:rounded-md [&::-moz-color-swatch]:border-none [&::-moz-color-swatch]:rounded-md"
+							/>
+							<input
+								type="text"
+								placeholder="#000000"
+								value={diBColorValue}
+								onChange={(e) => setDiBColorValue(e.currentTarget.value.toUpperCase())}
+								maxLength={7}
+								className="flex-grow min-w-0 h-10 px-3 border border-gray-300 rounded-md font-mono text-sm focus:border-pnw-gold focus:outline-none transition-colors mb-0"
+							/>
+						</div>
 					</Field>
 				</div>
 			)}
