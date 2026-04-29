@@ -37,12 +37,11 @@ export function fixInputDate(utcNumb: number)
 }
 
 export function formatDateForHTMLInput(date: Date) {
-    // Format the date in YYYY-MM-DD format using local time
-    return date.getFullYear() +
+    return date.getUTCFullYear() +
         '-' +
-        String(date.getMonth() + 1).padStart(2, '0') +
+        String(date.getUTCMonth() + 1).padStart(2, '0') +
         '-' +
-        String(date.getDate()).padStart(2, '0');
+        String(date.getUTCDate()).padStart(2, '0');
 }
 
 export function formatTimeForHTMLInput(date: Date) {

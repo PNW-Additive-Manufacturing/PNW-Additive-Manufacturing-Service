@@ -35,6 +35,7 @@ export default function Page() {
 	const account = useContext(AccountContext);
 
 	if (!account.isSingedIn) redirect("/user/login");
+	if (!account.account?.isEmailVerified) redirect("/user/not-verified");
 
 	return (
 		<>
