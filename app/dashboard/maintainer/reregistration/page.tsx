@@ -11,10 +11,10 @@ export default async function Accounting() {
             <HorizontalWrap>
                 <div className="py-8 flex flex-col gap-4">
                     <h1 className="w-fit text-3xl font-normal">
-                        Registration Period
+                        Registration Periods
                     </h1>
                     <p className="text-gray-600">
-                        Review and manage user registration activity across defined time periods.
+                        Review and manage user registration and order activity across defined time periods.
                     </p>
                 </div>
             </HorizontalWrap>

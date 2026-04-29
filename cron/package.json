@@ -1,7 +1,7 @@
 {
   "name": "ams-cron",
   "version": "1.0.0",
-  "description": "Additive Manufacturing Service CRON Jobs",
+  "description": "Additive Manufacturing Lab CRON Jobs",
   "main": "index.js",
   "scripts": {
     "dev": "npx tsc & node ./out/cron.js",

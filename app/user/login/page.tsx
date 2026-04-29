@@ -13,7 +13,7 @@ export default function Page({ searchParams }: { searchParams: { reason?: string
                     <AMSIcon />
                 </div>
                 <h1 className="text-xl mx-auto font-normal w-fit">
-                    Sign into Additive Manufacturing Service
+                    Sign into Additive Manufacturing Lab
                 </h1>
                 {reason && <p className="text-base mt-4 lg:text-center font-bold">{reason}</p>}
                 <br />

@@ -38,7 +38,7 @@ export default async function Home() {
 								{/* <span>Welcome to the</span> */}
 								<span className="font-bold text-center">
 									<span className="text-pnw-gold"> PNW </span>
-									Additive Manufacturing Service
+									Additive Manufacturing Lab
 								</span>
 							</h1>
 

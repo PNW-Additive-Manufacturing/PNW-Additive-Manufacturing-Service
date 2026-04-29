@@ -53,7 +53,7 @@ export default function CreateAccount() {
 					priority={true}
 					className="w-1/4 lg:mx-auto mb-4"></Image>
 				<h1 className="text-xl lg:mx-auto font-normal w-fit">
-					Sign up for Additive Manufacturing Service
+					Sign up for Additive Manufacturing Lab
 				</h1>
 				<br />
 				<div className="py-2 w-full">

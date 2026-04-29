@@ -1,4 +1,4 @@
-# Additive Manufacturing Service CRON Jobs
+# Additive Manufacturing Lab CRON Jobs
 
 - [x] Delete unused models (request deleted, or model purged) from the datastore (every day).
 - [x] Perform model-analysis using a queue system.

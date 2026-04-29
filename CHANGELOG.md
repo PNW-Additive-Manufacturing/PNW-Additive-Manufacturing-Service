@@ -1,6 +1,6 @@
 # Application Changelog
 As of 1/26/2025 this file will be used to keep track of new features and changes to the structure of the
-Additive Manufacturing Service.
+Additive Manufacturing Lab.
 
 - Comment on new features.
 - Provide database migration scripts when database changes occur.

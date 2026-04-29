@@ -65,7 +65,7 @@ export async function sendRequestEmail(emailKind: RequestEmail["kind"], request:
 export async function sendEmail(to: string, subject: string, html: string, attachments?: Mail.Attachment[]) {
 	try {
 		const sessionInfo = await transporter.sendMail({
-			from: `Additive Manufacturing Service of PNW <${envConfig.email.user}>`,
+			from: `Additive Manufacturing Lab of PNW <${envConfig.email.user}>`,
 			to,
 			subject,
 			html,
@@ -116,7 +116,7 @@ export async function sendVerificationEmail(
 export async function emailTemplate(content: string) {
 	return `
 		<div style="font-family:inherit;background-color:rgb(248,248,248);padding:1.5rem;border-radius:12px;color:rgb(64,64,64);">
-			<h2 style="margin-top:0px; font-family:'Helvetica'; letter-spacing:0.025em; font-weight:bolder;"><span style="color: #b1810b;">PNW</span> Additive Manufacturing Service</h2>
+			<h2 style="margin-top:0px; font-family:'Helvetica'; letter-spacing:0.025em; font-weight:bolder;"><span style="color: #b1810b;">PNW</span> Additive Manufacturing Lab</h2>
 			
 			<div style="max-width: 850px;">
 				${content}
@@ -139,7 +139,7 @@ export async function emailTemplateDearUser(
 export async function fundsAdded(transaction: WalletTransaction) {
 	return emailTemplate(`
 		<p style="font-family: inherit; color: rgb(64, 64, 64); font-size: medium;">
-			\$${(transaction.amountInCents / 100).toFixed(2)} has been added to your account. You can apply these funds to pay for our Additive Manufacturing Service. 
+			\$${(transaction.amountInCents / 100).toFixed(2)} has been added to your account. You can apply these funds to pay for our Additive Manufacturing Lab. 
 		</p>
 		<a href=${`${envConfig.hostURL}/user/profile#wallet-transaction-${transaction.id}`} target="_blank" style="font-family: inherit; text-decoration:none; height: fit-content; width: fit-content; display: block;">
 			<button style="font-family: inherit; text-decoration: none; border-radius: 5px; padding: 1rem 1.2rem 1rem 1.2rem; padding-top: 12px; padding-bottom: 12px; display: block; margin-bottom: 0px; outline: none; border: none; background-color: #2b2b2b; color: white; font-size: large; font-weight: 500; text-wrap: nowrap; width: auto; font-size: small;">View Wallet</button>
@@ -216,7 +216,7 @@ export async function requestCompletedHTML(request: RequestWithParts, trackingId
 	return emailTemplateDearUser(request.firstName, request.lastName,
 		`
 		<p style="font-family: inherit; color: rgb(64, 64, 64); font-size: medium;">
-			Your request for ${DOMPurify.sanitize(request.name)} has been completed. You may pick up your parts during our scheduled <a href=${`${envConfig.hostURL}/schedule`}>pickup hours</a> whenever you are available. Thank you for choosing the Additive Manufacturing Service of PNW!
+			Your request for ${DOMPurify.sanitize(request.name)} has been completed. You may pick up your parts during our scheduled <a href=${`${envConfig.hostURL}/schedule`}>pickup hours</a> whenever you are available. Thank you for choosing the Additive Manufacturing Lab of PNW!
 		</p>
 		<a href=${`${envConfig.hostURL}/dashboard/user/${request.id}${trackingId ? `?trackingId=${trackingId}` : ""}`} target="_blank" style="font-family: inherit; text-decoration:none; height: fit-content; width: fit-content; display: block;">
 			<button style="font-family: inherit; text-decoration: none; border-radius: 5px; padding: 1rem 1.2rem 1rem 1.2rem; padding-top: 12px; padding-bottom: 12px; display: block; margin-bottom: 0px; outline: none; border: none; background-color: #2b2b2b; color: white; font-size: large; font-weight: 500; text-wrap: nowrap; width: auto; font-size: small;">View Request</button>
